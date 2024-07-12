@@ -1,0 +1,20 @@
+{
+  "name": "@total-report/core-schema",
+  "type": "module",
+  "version": "1.0.0",
+  "description": "",
+  "engines": {
+    "node": ">=20.13.1",
+    "pnpm": ">=8.15.1"
+  },
+  "dependencies": {
+    "drizzle-orm": "^0.32.0",
+    "pg": "^8.12.0"
+  },
+  "devDependencies": {
+    "typescript": "5.5.3",
+    "@total-report/typescript-config": "workspace:*",
+    "@types/pg": "^8.11.6",
+    "drizzle-kit": "^0.23.0"
+  }
+}
