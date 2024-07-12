@@ -4,8 +4,14 @@
   "version": "1.0.0",
   "description": "",
   "engines": {
-    "node": ">=20.13.1",
-    "pnpm": ">=8.15.1"
+    "node": ">=20.15.0",
+    "pnpm": ">=9.5.0"
+  },
+  "exports": {
+    "./schema": {
+      "types": "./src/schema.ts",
+      "default": "./dist/schema.js"
+    }
   },
   "dependencies": {
     "drizzle-orm": "^0.32.0",
@@ -14,7 +20,6 @@
   "devDependencies": {
     "typescript": "5.5.3",
     "@total-report/typescript-config": "workspace:*",
-    "@types/pg": "^8.11.6",
-    "drizzle-kit": "^0.23.0"
+    "@types/pg": "^8.11.6"
   }
 }
