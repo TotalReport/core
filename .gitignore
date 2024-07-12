@@ -18,6 +18,9 @@ coverage
 # Turbo
 .turbo
 
+# Nx
+.nx
+
 # Vercel
 .vercel
 
@@ -36,3 +39,8 @@ yarn-error.log*
 # Misc
 .DS_Store
 *.pem
+
+
+
+.nx/cache
+.nx/workspace-data
