@@ -13,6 +13,9 @@
       "default": "./dist/schema.js"
     }
   },
+  "scripts": {
+    "build": "tsc"
+  },
   "dependencies": {
     "drizzle-orm": "^0.32.0",
     "pg": "^8.12.0"
