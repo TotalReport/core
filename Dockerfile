@@ -21,4 +21,5 @@ CMD [ "pnpm", "migrate" ]
 FROM base AS total-report-core-service
 COPY --from=build /prod/total-report-core-service /prod/total-report-core-service
 WORKDIR /prod/total-report-core-service
+HEALTHCHECK --interval=10s --timeout=1s --start-period=5s CMD ["node", "./dist/healthcheck.js"]
 CMD [ "pnpm", "start" ]

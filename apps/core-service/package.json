@@ -6,7 +6,9 @@
   "scripts": {
     "build": "tsc",
     "start": "node dist/index.js",
-    "test": "jest"
+    "test": "dotenv -e ./test/setup/test.env -- jest",
+    "test:app:up": "docker compose --env-file ./test/setup/test.env -f ./test/setup/test-app.docker-compose.yml up --wait -d",
+    "test:app:down": "docker compose --env-file ./test/setup/test.env -f ./test/setup/test-app.docker-compose.yml down"
   },
   "keywords": [],
   "author": "",

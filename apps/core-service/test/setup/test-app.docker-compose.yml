@@ -1,0 +1,52 @@
+version: '3.9'
+name: total-report-core-test
+services:
+  total-report-db:
+    image: postgres:16-alpine
+    restart: no
+    environment:
+      PGPORT: ${DB_PORT}
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_NAME}
+    ports:
+      - ${DB_PORT}:${DB_PORT}
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+
+  total-report-core-schema:
+    image: total-report-core-schema:latest
+    depends_on:
+      total-report-db:
+        condition: service_healthy
+    links:
+      - total-report-db:${DB_HOST}
+    restart: no
+    environment:
+      - NODE_ENV=production
+      - DB_URL=${DB_URL}
+
+
+  total-report-core-service:
+    env_file: ./test.env
+    image: total-report-core-service:latest
+    depends_on:
+      total-report-db:
+        condition: service_healthy
+      total-report-core-schema:
+        condition: service_completed_successfully
+    links:
+      - total-report-db:${DB_HOST}
+    restart: no
+    environment:
+      - NODE_ENV=production
+      - CORE_SERVICE_PORT=${CORE_SERVICE_PORT}
+      - DB_URL=${DB_URL}
+    expose:
+      - "${CORE_SERVICE_PORT}"
+    ports:
+      - "${CORE_SERVICE_PORT}:${CORE_SERVICE_PORT}"
