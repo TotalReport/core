@@ -2,7 +2,19 @@
   "name": "total-report",
   "private": true,
   "scripts": {
+    "dockerize:core-schema-migrator": "docker build . --target total-report-core-schema-migrator --tag total-report-core-schema-migrator:latest",
+    "dockerize:core-service": "docker build . --target total-report-core-service --tag total-report-core-service:latest",
     "format": "prettier --write \"**/*.{ts,tsx,md}\""
+  },
+  "nx": {
+    "targets": {
+      "dockerize": {
+        "dependsOn": [
+          "dockerize:core-schema-migrator",
+          "dockerize:core-service"
+        ]
+      }
+    }
   },
   "devDependencies": {
     "dotenv-cli": "^7.4.2",
