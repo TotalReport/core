@@ -8,6 +8,22 @@
     "test:app:up": "docker compose --env-file ./setup/test.env -f ./setup/test-app.docker-compose.yml up --wait -d",
     "test:app:down": "docker compose --env-file ./setup/test.env -f ./setup/test-app.docker-compose.yml down"
   },
+  "nx": {
+    "targets": {
+      "test": {
+        "dependsOn": [
+          {
+            "target": "build",
+            "projects": "total-report"
+          },
+          {
+            "target": "dockerize",
+            "projects": "total-report"
+          }
+        ]
+      }
+    }
+  },
   "keywords": [],
   "author": "",
   "license": "ISC",
