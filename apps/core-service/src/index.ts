@@ -1,12 +1,11 @@
+import { contract } from "@total-report/core-contract/contract";
 import { createExpressEndpoints, initServer } from "@ts-rest/express";
+import bodyParser from "body-parser";
 import cors from "cors";
 import express from "express";
-import bodyParser from "body-parser";
-import { contract } from "@total-report/core-contract/contract";
 import { healthCheckRoute, setApiStarted } from "./routes/healthcheck.js";
 import { openapiSchema } from "./routes/openapi_schema.js";
-
-let apiStarted = false;
+import { createReportRoute } from "./routes/reports.js";
 
 const { urlencoded, json } = bodyParser;
 
@@ -22,12 +21,14 @@ const s = initServer();
 
 const router = s.router(contract, {
   healthCheck: healthCheckRoute,
+  createReport: createReportRoute,
 });
 
 createExpressEndpoints(contract, router, app);
 
 const port = process.env.CORE_SERVICE_PORT || 3333;
-const server = app.listen(port, () => {
+
+app.listen(port, () => {
   console.log(`Listening at http://localhost:${port}`);
   setApiStarted(true);
 });
