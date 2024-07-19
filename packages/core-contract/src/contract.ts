@@ -23,7 +23,7 @@ export const contract = initContract().router({
       200: HealthCheckSchema,
       503: HealthCheckSchema,
     },
-    summary: "Get health check status.",
+    summary: "Get a health check status.",
   },
   createReport: {
     method: "POST",
@@ -34,6 +34,18 @@ export const contract = initContract().router({
     body: z.object({
       title: z.string(),
     }),
-    summary: "Create a report.",
+    summary: "Create the report.",
+  },
+  readReport: {
+    method: "GET",
+    path: "/v1/reports/:id",
+    pathParams: z.object({
+      id: z.string().uuid(),
+    }),
+    responses: {
+      201: ReportSchema,
+      404: z.object({}),
+    },
+    summary: "Read the report by ID.",
   },
 });

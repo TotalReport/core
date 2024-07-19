@@ -1,10 +1,11 @@
 import { reports } from "@total-report/core-schema/schema";
-import { db } from "./setup.js";
+import { eq } from "drizzle-orm";
 import { v4 as uuidv4 } from "uuid";
+import { db } from "./setup.js";
 
 export const createReport = async ({
   title,
-}: CreateReportArgs): Promise<CreatedReport> => {
+}: CreateReportArgs): Promise<ReportBaseInfo> => {
   return (
     await db
       .insert(reports)
@@ -17,11 +18,21 @@ export const createReport = async ({
   ).at(0)!;
 };
 
+export const findReportById = async (
+  id: string
+): Promise<ReportBaseInfo | undefined> => {
+  const found = await db.select().from(reports).where(eq(reports.id, id));
+  if (found.length === 0) {
+    return undefined;
+  }
+  return found[0];
+};
+
 type CreateReportArgs = {
   title: string;
 };
 
-type CreatedReport = {
+type ReportBaseInfo = {
   id: string;
   title: string;
   createdTimestamp: string;

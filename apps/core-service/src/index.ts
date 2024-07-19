@@ -5,7 +5,7 @@ import cors from "cors";
 import express from "express";
 import { healthCheckRoute, setApiStarted } from "./routes/healthcheck.js";
 import { openapiSchema } from "./routes/openapi_schema.js";
-import { createReportRoute } from "./routes/reports.js";
+import { createReportRoute, readReportRoute } from "./routes/reports.js";
 
 const { urlencoded, json } = bodyParser;
 
@@ -22,6 +22,7 @@ const s = initServer();
 const router = s.router(contract, {
   healthCheck: healthCheckRoute,
   createReport: createReportRoute,
+  readReport: readReportRoute,
 });
 
 createExpressEndpoints(contract, router, app);

@@ -11,16 +11,25 @@ export const client = initClient(contract, {
 });
 
 describe("reports", () => {
-  test("create report", async () => {
-    let response = await client.createReport({
+  test("create and read report", async () => {
+    let createReportResponse = await client.createReport({
       body: {
         title: "New report",
       },
     });
-    expect_toBe(response.status, 201);
-    expect(response.body.id).not.toBeNull();
-    expect(response.body.title).toBe("New report");
-    expect_toBeCloseToNow(Date.parse(response.body.createdTimestamp), 1000);
+    expect_toBe(createReportResponse.status, 201);
+    expect(createReportResponse.body.id).not.toBeNull();
+    expect(createReportResponse.body.title).toBe("New report");
+    expect_toBeCloseToNow(
+      Date.parse(createReportResponse.body.createdTimestamp),
+      1000
+    );
+
+    const reportByIdResponse = await client.readReport({
+      params: { id: createReportResponse.body.id },
+    });
+    expect_toBe(reportByIdResponse.status, 200);
+    expect(reportByIdResponse.body).toEqual(createReportResponse.body);
   });
 });
 
