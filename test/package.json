@@ -1,0 +1,27 @@
+{
+  "name": "@total-report/test",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "",
+  "scripts": {
+    "test": "dotenv -e ./setup/test.env -- jest",
+    "test:app:up": "docker compose --env-file ./setup/test.env -f ./setup/test-app.docker-compose.yml up --wait -d",
+    "test:app:down": "docker compose --env-file ./setup/test.env -f ./setup/test-app.docker-compose.yml down"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@total-report/core-contract": "workspace:*",
+    "@total-report/core-schema": "workspace:*"
+  },
+  "devDependencies": {
+    "@jest/globals": "^29.7.0",
+    "@swc/jest": "^0.2.36",
+    "@total-report/typescript-config": "workspace:*",
+    "@ts-rest/core": "^3.45.2",
+    "@types/jest": "^29.5.12",
+    "jest": "^29.7.0",
+    "typescript": "5.5.3"
+  }
+}
