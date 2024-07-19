@@ -28,6 +28,10 @@ export const findReportById = async (
   return found[0];
 };
 
+export const deleteReportById = async (id: string): Promise<void> => {
+  await db.delete(reports).where(eq(reports.id, id));
+};
+
 type CreateReportArgs = {
   title: string;
 };

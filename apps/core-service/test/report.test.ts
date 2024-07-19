@@ -30,6 +30,18 @@ describe("reports", () => {
     });
     expect_toBe(reportByIdResponse.status, 200);
     expect(reportByIdResponse.body).toEqual(createReportResponse.body);
+
+    const deleteReportResponse = await client.deleteReport({
+      params: { id: createReportResponse.body.id },
+      body: undefined,
+    });
+    expect(deleteReportResponse.status).toBe(204);
+
+    const reportByIdAfterDeleteResponse = await client.readReport({
+      params: { id: createReportResponse.body.id },
+    });
+    expect_toBe(reportByIdAfterDeleteResponse.status, 404);
+    expect(reportByIdAfterDeleteResponse.body).toEqual({});
   });
 });
 

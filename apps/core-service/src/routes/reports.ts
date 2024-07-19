@@ -1,6 +1,6 @@
 import { contract } from "@total-report/core-contract/contract";
 import { AppRouteImplementation } from "@ts-rest/express";
-import { createReport, findReportById } from "../db/reports.js";
+import { createReport, deleteReportById, findReportById } from "../db/reports.js";
 
 export const createReportRoute: CreateReportRoute = async ({ body }) => {
   return {
@@ -23,6 +23,14 @@ export const readReportRoute: ReadReportRoute = async ({ params }) => {
   };
 };
 
+export const deleteReportRoute: DeleteReportRoute = async ({ params }) => {
+  await deleteReportById(params.id);
+  return {
+    status: 204,
+    body: undefined,
+  };
+}
 
 type CreateReportRoute = AppRouteImplementation<typeof contract.createReport>;
 type ReadReportRoute = AppRouteImplementation<typeof contract.readReport>;
+type DeleteReportRoute = AppRouteImplementation<typeof contract.deleteReport>;

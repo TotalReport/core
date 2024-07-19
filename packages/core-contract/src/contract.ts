@@ -15,7 +15,9 @@ const ReportSchema = z.object({
   createdTimestamp: z.string(),
 });
 
-export const contract = initContract().router({
+const c = initContract()
+
+export const contract = c.router({
   healthCheck: {
     method: "GET",
     path: "/healthcheck",
@@ -47,5 +49,18 @@ export const contract = initContract().router({
       404: z.object({}),
     },
     summary: "Read the report by ID.",
+  },
+  deleteReport: {
+    method: "DELETE",
+    path: "/v1/reports/:id",
+    pathParams: z.object({
+      id: z.string().uuid(),
+    }),
+    responses: {
+      204: c.type<void>(),
+      404: z.object({}),
+    },
+    body: c.type<void>(),
+    summary: "Delete the report by ID.",
   },
 });
