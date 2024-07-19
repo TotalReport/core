@@ -14,7 +14,7 @@
         "dependsOn": [
           {
             "target": "build",
-            "projects": "total-report"
+            "projects": "@total-report/core-service"
           },
           {
             "target": "dockerize",
