@@ -15,6 +15,13 @@ const ReportSchema = z.object({
   createdTimestamp: z.string(),
 });
 
+const LaunchSchema = z.object({
+  id: z.string(),
+  title: z.string(),
+  createdTimestamp: z.string(),
+  reportId: z.string().uuid(),
+});
+
 const c = initContract()
 
 export const contract = c.router({
@@ -62,5 +69,17 @@ export const contract = c.router({
     },
     body: c.type<void>(),
     summary: "Delete the report by ID.",
+  },
+  createLaunch: {
+    method: "POST",
+    path: "/v1/launches",
+    responses: {
+      201: LaunchSchema,
+    },
+    body: z.object({
+      reportId: z.string().uuid(),
+      title: z.string(),
+    }),
+    summary: "Create the launch.",
   },
 });

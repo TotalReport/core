@@ -1,4 +1,4 @@
-import { reports } from "@total-report/core-schema/schema";
+import { launches, reports } from "@total-report/core-schema/schema";
 import { eq } from "drizzle-orm";
 import { v4 as uuidv4 } from "uuid";
 import { db } from "./setup.js";
@@ -29,7 +29,11 @@ export const findReportById = async (
 };
 
 export const deleteReportById = async (id: string): Promise<void> => {
-  await db.delete(reports).where(eq(reports.id, id));
+  db.transaction(async (tx) => {
+    // FIXME: handle launches delete in launches.ts
+    await tx.delete(launches).where(eq(launches.reportId, id)); 
+    await tx.delete(reports).where(eq(reports.id, id));
+  });
 };
 
 type CreateReportArgs = {

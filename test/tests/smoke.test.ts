@@ -31,6 +31,17 @@ describe("reports", () => {
     expect_toBe(reportByIdResponse.status, 200);
     expect(reportByIdResponse.body).toEqual(createReportResponse.body);
 
+    const launchResponse = await client.createLaunch({body: {title: "New launch", reportId: createReportResponse.body.id}});
+
+    expect_toBe(launchResponse.status, 201);
+    expect(launchResponse.body.id).not.toBeNull();
+    expect(launchResponse.body.title).toBe("New launch");
+    expect(launchResponse.body.reportId).toBe(createReportResponse.body.id);
+    expect_toBeCloseToNow(
+      Date.parse(launchResponse.body.createdTimestamp),
+      1000
+    );   
+
     const deleteReportResponse = await client.deleteReport({
       params: { id: createReportResponse.body.id },
       body: undefined,
