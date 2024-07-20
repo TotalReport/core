@@ -22,7 +22,7 @@ const LaunchSchema = z.object({
   reportId: z.string().uuid(),
 });
 
-const c = initContract()
+const c = initContract();
 
 export const contract = c.router({
   healthCheck: {
@@ -81,5 +81,17 @@ export const contract = c.router({
       title: z.string(),
     }),
     summary: "Create the launch.",
+  },
+  readLaunch: {
+    method: "GET",
+    path: "/v1/launches/:id",
+    pathParams: z.object({
+      id: z.string().uuid(),
+    }),
+    responses: {
+      201: LaunchSchema,
+      404: z.object({}),
+    },
+    summary: "Read the launch by ID.",
   },
 });

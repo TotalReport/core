@@ -10,7 +10,7 @@ import {
   deleteReportRoute,
   readReportRoute,
 } from "./routes/reports.js";
-import { createLaunchRoute } from "./routes/launches.js";
+import { createLaunchRoute, readLaunchRoute } from "./routes/launches.js";
 
 const { urlencoded, json } = bodyParser;
 
@@ -30,6 +30,7 @@ const router = s.router(contract, {
   readReport: readReportRoute,
   deleteReport: deleteReportRoute,
   createLaunch: createLaunchRoute,
+  readLaunch: readLaunchRoute,
 });
 
 createExpressEndpoints(contract, router, app);

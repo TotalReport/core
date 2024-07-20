@@ -1,4 +1,5 @@
 import { launches } from "@total-report/core-schema/schema";
+import { eq } from "drizzle-orm";
 import { db } from "../db/setup.js";
 import { v4 as uuidv4 } from "uuid";
 import { ReportNotFoundError } from "../errors/errors.js";
@@ -22,6 +23,14 @@ export const createLaunch = async (
     console.log(typeof error);
     throw new ReportNotFoundError(args.reportId);
   }
+};
+
+export const findLaunchById = async (id: string): Promise<CreatedLaunch | undefined> => {
+  const found = await db.select().from(launches).where(eq(launches.id, id));
+  if (found.length === 0) {
+    return undefined;
+  }
+  return found[0];
 };
 
 type CreateLaunchArgs = {

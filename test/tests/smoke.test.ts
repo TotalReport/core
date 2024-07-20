@@ -40,7 +40,13 @@ describe("reports", () => {
     expect_toBeCloseToNow(
       Date.parse(launchResponse.body.createdTimestamp),
       1000
-    );   
+    );
+
+    const launchByIdResponse = await client.readLaunch({
+      params: { id: launchResponse.body.id },
+    });
+    expect_toBe(launchByIdResponse.status, 200);
+    expect(launchByIdResponse.body).toEqual(launchResponse.body);
 
     const deleteReportResponse = await client.deleteReport({
       params: { id: createReportResponse.body.id },
