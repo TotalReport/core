@@ -94,4 +94,16 @@ export const contract = c.router({
     },
     summary: "Read the launch by ID.",
   },
+  deleteLaunch: {
+    method: "DELETE",
+    path: "/v1/launches/:id",
+    pathParams: z.object({
+      id: z.string().uuid(),
+    }),
+    responses: {
+      204: c.type<void>(),
+      404: z.object({}),
+    },
+    body: c.type<void>(),
+  },
 });

@@ -31,22 +31,33 @@ describe("reports", () => {
     expect_toBe(reportByIdResponse.status, 200);
     expect(reportByIdResponse.body).toEqual(createReportResponse.body);
 
-    const launchResponse = await client.createLaunch({body: {title: "New launch", reportId: createReportResponse.body.id}});
+    const createLaunch = await client.createLaunch({body: {title: "New launch", reportId: createReportResponse.body.id}});
 
-    expect_toBe(launchResponse.status, 201);
-    expect(launchResponse.body.id).not.toBeNull();
-    expect(launchResponse.body.title).toBe("New launch");
-    expect(launchResponse.body.reportId).toBe(createReportResponse.body.id);
+    expect_toBe(createLaunch.status, 201);
+    expect(createLaunch.body.id).not.toBeNull();
+    expect(createLaunch.body.title).toBe("New launch");
+    expect(createLaunch.body.reportId).toBe(createReportResponse.body.id);
     expect_toBeCloseToNow(
-      Date.parse(launchResponse.body.createdTimestamp),
+      Date.parse(createLaunch.body.createdTimestamp),
       1000
     );
 
-    const launchByIdResponse = await client.readLaunch({
-      params: { id: launchResponse.body.id },
+    const readLaunchById = await client.readLaunch({
+      params: { id: createLaunch.body.id },
     });
-    expect_toBe(launchByIdResponse.status, 200);
-    expect(launchByIdResponse.body).toEqual(launchResponse.body);
+    expect_toBe(readLaunchById.status, 200);
+    expect(readLaunchById.body).toEqual(createLaunch.body);
+
+    const deleteLaunch = await client.deleteLaunch({
+      params: { id: createLaunch.body.id },
+      body: undefined,
+    });
+    expect(deleteLaunch.status).toBe(204);
+
+    const launchByIdAfterDelete = await client.readLaunch({
+      params: { id: createLaunch.body.id },
+    });
+    expect_toBe(launchByIdAfterDelete.status, 404);
 
     const deleteReportResponse = await client.deleteReport({
       params: { id: createReportResponse.body.id },

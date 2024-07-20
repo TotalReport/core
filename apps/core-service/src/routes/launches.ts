@@ -1,6 +1,6 @@
 import { contract } from "@total-report/core-contract/contract";
 import { AppRouteImplementation } from "@ts-rest/express";
-import { createLaunch, findLaunchById } from "../db/launches.js";
+import { createLaunch, deleteLaunchById, findLaunchById } from "../db/launches.js";
 
 export const createLaunchRoute: CreateLaunchRoute = async ({ body }) => {
   return {
@@ -23,5 +23,14 @@ export const readLaunchRoute: ReadLaunchRoute = async ({ params }) => {
   };
 };
 
+export const deleteLaunchRoute: DeleteLaunchRoute = async ({ params }) => {
+  await deleteLaunchById(params.id);
+  return {
+    status: 204,
+    body: undefined,
+  };
+}
+
 type CreateLaunchRoute = AppRouteImplementation<typeof contract.createLaunch>;
 type ReadLaunchRoute = AppRouteImplementation<typeof contract.readLaunch>;
+type DeleteLaunchRoute = AppRouteImplementation<typeof contract.deleteLaunch>;

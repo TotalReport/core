@@ -33,6 +33,10 @@ export const findLaunchById = async (id: string): Promise<CreatedLaunch | undefi
   return found[0];
 };
 
+export const deleteLaunchById = async (id: string): Promise<void> => {
+  await db.delete(launches).where(eq(launches.id, id));
+};
+
 type CreateLaunchArgs = {
   reportId: string;
   title: string;
