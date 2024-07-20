@@ -11,6 +11,10 @@
     "./schema": {
       "types": "./src/schema.ts",
       "default": "./dist/schema.js"
+    },
+    "./constants": {
+      "types": "./src/constants.ts",
+      "default": "./dist/constants.js"
     }
   },
   "scripts": {

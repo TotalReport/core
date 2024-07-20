@@ -1,9 +1,9 @@
 {
   "extends": "@total-report/typescript-config/base.json",
   "compilerOptions": {
-    "rootDir": "./",
-    "noEmit": true
+    "outDir": "dist",
+    "rootDir": "src"
   },
-  "include": ["drizzle.config.ts"],
-  "exclude": ["node_modules", "migrations"]
+  "include": ["src"],
+  "exclude": ["node_modules", "dist", "migrations"]
 }
