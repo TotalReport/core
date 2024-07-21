@@ -4,6 +4,7 @@
   "type": "module",
   "description": "",
   "scripts": {
+    "build": "tsc",
     "test": "dotenv -e ./setup/test.env -- jest",
     "test:app:up": "docker compose --env-file ./setup/test.env -f ./setup/test-app.docker-compose.yml up --wait -d",
     "test:app:down": "docker compose --env-file ./setup/test.env -f ./setup/test-app.docker-compose.yml down"
@@ -32,6 +33,7 @@
     "@total-report/core-schema": "workspace:*"
   },
   "devDependencies": {
+    "@faker-js/faker": "^8.4.1",
     "@jest/globals": "^29.7.0",
     "@swc/jest": "^0.2.36",
     "@total-report/typescript-config": "workspace:*",

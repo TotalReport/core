@@ -6,7 +6,7 @@ import { ReportNotFoundError } from "../errors/errors.js";
 
 export const createLaunch = async (
   args: CreateLaunchArgs
-): Promise<CreatedLaunch> => {
+): Promise<LaunchCommonInfo> => {
   try {
     return (
       await db
@@ -25,7 +25,9 @@ export const createLaunch = async (
   }
 };
 
-export const findLaunchById = async (id: string): Promise<CreatedLaunch | undefined> => {
+export const findLaunchById = async (
+  id: string
+): Promise<LaunchCommonInfo | undefined> => {
   const found = await db.select().from(launches).where(eq(launches.id, id));
   if (found.length === 0) {
     return undefined;
@@ -37,12 +39,40 @@ export const deleteLaunchById = async (id: string): Promise<void> => {
   await db.delete(launches).where(eq(launches.id, id));
 };
 
+export const updateLaunchStarted = async ({
+  id,
+  startedTimestamp,
+}: UpdateLaunchStartedArgs): Promise<LaunchCommonInfo | undefined> => {
+  if (startedTimestamp === undefined) {
+    await db
+      .update(launches)
+      .set({ startedTimestamp: new Date().toISOString() })
+      .where(eq(launches.id, id));
+  } else if (startedTimestamp === null) {
+    await db
+      .update(launches)
+      .set({ startedTimestamp: null })
+      .where(eq(launches.id, id));
+  } else {
+    await db
+      .update(launches)
+      .set({ startedTimestamp: startedTimestamp.toISOString() })
+      .where(eq(launches.id, id));
+  }
+  return await findLaunchById(id);
+};
+
 type CreateLaunchArgs = {
   reportId: string;
   title: string;
 };
 
-type CreatedLaunch = {
+type UpdateLaunchStartedArgs = {
+  id: string;
+  startedTimestamp: Date | null | undefined;
+};
+
+type LaunchCommonInfo = {
   id: string;
   title: string;
   createdTimestamp: string;

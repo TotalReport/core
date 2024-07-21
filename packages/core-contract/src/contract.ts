@@ -19,6 +19,8 @@ const LaunchSchema = z.object({
   id: z.string(),
   title: z.string(),
   createdTimestamp: z.string(),
+  startedTimestamp: z.string().nullable(),
+  finishedTimestamp: z.string().nullable(),
   reportId: z.string().uuid(),
 });
 
@@ -105,5 +107,20 @@ export const contract = c.router({
       404: z.object({}),
     },
     body: c.type<void>(),
+  },
+  updateLaunchStarted: {
+    summary: "Update the launch started timestamp.",
+    method: "PATCH",
+    path: "/v1/launches/:id/started",
+    pathParams: z.object({
+      id: z.string().uuid(),
+    }),
+    body: z.object({
+      startedTimestamp: z.string().datetime({ offset: true }).nullish(),
+    }),
+    responses: {
+      201: LaunchSchema,
+      404: z.object({}),
+    },
   },
 });

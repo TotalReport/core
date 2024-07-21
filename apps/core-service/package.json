@@ -14,12 +14,13 @@
   "dependencies": {
     "@total-report/core-contract": "workspace:*",
     "@total-report/core-schema": "workspace:*",
-    "express": "^4.19.2",
-    "cors": "^2.8.5",
-    "body-parser": "^1.20.2",
     "@ts-rest/express": "^3.45.2",
     "@ts-rest/open-api": "^3.45.2",
+    "body-parser": "^1.20.2",
+    "cors": "^2.8.5",
+    "date-fns": "^3.6.0",
     "drizzle-orm": "^0.32.0",
+    "express": "^4.19.2",
     "pg": "^8.12.0",
     "uuid": "^10.0.0"
   },
