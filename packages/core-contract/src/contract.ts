@@ -119,7 +119,7 @@ export const contract = c.router({
       startedTimestamp: z.string().datetime({ offset: true }).nullish(),
     }),
     responses: {
-      201: LaunchSchema,
+      200: LaunchSchema,
       404: z.object({}),
     },
   },

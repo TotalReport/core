@@ -1,4 +1,5 @@
-import { describe, expect, test } from "@jest/globals";
+import { describe, test } from "mocha";
+import { expect } from "earl";
 import { expect_toBe, expect_toBeCloseToNow } from "../tools/utils.js";
 import { generateReport } from "../tools/report-generator.js";
 import { generateLaunch } from "../tools/launch-generator.js";
@@ -13,15 +14,15 @@ describe("reports", () => {
     });
 
     expect_toBe(createReportResponse.status, 201);
-    expect(createReportResponse.body.id).not.toBeNull();
-    expect(createReportResponse.body.title).toBe("New report");
+    expect(createReportResponse.body.id).not.toBeNullish();
+    expect(createReportResponse.body.title).toEqual("New report");
     expect_toBeCloseToNow(
       Date.parse(createReportResponse.body.createdTimestamp),
       1000
     );
   });
 
-  test("read report", async () => {
+  test("read report by id", async () => {
     let report = await generateReport();
 
     const reportByIdResponse = await client.readReport({
@@ -39,13 +40,16 @@ describe("reports", () => {
       params: { id: report.id },
       body: undefined,
     });
-    expect(deleteReportResponse.status).toBe(204);
+    expect(deleteReportResponse.status).toEqual(204);
 
     const reportByIdAfterDeleteResponse = await client.readReport({
       params: { id: report.id },
     });
-    expect_toBe(reportByIdAfterDeleteResponse.status, 404);
-    expect(reportByIdAfterDeleteResponse.body).toEqual({});
+    expect(reportByIdAfterDeleteResponse).toEqual({
+      status: 404,
+      body: {},
+      headers: expect.anything(),
+    });
   });
 
   test("delete report with launches", async () => {
@@ -55,12 +59,16 @@ describe("reports", () => {
       params: { id: launch.reportId },
       body: undefined,
     });
-    expect(deleteReportResponse.status).toBe(204);
+    expect(deleteReportResponse.status).toEqual(204);
 
     const reportByIdAfterDeleteResponse = await client.readReport({
       params: { id: launch.reportId },
     });
-    expect_toBe(reportByIdAfterDeleteResponse.status, 404);
-    expect(reportByIdAfterDeleteResponse.body).toEqual({});
+
+    expect(reportByIdAfterDeleteResponse).toEqual({
+      status: 404,
+      body: {},
+      headers: expect.anything(),
+    });
   });
 });

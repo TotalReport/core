@@ -1,6 +1,10 @@
 import { contract } from "@total-report/core-contract/contract";
 import { AppRouteImplementation } from "@ts-rest/express";
-import { createReport, deleteReportById, findReportById } from "../db/reports.js";
+import {
+  createReport,
+  deleteReportById,
+  findReportById,
+} from "../db/reports.js";
 
 export const createReportRoute: CreateReportRoute = async ({ body }) => {
   return {
@@ -9,8 +13,8 @@ export const createReportRoute: CreateReportRoute = async ({ body }) => {
   };
 };
 
-export const readReportRoute: ReadReportRoute = async ({ params }) => {
-  const report = await findReportById(params.id);
+export const readReportRoute: ReadReportRoute = async ({ params: { id } }) => {
+  const report = await findReportById(id);
   if (report === undefined) {
     return {
       status: 404,
@@ -29,7 +33,7 @@ export const deleteReportRoute: DeleteReportRoute = async ({ params }) => {
     status: 204,
     body: undefined,
   };
-}
+};
 
 type CreateReportRoute = AppRouteImplementation<typeof contract.createReport>;
 type ReadReportRoute = AppRouteImplementation<typeof contract.readReport>;

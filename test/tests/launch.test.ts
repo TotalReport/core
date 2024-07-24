@@ -1,4 +1,5 @@
-import { describe, expect, test } from "@jest/globals";
+import { describe, test } from "mocha";
+import { expect } from "earl";
 import { generateReport } from "../tools/report-generator.js";
 import { expect_toBe, expect_toBeCloseToNow } from "../tools/utils.js";
 import { generateLaunch } from "../tools/launch-generator.js";
@@ -13,13 +14,13 @@ describe("launches", () => {
     });
 
     expect_toBe(createLaunch.status, 201);
-    expect(createLaunch.body.id).not.toBeNull();
-    expect(createLaunch.body.title).toBe("New launch");
-    expect(createLaunch.body.reportId).toBe(report.id);
+    expect(createLaunch.body.id).not.toBeNullish();
+    expect(createLaunch.body.title).toEqual("New launch");
+    expect(createLaunch.body.reportId).toEqual(report.id);
     expect_toBeCloseToNow(Date.parse(createLaunch.body.createdTimestamp), 1000);
   });
 
-  test("read launch", async () => {
+  test("read launch by id", async () => {
     const launch = await generateLaunch();
 
     const readLaunchById = await client.readLaunch({
@@ -37,7 +38,7 @@ describe("launches", () => {
       body: undefined,
     });
 
-    expect(deleteLaunch.status).toBe(204);
+    expect(deleteLaunch.status).toEqual(204);
 
     const launchByIdAfterDelete = await client.readLaunch({
       params: { id: launch.id },
@@ -49,6 +50,7 @@ describe("launches", () => {
   test("update launch started", async () => {
     const launch = await generateLaunch();
     const date = "2024-07-21T06:52:32Z";
+    const dateExpected = "2024-07-21 06:52:32";
 
     const updateLaunchStarted = await client.updateLaunchStarted({
       params: { id: launch.id },
@@ -56,9 +58,9 @@ describe("launches", () => {
     });
 
     expect_toBe(updateLaunchStarted.status, 200);
-    expect(updateLaunchStarted.body).toBe({
-        ...launch,
-        startedTimestamp: date,
+    expect(updateLaunchStarted.body).toEqual({
+      ...launch,
+      startedTimestamp: dateExpected,
     });
   });
 });

@@ -7,7 +7,8 @@ export const generateLaunch = async (args: CreateLaunchArgs = undefined) => {
   const reportId = await getReportId(args);
 
   const title =
-    args?.title ?? faker.word.noun() + faker.word.verb() + faker.date.recent();
+    args?.title ??
+    faker.word.noun() + " " + faker.word.verb() + " " + faker.date.recent();
 
   const response = await client.createLaunch({
     body: {

@@ -21,7 +21,10 @@ export const createReport = async ({
 export const findReportById = async (
   id: string
 ): Promise<ReportBaseInfo | undefined> => {
-  const found = await db.select().from(reports).where(eq(reports.id, id));
+  const found = await db.transaction(async (tx) => {
+    return await tx.select().from(reports).where(eq(reports.id, id));
+  });
+
   if (found.length === 0) {
     return undefined;
   }
@@ -29,9 +32,9 @@ export const findReportById = async (
 };
 
 export const deleteReportById = async (id: string): Promise<void> => {
-  db.transaction(async (tx) => {
+  await db.transaction(async (tx) => {
     // FIXME: handle launches delete in launches.ts
-    await tx.delete(launches).where(eq(launches.reportId, id)); 
+    await tx.delete(launches).where(eq(launches.reportId, id));
     await tx.delete(reports).where(eq(reports.id, id));
   });
 };

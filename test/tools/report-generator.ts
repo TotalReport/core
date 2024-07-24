@@ -5,7 +5,7 @@ import { expect_toBe } from "./utils.js";
 export const generateReport = async (args: CreateReportArgs | undefined = undefined) => {
   const title =
     args?.title ??
-    faker.word.noun() + faker.word.verb() + faker.word.adjective();
+    faker.word.noun() + " " + faker.word.verb() + " " + faker.word.adjective();
 
   const response = await client.createReport({
     body: {

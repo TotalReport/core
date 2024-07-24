@@ -43,9 +43,18 @@ export const updateLaunchStartedRoute: UpdateLaunchStartedRoute = async ({
   let originalTimeStamp = body.startedTimestamp;
   let timestamp =
     originalTimeStamp == null ? null : new Date(originalTimeStamp);
-  let result = await updateLaunchStarted({ id: params.id, startedTimestamp: timestamp });
+  let result = await updateLaunchStarted({
+    id: params.id,
+    startedTimestamp: timestamp,
+  });
+  if (result === undefined) {
+    return {
+      status: 404,
+      body: {},
+    };
+  }
   return {
-    status: 204,
+    status: 200,
     body: result,
   };
 };

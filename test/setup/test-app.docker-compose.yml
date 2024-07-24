@@ -32,7 +32,6 @@ services:
 
 
   total-report-core-service:
-    env_file: ./test.env
     image: total-report-core-service:latest
     depends_on:
       total-report-db:

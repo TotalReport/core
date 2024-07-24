@@ -1,8 +1,10 @@
+import { expect } from "earl";
+
 export function expect_toBe<T>(
   actual: unknown,
   expected: T
 ): asserts actual is T {
-  expect(actual).toBe(expected);
+  expect(actual).toEqual(expected);
 }
 
 export function expect_toBeCloseTo(
