@@ -10,6 +10,14 @@
   },
   "nx": {
     "targets": {
+      "dev": {
+        "dependsOn": [
+          {
+            "target": "dev",
+            "projects": "total-report"
+          }
+        ]
+      },
       "test": {
         "dependsOn": [
           {
