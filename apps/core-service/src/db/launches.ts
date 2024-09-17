@@ -62,6 +62,29 @@ export const updateLaunchStarted = async ({
   return await findLaunchById(id);
 };
 
+export const updateLaunchFinished = async ({
+  id,
+  finishedTimestamp,
+}: UpdateLaunchFinishedArgs): Promise<LaunchCommonInfo | undefined> => {
+  if (finishedTimestamp === undefined) {
+    await db
+      .update(launches)
+      .set({ finishedTimestamp: new Date().toISOString() })
+      .where(eq(launches.id, id));
+  } else if (finishedTimestamp === null) {
+    await db
+      .update(launches)
+      .set({ finishedTimestamp: null })
+      .where(eq(launches.id, id));
+  } else {
+    await db
+      .update(launches)
+      .set({ finishedTimestamp: finishedTimestamp.toISOString() })
+      .where(eq(launches.id, id));
+  }
+  return await findLaunchById(id);
+};
+
 type CreateLaunchArgs = {
   reportId: string;
   title: string;
@@ -70,6 +93,11 @@ type CreateLaunchArgs = {
 type UpdateLaunchStartedArgs = {
   id: string;
   startedTimestamp: Date | null | undefined;
+};
+
+type UpdateLaunchFinishedArgs = {
+  id: string;
+  finishedTimestamp: Date | null | undefined;
 };
 
 type LaunchCommonInfo = {

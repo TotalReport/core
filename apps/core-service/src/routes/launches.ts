@@ -4,6 +4,7 @@ import {
   createLaunch,
   deleteLaunchById,
   findLaunchById,
+  updateLaunchFinished,
   updateLaunchStarted,
 } from "../db/launches.js";
 
@@ -59,9 +60,35 @@ export const updateLaunchStartedRoute: UpdateLaunchStartedRoute = async ({
   };
 };
 
+export const updateLaunchFinishedRoute: UpdateLaunchFinishedRoute = async ({
+  params,
+  body,
+}) => {
+  let originalTimeStamp = body.finishedTimestamp;
+  let timestamp =
+    originalTimeStamp == null ? null : new Date(originalTimeStamp);
+  let result = await updateLaunchFinished({
+    id: params.id,
+    finishedTimestamp: timestamp,
+  });
+  if (result === undefined) {
+    return {
+      status: 404,
+      body: {},
+    };
+  }
+  return {
+    status: 200,
+    body: result,
+  };
+};
+
 type CreateLaunchRoute = AppRouteImplementation<typeof contract.createLaunch>;
 type ReadLaunchRoute = AppRouteImplementation<typeof contract.readLaunch>;
 type DeleteLaunchRoute = AppRouteImplementation<typeof contract.deleteLaunch>;
 type UpdateLaunchStartedRoute = AppRouteImplementation<
   typeof contract.updateLaunchStarted
+>;
+type UpdateLaunchFinishedRoute = AppRouteImplementation<
+  typeof contract.updateLaunchFinished
 >;

@@ -63,4 +63,21 @@ describe("launches", () => {
       startedTimestamp: dateExpected,
     });
   });
+
+  test("update launch finished", async () => {
+    const launch = await generateLaunch();
+    const date = "2024-07-21T06:52:32Z";
+    const dateExpected = "2024-07-21 06:52:32";
+
+    const updateLaunchStarted = await client.updateLaunchFinished({
+      params: { id: launch.id },
+      body: { finishedTimestamp: date },
+    });
+
+    expect_toBe(updateLaunchStarted.status, 200);
+    expect(updateLaunchStarted.body).toEqual({
+      ...launch,
+      finishedTimestamp: dateExpected,
+    });
+  });
 });

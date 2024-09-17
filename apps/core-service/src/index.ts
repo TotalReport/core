@@ -14,6 +14,7 @@ import {
   createLaunchRoute,
   deleteLaunchRoute,
   readLaunchRoute,
+  updateLaunchFinishedRoute,
   updateLaunchStartedRoute,
 } from "./routes/launches.js";
 
@@ -38,6 +39,7 @@ const router = s.router(contract, {
   readLaunch: readLaunchRoute,
   deleteLaunch: deleteLaunchRoute,
   updateLaunchStarted: updateLaunchStartedRoute,
+  updateLaunchFinished: updateLaunchFinishedRoute,
 });
 
 createExpressEndpoints(contract, router, app);

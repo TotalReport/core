@@ -123,4 +123,19 @@ export const contract = c.router({
       404: z.object({}),
     },
   },
+  updateLaunchFinished: {
+    summary: "Update the launch finished timestamp.",
+    method: "PATCH",
+    path: "/v1/launches/:id/finished",
+    pathParams: z.object({
+      id: z.string().uuid(),
+    }),
+    body: z.object({
+      finishedTimestamp: z.string().datetime({ offset: true }).nullish(),
+    }),
+    responses: {
+      200: LaunchSchema,
+      404: z.object({}),
+    },
+  }
 });
