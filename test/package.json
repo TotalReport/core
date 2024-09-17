@@ -8,30 +8,6 @@
     "test:app:up": "docker compose --env-file ./setup/test.env -f ./setup/test-app.docker-compose.yml up --wait -d",
     "test:app:down": "docker compose --env-file ./setup/test.env -f ./setup/test-app.docker-compose.yml down"
   },
-  "nx": {
-    "targets": {
-      "dev": {
-        "dependsOn": [
-          {
-            "target": "dev",
-            "projects": "total-report"
-          }
-        ]
-      },
-      "test": {
-        "dependsOn": [
-          {
-            "target": "build",
-            "projects": "@total-report/core-service"
-          },
-          {
-            "target": "dockerize",
-            "projects": "total-report"
-          }
-        ]
-      }
-    }
-  },
   "mocha": {
     "node-option": [
       "import=tsx"
