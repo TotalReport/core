@@ -18,8 +18,8 @@ services:
       retries: 5
 
 
-  total-report-core-schema:
-    image: total-report-core-schema:latest
+  total-report-core-schema-migrator:
+    image: total-report-core-schema-migrator:latest
     depends_on:
       total-report-db:
         condition: service_healthy
@@ -36,7 +36,7 @@ services:
     depends_on:
       total-report-db:
         condition: service_healthy
-      total-report-core-schema:
+      total-report-core-schema-migrator:
         condition: service_completed_successfully
     links:
       - total-report-db:${DB_HOST}
