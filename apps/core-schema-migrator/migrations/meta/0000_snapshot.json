@@ -1,5 +1,5 @@
 {
-  "id": "bb743a39-36aa-4e52-9012-20ca6549fa3f",
+  "id": "d1eb3c7a-6b95-4417-9569-7fcd1031f2a5",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -156,17 +156,17 @@
           "name": "launch_id",
           "type": "uuid",
           "primaryKey": false,
-          "notNull": false
+          "notNull": true
         },
         "status_id": {
           "name": "status_id",
           "type": "varchar",
           "primaryKey": false,
-          "notNull": true
+          "notNull": false
         },
         "arguments_hash": {
           "name": "arguments_hash",
-          "type": "varchar(8)",
+          "type": "uuid",
           "primaryKey": false,
           "notNull": true
         }
@@ -281,6 +281,12 @@
           "type": "integer",
           "primaryKey": false,
           "notNull": false
+        },
+        "type": {
+          "name": "type",
+          "type": "varchar(256)",
+          "primaryKey": false,
+          "notNull": true
         },
         "value": {
           "name": "value",
@@ -412,19 +418,19 @@
           "name": "launch_id",
           "type": "uuid",
           "primaryKey": false,
-          "notNull": false
+          "notNull": true
         },
         "status_id": {
           "name": "status_id",
           "type": "varchar",
           "primaryKey": false,
-          "notNull": true
+          "notNull": false
         },
         "arguments_hash": {
           "name": "arguments_hash",
-          "type": "varchar(8)",
+          "type": "uuid",
           "primaryKey": false,
-          "notNull": true
+          "notNull": false
         }
       },
       "indexes": {},
@@ -890,7 +896,7 @@
         },
         "arguments_hash": {
           "name": "arguments_hash",
-          "type": "varchar(8)",
+          "type": "uuid",
           "primaryKey": false,
           "notNull": true
         }

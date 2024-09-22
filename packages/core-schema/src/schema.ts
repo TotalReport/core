@@ -35,9 +35,9 @@ export const beforeTests = pgTable("before_tests", {
   createdTimestamp: timestamp("created_timestamp", { withTimezone: false, mode: "string" }).notNull(),
   startedTimestamp: timestamp("started_timestamp", { withTimezone: false, mode: "string" }),
   finishedTimestamp: timestamp("finished_timestamp", { withTimezone: false, mode: "string" }),
-  launchId: uuid("launch_id").references(() => launches.id),
-  statusId: varchar("status_id").references(() => testStatuses.id).notNull(),
-  argumentsHash: varchar("arguments_hash", { length: 8 }).notNull(),
+  launchId: uuid("launch_id").references(() => launches.id).notNull(),
+  statusId: varchar("status_id").references(() => testStatuses.id),
+  argumentsHash: uuid("arguments_hash"),
 });
 
 export const afterTests = pgTable("after_tests", {
@@ -46,15 +46,16 @@ export const afterTests = pgTable("after_tests", {
   createdTimestamp: timestamp("created_timestamp", { withTimezone: false, mode: "string" }).notNull(),
   startedTimestamp: timestamp("started_timestamp", { withTimezone: false, mode: "string" }),
   finishedTimestamp: timestamp("finished_timestamp", { withTimezone: false, mode: "string" }),
-  launchId: uuid("launch_id").references(() => launches.id),
-  statusId: varchar("status_id").references(() => testStatuses.id).notNull(),
-  argumentsHash: varchar("arguments_hash", { length: 8 }).notNull(),
+  launchId: uuid("launch_id").references(() => launches.id).notNull(),
+  statusId: varchar("status_id").references(() => testStatuses.id),
+  argumentsHash: uuid("arguments_hash").notNull(),
 });
 
 export const beforeTestArguments = pgTable("before_test_arguments", {
   id: uuid("id").primaryKey(),
   name: varchar("name", { length: 256 }).notNull(),
   index: integer("index"),
+  type: varchar("type", { length: 256 }).notNull(),
   value: text("value"),
   beforeTestId: uuid("before_test_id").references(() => beforeTests.id),
 });
@@ -83,7 +84,7 @@ export const tests = pgTable("tests", {
   finishedTimestamp: timestamp("finished_timestamp", { withTimezone: false, mode: "string" }),
   launchId: uuid("launch_id").references(() => launches.id),
   statusId: varchar("status_id").references(() => testStatuses.id).notNull(),
-  argumentsHash: varchar("arguments_hash", { length: 8 }).notNull(),
+  argumentsHash: uuid("arguments_hash").notNull(),
 });
 
 export const testsRelations = relations(tests, ({ many }) => ({

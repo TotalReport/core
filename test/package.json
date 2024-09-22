@@ -6,7 +6,7 @@
   "scripts": {
     "test": "dotenv -e ./setup/test.env -- mocha --require ./setup/hooks.ts './tests/**/*.test.ts'",
     "test:app:up": "docker compose --env-file ./setup/test.env -f ./setup/test-app.docker-compose.yml up --wait -d",
-    "test:app:down": "docker compose --env-file ./setup/test.env -f ./setup/test-app.docker-compose.yml down"
+    "test:app:down": "docker compose --env-file ./setup/test.env -f ./setup/test-app.docker-compose.yml stop"
   },
   "mocha": {
     "node-option": [

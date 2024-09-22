@@ -21,9 +21,9 @@ CREATE TABLE IF NOT EXISTS "after_tests" (
 	"created_timestamp" timestamp NOT NULL,
 	"started_timestamp" timestamp,
 	"finished_timestamp" timestamp,
-	"launch_id" uuid,
-	"status_id" varchar NOT NULL,
-	"arguments_hash" varchar(8) NOT NULL
+	"launch_id" uuid NOT NULL,
+	"status_id" varchar,
+	"arguments_hash" uuid NOT NULL
 );
 --> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "after_tests_to_tests" (
@@ -36,6 +36,7 @@ CREATE TABLE IF NOT EXISTS "before_test_arguments" (
 	"id" uuid PRIMARY KEY NOT NULL,
 	"name" varchar(256) NOT NULL,
 	"index" integer,
+	"type" varchar(256) NOT NULL,
 	"value" text,
 	"before_test_id" uuid
 );
@@ -55,9 +56,9 @@ CREATE TABLE IF NOT EXISTS "before_tests" (
 	"created_timestamp" timestamp NOT NULL,
 	"started_timestamp" timestamp,
 	"finished_timestamp" timestamp,
-	"launch_id" uuid,
-	"status_id" varchar NOT NULL,
-	"arguments_hash" varchar(8) NOT NULL
+	"launch_id" uuid NOT NULL,
+	"status_id" varchar,
+	"arguments_hash" uuid
 );
 --> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "before_tests_to_tests" (
@@ -126,7 +127,7 @@ CREATE TABLE IF NOT EXISTS "tests" (
 	"finished_timestamp" timestamp,
 	"launch_id" uuid,
 	"status_id" varchar NOT NULL,
-	"arguments_hash" varchar(8) NOT NULL
+	"arguments_hash" uuid NOT NULL
 );
 --> statement-breakpoint
 DO $$ BEGIN
