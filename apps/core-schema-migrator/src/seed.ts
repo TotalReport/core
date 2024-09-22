@@ -19,6 +19,7 @@ const seed = async (url: string) => {
   await client.connect();
   const db = drizzle(client);
 
+  console.log("Seeding test status groups and statuses.");
   await db
     .insert(testStatusGroups)
     .values([
@@ -52,6 +53,8 @@ const seed = async (url: string) => {
       set: { title: sql`excluded.title` },
     });
 
+  console.log("Seeding test statuses groups is finished.");
+
   await db
     .insert(testStatuses)
     .values([
@@ -84,6 +87,10 @@ const seed = async (url: string) => {
       target: testStatuses.id,
       set: { title: sql`excluded.title` },
     });
+
+  console.log("Seeding test statuses is finished.");
 };
 
 seed(process.env["DB_URL"]!);
+
+process.exit(0);
