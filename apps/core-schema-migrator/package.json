@@ -10,7 +10,7 @@
     "clean": "rimraf dist",
     "dev": "tsc && pnpm migrate",
     "build": "tsc",
-    "generate": "drizzle-kit generate",
+    "generate": "drizzle-kit generate --config=./dist/drizzle.config.js",
     "migrate": "drizzle-kit migrate --config=./dist/drizzle.config.js && node ./dist/seed.js"
   },
   "type": "module",
