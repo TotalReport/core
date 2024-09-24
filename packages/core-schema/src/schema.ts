@@ -53,7 +53,7 @@ export const beforeTests = pgTable("before_tests", {
 export const beforeTestArguments = pgTable("before_test_arguments", {
   id: uuid("id").primaryKey(),
   name: varchar("name", { length: 256 }).notNull(),
-  index: integer("index"),
+  index: integer("index").notNull(),
   type: varchar("type", { length: 256 }).notNull(),
   value: text("value"),
   beforeTestId: uuid("before_test_id").references(() => beforeTests.id),
@@ -115,16 +115,16 @@ export const afterTests = pgTable("after_tests", {
 });
 
 export const afterTestArguments = pgTable("after_test_arguments", {
-  beforeTestId: uuid("before_test_id").references(() => afterTests.id),
+  afterTestId: uuid("before_test_id").references(() => afterTests.id).notNull(),
   id: uuid("id").primaryKey(),
   name: varchar("name", { length: 256 }).notNull(),
-  index: integer("index"),
+  index: integer("index").notNull(),
   type: varchar("type", { length: 256 }).notNull(),
   value: text("value"),
 });
 
 export const afterTestSteps = pgTable("after_test_steps", {
-  afterTestId: uuid("after_test_id").references(() => afterTests.id),
+  afterTestId: uuid("after_test_id").references(() => afterTests.id).notNull(),
   id: bigserial("id", { mode: "number" }).primaryKey(),
   title: varchar("title", { length: 256 }).notNull(),
   createdTimestamp: timestamp("created_timestamp", { withTimezone: false, mode: "string" }).notNull(),

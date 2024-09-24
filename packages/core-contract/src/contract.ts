@@ -7,6 +7,7 @@ import { createTestContext } from "./test-contexts.js";
 import { createAfterTest } from "./after-tests.js";
 import { createBeforeTestStep } from "./before-test-steps.js";
 import { createTestStep } from "./test-steps.js";
+import { createAfterTestStep } from "./after-test-steps.js";
 
 extendZodWithOpenApi(z);
 
@@ -150,4 +151,5 @@ export const contract = c.router({
   createTest: createTest,
   createTestStep: createTestStep,
   createAfterTest: createAfterTest,
+  createAfterTestStep: createAfterTestStep,
 });

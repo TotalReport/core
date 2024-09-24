@@ -1,5 +1,5 @@
 {
-  "id": "30757c19-b2ba-4ae5-9f86-dd30b77a0bd3",
+  "id": "c19f409e-4e85-4ee3-a2df-9933f7c8bd6a",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -12,7 +12,7 @@
           "name": "before_test_id",
           "type": "uuid",
           "primaryKey": false,
-          "notNull": false
+          "notNull": true
         },
         "id": {
           "name": "id",
@@ -30,7 +30,7 @@
           "name": "index",
           "type": "integer",
           "primaryKey": false,
-          "notNull": false
+          "notNull": true
         },
         "type": {
           "name": "type",
@@ -72,7 +72,7 @@
           "name": "after_test_id",
           "type": "uuid",
           "primaryKey": false,
-          "notNull": false
+          "notNull": true
         },
         "id": {
           "name": "id",
@@ -260,7 +260,7 @@
           "name": "index",
           "type": "integer",
           "primaryKey": false,
-          "notNull": false
+          "notNull": true
         },
         "type": {
           "name": "type",

@@ -3,13 +3,11 @@ import { createExpressEndpoints, initServer } from "@ts-rest/express";
 import bodyParser from "body-parser";
 import cors from "cors";
 import express from "express";
+import { createAfterTestStep } from "./routes/after-test-steps.js";
+import { createAfterTest } from "./routes/after-tests.js";
+import { createBeforeTestStep } from "./routes/before-test-steps.js";
+import { createBeforeTest } from "./routes/before-tests.js";
 import { healthCheckRoute, setApiStarted } from "./routes/healthcheck.js";
-import { openapiSchema } from "./routes/openapi_schema.js";
-import {
-  createReportRoute,
-  deleteReportRoute,
-  readReportRoute,
-} from "./routes/reports.js";
 import {
   createLaunchRoute,
   deleteLaunchRoute,
@@ -17,12 +15,15 @@ import {
   updateLaunchFinishedRoute,
   updateLaunchStartedRoute,
 } from "./routes/launches.js";
-import { createBeforeTest } from "./routes/before-tests.js";
-import { createTest } from "./routes/tests.js";
+import { openapiSchema } from "./routes/openapi_schema.js";
+import {
+  createReportRoute,
+  deleteReportRoute,
+  readReportRoute,
+} from "./routes/reports.js";
 import { createTestContext } from "./routes/test-contexts.js";
-import { createAfterTest } from "./routes/after-tests.js";
-import { createBeforeTestStep } from "./routes/before-test-steps.js";
 import { createTestStep } from "./routes/test-steps.js";
+import { createTest } from "./routes/tests.js";
 
 const { urlencoded, json } = bodyParser;
 
@@ -52,6 +53,7 @@ const router = s.router(contract, {
   createTest: createTest,
   createTestStep: createTestStep,
   createAfterTest: createAfterTest,
+  createAfterTestStep: createAfterTestStep,
 });
 
 createExpressEndpoints(contract, router, app);

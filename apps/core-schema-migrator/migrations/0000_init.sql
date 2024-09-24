@@ -1,14 +1,14 @@
 CREATE TABLE IF NOT EXISTS "after_test_arguments" (
-	"before_test_id" uuid,
+	"before_test_id" uuid NOT NULL,
 	"id" uuid PRIMARY KEY NOT NULL,
 	"name" varchar(256) NOT NULL,
-	"index" integer,
+	"index" integer NOT NULL,
 	"type" varchar(256) NOT NULL,
 	"value" text
 );
 --> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "after_test_steps" (
-	"after_test_id" uuid,
+	"after_test_id" uuid NOT NULL,
 	"id" bigserial PRIMARY KEY NOT NULL,
 	"title" varchar(256) NOT NULL,
 	"created_timestamp" timestamp NOT NULL,
@@ -33,7 +33,7 @@ CREATE TABLE IF NOT EXISTS "after_tests" (
 CREATE TABLE IF NOT EXISTS "before_test_arguments" (
 	"id" uuid PRIMARY KEY NOT NULL,
 	"name" varchar(256) NOT NULL,
-	"index" integer,
+	"index" integer NOT NULL,
 	"type" varchar(256) NOT NULL,
 	"value" text,
 	"before_test_id" uuid
