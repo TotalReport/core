@@ -8,7 +8,6 @@ export const CreateTestSchema = z.object({
   createdTimestamp: z.string().optional(),
   startedTimestamp: z.string().optional(),
   finishedTimestamp: z.string().optional(),
-  before: z.array(z.string().uuid()).optional(),
   statusId: z.string().optional(),
   arguments: z.array(
     z.object({
