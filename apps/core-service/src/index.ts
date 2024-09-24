@@ -18,6 +18,8 @@ import {
   updateLaunchStartedRoute,
 } from "./routes/launches.js";
 import { createBeforeTest } from "./routes/before-tests.js";
+import { createTest } from "./routes/tests.js";
+import { createTestContext } from "./routes/test-contexts.js";
 
 const { urlencoded, json } = bodyParser;
 
@@ -41,7 +43,9 @@ const router = s.router(contract, {
   deleteLaunch: deleteLaunchRoute,
   updateLaunchStarted: updateLaunchStartedRoute,
   updateLaunchFinished: updateLaunchFinishedRoute,
+  createTestContext: createTestContext,
   createBeforeTest: createBeforeTest,
+  createTest: createTest,
 });
 
 createExpressEndpoints(contract, router, app);

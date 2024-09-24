@@ -2,6 +2,8 @@ import { extendZodWithOpenApi } from "@anatine/zod-openapi";
 import { initContract } from "@ts-rest/core";
 import { z } from "zod";
 import { createBeforeTest } from "./before-tests.js";
+import { createTest } from "./tests.js";
+import { createTestContext } from "./test-contexts.js";
 
 extendZodWithOpenApi(z);
 
@@ -139,5 +141,7 @@ export const contract = c.router({
       404: z.object({}),
     },
   },
+  createTestContext: createTestContext,
   createBeforeTest: createBeforeTest,
+  createTest: createTest,
 });

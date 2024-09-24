@@ -2,6 +2,7 @@ CREATE TABLE IF NOT EXISTS "after_test_arguments" (
 	"id" uuid PRIMARY KEY NOT NULL,
 	"name" varchar(256) NOT NULL,
 	"index" integer,
+	"type" varchar(256) NOT NULL,
 	"value" text,
 	"before_test_id" uuid
 );
@@ -22,14 +23,9 @@ CREATE TABLE IF NOT EXISTS "after_tests" (
 	"started_timestamp" timestamp,
 	"finished_timestamp" timestamp,
 	"launch_id" uuid NOT NULL,
+	"test_context_id" bigint,
 	"status_id" varchar,
 	"arguments_hash" uuid NOT NULL
-);
---> statement-breakpoint
-CREATE TABLE IF NOT EXISTS "after_tests_to_tests" (
-	"after_test_id" uuid NOT NULL,
-	"test_id" uuid NOT NULL,
-	CONSTRAINT "after_tests_to_tests_after_test_id_test_id_pk" PRIMARY KEY("after_test_id","test_id")
 );
 --> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "before_test_arguments" (
@@ -57,14 +53,9 @@ CREATE TABLE IF NOT EXISTS "before_tests" (
 	"started_timestamp" timestamp,
 	"finished_timestamp" timestamp,
 	"launch_id" uuid NOT NULL,
+	"test_context_id" bigint,
 	"status_id" varchar,
 	"arguments_hash" uuid
-);
---> statement-breakpoint
-CREATE TABLE IF NOT EXISTS "before_tests_to_tests" (
-	"before_test_id" uuid NOT NULL,
-	"test_id" uuid NOT NULL,
-	CONSTRAINT "before_tests_to_tests_before_test_id_test_id_pk" PRIMARY KEY("before_test_id","test_id")
 );
 --> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "launches" (
@@ -93,8 +84,19 @@ CREATE TABLE IF NOT EXISTS "test_arguments" (
 	"id" uuid PRIMARY KEY NOT NULL,
 	"name" varchar(256) NOT NULL,
 	"index" integer,
+	"type" varchar(256) NOT NULL,
 	"value" text,
 	"test_id" uuid
+);
+--> statement-breakpoint
+CREATE TABLE IF NOT EXISTS "test_contexts" (
+	"id" bigserial PRIMARY KEY NOT NULL,
+	"title" varchar(256) NOT NULL,
+	"created_timestamp" timestamp NOT NULL,
+	"started_timestamp" timestamp,
+	"finished_timestamp" timestamp,
+	"launch_id" uuid NOT NULL,
+	"parent_test_context_id" bigint
 );
 --> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "test_status_groups" (
@@ -125,9 +127,10 @@ CREATE TABLE IF NOT EXISTS "tests" (
 	"created_timestamp" timestamp NOT NULL,
 	"started_timestamp" timestamp,
 	"finished_timestamp" timestamp,
-	"launch_id" uuid,
-	"status_id" varchar NOT NULL,
-	"arguments_hash" uuid NOT NULL
+	"launch_id" uuid NOT NULL,
+	"test_context_id" bigint,
+	"status_id" varchar,
+	"arguments_hash" uuid
 );
 --> statement-breakpoint
 DO $$ BEGIN
@@ -149,19 +152,13 @@ EXCEPTION
 END $$;
 --> statement-breakpoint
 DO $$ BEGIN
+ ALTER TABLE "after_tests" ADD CONSTRAINT "after_tests_test_context_id_test_contexts_id_fk" FOREIGN KEY ("test_context_id") REFERENCES "public"."test_contexts"("id") ON DELETE no action ON UPDATE no action;
+EXCEPTION
+ WHEN duplicate_object THEN null;
+END $$;
+--> statement-breakpoint
+DO $$ BEGIN
  ALTER TABLE "after_tests" ADD CONSTRAINT "after_tests_status_id_test_statuses_id_fk" FOREIGN KEY ("status_id") REFERENCES "public"."test_statuses"("id") ON DELETE no action ON UPDATE no action;
-EXCEPTION
- WHEN duplicate_object THEN null;
-END $$;
---> statement-breakpoint
-DO $$ BEGIN
- ALTER TABLE "after_tests_to_tests" ADD CONSTRAINT "after_tests_to_tests_after_test_id_after_tests_id_fk" FOREIGN KEY ("after_test_id") REFERENCES "public"."after_tests"("id") ON DELETE no action ON UPDATE no action;
-EXCEPTION
- WHEN duplicate_object THEN null;
-END $$;
---> statement-breakpoint
-DO $$ BEGIN
- ALTER TABLE "after_tests_to_tests" ADD CONSTRAINT "after_tests_to_tests_test_id_tests_id_fk" FOREIGN KEY ("test_id") REFERENCES "public"."tests"("id") ON DELETE no action ON UPDATE no action;
 EXCEPTION
  WHEN duplicate_object THEN null;
 END $$;
@@ -185,19 +182,13 @@ EXCEPTION
 END $$;
 --> statement-breakpoint
 DO $$ BEGIN
+ ALTER TABLE "before_tests" ADD CONSTRAINT "before_tests_test_context_id_test_contexts_id_fk" FOREIGN KEY ("test_context_id") REFERENCES "public"."test_contexts"("id") ON DELETE no action ON UPDATE no action;
+EXCEPTION
+ WHEN duplicate_object THEN null;
+END $$;
+--> statement-breakpoint
+DO $$ BEGIN
  ALTER TABLE "before_tests" ADD CONSTRAINT "before_tests_status_id_test_statuses_id_fk" FOREIGN KEY ("status_id") REFERENCES "public"."test_statuses"("id") ON DELETE no action ON UPDATE no action;
-EXCEPTION
- WHEN duplicate_object THEN null;
-END $$;
---> statement-breakpoint
-DO $$ BEGIN
- ALTER TABLE "before_tests_to_tests" ADD CONSTRAINT "before_tests_to_tests_before_test_id_before_tests_id_fk" FOREIGN KEY ("before_test_id") REFERENCES "public"."before_tests"("id") ON DELETE no action ON UPDATE no action;
-EXCEPTION
- WHEN duplicate_object THEN null;
-END $$;
---> statement-breakpoint
-DO $$ BEGIN
- ALTER TABLE "before_tests_to_tests" ADD CONSTRAINT "before_tests_to_tests_test_id_tests_id_fk" FOREIGN KEY ("test_id") REFERENCES "public"."tests"("id") ON DELETE no action ON UPDATE no action;
 EXCEPTION
  WHEN duplicate_object THEN null;
 END $$;
@@ -221,6 +212,18 @@ EXCEPTION
 END $$;
 --> statement-breakpoint
 DO $$ BEGIN
+ ALTER TABLE "test_contexts" ADD CONSTRAINT "test_contexts_launch_id_launches_id_fk" FOREIGN KEY ("launch_id") REFERENCES "public"."launches"("id") ON DELETE no action ON UPDATE no action;
+EXCEPTION
+ WHEN duplicate_object THEN null;
+END $$;
+--> statement-breakpoint
+DO $$ BEGIN
+ ALTER TABLE "test_contexts" ADD CONSTRAINT "test_contexts_parent_test_context_id_test_contexts_id_fk" FOREIGN KEY ("parent_test_context_id") REFERENCES "public"."test_contexts"("id") ON DELETE no action ON UPDATE no action;
+EXCEPTION
+ WHEN duplicate_object THEN null;
+END $$;
+--> statement-breakpoint
+DO $$ BEGIN
  ALTER TABLE "test_statuses" ADD CONSTRAINT "test_statuses_group_id_test_status_groups_id_fk" FOREIGN KEY ("group_id") REFERENCES "public"."test_status_groups"("id") ON DELETE no action ON UPDATE no action;
 EXCEPTION
  WHEN duplicate_object THEN null;
@@ -234,6 +237,12 @@ END $$;
 --> statement-breakpoint
 DO $$ BEGIN
  ALTER TABLE "tests" ADD CONSTRAINT "tests_launch_id_launches_id_fk" FOREIGN KEY ("launch_id") REFERENCES "public"."launches"("id") ON DELETE no action ON UPDATE no action;
+EXCEPTION
+ WHEN duplicate_object THEN null;
+END $$;
+--> statement-breakpoint
+DO $$ BEGIN
+ ALTER TABLE "tests" ADD CONSTRAINT "tests_test_context_id_test_contexts_id_fk" FOREIGN KEY ("test_context_id") REFERENCES "public"."test_contexts"("id") ON DELETE no action ON UPDATE no action;
 EXCEPTION
  WHEN duplicate_object THEN null;
 END $$;

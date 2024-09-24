@@ -1,5 +1,5 @@
 {
-  "id": "d1eb3c7a-6b95-4417-9569-7fcd1031f2a5",
+  "id": "ffe71e59-617e-469f-bc3e-6cb1641fd5b2",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -25,6 +25,12 @@
           "type": "integer",
           "primaryKey": false,
           "notNull": false
+        },
+        "type": {
+          "name": "type",
+          "type": "varchar(256)",
+          "primaryKey": false,
+          "notNull": true
         },
         "value": {
           "name": "value",
@@ -158,6 +164,12 @@
           "primaryKey": false,
           "notNull": true
         },
+        "test_context_id": {
+          "name": "test_context_id",
+          "type": "bigint",
+          "primaryKey": false,
+          "notNull": false
+        },
         "status_id": {
           "name": "status_id",
           "type": "varchar",
@@ -186,6 +198,19 @@
           "onDelete": "no action",
           "onUpdate": "no action"
         },
+        "after_tests_test_context_id_test_contexts_id_fk": {
+          "name": "after_tests_test_context_id_test_contexts_id_fk",
+          "tableFrom": "after_tests",
+          "tableTo": "test_contexts",
+          "columnsFrom": [
+            "test_context_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
         "after_tests_status_id_test_statuses_id_fk": {
           "name": "after_tests_status_id_test_statuses_id_fk",
           "tableFrom": "after_tests",
@@ -201,63 +226,6 @@
         }
       },
       "compositePrimaryKeys": {},
-      "uniqueConstraints": {}
-    },
-    "public.after_tests_to_tests": {
-      "name": "after_tests_to_tests",
-      "schema": "",
-      "columns": {
-        "after_test_id": {
-          "name": "after_test_id",
-          "type": "uuid",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "test_id": {
-          "name": "test_id",
-          "type": "uuid",
-          "primaryKey": false,
-          "notNull": true
-        }
-      },
-      "indexes": {},
-      "foreignKeys": {
-        "after_tests_to_tests_after_test_id_after_tests_id_fk": {
-          "name": "after_tests_to_tests_after_test_id_after_tests_id_fk",
-          "tableFrom": "after_tests_to_tests",
-          "tableTo": "after_tests",
-          "columnsFrom": [
-            "after_test_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "no action",
-          "onUpdate": "no action"
-        },
-        "after_tests_to_tests_test_id_tests_id_fk": {
-          "name": "after_tests_to_tests_test_id_tests_id_fk",
-          "tableFrom": "after_tests_to_tests",
-          "tableTo": "tests",
-          "columnsFrom": [
-            "test_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "no action",
-          "onUpdate": "no action"
-        }
-      },
-      "compositePrimaryKeys": {
-        "after_tests_to_tests_after_test_id_test_id_pk": {
-          "name": "after_tests_to_tests_after_test_id_test_id_pk",
-          "columns": [
-            "after_test_id",
-            "test_id"
-          ]
-        }
-      },
       "uniqueConstraints": {}
     },
     "public.before_test_arguments": {
@@ -420,6 +388,12 @@
           "primaryKey": false,
           "notNull": true
         },
+        "test_context_id": {
+          "name": "test_context_id",
+          "type": "bigint",
+          "primaryKey": false,
+          "notNull": false
+        },
         "status_id": {
           "name": "status_id",
           "type": "varchar",
@@ -448,6 +422,19 @@
           "onDelete": "no action",
           "onUpdate": "no action"
         },
+        "before_tests_test_context_id_test_contexts_id_fk": {
+          "name": "before_tests_test_context_id_test_contexts_id_fk",
+          "tableFrom": "before_tests",
+          "tableTo": "test_contexts",
+          "columnsFrom": [
+            "test_context_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
         "before_tests_status_id_test_statuses_id_fk": {
           "name": "before_tests_status_id_test_statuses_id_fk",
           "tableFrom": "before_tests",
@@ -463,63 +450,6 @@
         }
       },
       "compositePrimaryKeys": {},
-      "uniqueConstraints": {}
-    },
-    "public.before_tests_to_tests": {
-      "name": "before_tests_to_tests",
-      "schema": "",
-      "columns": {
-        "before_test_id": {
-          "name": "before_test_id",
-          "type": "uuid",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "test_id": {
-          "name": "test_id",
-          "type": "uuid",
-          "primaryKey": false,
-          "notNull": true
-        }
-      },
-      "indexes": {},
-      "foreignKeys": {
-        "before_tests_to_tests_before_test_id_before_tests_id_fk": {
-          "name": "before_tests_to_tests_before_test_id_before_tests_id_fk",
-          "tableFrom": "before_tests_to_tests",
-          "tableTo": "before_tests",
-          "columnsFrom": [
-            "before_test_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "no action",
-          "onUpdate": "no action"
-        },
-        "before_tests_to_tests_test_id_tests_id_fk": {
-          "name": "before_tests_to_tests_test_id_tests_id_fk",
-          "tableFrom": "before_tests_to_tests",
-          "tableTo": "tests",
-          "columnsFrom": [
-            "test_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "no action",
-          "onUpdate": "no action"
-        }
-      },
-      "compositePrimaryKeys": {
-        "before_tests_to_tests_before_test_id_test_id_pk": {
-          "name": "before_tests_to_tests_before_test_id_test_id_pk",
-          "columns": [
-            "before_test_id",
-            "test_id"
-          ]
-        }
-      },
       "uniqueConstraints": {}
     },
     "public.launches": {
@@ -680,6 +610,12 @@
           "primaryKey": false,
           "notNull": false
         },
+        "type": {
+          "name": "type",
+          "type": "varchar(256)",
+          "primaryKey": false,
+          "notNull": true
+        },
         "value": {
           "name": "value",
           "type": "text",
@@ -701,6 +637,85 @@
           "tableTo": "tests",
           "columnsFrom": [
             "test_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {}
+    },
+    "public.test_contexts": {
+      "name": "test_contexts",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "bigserial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "title": {
+          "name": "title",
+          "type": "varchar(256)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "created_timestamp": {
+          "name": "created_timestamp",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "started_timestamp": {
+          "name": "started_timestamp",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "finished_timestamp": {
+          "name": "finished_timestamp",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "launch_id": {
+          "name": "launch_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "parent_test_context_id": {
+          "name": "parent_test_context_id",
+          "type": "bigint",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "test_contexts_launch_id_launches_id_fk": {
+          "name": "test_contexts_launch_id_launches_id_fk",
+          "tableFrom": "test_contexts",
+          "tableTo": "launches",
+          "columnsFrom": [
+            "launch_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "test_contexts_parent_test_context_id_test_contexts_id_fk": {
+          "name": "test_contexts_parent_test_context_id_test_contexts_id_fk",
+          "tableFrom": "test_contexts",
+          "tableTo": "test_contexts",
+          "columnsFrom": [
+            "parent_test_context_id"
           ],
           "columnsTo": [
             "id"
@@ -886,19 +901,25 @@
           "name": "launch_id",
           "type": "uuid",
           "primaryKey": false,
+          "notNull": true
+        },
+        "test_context_id": {
+          "name": "test_context_id",
+          "type": "bigint",
+          "primaryKey": false,
           "notNull": false
         },
         "status_id": {
           "name": "status_id",
           "type": "varchar",
           "primaryKey": false,
-          "notNull": true
+          "notNull": false
         },
         "arguments_hash": {
           "name": "arguments_hash",
           "type": "uuid",
           "primaryKey": false,
-          "notNull": true
+          "notNull": false
         }
       },
       "indexes": {},
@@ -909,6 +930,19 @@
           "tableTo": "launches",
           "columnsFrom": [
             "launch_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "tests_test_context_id_test_contexts_id_fk": {
+          "name": "tests_test_context_id_test_contexts_id_fk",
+          "tableFrom": "tests",
+          "tableTo": "test_contexts",
+          "columnsFrom": [
+            "test_context_id"
           ],
           "columnsTo": [
             "id"
