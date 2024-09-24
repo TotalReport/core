@@ -21,7 +21,7 @@ export const TestContext = z.object({
 export const createTestContext = initContract().mutation({
   summary: "Create the test context.",
   method: "POST",
-  path: "/v1/test-ciontexts",
+  path: "/v1/test-contexts",
   body: CreateTestContext,
   responses: {
     201: TestContext,
