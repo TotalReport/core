@@ -22,6 +22,7 @@ import { createTest } from "./routes/tests.js";
 import { createTestContext } from "./routes/test-contexts.js";
 import { createAfterTest } from "./routes/after-tests.js";
 import { createBeforeTestStep } from "./routes/before-test-steps.js";
+import { createTestStep } from "./routes/test-steps.js";
 
 const { urlencoded, json } = bodyParser;
 
@@ -49,6 +50,7 @@ const router = s.router(contract, {
   createBeforeTest: createBeforeTest,
   createBeforeTestStep: createBeforeTestStep,
   createTest: createTest,
+  createTestStep: createTestStep,
   createAfterTest: createAfterTest,
 });
 

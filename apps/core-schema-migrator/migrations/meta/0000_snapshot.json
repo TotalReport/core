@@ -1,5 +1,5 @@
 {
-  "id": "a7e907bc-6e06-4765-9e74-89366316b047",
+  "id": "30757c19-b2ba-4ae5-9f86-dd30b77a0bd3",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -8,6 +8,12 @@
       "name": "after_test_arguments",
       "schema": "",
       "columns": {
+        "before_test_id": {
+          "name": "before_test_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": false
+        },
         "id": {
           "name": "id",
           "type": "uuid",
@@ -37,12 +43,6 @@
           "type": "text",
           "primaryKey": false,
           "notNull": false
-        },
-        "before_test_id": {
-          "name": "before_test_id",
-          "type": "uuid",
-          "primaryKey": false,
-          "notNull": false
         }
       },
       "indexes": {},
@@ -68,9 +68,15 @@
       "name": "after_test_steps",
       "schema": "",
       "columns": {
+        "after_test_id": {
+          "name": "after_test_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": false
+        },
         "id": {
           "name": "id",
-          "type": "uuid",
+          "type": "bigserial",
           "primaryKey": true,
           "notNull": true
         },
@@ -98,9 +104,15 @@
           "primaryKey": false,
           "notNull": false
         },
-        "after_test_id": {
-          "name": "after_test_id",
-          "type": "uuid",
+        "is_successful": {
+          "name": "is_successful",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "error_message": {
+          "name": "error_message",
+          "type": "text",
           "primaryKey": false,
           "notNull": false
         }
@@ -128,6 +140,18 @@
       "name": "after_tests",
       "schema": "",
       "columns": {
+        "launch_id": {
+          "name": "launch_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "test_context_id": {
+          "name": "test_context_id",
+          "type": "bigint",
+          "primaryKey": false,
+          "notNull": false
+        },
         "id": {
           "name": "id",
           "type": "uuid",
@@ -155,18 +179,6 @@
         "finished_timestamp": {
           "name": "finished_timestamp",
           "type": "timestamp",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "launch_id": {
-          "name": "launch_id",
-          "type": "uuid",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "test_context_id": {
-          "name": "test_context_id",
-          "type": "bigint",
           "primaryKey": false,
           "notNull": false
         },
@@ -528,6 +540,12 @@
       "name": "paths",
       "schema": "",
       "columns": {
+        "test_id": {
+          "name": "test_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": false
+        },
         "id": {
           "name": "id",
           "type": "uuid",
@@ -545,12 +563,6 @@
           "type": "timestamp",
           "primaryKey": false,
           "notNull": true
-        },
-        "test_id": {
-          "name": "test_id",
-          "type": "uuid",
-          "primaryKey": false,
-          "notNull": false
         }
       },
       "indexes": {},
@@ -604,6 +616,12 @@
       "name": "test_arguments",
       "schema": "",
       "columns": {
+        "test_id": {
+          "name": "test_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
         "id": {
           "name": "id",
           "type": "uuid",
@@ -620,7 +638,7 @@
           "name": "index",
           "type": "integer",
           "primaryKey": false,
-          "notNull": false
+          "notNull": true
         },
         "type": {
           "name": "type",
@@ -631,12 +649,6 @@
         "value": {
           "name": "value",
           "type": "text",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "test_id": {
-          "name": "test_id",
-          "type": "uuid",
           "primaryKey": false,
           "notNull": false
         }
@@ -819,9 +831,15 @@
       "name": "test_steps",
       "schema": "",
       "columns": {
+        "test_id": {
+          "name": "test_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
         "id": {
           "name": "id",
-          "type": "uuid",
+          "type": "bigserial",
           "primaryKey": true,
           "notNull": true
         },
@@ -849,9 +867,15 @@
           "primaryKey": false,
           "notNull": false
         },
-        "test_id": {
-          "name": "test_id",
-          "type": "uuid",
+        "is_successful": {
+          "name": "is_successful",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "error_message": {
+          "name": "error_message",
+          "type": "text",
           "primaryKey": false,
           "notNull": false
         }
@@ -879,6 +903,18 @@
       "name": "tests",
       "schema": "",
       "columns": {
+        "launch_id": {
+          "name": "launch_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "test_context_id": {
+          "name": "test_context_id",
+          "type": "bigint",
+          "primaryKey": false,
+          "notNull": false
+        },
         "id": {
           "name": "id",
           "type": "uuid",
@@ -906,18 +942,6 @@
         "finished_timestamp": {
           "name": "finished_timestamp",
           "type": "timestamp",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "launch_id": {
-          "name": "launch_id",
-          "type": "uuid",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "test_context_id": {
-          "name": "test_context_id",
-          "type": "bigint",
           "primaryKey": false,
           "notNull": false
         },

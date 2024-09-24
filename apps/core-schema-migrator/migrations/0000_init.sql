@@ -1,29 +1,31 @@
 CREATE TABLE IF NOT EXISTS "after_test_arguments" (
+	"before_test_id" uuid,
 	"id" uuid PRIMARY KEY NOT NULL,
 	"name" varchar(256) NOT NULL,
 	"index" integer,
 	"type" varchar(256) NOT NULL,
-	"value" text,
-	"before_test_id" uuid
+	"value" text
 );
 --> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "after_test_steps" (
-	"id" uuid PRIMARY KEY NOT NULL,
+	"after_test_id" uuid,
+	"id" bigserial PRIMARY KEY NOT NULL,
 	"title" varchar(256) NOT NULL,
 	"created_timestamp" timestamp NOT NULL,
 	"started_timestamp" timestamp,
 	"finished_timestamp" timestamp,
-	"after_test_id" uuid
+	"is_successful" boolean,
+	"error_message" text
 );
 --> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "after_tests" (
+	"launch_id" uuid NOT NULL,
+	"test_context_id" bigint,
 	"id" uuid PRIMARY KEY NOT NULL,
 	"title" varchar(256) NOT NULL,
 	"created_timestamp" timestamp NOT NULL,
 	"started_timestamp" timestamp,
 	"finished_timestamp" timestamp,
-	"launch_id" uuid NOT NULL,
-	"test_context_id" bigint,
 	"status_id" varchar,
 	"arguments_hash" uuid
 );
@@ -70,10 +72,10 @@ CREATE TABLE IF NOT EXISTS "launches" (
 );
 --> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "paths" (
+	"test_id" uuid,
 	"id" uuid PRIMARY KEY NOT NULL,
 	"title" varchar(256) NOT NULL,
-	"created_timestamp" timestamp NOT NULL,
-	"test_id" uuid
+	"created_timestamp" timestamp NOT NULL
 );
 --> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "reports" (
@@ -83,12 +85,12 @@ CREATE TABLE IF NOT EXISTS "reports" (
 );
 --> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "test_arguments" (
+	"test_id" uuid NOT NULL,
 	"id" uuid PRIMARY KEY NOT NULL,
 	"name" varchar(256) NOT NULL,
-	"index" integer,
+	"index" integer NOT NULL,
 	"type" varchar(256) NOT NULL,
-	"value" text,
-	"test_id" uuid
+	"value" text
 );
 --> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "test_contexts" (
@@ -115,22 +117,24 @@ CREATE TABLE IF NOT EXISTS "test_statuses" (
 );
 --> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "test_steps" (
-	"id" uuid PRIMARY KEY NOT NULL,
+	"test_id" uuid NOT NULL,
+	"id" bigserial PRIMARY KEY NOT NULL,
 	"title" varchar(256) NOT NULL,
 	"created_timestamp" timestamp NOT NULL,
 	"started_timestamp" timestamp,
 	"finished_timestamp" timestamp,
-	"test_id" uuid
+	"is_successful" boolean,
+	"error_message" text
 );
 --> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "tests" (
+	"launch_id" uuid NOT NULL,
+	"test_context_id" bigint,
 	"id" uuid PRIMARY KEY NOT NULL,
 	"title" varchar(256) NOT NULL,
 	"created_timestamp" timestamp NOT NULL,
 	"started_timestamp" timestamp,
 	"finished_timestamp" timestamp,
-	"launch_id" uuid NOT NULL,
-	"test_context_id" bigint,
 	"status_id" varchar,
 	"arguments_hash" uuid
 );
