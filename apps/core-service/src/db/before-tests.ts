@@ -20,13 +20,13 @@ export class BeforeTestsDAO {
     const result = await this.db.transaction(async (tx) => {
       const argsHash = arguments == null ? null : MD5(args.arguments);
 
-      if (args.testContext) {
+      if (args.testContextId) {
         const testContext = await new TestContextsDAO(tx).findById(
-          args.testContext
+          args.testContextId
         );
         if (testContext?.launchId != args.launchId) {
           throw new Error(
-            `Test context with id ${args.testContext} has launchId ${testContext?.launchId} which is different from provided launchId ${args.launchId}`
+            `Test context with id ${args.testContextId} has launchId ${testContext?.launchId} which is different from provided launchId ${args.launchId}`
           );
         }
       }
@@ -78,7 +78,7 @@ export type CreateBeforeTestArguments = {
   startedTimestamp?: string;
   finishedTimestamp?: string;
   statusId?: string;
-  testContext?: number;
+  testContextId?: number;
   arguments: {
     name: string;
     type: string;

@@ -4,29 +4,30 @@ import {
 import { z } from "zod";
 
 export const CreateBeforeTestSchema = z.object({
-  title: z.string(),
-  createdTimestamp: z.string(),
-  startedTimestamp: z.string().nullable(),
-  finishedTimestamp: z.string().nullable(),
   launchId: z.string().uuid(),
-  statusId: z.string().nullable(),
+  testContextId: z.number().int().optional(),
+  title: z.string(),
+  createdTimestamp: z.string().optional(),
+  startedTimestamp: z.string().optional(),
+  finishedTimestamp: z.string().optional(),
+  statusId: z.string().optional(),
   arguments: z.array(
-    z
-      .object({
-        name: z.string(),
-        value: z.string(),
-      })
-      .nullable()
+    z.object({
+      name: z.string(),
+      type: z.string(),
+      value: z.string().nullable(),
+    })
   ),
 });
 
 export const BeforeTestSchema = z.object({
+  launchId: z.string().uuid(),
+  testContextId: z.number().int().optional(),
   id: z.string(),
   title: z.string(),
   createdTimestamp: z.string(),
   startedTimestamp: z.string().optional(),
   finishedTimestamp: z.string().optional(),
-  launchId: z.string().uuid(),
   statusId: z.string().optional(),
   argumentsHash: z.string().nullable(),
   arguments: z
@@ -45,22 +46,7 @@ export const createBeforeTest = initContract().mutation({
   summary: "Create the before test.",
   method: "POST",
   path: "/v1/before-tests",
-  body: z.object({
-    launchId: z.string().uuid(),
-    title: z.string(),
-    createdTimestamp: z.string().optional(),
-    startedTimestamp: z.string().optional(),
-    finishedTimestamp: z.string().optional(),
-    statusId: z.string().optional(),
-    arguments: z.array(
-      z
-        .object({
-          name: z.string(),
-          type: z.string(),
-          value: z.string().nullable(),
-        })
-    ),
-  }),
+  body: CreateBeforeTestSchema,
   responses: {
     201: BeforeTestSchema,
   },
