@@ -24,7 +24,7 @@ export class AfterTestsGenerator {
       body: {
         launchId: launchId,
         title: title,
-        arguments: args?.arguments ?? [],
+        arguments: args?.arguments,
       },
     });
     if (response.status !== 201) {

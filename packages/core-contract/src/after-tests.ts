@@ -17,7 +17,7 @@ export const CreateAfterTestSchema = z.object({
       type: z.string(),
       value: z.string().nullable(),
     })
-  ),
+  ).optional(),
 });
 
 export const AfterTestSchema = z.object({
@@ -29,7 +29,7 @@ export const AfterTestSchema = z.object({
   startedTimestamp: z.string().optional(),
   finishedTimestamp: z.string().optional(),
   statusId: z.string().optional(),
-  argumentsHash: z.string().nullable(),
+  argumentsHash: z.string().optional(),
   arguments: z
     .array(
       z.object({
@@ -39,7 +39,7 @@ export const AfterTestSchema = z.object({
         value: z.string().nullable(),
       })
     )
-    .nullable(),
+    .optional(),
 });
 
 export const createAfterTest = initContract().mutation({

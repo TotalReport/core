@@ -18,7 +18,7 @@ export class AfterTestsDAO {
 
   async create(args: CreateAfterTestArguments) {
     const result = await this.db.transaction(async (tx) => {
-      const argsHash = arguments == null ? null : MD5(args.arguments);
+      const argsHash = args.arguments == undefined ? undefined : MD5(args.arguments);
 
       if (args.testContextId) {
         const testContext = await new TestContextsDAO(tx).findById(
@@ -47,7 +47,7 @@ export class AfterTestsDAO {
           .returning()
       ).at(0)!;
 
-      const argumentsInDb = await new AfterTestArgumentsDAO(tx).create({
+      const argumentsInDb = args.arguments == undefined ? undefined : await new AfterTestArgumentsDAO(tx).create({
         afterTestId: afterTest.id,
         arguments: args.arguments,
       });
@@ -58,7 +58,8 @@ export class AfterTestsDAO {
         finishedTimestamp: afterTest.finishedTimestamp ?? undefined,
         testContextId: afterTest.testContextId ?? undefined,
         statusId: afterTest.statusId ?? undefined,
-        arguments: argumentsInDb.map((arg) => ({
+        argumentsHash: afterTest.argumentsHash ?? undefined,
+        arguments: argumentsInDb == undefined ? undefined : argumentsInDb.map((arg) => ({
           id: arg.id,
           name: arg.name,
           type: arg.type,
@@ -79,7 +80,7 @@ export type CreateAfterTestArguments = {
   finishedTimestamp?: string;
   statusId?: string;
   testContextId?: number;
-  arguments: {
+  arguments?: {
     name: string;
     type: string;
     value: string | null;
