@@ -18,7 +18,8 @@ export class TestsDAO {
 
   async create(args: CreateTest) {
     const result = await this.db.transaction(async (tx) => {
-      const argsHash = arguments == null ? null : MD5(args.arguments);
+      const argsHash =
+        args.arguments == undefined ? undefined : MD5(args.arguments);
 
       if (args.testContextId) {
         const testContext = await new TestContextsDAO(tx).findById(
@@ -47,10 +48,13 @@ export class TestsDAO {
           .returning()
       ).at(0)!;
 
-      const argumentsInDb = await new TestArgumentsDAO(tx).create({
-        testId: test.id,
-        arguments: args.arguments,
-      });
+      const argumentsInDb =
+        args.arguments == undefined || args.arguments.length == 0
+          ? undefined
+          : await new TestArgumentsDAO(tx).create({
+              testId: test.id,
+              arguments: args.arguments,
+            });
 
       return {
         ...test,
@@ -58,12 +62,16 @@ export class TestsDAO {
         finishedTimestamp: test.finishedTimestamp ?? undefined,
         testContextId: test.testContextId ?? undefined,
         statusId: test.statusId ?? undefined,
-        arguments: argumentsInDb.map((arg) => ({
-          id: arg.id,
-          name: arg.name,
-          type: arg.type,
-          value: arg.value,
-        })),
+        argumentsHash: test.argumentsHash ?? undefined,
+        arguments:
+          argumentsInDb == undefined
+            ? undefined
+            : argumentsInDb.map((arg) => ({
+                id: arg.id,
+                name: arg.name,
+                type: arg.type,
+                value: arg.value,
+              })),
       };
     });
 
@@ -79,7 +87,7 @@ export type CreateTest = {
   finishedTimestamp?: string;
   statusId?: string;
   testContextId?: number;
-  arguments: {
+  arguments?: {
     name: string;
     type: string;
     value: string | null;

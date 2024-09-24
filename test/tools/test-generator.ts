@@ -24,11 +24,13 @@ export class TestsGenerator {
       body: {
         launchId: launchId,
         title: title,
-        arguments: args?.arguments ?? [],
+        arguments: args?.arguments,
       },
     });
     if (response.status !== 201) {
-      throw new Error("Failed to create test. Server response: " + response.body);
+      throw new Error(
+        "Failed to create test. Server response: " + response.body
+      );
     }
     return response.body;
   }

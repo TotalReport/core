@@ -15,7 +15,7 @@ export const CreateTestSchema = z.object({
       type: z.string(),
       value: z.string().nullable(),
     })
-  ),
+  ).optional(), 
 });
 
 export const TestSchema = z.object({
@@ -27,7 +27,7 @@ export const TestSchema = z.object({
   startedTimestamp: z.string().optional(),
   finishedTimestamp: z.string().optional(),
   statusId: z.string().optional(),
-  argumentsHash: z.string().nullable(),
+  argumentsHash: z.string().optional(),
   arguments: z
     .array(
       z.object({
@@ -37,7 +37,7 @@ export const TestSchema = z.object({
         value: z.string().nullable(),
       })
     )
-    .nullable(),
+    .optional(),
 });
 
 export const createTest = initContract().mutation({
