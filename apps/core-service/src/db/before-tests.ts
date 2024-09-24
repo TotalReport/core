@@ -18,7 +18,7 @@ export class BeforeTestsDAO {
 
   async create(args: CreateBeforeTestArguments) {
     const result = await this.db.transaction(async (tx) => {
-      const argsHash = arguments == null ? null : MD5(args.arguments);
+      const argsHash = args.arguments == undefined ? null : MD5(args.arguments);
 
       if (args.testContextId) {
         const testContext = await new TestContextsDAO(tx).findById(
@@ -47,10 +47,13 @@ export class BeforeTestsDAO {
           .returning()
       ).at(0)!;
 
-      const argumentsInDb = await new BeforeTestArgumentsDAO(tx).create({
-        beforeTestId: beforeTest.id,
-        arguments: args.arguments,
-      });
+      const argumentsInDb =
+        args.arguments && args.arguments.length > 0
+          ? await new BeforeTestArgumentsDAO(tx).create({
+              beforeTestId: beforeTest.id,
+              arguments: args.arguments,
+            })
+          : undefined;
 
       return {
         ...beforeTest,
@@ -58,7 +61,8 @@ export class BeforeTestsDAO {
         finishedTimestamp: beforeTest.finishedTimestamp ?? undefined,
         testContextId: beforeTest.testContextId ?? undefined,
         statusId: beforeTest.statusId ?? undefined,
-        arguments: argumentsInDb.map((arg) => ({
+        argumentsHash: beforeTest.argumentsHash ?? undefined,
+        arguments: argumentsInDb == undefined ? undefined : argumentsInDb.map((arg) => ({
           id: arg.id,
           name: arg.name,
           type: arg.type,
@@ -79,7 +83,7 @@ export type CreateBeforeTestArguments = {
   finishedTimestamp?: string;
   statusId?: string;
   testContextId?: number;
-  arguments: {
+  arguments?: {
     name: string;
     type: string;
     value: string | null;
