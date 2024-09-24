@@ -38,12 +38,14 @@ CREATE TABLE IF NOT EXISTS "before_test_arguments" (
 );
 --> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "before_test_steps" (
-	"id" uuid PRIMARY KEY NOT NULL,
+	"before_test_id" uuid NOT NULL,
+	"id" bigserial PRIMARY KEY NOT NULL,
 	"title" varchar(256) NOT NULL,
 	"created_timestamp" timestamp NOT NULL,
 	"started_timestamp" timestamp,
 	"finished_timestamp" timestamp,
-	"before_test_id" uuid
+	"is_successful" boolean,
+	"error_message" text
 );
 --> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "before_tests" (

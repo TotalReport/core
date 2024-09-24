@@ -1,5 +1,5 @@
 {
-  "id": "f1f4517f-12e5-4ccd-aa9a-2a0e1487ff57",
+  "id": "a7e907bc-6e06-4765-9e74-89366316b047",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -292,9 +292,15 @@
       "name": "before_test_steps",
       "schema": "",
       "columns": {
+        "before_test_id": {
+          "name": "before_test_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
         "id": {
           "name": "id",
-          "type": "uuid",
+          "type": "bigserial",
           "primaryKey": true,
           "notNull": true
         },
@@ -322,9 +328,15 @@
           "primaryKey": false,
           "notNull": false
         },
-        "before_test_id": {
-          "name": "before_test_id",
-          "type": "uuid",
+        "is_successful": {
+          "name": "is_successful",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "error_message": {
+          "name": "error_message",
+          "type": "text",
           "primaryKey": false,
           "notNull": false
         }

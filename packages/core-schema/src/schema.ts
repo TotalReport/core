@@ -1,5 +1,5 @@
 import { relations } from "drizzle-orm";
-import { pgTable, varchar, uuid, timestamp, text, integer, primaryKey, AnyPgColumn, bigserial, bigint } from "drizzle-orm/pg-core";
+import { pgTable, varchar, uuid, timestamp, text, integer, primaryKey, AnyPgColumn, bigserial, bigint, boolean } from "drizzle-orm/pg-core";
 
 export const testStatusGroups = pgTable("test_status_groups", {
   id: varchar("id", { length: 20 }).primaryKey(),
@@ -61,12 +61,14 @@ export const beforeTestArguments = pgTable("before_test_arguments", {
 });
 
 export const beforeTestSteps = pgTable("before_test_steps", {
-  id: uuid("id").primaryKey(),
+  beforeTestId: uuid("before_test_id").references(() => beforeTests.id).notNull(),
+  id: bigserial("id", { mode: "number" }).primaryKey(),
   title: varchar("title", { length: 256 }).notNull(),
   createdTimestamp: timestamp("created_timestamp", { withTimezone: false, mode: "string" }).notNull(),
   startedTimestamp: timestamp("started_timestamp", { withTimezone: false, mode: "string" }),
   finishedTimestamp: timestamp("finished_timestamp", { withTimezone: false, mode: "string" }),
-  beforeTestId: uuid("before_test_id").references(() => beforeTests.id)
+  isSuccessful: boolean("is_successful"),
+  errorMessage: text("error_message"),
 });
 
 // export const beforeTestsRelations = relations(beforeTests, ({ many }) => ({
