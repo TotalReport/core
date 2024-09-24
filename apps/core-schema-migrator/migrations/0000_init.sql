@@ -25,7 +25,7 @@ CREATE TABLE IF NOT EXISTS "after_tests" (
 	"launch_id" uuid NOT NULL,
 	"test_context_id" bigint,
 	"status_id" varchar,
-	"arguments_hash" uuid NOT NULL
+	"arguments_hash" uuid
 );
 --> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "before_test_arguments" (

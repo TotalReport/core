@@ -1,5 +1,5 @@
 {
-  "id": "ffe71e59-617e-469f-bc3e-6cb1641fd5b2",
+  "id": "f1f4517f-12e5-4ccd-aa9a-2a0e1487ff57",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -180,7 +180,7 @@
           "name": "arguments_hash",
           "type": "uuid",
           "primaryKey": false,
-          "notNull": true
+          "notNull": false
         }
       },
       "indexes": {},

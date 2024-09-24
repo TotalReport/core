@@ -116,7 +116,7 @@ export const afterTests = pgTable("after_tests", {
   launchId: uuid("launch_id").references(() => launches.id).notNull(),
   testContextId: bigint("test_context_id", { mode: 'number' }).references(() => testContexts.id),
   statusId: varchar("status_id").references(() => testStatuses.id),
-  argumentsHash: uuid("arguments_hash").notNull(),
+  argumentsHash: uuid("arguments_hash"),
 });
 
 export const afterTestArguments = pgTable("after_test_arguments", {
