@@ -3,8 +3,10 @@ import { client } from "./client.js";
 import { expect_toBe } from "./utils.js";
 import { generateReport } from "./report-generator.js";
 
-export const generateLaunch = async (args: CreateLaunchArgs = undefined) => {
-  const reportId = await getReportId(args);
+export const generateLaunch = async (
+  args: GenerateLaunch | undefined = undefined
+) => {
+  const reportId = args?.reportId ?? (await generateReport()).id;
 
   const title =
     args?.title ??
@@ -12,8 +14,11 @@ export const generateLaunch = async (args: CreateLaunchArgs = undefined) => {
 
   const response = await client.createLaunch({
     body: {
-      title: title,
       reportId: reportId,
+      title: title,
+      createdTimestamp: args?.createdTimestamp,
+      startedTimestamp: args?.startedTimestamp,
+      finishedTimestamp: args?.finishedTimestamp,
     },
   });
 
@@ -22,16 +27,10 @@ export const generateLaunch = async (args: CreateLaunchArgs = undefined) => {
   return response.body;
 };
 
-const getReportId = async (args: CreateLaunchArgs) => {
-  if (args?.reportId == null) {
-    return (await generateReport()).id;
-  }
-  return args.reportId;
+type GenerateLaunch = {
+  title?: string;
+  reportId?: string;
+  createdTimestamp?: Date;
+  startedTimestamp?: Date;
+  finishedTimestamp?: Date;
 };
-
-type CreateLaunchArgs =
-  | {
-      title: string | null;
-      reportId: string | null;
-    }
-  | undefined;

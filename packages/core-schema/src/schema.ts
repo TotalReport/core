@@ -20,12 +20,12 @@ export const reports = pgTable("reports", {
 });
 
 export const launches = pgTable("launches", {
+  reportId: uuid("report_id").references(() => reports.id).notNull(),
   id: uuid("id").primaryKey(),
   title: varchar("title", { length: 256 }).notNull(),
-  createdTimestamp: timestamp("created_timestamp", { withTimezone: false, mode: "string" }).notNull(),
-  startedTimestamp: timestamp("started_timestamp", { withTimezone: false, mode: "string" }),
-  finishedTimestamp: timestamp("finished_timestamp", { withTimezone: false, mode: "string" }),
-  reportId: uuid("report_id").notNull().references(() => reports.id)
+  createdTimestamp: timestamp("created_timestamp", { withTimezone: false, mode: "date" }).notNull(),
+  startedTimestamp: timestamp("started_timestamp", { withTimezone: false, mode: "date" }),
+  finishedTimestamp: timestamp("finished_timestamp", { withTimezone: false, mode: "date" })
 });
 
 export const testContexts = pgTable("test_contexts", {

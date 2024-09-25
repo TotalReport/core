@@ -11,9 +11,8 @@ import { healthCheckRoute, setApiStarted } from "./routes/healthcheck.js";
 import {
   createLaunchRoute,
   deleteLaunchRoute,
+  patchLaunchRoute,
   readLaunchRoute,
-  updateLaunchFinishedRoute,
-  updateLaunchStartedRoute,
 } from "./routes/launches.js";
 import { openapiSchema } from "./routes/openapi_schema.js";
 import {
@@ -39,19 +38,24 @@ const s = initServer();
 
 const router = s.router(contract, {
   healthCheck: healthCheckRoute,
+
   createReport: createReportRoute,
   readReport: readReportRoute,
   deleteReport: deleteReportRoute,
+
   createLaunch: createLaunchRoute,
   readLaunch: readLaunchRoute,
+  patchLaunch: patchLaunchRoute,
   deleteLaunch: deleteLaunchRoute,
-  updateLaunchStarted: updateLaunchStartedRoute,
-  updateLaunchFinished: updateLaunchFinishedRoute,
+
   createTestContext: createTestContext,
+
   createBeforeTest: createBeforeTest,
   createBeforeTestStep: createBeforeTestStep,
+
   createTest: createTest,
   createTestStep: createTestStep,
+
   createAfterTest: createAfterTest,
   createAfterTestStep: createAfterTestStep,
 });

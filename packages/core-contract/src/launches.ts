@@ -4,31 +4,46 @@ import { z } from "zod";
 
 extendZodWithOpenApi(z);
 
-const LaunchSchema = z.object({
-  id: z.string(),
-  title: z.string(),
-  createdTimestamp: z.string(),
-  startedTimestamp: z.string().nullable(),
-  finishedTimestamp: z.string().nullable(),
+z.date;
+
+const CreateLaunchSchema = z.object({
   reportId: z.string().uuid(),
+  title: z.string().min(1).max(256),
+  createdTimestamp: z.coerce.date().optional(),
+  startedTimestamp: z.coerce.date().optional(),
+  finishedTimestamp: z.coerce.date().optional(),
+});
+
+const PatchLaunchSchema = z.object({
+  title: z.string().min(1).max(256).optional(),
+  createdTimestamp: z.coerce.date().optional(),
+  startedTimestamp: z.coerce.date().nullish(),
+  finishedTimestamp: z.coerce.date().nullish(),
+});
+
+const LaunchSchema = z.object({
+  reportId: z.string().uuid(),
+  id: z.string().uuid(),
+  title: z.string().min(1).max(256),
+  createdTimestamp: z.string().datetime({ offset: true }),
+  startedTimestamp: z.string().datetime({ offset: true }).optional(),
+  finishedTimestamp: z.string().datetime({ offset: true }).optional(),
 });
 
 const launchesContract = initContract();
 
 export const createLaunch = launchesContract.mutation({
+  summary: "Create the launch.",
   method: "POST",
   path: "/v1/launches",
+  body: CreateLaunchSchema,
   responses: {
     201: LaunchSchema,
   },
-  body: z.object({
-    reportId: z.string().uuid(),
-    title: z.string(),
-  }),
-  summary: "Create the launch.",
 });
 
 export const readLaunch = launchesContract.query({
+  summary: "Read the launch by ID.",
   method: "GET",
   path: "/v1/launches/:id",
   pathParams: z.object({
@@ -38,50 +53,32 @@ export const readLaunch = launchesContract.query({
     201: LaunchSchema,
     404: z.object({}),
   },
-  summary: "Read the launch by ID.",
+});
+
+export const patchLaunch = launchesContract.mutation({
+  summary: "Patch the launch fields.",
+  method: "PATCH",
+  path: "/v1/launches/:id",
+  pathParams: z.object({
+    id: z.string().uuid(),
+  }),
+  body: PatchLaunchSchema,
+  responses: {
+    200: LaunchSchema,
+    404: z.object({}),
+  },
 });
 
 export const deleteLaunch = launchesContract.mutation({
+  summary: "Delete the launch by ID.",
   method: "DELETE",
   path: "/v1/launches/:id",
   pathParams: z.object({
     id: z.string().uuid(),
   }),
-  responses: {
-    204: launchesContract.type<void>(),
-    404: z.object({}),
-  },
   body: launchesContract.type<void>(),
-});
-
-export const updateLaunchStarted = launchesContract.mutation({
-  summary: "Update the launch started timestamp.",
-  method: "PATCH",
-  path: "/v1/launches/:id/started",
-  pathParams: z.object({
-    id: z.string().uuid(),
-  }),
-  body: z.object({
-    startedTimestamp: z.string().datetime({ offset: true }).nullish(),
-  }),
   responses: {
-    200: LaunchSchema,
-    404: z.object({}),
-  },
-});
-
-export const updateLaunchFinished = launchesContract.mutation({
-  summary: "Update the launch finished timestamp.",
-  method: "PATCH",
-  path: "/v1/launches/:id/finished",
-  pathParams: z.object({
-    id: z.string().uuid(),
-  }),
-  body: z.object({
-    finishedTimestamp: z.string().datetime({ offset: true }).nullish(),
-  }),
-  responses: {
-    200: LaunchSchema,
+    204: launchesContract.noBody(),
     404: z.object({}),
   },
 });
