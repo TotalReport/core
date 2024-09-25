@@ -8,18 +8,13 @@ import { createAfterTest } from "./after-tests.js";
 import { createBeforeTestStep } from "./before-test-steps.js";
 import { createTestStep } from "./test-steps.js";
 import { createAfterTestStep } from "./after-test-steps.js";
+import { createReport, deleteReport, readReport } from "./reports.js";
 
 extendZodWithOpenApi(z);
 
 const HealthCheckSchema = z.object({
   apiStarted: z.boolean(),
   databaseAccessible: z.boolean(),
-});
-
-const ReportSchema = z.object({
-  id: z.string(),
-  title: z.string(),
-  createdTimestamp: z.string(),
 });
 
 const LaunchSchema = z.object({
@@ -43,42 +38,11 @@ export const contract = c.router({
     },
     summary: "Get a health check status.",
   },
-  createReport: {
-    method: "POST",
-    path: "/v1/reports",
-    responses: {
-      201: ReportSchema,
-    },
-    body: z.object({
-      title: z.string(),
-    }),
-    summary: "Create the report.",
-  },
-  readReport: {
-    method: "GET",
-    path: "/v1/reports/:id",
-    pathParams: z.object({
-      id: z.string().uuid(),
-    }),
-    responses: {
-      201: ReportSchema,
-      404: z.object({}),
-    },
-    summary: "Read the report by ID.",
-  },
-  deleteReport: {
-    method: "DELETE",
-    path: "/v1/reports/:id",
-    pathParams: z.object({
-      id: z.string().uuid(),
-    }),
-    responses: {
-      204: c.type<void>(),
-      404: z.object({}),
-    },
-    body: c.type<void>(),
-    summary: "Delete the report by ID.",
-  },
+
+  createReport: createReport,
+  readReport: readReport,
+  deleteReport: deleteReport,
+
   createLaunch: {
     method: "POST",
     path: "/v1/launches",
