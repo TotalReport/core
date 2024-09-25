@@ -29,13 +29,13 @@ export const launches = pgTable("launches", {
 });
 
 export const testContexts = pgTable("test_contexts", {
-  id: bigserial("id", { mode: "number" }).primaryKey(),
-  title: varchar("title", { length: 256 }).notNull(),
-  createdTimestamp: timestamp("created_timestamp", { withTimezone: false, mode: "string" }).notNull(),
-  startedTimestamp: timestamp("started_timestamp", { withTimezone: false, mode: "string" }),
-  finishedTimestamp: timestamp("finished_timestamp", { withTimezone: false, mode: "string" }),
   launchId: uuid("launch_id").references(() => launches.id).notNull(),
   parentTestContextId: bigint("parent_test_context_id", { mode: 'number' }).references((): AnyPgColumn => testContexts.id),
+  id: bigserial("id", { mode: "number" }).primaryKey(),
+  title: varchar("title", { length: 256 }).notNull(),
+  createdTimestamp: timestamp("created_timestamp", { withTimezone: false, mode: "date" }).notNull(),
+  startedTimestamp: timestamp("started_timestamp", { withTimezone: false, mode: "date" }),
+  finishedTimestamp: timestamp("finished_timestamp", { withTimezone: false, mode: "date" }),
 });
 
 export const beforeTests = pgTable("before_tests", {

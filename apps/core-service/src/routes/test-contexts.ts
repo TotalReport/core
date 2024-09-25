@@ -5,12 +5,23 @@ import { TestContextsDAO } from "../db/test-contexts.js";
 export const createTestContext: CreateTestContextRoute = async ({ body }) => {
   const request = {
     ...body,
-    createdTimestamp: body.createdTimestamp ?? new Date().toISOString(),
+    createdTimestamp: body.createdTimestamp ?? new Date(),
   };
+
+  const createdTestContext = await new TestContextsDAO().create(request);
 
   return {
     status: 201,
-    body: await new TestContextsDAO().create(request),
+    body: {
+      ...createdTestContext,
+      createdTimestamp: createdTestContext.createdTimestamp.toISOString(),
+      startedTimestamp: createdTestContext.startedTimestamp
+        ? createdTestContext.startedTimestamp.toISOString()
+        : undefined,
+      finishedTimestamp: createdTestContext.finishedTimestamp
+        ? createdTestContext.finishedTimestamp.toISOString()
+        : undefined,
+    },
   };
 };
 

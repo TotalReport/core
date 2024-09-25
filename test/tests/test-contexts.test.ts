@@ -5,11 +5,15 @@ import { client } from "../tools/client.js";
 import { generateLaunch } from "../tools/launch-generator.js";
 
 describe("test contexts", () => {
-  test("create test context", async () => {
+  test("create test context with minimum fields", async () => {
     const launch = await generateLaunch();
+    const request = {
+      title: "New test context",
+      launchId: launch.id,
+    };
 
     const response = await client.createTestContext({
-      body: { title: "New test context", launchId: launch.id },
+      body: request,
     });
 
     expect(response).toEqual({
@@ -17,7 +21,7 @@ describe("test contexts", () => {
       status: 201,
       body: {
         id: expect.a(Number),
-        title: "New test context",
+        title: request.title,
         launchId: launch.id,
         createdTimestamp: expect.isCloseToNow(3000),
       },
