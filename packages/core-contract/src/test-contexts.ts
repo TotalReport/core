@@ -60,7 +60,7 @@ export const patchTestContext = testContextContract.mutation({
   method: "PATCH",
   path: "/v1/test-contexts/:id",
   pathParams: z.object({
-    id: z.number().int(),
+    id: z.coerce.number().int(),
   }),
   body: PatchTestContextSchema,
   responses: {
@@ -74,7 +74,7 @@ export const deleteTestContext = testContextContract.mutation({
   method: "DELETE",
   path: "/v1/test-contexts/:id",
   pathParams: z.object({
-    id: z.number().int(),
+    id: z.coerce.number().int(),
   }),
   body: testContextContract.type<void>(),
   responses: {

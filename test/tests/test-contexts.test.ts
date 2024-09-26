@@ -93,4 +93,41 @@ describe("test contexts", () => {
       },
     });
   });
+
+  test("patch test context all fields", async () => {
+    const parentTestContext = await new TestContextsGenerator(client).create();
+    const testContext = await new TestContextsGenerator(client).create({
+      launchId: parentTestContext.launchId,
+      parentTestContextId: parentTestContext.id,
+      title: "Text context 1",
+      createdTimestamp: new Date("2024-07-21T06:52:32Z"),
+      startedTimestamp: new Date("2024-07-21T06:52:35Z"),
+      finishedTimestamp: new Date("2024-07-21T06:53:21Z"),
+    });
+    const patchRequest = {
+      title: "Text context 2",
+      createdTimestamp: new Date("2024-08-21T06:47:32Z"),
+      startedTimestamp: new Date("2024-08-21T06:51:35Z"),
+      finishedTimestamp: new Date("2024-08-21T06:52:21Z"),
+    };
+
+    const patchResponse = await client.patchTestContext({
+      params: { id: testContext.id },
+      body: patchRequest,
+    });
+
+    expect(patchResponse).toEqual({
+      headers: expect.anything(),
+      status: 200,
+      body: {
+        parentTestContextId: parentTestContext.id,
+        launchId: testContext.launchId,
+        id: testContext.id,
+        title: patchRequest.title,
+        createdTimestamp: patchRequest.createdTimestamp.toISOString(),
+        startedTimestamp: patchRequest.startedTimestamp.toISOString(),
+        finishedTimestamp: patchRequest.finishedTimestamp.toISOString(),
+      },
+    });
+  });
 });

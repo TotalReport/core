@@ -20,7 +20,7 @@ import {
   deleteReportRoute,
   readReportRoute,
 } from "./routes/reports.js";
-import { createTestContext, readTestContext } from "./routes/test-contexts.js";
+import { createTestContextRoute, patchTestContextRoute, readTestContextRoute } from "./routes/test-contexts.js";
 import { createTestStep } from "./routes/test-steps.js";
 import { createTest } from "./routes/tests.js";
 import { NextFunction, Request, Response } from "express";
@@ -50,8 +50,9 @@ const router = s.router(contract, {
   patchLaunch: patchLaunchRoute,
   deleteLaunch: deleteLaunchRoute,
 
-  createTestContext: createTestContext,
-  readTestContext: readTestContext,
+  createTestContext: createTestContextRoute,
+  readTestContext: readTestContextRoute,
+  patchTestContext: patchTestContextRoute,
 
   createBeforeTest: createBeforeTest,
   createBeforeTestStep: createBeforeTestStep,
