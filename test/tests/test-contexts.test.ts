@@ -130,4 +130,45 @@ describe("test contexts", () => {
       },
     });
   });
+
+  test("delete test context", async () => {
+    const parentTestContext = await new TestContextsGenerator(client).create();
+    const testContextToDelete = await new TestContextsGenerator(client).create({
+      launchId: parentTestContext.launchId,
+      parentTestContextId: parentTestContext.id,
+    });
+
+    const deleteTestContextResponse = await client.deleteTestContext({
+      params: { id: testContextToDelete.id },
+      body: undefined,
+    });
+
+    expect(deleteTestContextResponse).toEqual({
+      headers: expect.anything(),
+      status: 204,
+      body: expect.a(Blob),
+    });
+
+    const testContextByIdAfterDeleteResponse = await client.readTestContext({
+      params: { id: testContextToDelete.id },
+    });
+
+    expect(testContextByIdAfterDeleteResponse).toEqual({
+      headers: expect.anything(),
+      status: 404,
+      body: {},
+    });
+
+    const parentTestContextByIdResponse = await client.readTestContext({
+      params: { id: parentTestContext.id },
+    });
+
+    expect(parentTestContextByIdResponse).toEqual({
+      headers: expect.anything(),
+      status: 200,
+      body: {
+        ...parentTestContext,
+      },
+    });
+  });
 });

@@ -2,7 +2,9 @@ import { contract } from "@total-report/core-contract/contract";
 import { AppRouteImplementation } from "@ts-rest/express";
 import { TestContextsDAO } from "../db/test-contexts.js";
 
-export const createTestContextRoute: CreateTestContextRoute = async ({ body }) => {
+export const createTestContextRoute: CreateTestContextRoute = async ({
+  body,
+}) => {
   const request = {
     ...body,
     createdTimestamp: body.createdTimestamp ?? new Date(),
@@ -14,6 +16,7 @@ export const createTestContextRoute: CreateTestContextRoute = async ({ body }) =
     status: 201,
     body: {
       ...createdTestContext,
+      parentTestContextId: createdTestContext.parentTestContextId ?? undefined,
       createdTimestamp: createdTestContext.createdTimestamp.toISOString(),
       startedTimestamp: createdTestContext.startedTimestamp
         ? createdTestContext.startedTimestamp.toISOString()
@@ -25,7 +28,9 @@ export const createTestContextRoute: CreateTestContextRoute = async ({ body }) =
   };
 };
 
-export const readTestContextRoute: ReadTestContextRoute = async ({ params }) => {
+export const readTestContextRoute: ReadTestContextRoute = async ({
+  params,
+}) => {
   const testContext = await new TestContextsDAO().findById(params.id);
 
   if (testContext === undefined) {
@@ -39,13 +44,12 @@ export const readTestContextRoute: ReadTestContextRoute = async ({ params }) => 
     status: 200,
     body: {
       ...testContext,
+      parentTestContextId: testContext.parentTestContextId ?? undefined,
       createdTimestamp: testContext.createdTimestamp.toISOString(),
-      startedTimestamp: testContext.startedTimestamp
-        ? testContext.startedTimestamp.toISOString()
-        : undefined,
-      finishedTimestamp: testContext.finishedTimestamp
-        ? testContext.finishedTimestamp.toISOString()
-        : undefined,
+      startedTimestamp:
+        testContext.startedTimestamp?.toISOString() ?? undefined,
+      finishedTimestamp:
+        testContext.finishedTimestamp?.toISOString() ?? undefined,
     },
   };
 };
@@ -54,12 +58,12 @@ export const patchTestContextRoute: PatchTestContextRoute = async ({
   params,
   body,
 }) => {
-  let result = await new TestContextsDAO().patch({
+  let testContext = await new TestContextsDAO().patch({
     ...body,
     id: params.id,
   });
 
-  if (result === undefined) {
+  if (testContext === undefined) {
     return {
       status: 404,
       body: {},
@@ -69,11 +73,24 @@ export const patchTestContextRoute: PatchTestContextRoute = async ({
   return {
     status: 200,
     body: {
-      ...result,
-      createdTimestamp: result.createdTimestamp.toISOString(),
-      startedTimestamp: result.startedTimestamp?.toISOString(),
-      finishedTimestamp: result.finishedTimestamp?.toISOString(),
+      ...testContext,
+      parentTestContextId: testContext.parentTestContextId ?? undefined,
+      createdTimestamp: testContext.createdTimestamp.toISOString(),
+      startedTimestamp:
+        testContext.startedTimestamp?.toISOString() ?? undefined,
+      finishedTimestamp:
+        testContext.finishedTimestamp?.toISOString() ?? undefined,
     },
+  };
+};
+
+export const deleteTestContextRoute: DeleteTestContextRoute = async ({
+  params,
+}) => {
+  await new TestContextsDAO().deleteById(params.id);
+  return {
+    status: 204,
+    body: undefined,
   };
 };
 
@@ -87,4 +104,8 @@ type ReadTestContextRoute = AppRouteImplementation<
 
 type PatchTestContextRoute = AppRouteImplementation<
   typeof contract.patchTestContext
+>;
+
+type DeleteTestContextRoute = AppRouteImplementation<
+  typeof contract.deleteTestContext
 >;

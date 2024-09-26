@@ -12,7 +12,7 @@ import {
   patchLaunch,
 } from "./launches.js";
 import { createReport, deleteReport, readReport } from "./reports.js";
-import { createTestContext, patchTestContext, readTestContext } from "./test-contexts.js";
+import { createTestContext, deleteTestContext, patchTestContext, readTestContext } from "./test-contexts.js";
 import { createTestStep } from "./test-steps.js";
 import { createTest } from "./tests.js";
 
@@ -48,6 +48,7 @@ export const contract = c.router({
   createTestContext: createTestContext,
   readTestContext: readTestContext,
   patchTestContext: patchTestContext,
+  deleteTestContext: deleteTestContext,
 
   createBeforeTest: createBeforeTest,
   createBeforeTestStep: createBeforeTestStep,
