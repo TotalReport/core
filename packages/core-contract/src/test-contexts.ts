@@ -36,6 +36,9 @@ export const createTestContext = testContextContract.mutation({
   body: CreateTestContextSchema,
   responses: {
     201: TestContextSchema,
+    400: z.object({
+      message: z.string()
+    })
   },
 });
 
@@ -44,7 +47,7 @@ export const readTestContext = testContextContract.query({
   method: "GET",
   path: "/v1/test-contexts/:id",
   pathParams: z.object({
-    id: z.string().uuid(),
+    id: z.coerce.number().int(),
   }),
   responses: {
     201: TestContextSchema,
@@ -57,7 +60,7 @@ export const patchTestContext = testContextContract.mutation({
   method: "PATCH",
   path: "/v1/test-contexts/:id",
   pathParams: z.object({
-    id: z.string().uuid(),
+    id: z.number().int(),
   }),
   body: PatchTestContextSchema,
   responses: {
@@ -71,7 +74,7 @@ export const deleteTestContext = testContextContract.mutation({
   method: "DELETE",
   path: "/v1/test-contexts/:id",
   pathParams: z.object({
-    id: z.string().uuid(),
+    id: z.number().int(),
   }),
   body: testContextContract.type<void>(),
   responses: {

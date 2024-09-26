@@ -63,12 +63,12 @@ CREATE TABLE IF NOT EXISTS "before_tests" (
 );
 --> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "launches" (
+	"report_id" uuid NOT NULL,
 	"id" uuid PRIMARY KEY NOT NULL,
 	"title" varchar(256) NOT NULL,
 	"created_timestamp" timestamp NOT NULL,
 	"started_timestamp" timestamp,
-	"finished_timestamp" timestamp,
-	"report_id" uuid NOT NULL
+	"finished_timestamp" timestamp
 );
 --> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "paths" (
@@ -94,13 +94,13 @@ CREATE TABLE IF NOT EXISTS "test_arguments" (
 );
 --> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "test_contexts" (
+	"launch_id" uuid NOT NULL,
+	"parent_test_context_id" bigint,
 	"id" bigserial PRIMARY KEY NOT NULL,
 	"title" varchar(256) NOT NULL,
 	"created_timestamp" timestamp NOT NULL,
 	"started_timestamp" timestamp,
-	"finished_timestamp" timestamp,
-	"launch_id" uuid NOT NULL,
-	"parent_test_context_id" bigint
+	"finished_timestamp" timestamp
 );
 --> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "test_status_groups" (

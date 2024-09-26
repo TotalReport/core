@@ -20,9 +20,11 @@ import {
   deleteReportRoute,
   readReportRoute,
 } from "./routes/reports.js";
-import { createTestContext } from "./routes/test-contexts.js";
+import { createTestContext, readTestContext } from "./routes/test-contexts.js";
 import { createTestStep } from "./routes/test-steps.js";
 import { createTest } from "./routes/tests.js";
+import { NextFunction, Request, Response } from "express";
+import { ValidationError } from "./errors/errors.js";
 
 const { urlencoded, json } = bodyParser;
 
@@ -49,6 +51,7 @@ const router = s.router(contract, {
   deleteLaunch: deleteLaunchRoute,
 
   createTestContext: createTestContext,
+  readTestContext: readTestContext,
 
   createBeforeTest: createBeforeTest,
   createBeforeTestStep: createBeforeTestStep,
@@ -61,6 +64,15 @@ const router = s.router(contract, {
 });
 
 createExpressEndpoints(contract, router, app);
+
+app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
+  if (err instanceof ValidationError) {
+    res.status(400).send({ message: err.message });
+  }
+
+  console.error(err);
+  res.status(500).send({ message: "Something went wrong." });
+});
 
 const port = process.env.CORE_SERVICE_PORT || 3333;
 

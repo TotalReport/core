@@ -25,6 +25,35 @@ export const createTestContext: CreateTestContextRoute = async ({ body }) => {
   };
 };
 
+export const readTestContext: ReadTestContextRoute = async ({ params }) => {
+  const testContext = await new TestContextsDAO().findById(params.id);
+
+  if (testContext === undefined) {
+    return {
+      status: 404,
+      body: {},
+    };
+  }
+
+  return {
+    status: 200,
+    body: {
+      ...testContext,
+      createdTimestamp: testContext.createdTimestamp.toISOString(),
+      startedTimestamp: testContext.startedTimestamp
+        ? testContext.startedTimestamp.toISOString()
+        : undefined,
+      finishedTimestamp: testContext.finishedTimestamp
+        ? testContext.finishedTimestamp.toISOString()
+        : undefined,
+    },
+  };
+};
+
 type CreateTestContextRoute = AppRouteImplementation<
   typeof contract.createTestContext
+>;
+
+type ReadTestContextRoute = AppRouteImplementation<
+  typeof contract.readTestContext
 >;

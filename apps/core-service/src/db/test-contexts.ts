@@ -3,6 +3,14 @@ import { eq } from "drizzle-orm";
 import { NodePgQueryResultHKT } from "drizzle-orm/node-postgres/session";
 import { PgDatabase } from "drizzle-orm/pg-core/db";
 import { db as defaultDB } from "../db/setup.js";
+import {
+  FinishedTimestampBeforeStartedTimestampError,
+  ParentTestContextBelongsToDifferentLaunchError,
+  ParentTestContextHasCircularParentTestContextReferenceError,
+  ParentTestContextNotFoundError,
+  StartedTimestampBeforeCreatedTimestampError,
+  StartedTimestampIsNotSetButFinishedTimestampIsSetError,
+} from "../errors/errors.js";
 
 export class TestContextsDAO {
   db: PgDatabase<NodePgQueryResultHKT, Record<string, unknown>>;
@@ -88,7 +96,7 @@ export type CreateTestContext = {
 export type TestContextEntity = {
   parentTestContextId?: number;
   launchId: string;
-  id: number,
+  id: number;
   title: string;
   createdTimestamp: Date;
   startedTimestamp?: Date;
@@ -132,14 +140,13 @@ const validateTitleAndTimestamps = (args: {
 
   if (args.startedTimestamp == undefined) {
     if (args.finishedTimestamp != undefined) {
-      throw new Error(
-        "Started timestamp should be set if finished timestamp is set."
-      );
+      throw new StartedTimestampIsNotSetButFinishedTimestampIsSetError();
     }
   } else {
     if (args.createdTimestamp > args.startedTimestamp) {
-      throw new Error(
-        "Started timestamp should be greater than created timestamp."
+      throw new StartedTimestampBeforeCreatedTimestampError(
+        args.startedTimestamp,
+        args.createdTimestamp
       );
     }
 
@@ -147,8 +154,9 @@ const validateTitleAndTimestamps = (args: {
       args.finishedTimestamp != undefined &&
       args.startedTimestamp > args.finishedTimestamp
     ) {
-      throw new Error(
-        "Finished timestamp should be greater than started timestamp."
+      throw new FinishedTimestampBeforeStartedTimestampError(
+        args.finishedTimestamp,
+        args.startedTimestamp
       );
     }
   }
@@ -171,20 +179,20 @@ async function validateParentTestContext(
       );
 
       if (parentTestContext == undefined) {
-        throw new Error(
-          `Parent test context with id ${currentParentTestContextId} not found.`
-        );
+        throw new ParentTestContextNotFoundError(currentParentTestContextId);
       }
 
       if (parentTestContext.launchId != args.launchId) {
-        throw new Error(
-          `Parent test context with id ${currentParentTestContextId} has launch id ${parentTestContext.launchId} which is different from the expected launch id ${args.launchId}.`
-        );
+        throw new ParentTestContextBelongsToDifferentLaunchError({
+          parentTestContextId: parentTestContext.id,
+          parentTestContextLaunchId: parentTestContext.launchId,
+          expectedLaunchId: args.launchId,
+        });
       }
 
       if (parentTestContextsIds.includes(parentTestContext.id)) {
-        throw new Error(
-          `Parent test context with id ${currentParentTestContextId} has a circular reference.`
+        throw new ParentTestContextHasCircularParentTestContextReferenceError(
+          currentParentTestContextId
         );
       }
 

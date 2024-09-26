@@ -1,5 +1,5 @@
 {
-  "id": "c19f409e-4e85-4ee3-a2df-9933f7c8bd6a",
+  "id": "32604bb5-120c-4c7e-80f8-153ca99f62a5",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -480,6 +480,12 @@
       "name": "launches",
       "schema": "",
       "columns": {
+        "report_id": {
+          "name": "report_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
         "id": {
           "name": "id",
           "type": "uuid",
@@ -509,12 +515,6 @@
           "type": "timestamp",
           "primaryKey": false,
           "notNull": false
-        },
-        "report_id": {
-          "name": "report_id",
-          "type": "uuid",
-          "primaryKey": false,
-          "notNull": true
         }
       },
       "indexes": {},
@@ -676,6 +676,18 @@
       "name": "test_contexts",
       "schema": "",
       "columns": {
+        "launch_id": {
+          "name": "launch_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "parent_test_context_id": {
+          "name": "parent_test_context_id",
+          "type": "bigint",
+          "primaryKey": false,
+          "notNull": false
+        },
         "id": {
           "name": "id",
           "type": "bigserial",
@@ -703,18 +715,6 @@
         "finished_timestamp": {
           "name": "finished_timestamp",
           "type": "timestamp",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "launch_id": {
-          "name": "launch_id",
-          "type": "uuid",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "parent_test_context_id": {
-          "name": "parent_test_context_id",
-          "type": "bigint",
           "primaryKey": false,
           "notNull": false
         }
