@@ -91,6 +91,6 @@ const seed = async (url: string) => {
   console.log("Seeding test statuses is finished.");
 };
 
-seed(process.env["DB_URL"]!);
+await seed(process.env["DB_URL"]!);
 
 process.exit(0);
