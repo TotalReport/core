@@ -1,9 +1,10 @@
 import { launches } from "@total-report/core-schema/schema";
 import { eq } from "drizzle-orm";
-import { v4 as uuidv4 } from "uuid";
-import { ReportNotFoundError } from "../errors/errors.js";
 import { NodePgQueryResultHKT } from "drizzle-orm/node-postgres/session";
 import { PgDatabase } from "drizzle-orm/pg-core/db";
+import { v4 as uuidv4 } from "uuid";
+import { ReportNotFoundError } from "../errors/errors.js";
+import { validateTimestamps } from "../validations/timestamps-validations.js";
 import { db as defaultDB } from "./setup.js";
 
 export class LaunchesDAO {
@@ -90,28 +91,7 @@ const validateLaunch = (args: {
     throw new Error("Title should not be empty.");
   }
 
-  if (args.startedTimestamp == undefined) {
-    if (args.finishedTimestamp != undefined) {
-      throw new Error(
-        "Started timestamp should be set if finished timestamp is set."
-      );
-    }
-  } else {
-    if (args.createdTimestamp > args.startedTimestamp) {
-      throw new Error(
-        "Started timestamp should be greater than created timestamp."
-      );
-    }
-
-    if (
-      args.finishedTimestamp != undefined &&
-      args.startedTimestamp > args.finishedTimestamp
-    ) {
-      throw new Error(
-        "Finished timestamp should be greater than started timestamp."
-      );
-    }
-  }
+  validateTimestamps(args);
 };
 
 type CreateLaunch = {

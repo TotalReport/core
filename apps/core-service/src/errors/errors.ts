@@ -75,3 +75,15 @@ export class TestContextBelongsToDifferentLaunchError extends ValidationError {
     );
   }
 }
+
+export class FinishedTimestampIsSetButStatusIsNotSetError extends ValidationError {
+  constructor() {
+    super("Finished timestamp is set but status is not set.");
+  }
+}
+
+export class StatusIsSetButFinishedTimestampIsNotSetError extends ValidationError {
+  constructor() {
+    super("Status is set but finished timestamp is not set.");
+  }
+}

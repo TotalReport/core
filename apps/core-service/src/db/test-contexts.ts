@@ -4,13 +4,11 @@ import { NodePgQueryResultHKT } from "drizzle-orm/node-postgres/session";
 import { PgDatabase } from "drizzle-orm/pg-core/db";
 import { db as defaultDB } from "../db/setup.js";
 import {
-  FinishedTimestampBeforeStartedTimestampError,
   ParentTestContextBelongsToDifferentLaunchError,
   ParentTestContextHasCircularParentTestContextReferenceError,
   ParentTestContextNotFoundError,
-  StartedTimestampBeforeCreatedTimestampError,
-  StartedTimestampIsNotSetButFinishedTimestampIsSetError,
 } from "../errors/errors.js";
+import { validateTimestamps } from "../validations/timestamps-validations.js";
 
 export class TestContextsDAO {
   db: PgDatabase<NodePgQueryResultHKT, Record<string, unknown>>;
@@ -138,28 +136,7 @@ const validateTitleAndTimestamps = (args: {
     throw new Error("Title should not be empty.");
   }
 
-  if (args.startedTimestamp == undefined) {
-    if (args.finishedTimestamp != undefined) {
-      throw new StartedTimestampIsNotSetButFinishedTimestampIsSetError();
-    }
-  } else {
-    if (args.createdTimestamp > args.startedTimestamp) {
-      throw new StartedTimestampBeforeCreatedTimestampError(
-        args.startedTimestamp,
-        args.createdTimestamp
-      );
-    }
-
-    if (
-      args.finishedTimestamp != undefined &&
-      args.startedTimestamp > args.finishedTimestamp
-    ) {
-      throw new FinishedTimestampBeforeStartedTimestampError(
-        args.finishedTimestamp,
-        args.startedTimestamp
-      );
-    }
-  }
+  validateTimestamps(args);
 };
 
 async function validateParentTestContext(
