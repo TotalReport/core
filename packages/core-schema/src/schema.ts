@@ -41,9 +41,9 @@ export const testContexts = pgTable("test_contexts", {
 export const beforeTests = pgTable("before_tests", {
   id: uuid("id").primaryKey(),
   title: varchar("title", { length: 256 }).notNull(),
-  createdTimestamp: timestamp("created_timestamp", { withTimezone: false, mode: "string" }).notNull(),
-  startedTimestamp: timestamp("started_timestamp", { withTimezone: false, mode: "string" }),
-  finishedTimestamp: timestamp("finished_timestamp", { withTimezone: false, mode: "string" }),
+  createdTimestamp: timestamp("created_timestamp", { withTimezone: false, mode: "date" }).notNull(),
+  startedTimestamp: timestamp("started_timestamp", { withTimezone: false, mode: "date" }),
+  finishedTimestamp: timestamp("finished_timestamp", { withTimezone: false, mode: "date" }),
   launchId: uuid("launch_id").references(() => launches.id).notNull(),
   testContextId: bigint("test_context_id", { mode: 'number' }).references(() => testContexts.id),
   statusId: varchar("status_id").references(() => testStatuses.id),
@@ -51,12 +51,12 @@ export const beforeTests = pgTable("before_tests", {
 });
 
 export const beforeTestArguments = pgTable("before_test_arguments", {
+  beforeTestId: uuid("before_test_id").references(() => beforeTests.id).notNull(),
   id: uuid("id").primaryKey(),
-  name: varchar("name", { length: 256 }).notNull(),
   index: integer("index").notNull(),
+  name: varchar("name", { length: 256 }).notNull(),
   type: varchar("type", { length: 256 }).notNull(),
   value: text("value"),
-  beforeTestId: uuid("before_test_id").references(() => beforeTests.id),
 });
 
 export const beforeTestSteps = pgTable("before_test_steps", {

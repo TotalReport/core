@@ -15,15 +15,20 @@ export class BeforeTestsGenerator {
     this.client = client;
   }
 
-  async create(args: CreateBeforeTestArgs = undefined) {
+  async create(args: CreateBeforeTestArgs | undefined = undefined) {
     const launchId = args?.launchId ?? (await generateLaunch()).id;
     const title =
       args?.title ??
       faker.word.noun() + " " + faker.word.verb() + " " + faker.date.recent();
     const response = await client.createBeforeTest({
       body: {
+        testContextId: args?.tesContextId,
         launchId: launchId,
         title: title,
+        createdTimestamp: args?.createdTimestamp,
+        startedTimestamp: args?.startedTimestamp,
+        finishedTimestamp: args?.finishedTimestamp,
+        statusId: args?.statusId,
         arguments: args?.arguments,
       },
     });
@@ -34,14 +39,17 @@ export class BeforeTestsGenerator {
   }
 }
 
-type CreateBeforeTestArgs =
-  | {
-      title?: string;
+type CreateBeforeTestArgs = {
       launchId?: string;
+      tesContextId?: number;
+      createdTimestamp?: Date;
+      startedTimestamp?: Date;
+      finishedTimestamp?: Date;
+      statusId?: string;
+      title?: string;
       arguments?: Array<{
         name: string;
         type: string;
         value: string;
       }>;
-    }
-  | undefined;
+    };

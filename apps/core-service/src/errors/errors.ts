@@ -63,3 +63,15 @@ export class ParentTestContextBelongsToDifferentLaunchError extends ValidationEr
     );
   }
 }
+
+export class TestContextBelongsToDifferentLaunchError extends ValidationError {
+  constructor(args: {
+    testContextId: number;
+    testContextLaunchId: string;
+    expectedLaunchId: string;
+  }) {
+    super(
+      `Test context ${args.testContextId} belongs to different launch ${args.testContextLaunchId}. Expected ${args.expectedLaunchId}.`
+    );
+  }
+}

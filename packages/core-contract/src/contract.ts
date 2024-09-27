@@ -4,7 +4,7 @@ import { z } from "zod";
 import { createAfterTestStep } from "./after-test-steps.js";
 import { createAfterTest } from "./after-tests.js";
 import { createBeforeTestStep } from "./before-test-steps.js";
-import { createBeforeTest } from "./before-tests.js";
+import { createBeforeTest, readBeforeTest } from "./before-tests.js";
 import {
   createLaunch,
   deleteLaunch,
@@ -51,7 +51,10 @@ export const contract = c.router({
   deleteTestContext: deleteTestContext,
 
   createBeforeTest: createBeforeTest,
+  readBeforeTest: readBeforeTest,
+
   createBeforeTestStep: createBeforeTestStep,
+
   createTest: createTest,
   createTestStep: createTestStep,
   createAfterTest: createAfterTest,

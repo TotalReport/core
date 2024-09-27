@@ -3,6 +3,7 @@ import { NodePgQueryResultHKT } from "drizzle-orm/node-postgres/session";
 import { PgDatabase } from "drizzle-orm/pg-core/db";
 import { v4 as uuidv4 } from "uuid";
 import { db as defaultDB } from "../db/setup.js";
+import { eq } from "drizzle-orm";
 
 export class BeforeTestArgumentsDAO {
   db: PgDatabase<NodePgQueryResultHKT, Record<string, unknown>>;
@@ -24,6 +25,10 @@ export class BeforeTestArgumentsDAO {
         };
       })
     ).returning();
+  }
+
+  async findByBeforeTestId(beforeTestId: string) {
+    return await this.db.select().from(beforeTestArguments).where(eq(beforeTestArguments.beforeTestId, beforeTestId));
   }
 }
 

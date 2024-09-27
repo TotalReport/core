@@ -3,6 +3,7 @@ import { describe, test } from "mocha";
 import { client } from "../tools/client.js";
 import { generateLaunch } from "../tools/launch-generator.js";
 import { BeforeTestsGenerator } from "../tools/before-test-generator.js";
+import { TestContextsGenerator } from "../tools/test-context-generator.js";
 
 describe("before tests", () => {
   test("create before test", async () => {
@@ -122,5 +123,39 @@ describe("before tests", () => {
     );
 
     expect(first.argumentsHash).not.toEqual(second.argumentsHash);
+  });
+
+  test("read before test", async () => {
+    const launch = await generateLaunch();
+    const testContext = await new TestContextsGenerator(client).create({
+      launchId: launch.id,
+    });
+    const created = await new BeforeTestsGenerator(client).create({
+      tesContextId: testContext.id,
+      title: "New before test",
+      launchId: launch.id,
+      arguments: [
+        {
+          name: "Argument1",
+          type: "String",
+          value: "value1",
+        },
+        {
+          name: "Argument2",
+          type: "Integer",
+          value: "value2",
+        },
+      ],
+    });
+
+    const response = await client.readBeforeTest({
+      params: { id: created.id },
+    });
+
+    expect(response).toEqual({
+      headers: expect.anything(),
+      status: 200,
+      body: created,
+    });
   });
 });
