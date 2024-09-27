@@ -4,6 +4,12 @@ export class ValidationError extends Error {
   }
 }
 
+export class TitleIsEmptyError extends ValidationError {
+  constructor() {
+    super("Title is empty.");
+  }
+}
+
 export class ReportNotFoundError extends ValidationError {
   constructor(reportId: string) {
     super("Report with id " + reportId + " is not found.");
@@ -85,5 +91,11 @@ export class FinishedTimestampIsSetButStatusIsNotSetError extends ValidationErro
 export class StatusIsSetButFinishedTimestampIsNotSetError extends ValidationError {
   constructor() {
     super("Status is set but finished timestamp is not set.");
+  }
+}
+
+export class BeforeTestNotFoundError extends ValidationError {
+  constructor(beforeTestId: string) {
+    super("Before test with id " + beforeTestId + " is not found.");
   }
 }

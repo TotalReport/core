@@ -31,12 +31,12 @@ CREATE TABLE IF NOT EXISTS "after_tests" (
 );
 --> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "before_test_arguments" (
+	"before_test_id" uuid NOT NULL,
 	"id" uuid PRIMARY KEY NOT NULL,
-	"name" varchar(256) NOT NULL,
 	"index" integer NOT NULL,
+	"name" varchar(256) NOT NULL,
 	"type" varchar(256) NOT NULL,
-	"value" text,
-	"before_test_id" uuid
+	"value" text
 );
 --> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "before_test_steps" (

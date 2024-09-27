@@ -22,34 +22,31 @@ export class BeforeTestsGenerator {
       faker.word.noun() + " " + faker.word.verb() + " " + faker.date.recent();
     const response = await client.createBeforeTest({
       body: {
-        testContextId: args?.tesContextId,
+        ...args,
         launchId: launchId,
         title: title,
-        createdTimestamp: args?.createdTimestamp,
-        startedTimestamp: args?.startedTimestamp,
-        finishedTimestamp: args?.finishedTimestamp,
-        statusId: args?.statusId,
-        arguments: args?.arguments,
       },
     });
     if (response.status !== 201) {
-      throw new Error("Failed to create before test. Server response: " + response.body);
+      throw new Error(
+        `Failed to create before test. Server response status ${response.status} body ${JSON.stringify(response.body)}`
+      );
     }
     return response.body;
   }
 }
 
 type CreateBeforeTestArgs = {
-      launchId?: string;
-      tesContextId?: number;
-      createdTimestamp?: Date;
-      startedTimestamp?: Date;
-      finishedTimestamp?: Date;
-      statusId?: string;
-      title?: string;
-      arguments?: Array<{
-        name: string;
-        type: string;
-        value: string;
-      }>;
-    };
+  launchId?: string;
+  testContextId?: number;
+  createdTimestamp?: Date;
+  startedTimestamp?: Date;
+  finishedTimestamp?: Date;
+  statusId?: string;
+  title?: string;
+  arguments?: Array<{
+    name: string;
+    type: string;
+    value: string;
+  }>;
+};

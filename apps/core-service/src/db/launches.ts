@@ -4,7 +4,7 @@ import { NodePgQueryResultHKT } from "drizzle-orm/node-postgres/session";
 import { PgDatabase } from "drizzle-orm/pg-core/db";
 import { v4 as uuidv4 } from "uuid";
 import { ReportNotFoundError } from "../errors/errors.js";
-import { validateTimestamps } from "../validations/timestamps-validations.js";
+import { validateTimestamps } from "../validations/validations.js";
 import { db as defaultDB } from "./setup.js";
 
 export class LaunchesDAO {

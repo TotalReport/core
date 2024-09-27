@@ -8,7 +8,7 @@ import {
   ParentTestContextHasCircularParentTestContextReferenceError,
   ParentTestContextNotFoundError,
 } from "../errors/errors.js";
-import { validateTimestamps } from "../validations/timestamps-validations.js";
+import { validateTimestamps } from "../validations/validations.js";
 
 export class TestContextsDAO {
   db: PgDatabase<NodePgQueryResultHKT, Record<string, unknown>>;

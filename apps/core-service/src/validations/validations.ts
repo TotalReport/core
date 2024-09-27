@@ -4,7 +4,14 @@ import {
   StartedTimestampBeforeCreatedTimestampError,
   StartedTimestampIsNotSetButFinishedTimestampIsSetError,
   StatusIsSetButFinishedTimestampIsNotSetError,
+  TitleIsEmptyError,
 } from "../errors/errors.js";
+
+export const validateTitle = (args: { title?: string }) => {
+  if (args.title == null || args.title.length === 0) {
+    throw new TitleIsEmptyError();
+  }
+}
 
 export const validateTimestamps = (args: {
   createdTimestamp: Date;
@@ -35,18 +42,18 @@ export const validateTimestamps = (args: {
   }
 };
 
-export const validateTimestamptAndStatus = (args: {
+export const validateTimestampsAndStatus = (args: {
   createdTimestamp: Date;
   startedTimestamp?: Date | null;
   finishedTimestamp?: Date | null;
-  status?: string;
+  statusId?: string | null;
 }) => {
   validateTimestamps(args);
-  if (args.finishedTimestamp != undefined && args.status == undefined) {
+  if (args.finishedTimestamp != undefined && args.statusId == undefined) {
     throw new FinishedTimestampIsSetButStatusIsNotSetError();
   }
 
-  if (args.status != undefined && args.finishedTimestamp == undefined) {
+  if (args.statusId != undefined && args.finishedTimestamp == undefined) {
     throw new StatusIsSetButFinishedTimestampIsNotSetError();
   }
 };

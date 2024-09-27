@@ -1,5 +1,5 @@
 {
-  "id": "32604bb5-120c-4c7e-80f8-153ca99f62a5",
+  "id": "c5ad617e-bb3d-43f7-943d-d95fd5d5a79d",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -244,21 +244,27 @@
       "name": "before_test_arguments",
       "schema": "",
       "columns": {
+        "before_test_id": {
+          "name": "before_test_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
         "id": {
           "name": "id",
           "type": "uuid",
           "primaryKey": true,
           "notNull": true
         },
-        "name": {
-          "name": "name",
-          "type": "varchar(256)",
-          "primaryKey": false,
-          "notNull": true
-        },
         "index": {
           "name": "index",
           "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "name": {
+          "name": "name",
+          "type": "varchar(256)",
           "primaryKey": false,
           "notNull": true
         },
@@ -271,12 +277,6 @@
         "value": {
           "name": "value",
           "type": "text",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "before_test_id": {
-          "name": "before_test_id",
-          "type": "uuid",
           "primaryKey": false,
           "notNull": false
         }

@@ -25,6 +25,21 @@ export const readBeforeTestRoute: ReadBeforeTestRoute = async ({ params }) => {
   return { status: 200, body: convertToResponseBody(entity) };
 };
 
+export const patchBeforeTestRoute: PatchBeforeTestRoute = async ({
+  params,
+  body,
+}) => {
+  let updatedBeforeTest = await new BeforeTestsDAO().patch({
+    ...body,
+    id: params.id,
+  });
+
+  return {
+    status: 200,
+    body: convertToResponseBody(updatedBeforeTest),
+  };
+};
+
 const convertToResponseBody = (response: BeforeTestEntity) => {
   return {
     id: response.id,
@@ -46,4 +61,8 @@ type CreateBeforeTestRoute = AppRouteImplementation<
 
 type ReadBeforeTestRoute = AppRouteImplementation<
   typeof contract.readBeforeTest
+>;
+
+type PatchBeforeTestRoute = AppRouteImplementation<
+  typeof contract.patchBeforeTest
 >;
