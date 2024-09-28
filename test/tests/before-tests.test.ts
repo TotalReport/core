@@ -213,4 +213,73 @@ describe("before tests", () => {
       },
     });
   });
+
+  test("delete before test", async () => {
+    const launch = await generateLaunch();
+    const testContext = await new TestContextsGenerator(client).create({
+      launchId: launch.id,
+    });
+    const beforeTest = await new BeforeTestsGenerator(client).create({
+      launchId: launch.id,
+      testContextId: testContext.id,
+      title: "Text context 1",
+      createdTimestamp: new Date("2024-07-21T06:52:32Z"),
+      startedTimestamp: new Date("2024-07-21T06:52:35Z"),
+      finishedTimestamp: new Date("2024-07-21T06:53:21Z"),
+      statusId: DEFAULT_TEST_STATUSES.SUCCESS.id,
+      arguments: [
+        {
+          name: "Argument1",
+          type: "String",
+          value: "value1",
+        },
+        {
+          name: "Argument2",
+          type: "Integer",
+          value: "value2",
+        },
+      ],
+    });
+
+    const deleteLaunchResponse = await client.deleteBeforeTest({
+      params: { id: beforeTest.id },
+      body: undefined,
+    });
+
+    expect(deleteLaunchResponse).toEqual({
+      headers: expect.anything(),
+      status: 204,
+      body: expect.a(Blob),
+    });
+
+    const beforeTestByIdAfterDeleteResponse = await client.readBeforeTest({
+      params: { id: beforeTest.id },
+    });
+
+    expect(beforeTestByIdAfterDeleteResponse).toEqual({
+      headers: expect.anything(),
+      status: 404,
+      body: {},
+    });
+
+    const testContextByIdAfterDeleteResponse = await client.readTestContext({
+      params: { id: testContext.id },
+    });
+
+    expect(testContextByIdAfterDeleteResponse).toEqual({
+      headers: expect.anything(),
+      status: 200,
+      body: testContext,
+    });
+
+    const launchByIdAfterDeleteResponse = await client.readLaunch({
+      params: { id: beforeTest.launchId },
+    });
+
+    expect(launchByIdAfterDeleteResponse).toEqual({
+      headers: expect.anything(),
+      status: 200,
+      body: launch,
+    });
+  });
 });

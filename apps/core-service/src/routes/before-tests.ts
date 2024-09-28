@@ -40,6 +40,12 @@ export const patchBeforeTestRoute: PatchBeforeTestRoute = async ({
   };
 };
 
+export const deleteBeforeTestRoute: DeleteBeforeTestRoute = async ({ params }) => {
+  await new BeforeTestsDAO().deleteById(params.id);
+
+  return { status: 204, body: undefined };
+};
+
 const convertToResponseBody = (response: BeforeTestEntity) => {
   return {
     id: response.id,
@@ -65,4 +71,8 @@ type ReadBeforeTestRoute = AppRouteImplementation<
 
 type PatchBeforeTestRoute = AppRouteImplementation<
   typeof contract.patchBeforeTest
+>;
+
+type DeleteBeforeTestRoute = AppRouteImplementation<
+  typeof contract.deleteBeforeTest
 >;

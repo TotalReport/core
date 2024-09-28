@@ -30,6 +30,10 @@ export class BeforeTestArgumentsDAO {
   async findByBeforeTestId(beforeTestId: string) {
     return await this.db.select().from(beforeTestArguments).where(eq(beforeTestArguments.beforeTestId, beforeTestId));
   }
+
+  async deleteByBeforeTestId(beforeTestId: string) {
+    return await this.db.delete(beforeTestArguments).where(eq(beforeTestArguments.beforeTestId, beforeTestId));
+  }
 }
 
 export type CreateBeforeTestArgumentsParameters = {

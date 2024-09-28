@@ -6,7 +6,7 @@ import express from "express";
 import { createAfterTestStep } from "./routes/after-test-steps.js";
 import { createAfterTest } from "./routes/after-tests.js";
 import { createBeforeTestStep } from "./routes/before-test-steps.js";
-import { createBeforeTestRoute, patchBeforeTestRoute, readBeforeTestRoute } from "./routes/before-tests.js";
+import { createBeforeTestRoute, deleteBeforeTestRoute, patchBeforeTestRoute, readBeforeTestRoute } from "./routes/before-tests.js";
 import { healthCheckRoute, setApiStarted } from "./routes/healthcheck.js";
 import {
   createLaunchRoute,
@@ -63,6 +63,7 @@ const router = s.router(contract, {
   createBeforeTest: createBeforeTestRoute,
   readBeforeTest: readBeforeTestRoute,
   patchBeforeTest: patchBeforeTestRoute,
+  deleteBeforeTest: deleteBeforeTestRoute,
 
   createBeforeTestStep: createBeforeTestStep,
 

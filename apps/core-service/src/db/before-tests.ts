@@ -166,6 +166,18 @@ export class BeforeTestsDAO {
       });
     });
   }
+
+  /**
+   * Delete a before test entity by id.
+   *
+   * @param id Id of the before test entity.
+   */
+  async deleteById(id: string): Promise<void> {
+    this.db.transaction(async (tx) => {
+      await new BeforeTestArgumentsDAO(tx).deleteByBeforeTestId(id);
+      await tx.delete(beforeTests).where(eq(beforeTests.id, id));
+    });
+  }
 }
 
 export type CreateBeforeTestArguments = {
@@ -184,12 +196,14 @@ export type CreateBeforeTestArguments = {
 };
 
 export type BeforeTestEntity = NoNullField<BeforeTestRow> & {
-  arguments: {
-    id: string;
-    name: string;
-    type: string;
-    value: string | null;
-  }[] | undefined;
+  arguments:
+    | {
+        id: string;
+        name: string;
+        type: string;
+        value: string | null;
+      }[]
+    | undefined;
 };
 
 export type PatchBeforeTest = {
