@@ -4,22 +4,22 @@ import { z } from "zod";
 export const CreateBeforeTestStep = z.object({
   beforeTestId: z.string().uuid(),
   title: z.string(),
-  createdTimestamp: z.string().optional(),
-  startedTimestamp: z.string().optional(),
-  finishedTimestamp: z.string().optional(),
+  createdTimestamp: z.coerce.date().optional(),
+  startedTimestamp: z.coerce.date().optional(),
+  finishedTimestamp: z.coerce.date().optional(),
   isSuccessful: z.boolean().optional(),
-  errorMessage: z.string().optional()
+  errorMessage: z.string().optional(),
 });
 
 export const BeforeTestStep = z.object({
   beforeTestId: z.string().uuid(),
   id: z.number().int(),
   title: z.string(),
-  createdTimestamp: z.string().optional(),
-  startedTimestamp: z.string().optional(),
-  finishedTimestamp: z.string().optional(),
+  createdTimestamp: z.string().datetime({ offset: true }).optional(),
+  startedTimestamp: z.string().datetime({ offset: true }).optional(),
+  finishedTimestamp: z.string().datetime({ offset: true }).optional(),
   isSuccessful: z.boolean().optional(),
-  errorMessage: z.string().optional()
+  errorMessage: z.string().optional(),
 });
 
 export const createBeforeTestStep = initContract().mutation({
@@ -29,5 +29,17 @@ export const createBeforeTestStep = initContract().mutation({
   body: CreateBeforeTestStep,
   responses: {
     201: BeforeTestStep,
+  },
+});
+
+export const readBeforeTestStep = initContract().query({
+  summary: "Get the before test step by ID.",
+  method: "GET",
+  path: "/v1/before-test-steps/:id",
+  pathParams: z.object({
+    id: z.coerce.number().int(),
+  }),
+  responses: {
+    200: BeforeTestStep,
   },
 });

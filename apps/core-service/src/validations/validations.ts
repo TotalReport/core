@@ -1,9 +1,11 @@
 import {
   FinishedTimestampBeforeStartedTimestampError,
   FinishedTimestampIsSetButStatusIsNotSetError,
+  FinishedTimestampIsSetButSuccessIsNotSetError,
   StartedTimestampBeforeCreatedTimestampError,
   StartedTimestampIsNotSetButFinishedTimestampIsSetError,
   StatusIsSetButFinishedTimestampIsNotSetError,
+  SuccessIsSetButFinishedTimestampIsNotSetError,
   TitleIsEmptyError,
 } from "../errors/errors.js";
 
@@ -55,5 +57,21 @@ export const validateTimestampsAndStatus = (args: {
 
   if (args.statusId != undefined && args.finishedTimestamp == undefined) {
     throw new StatusIsSetButFinishedTimestampIsNotSetError();
+  }
+};
+
+export const validateTimestampsAndSuccess = (args: {
+  createdTimestamp: Date;
+  startedTimestamp?: Date | null;
+  finishedTimestamp?: Date | null;
+  isSuccessful?: boolean | null;
+}) => {
+  validateTimestamps(args);
+  if (args.finishedTimestamp != null && args.isSuccessful == null) {
+    throw new FinishedTimestampIsSetButSuccessIsNotSetError();
+  }
+
+  if (args.isSuccessful != undefined && args.finishedTimestamp == undefined) {
+    throw new SuccessIsSetButFinishedTimestampIsNotSetError();
   }
 };

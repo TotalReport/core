@@ -15,6 +15,7 @@
   "dependencies": {
     "@total-report/core-contract": "workspace:*",
     "@total-report/core-schema": "workspace:*",
+    "@ts-rest/core": "^3.45.2",
     "@ts-rest/express": "^3.45.2",
     "@ts-rest/open-api": "^3.45.2",
     "body-parser": "^1.20.2",

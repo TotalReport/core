@@ -3,7 +3,7 @@ import { initContract } from "@ts-rest/core";
 import { z } from "zod";
 import { createAfterTestStep } from "./after-test-steps.js";
 import { createAfterTest } from "./after-tests.js";
-import { createBeforeTestStep } from "./before-test-steps.js";
+import { createBeforeTestStep, readBeforeTestStep } from "./before-test-steps.js";
 import { createBeforeTest, deleteBeforeTest, patchBeforeTest, readBeforeTest } from "./before-tests.js";
 import {
   createLaunch,
@@ -56,6 +56,7 @@ export const contract = c.router({
   deleteBeforeTest: deleteBeforeTest,
 
   createBeforeTestStep: createBeforeTestStep,
+  readBeforeTestStep: readBeforeTestStep,
 
   createTest: createTest,
   createTestStep: createTestStep,

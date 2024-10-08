@@ -88,14 +88,32 @@ export class FinishedTimestampIsSetButStatusIsNotSetError extends ValidationErro
   }
 }
 
+export class FinishedTimestampIsSetButSuccessIsNotSetError extends ValidationError {
+  constructor() {
+    super("Finished timestamp is set but success is not set.");
+  }
+}
+
 export class StatusIsSetButFinishedTimestampIsNotSetError extends ValidationError {
   constructor() {
     super("Status is set but finished timestamp is not set.");
   }
 }
 
+export class SuccessIsSetButFinishedTimestampIsNotSetError extends ValidationError {
+  constructor() {
+    super("Success is set but finished timestamp is not set.");
+  }
+}
+
 export class BeforeTestNotFoundError extends ValidationError {
   constructor(beforeTestId: string) {
     super("Before test with id " + beforeTestId + " is not found.");
+  }
+}
+
+export class BeforeTestStepNotFoundError extends ValidationError {
+  constructor(beforeTestStepId: number) {
+    super("Before test step with id " + beforeTestStepId + " is not found.");
   }
 }
