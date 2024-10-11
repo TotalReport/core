@@ -103,12 +103,12 @@ export type CreateBeforeTestStep = {
 
 export type PatchBeforeTestStep = {
   id: number;
-  title?: string;
-  createdTimestamp?: Date;
-  startedTimestamp?: Date | null;
-  finishedTimestamp?: Date | null;
-  isSuccessful?: boolean | null;
-  errorMessage?: string | null;
+  title: string | undefined;
+  createdTimestamp: Date | undefined;
+  startedTimestamp: Date | null | undefined;
+  finishedTimestamp: Date | null | undefined;
+  isSuccessful: boolean | null | undefined;
+  errorMessage: string | null | undefined;
 };
 
 export type BeforeTestStepEntity = ReplaceNullWithUndefined<BeforeTestStepRow>;
@@ -123,10 +123,22 @@ const applyPatch = (args: {
   patch: UpdateableFields;
 }): BeforeTestStepRow => {
   return {
-    ...args.row,
-    ...args.patch,
+    id: args.row.id,
+    beforeTestId : args.row.beforeTestId,
+    title: firstNotUndefined(args.patch.title, args.row.title),
+    createdTimestamp: firstNotUndefined(args.patch.createdTimestamp, args.row.createdTimestamp),
+    startedTimestamp: firstNotUndefined(args.patch.startedTimestamp, args.row.startedTimestamp),
+    finishedTimestamp: firstNotUndefined(args.patch.finishedTimestamp, args.row.finishedTimestamp),
+    isSuccessful: firstNotUndefined(args.patch.isSuccessful, args.row.isSuccessful),
+    errorMessage: firstNotUndefined(args.patch.errorMessage, args.row.errorMessage),
   };
 };
+
+const firstNotUndefined = <T>(arg1: NonUndefined<T> | undefined, arg2: NonUndefined<T>): NonUndefined<T> => {
+  return arg1 === undefined ? arg2 : arg1;
+}
+
+type NonUndefined<T> = T extends undefined ? never : T;
 
 const convertRowToEntity = (row: BeforeTestStepRow): BeforeTestStepEntity => {
   return {
@@ -134,12 +146,16 @@ const convertRowToEntity = (row: BeforeTestStepRow): BeforeTestStepEntity => {
     id: row.id,
     title: row.title,
     createdTimestamp: row.createdTimestamp,
-    startedTimestamp: row.startedTimestamp ?? undefined,
-    finishedTimestamp: row.finishedTimestamp ?? undefined,
-    isSuccessful: row.isSuccessful ?? undefined,
-    errorMessage: row.errorMessage ?? undefined,
+    startedTimestamp: nullToUndefined(row.startedTimestamp),
+    finishedTimestamp: nullToUndefined(row.finishedTimestamp),
+    isSuccessful: nullToUndefined(row.isSuccessful),
+    errorMessage: nullToUndefined(row.errorMessage),
   };
 };
+
+const nullToUndefined = <T>(value: NonNullable<T> | null): NonNullable<T> | undefined => {
+  return value === null ? undefined : value;
+}
 
 const takeUpdateableFields = (args: PatchBeforeTestStep): UpdateableFields => {
   return {
@@ -155,12 +171,12 @@ const takeUpdateableFields = (args: PatchBeforeTestStep): UpdateableFields => {
 type BeforeTestStepRow = typeof beforeTestSteps.$inferSelect;
 
 type UpdateableFields = {
-  title?: string;
-  createdTimestamp?: Date;
-  startedTimestamp?: Date | null;
-  finishedTimestamp?: Date | null;
-  isSuccessful?: boolean | null;
-  errorMessage?: string | null;
+  title: string | undefined;
+  createdTimestamp: Date | undefined;
+  startedTimestamp: Date | null | undefined;
+  finishedTimestamp: Date | null | undefined;
+  isSuccessful: boolean | null | undefined;
+  errorMessage: string | null | undefined;
 };
 
 type ReplaceNullWithUndefined<T extends Object> = {

@@ -22,7 +22,18 @@ export const BeforeTestStep = z.object({
   errorMessage: z.string().optional(),
 });
 
-export const createBeforeTestStep = initContract().mutation({
+const PatchBeforeTestStep = z.object({
+  title: z.string().min(1).max(256).optional(),
+  createdTimestamp: z.coerce.date().optional(),
+  startedTimestamp: z.coerce.date().nullish(),
+  finishedTimestamp: z.coerce.date().nullish(),
+  isSuccessful: z.boolean().nullish(),
+  errorMessage: z.string().nullish(),
+});
+
+const contract = initContract();
+
+export const createBeforeTestStep = contract.mutation({
   summary: "Create the before test step.",
   method: "POST",
   path: "/v1/before-test-steps",
@@ -32,7 +43,7 @@ export const createBeforeTestStep = initContract().mutation({
   },
 });
 
-export const readBeforeTestStep = initContract().query({
+export const readBeforeTestStep = contract.query({
   summary: "Get the before test step by ID.",
   method: "GET",
   path: "/v1/before-test-steps/:id",
@@ -41,5 +52,19 @@ export const readBeforeTestStep = initContract().query({
   }),
   responses: {
     200: BeforeTestStep,
+  },
+});
+
+export const patchBeforeTestStep = contract.mutation({
+  summary: "Patch the before test step fields.",
+  method: "PATCH",
+  path: "/v1/before-tests-steps/:id",
+  pathParams: z.object({
+    id: z.coerce.number().int(),
+  }),
+  body: PatchBeforeTestStep,
+  responses: {
+    200: BeforeTestStep,
+    404: z.object({}),
   },
 });
