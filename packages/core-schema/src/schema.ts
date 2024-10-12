@@ -85,8 +85,8 @@ export const tests = pgTable("tests", {
 export const testArguments = pgTable("test_arguments", {
   testId: uuid("test_id").references(() => tests.id).notNull(),
   id: uuid("id").primaryKey(),
-  name: varchar("name", { length: 256 }).notNull(),
   index: integer("index").notNull(),
+  name: varchar("name", { length: 256 }).notNull(),
   type: varchar("type", { length: 256 }).notNull(),
   value: text("value"),
 });
@@ -107,9 +107,9 @@ export const afterTests = pgTable("after_tests", {
   testContextId: bigint("test_context_id", { mode: 'number' }).references(() => testContexts.id),
   id: uuid("id").primaryKey(),
   title: varchar("title", { length: 256 }).notNull(),
-  createdTimestamp: timestamp("created_timestamp", { withTimezone: false, mode: "string" }).notNull(),
-  startedTimestamp: timestamp("started_timestamp", { withTimezone: false, mode: "string" }),
-  finishedTimestamp: timestamp("finished_timestamp", { withTimezone: false, mode: "string" }),
+  createdTimestamp: timestamp("created_timestamp", { withTimezone: false, mode: "date" }).notNull(),
+  startedTimestamp: timestamp("started_timestamp", { withTimezone: false, mode: "date" }),
+  finishedTimestamp: timestamp("finished_timestamp", { withTimezone: false, mode: "date" }),
   statusId: varchar("status_id").references(() => testStatuses.id),
   argumentsHash: uuid("arguments_hash"),
 });
@@ -117,8 +117,8 @@ export const afterTests = pgTable("after_tests", {
 export const afterTestArguments = pgTable("after_test_arguments", {
   afterTestId: uuid("before_test_id").references(() => afterTests.id).notNull(),
   id: uuid("id").primaryKey(),
-  name: varchar("name", { length: 256 }).notNull(),
   index: integer("index").notNull(),
+  name: varchar("name", { length: 256 }).notNull(),
   type: varchar("type", { length: 256 }).notNull(),
   value: text("value"),
 });

@@ -1,8 +1,8 @@
 CREATE TABLE IF NOT EXISTS "after_test_arguments" (
 	"before_test_id" uuid NOT NULL,
 	"id" uuid PRIMARY KEY NOT NULL,
-	"name" varchar(256) NOT NULL,
 	"index" integer NOT NULL,
+	"name" varchar(256) NOT NULL,
 	"type" varchar(256) NOT NULL,
 	"value" text
 );
@@ -87,8 +87,8 @@ CREATE TABLE IF NOT EXISTS "reports" (
 CREATE TABLE IF NOT EXISTS "test_arguments" (
 	"test_id" uuid NOT NULL,
 	"id" uuid PRIMARY KEY NOT NULL,
-	"name" varchar(256) NOT NULL,
 	"index" integer NOT NULL,
+	"name" varchar(256) NOT NULL,
 	"type" varchar(256) NOT NULL,
 	"value" text
 );

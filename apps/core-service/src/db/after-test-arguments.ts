@@ -2,7 +2,8 @@ import { afterTestArguments } from "@total-report/core-schema/schema";
 import { NodePgQueryResultHKT } from "drizzle-orm/node-postgres/session";
 import { PgDatabase } from "drizzle-orm/pg-core/db";
 import { v4 as uuidv4 } from "uuid";
-import { db as defaultDB } from "./setup.js";
+import { db as defaultDB } from "../db/setup.js";
+import { eq } from "drizzle-orm";
 
 export class AfterTestArgumentsDAO {
   db: PgDatabase<NodePgQueryResultHKT, Record<string, unknown>>;
@@ -24,6 +25,14 @@ export class AfterTestArgumentsDAO {
         };
       })
     ).returning();
+  }
+
+  async findByAfterTestId(afterTestId: string) {
+    return await this.db.select().from(afterTestArguments).where(eq(afterTestArguments.afterTestId, afterTestId));
+  }
+
+  async deleteByAfterTestId(afterTestId: string) {
+    return await this.db.delete(afterTestArguments).where(eq(afterTestArguments.afterTestId, afterTestId));
   }
 }
 

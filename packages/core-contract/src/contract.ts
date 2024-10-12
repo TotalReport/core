@@ -2,18 +2,43 @@ import { extendZodWithOpenApi } from "@anatine/zod-openapi";
 import { initContract } from "@ts-rest/core";
 import { z } from "zod";
 import { createAfterTestStep } from "./after-test-steps.js";
-import { createAfterTest } from "./after-tests.js";
-import { createBeforeTestStep, deleteBeforeTestStep, patchBeforeTestStep, readBeforeTestStep } from "./before-test-steps.js";
-import { createBeforeTest, deleteBeforeTest, patchBeforeTest, readBeforeTest } from "./before-tests.js";
+import {
+  createAfterTest,
+  deleteAfterTest,
+  patchAfterTest,
+  readAfterTest,
+} from "./after-tests.js";
+import {
+  createBeforeTestStep,
+  deleteBeforeTestStep,
+  patchBeforeTestStep,
+  readBeforeTestStep,
+} from "./before-test-steps.js";
+import {
+  createBeforeTest,
+  deleteBeforeTest,
+  patchBeforeTest,
+  readBeforeTest,
+} from "./before-tests.js";
 import {
   createLaunch,
   deleteLaunch,
-  readLaunch,
   patchLaunch,
+  readLaunch,
 } from "./launches.js";
 import { createReport, deleteReport, readReport } from "./reports.js";
-import { createTestContext, deleteTestContext, patchTestContext, readTestContext } from "./test-contexts.js";
-import { createTestStep, deleteTestStep, patchTestStep, readTestStep } from "./test-steps.js";
+import {
+  createTestContext,
+  deleteTestContext,
+  patchTestContext,
+  readTestContext,
+} from "./test-contexts.js";
+import {
+  createTestStep,
+  deleteTestStep,
+  patchTestStep,
+  readTestStep,
+} from "./test-steps.js";
 import { createTest, deleteTest, patchTest, readTest } from "./tests.js";
 
 extendZodWithOpenApi(z);
@@ -71,5 +96,9 @@ export const contract = c.router({
   deleteTestStep: deleteTestStep,
 
   createAfterTest: createAfterTest,
+  readAfterTest: readAfterTest,
+  patchAfterTest: patchAfterTest,
+  deleteAfterTest: deleteAfterTest,
+
   createAfterTestStep: createAfterTestStep,
 });
