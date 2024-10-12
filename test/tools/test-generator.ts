@@ -15,35 +15,42 @@ export class TestsGenerator {
     this.client = client;
   }
 
-  async create(args: CreateTestArgs = undefined) {
+  async create(args: CreateTestArgs | undefined = undefined) {
     const launchId = args?.launchId ?? (await generateLaunch()).id;
+
     const title =
       args?.title ??
       faker.word.noun() + " " + faker.word.verb() + " " + faker.date.recent();
+
     const response = await client.createTest({
       body: {
+        ...args,
         launchId: launchId,
         title: title,
-        arguments: args?.arguments,
       },
     });
+
     if (response.status !== 201) {
       throw new Error(
-        "Failed to create test. Server response: " + response.body
+        `Failed to create test. Server response status ${response.status} body ${JSON.stringify(response.body)}`
       );
     }
+
     return response.body;
   }
 }
 
-type CreateTestArgs =
-  | {
-      title?: string;
-      launchId?: string;
-      arguments?: Array<{
-        name: string;
-        type: string;
-        value: string;
-      }>;
-    }
-  | undefined;
+type CreateTestArgs = {
+  launchId?: string;
+  testContextId?: number;
+  createdTimestamp?: Date;
+  startedTimestamp?: Date;
+  finishedTimestamp?: Date;
+  statusId?: string;
+  title?: string;
+  arguments?: Array<{
+    name: string;
+    type: string;
+    value: string;
+  }>;
+};

@@ -112,6 +112,12 @@ export class BeforeTestNotFoundError extends ValidationError {
   }
 }
 
+export class TestNotFoundError extends ValidationError {
+  constructor(testId: string) {
+    super("Test with id " + testId + " is not found.");
+  }
+}
+
 export class BeforeTestStepNotFoundError extends ValidationError {
   constructor(beforeTestStepId: number) {
     super("Before test step with id " + beforeTestStepId + " is not found.");

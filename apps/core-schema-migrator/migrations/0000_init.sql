@@ -51,13 +51,13 @@ CREATE TABLE IF NOT EXISTS "before_test_steps" (
 );
 --> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "before_tests" (
+	"launch_id" uuid NOT NULL,
+	"test_context_id" bigint,
 	"id" uuid PRIMARY KEY NOT NULL,
 	"title" varchar(256) NOT NULL,
 	"created_timestamp" timestamp NOT NULL,
 	"started_timestamp" timestamp,
 	"finished_timestamp" timestamp,
-	"launch_id" uuid NOT NULL,
-	"test_context_id" bigint,
 	"status_id" varchar,
 	"arguments_hash" uuid
 );

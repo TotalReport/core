@@ -1,5 +1,5 @@
 {
-  "id": "c5ad617e-bb3d-43f7-943d-d95fd5d5a79d",
+  "id": "d12cee1c-d46f-4557-bfd2-ca2a9ac0ac11",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -376,6 +376,18 @@
       "name": "before_tests",
       "schema": "",
       "columns": {
+        "launch_id": {
+          "name": "launch_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "test_context_id": {
+          "name": "test_context_id",
+          "type": "bigint",
+          "primaryKey": false,
+          "notNull": false
+        },
         "id": {
           "name": "id",
           "type": "uuid",
@@ -403,18 +415,6 @@
         "finished_timestamp": {
           "name": "finished_timestamp",
           "type": "timestamp",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "launch_id": {
-          "name": "launch_id",
-          "type": "uuid",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "test_context_id": {
-          "name": "test_context_id",
-          "type": "bigint",
           "primaryKey": false,
           "notNull": false
         },

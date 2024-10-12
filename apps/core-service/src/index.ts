@@ -2,7 +2,8 @@ import { contract } from "@total-report/core-contract/contract";
 import { createExpressEndpoints, initServer } from "@ts-rest/express";
 import bodyParser from "body-parser";
 import cors from "cors";
-import express from "express";
+import express, { NextFunction, Request, Response } from "express";
+import { ValidationError } from "./errors/errors.js";
 import { createAfterTestStep } from "./routes/after-test-steps.js";
 import { createAfterTest } from "./routes/after-tests.js";
 import { createBeforeTestStepRoute, deleteBeforeTestStepRoute, patchBeforeTestStepRoute, readBeforeTestStepRoute } from "./routes/before-test-steps.js";
@@ -27,9 +28,7 @@ import {
   readTestContextRoute,
 } from "./routes/test-contexts.js";
 import { createTestStep } from "./routes/test-steps.js";
-import { createTest } from "./routes/tests.js";
-import { NextFunction, Request, Response } from "express";
-import { ValidationError } from "./errors/errors.js";
+import { createTestRoute, deleteTestRoute, patchTestRoute, readTestRoute } from "./routes/tests.js";
 
 const { urlencoded, json } = bodyParser;
 
@@ -70,7 +69,11 @@ const router = s.router(contract, {
   patchBeforeTestStep: patchBeforeTestStepRoute,
   deleteBeforeTestStep: deleteBeforeTestStepRoute,
 
-  createTest: createTest,
+  createTest: createTestRoute,
+  readTest: readTestRoute,
+  patchTest: patchTestRoute,
+  deleteTest: deleteTestRoute,  
+
   createTestStep: createTestStep,
 
   createAfterTest: createAfterTest,

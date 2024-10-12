@@ -39,13 +39,13 @@ export const testContexts = pgTable("test_contexts", {
 });
 
 export const beforeTests = pgTable("before_tests", {
+  launchId: uuid("launch_id").references(() => launches.id).notNull(),
+  testContextId: bigint("test_context_id", { mode: 'number' }).references(() => testContexts.id),
   id: uuid("id").primaryKey(),
   title: varchar("title", { length: 256 }).notNull(),
   createdTimestamp: timestamp("created_timestamp", { withTimezone: false, mode: "date" }).notNull(),
   startedTimestamp: timestamp("started_timestamp", { withTimezone: false, mode: "date" }),
   finishedTimestamp: timestamp("finished_timestamp", { withTimezone: false, mode: "date" }),
-  launchId: uuid("launch_id").references(() => launches.id).notNull(),
-  testContextId: bigint("test_context_id", { mode: 'number' }).references(() => testContexts.id),
   statusId: varchar("status_id").references(() => testStatuses.id),
   argumentsHash: uuid("arguments_hash"),
 });
@@ -75,9 +75,9 @@ export const tests = pgTable("tests", {
   testContextId: bigint("test_context_id", { mode: 'number' }).references(() => testContexts.id),
   id: uuid("id").primaryKey(),
   title: varchar("title", { length: 256 }).notNull(),
-  createdTimestamp: timestamp("created_timestamp", { withTimezone: false, mode: "string" }).notNull(),
-  startedTimestamp: timestamp("started_timestamp", { withTimezone: false, mode: "string" }),
-  finishedTimestamp: timestamp("finished_timestamp", { withTimezone: false, mode: "string" }),
+  createdTimestamp: timestamp("created_timestamp", { withTimezone: false, mode: "date" }).notNull(),
+  startedTimestamp: timestamp("started_timestamp", { withTimezone: false, mode: "date" }),
+  finishedTimestamp: timestamp("finished_timestamp", { withTimezone: false, mode: "date" }),
   statusId: varchar("status_id").references(() => testStatuses.id),
   argumentsHash: uuid("arguments_hash"),
 });

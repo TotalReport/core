@@ -14,7 +14,7 @@ import {
 import { createReport, deleteReport, readReport } from "./reports.js";
 import { createTestContext, deleteTestContext, patchTestContext, readTestContext } from "./test-contexts.js";
 import { createTestStep } from "./test-steps.js";
-import { createTest } from "./tests.js";
+import { createTest, deleteTest, patchTest, readTest } from "./tests.js";
 
 extendZodWithOpenApi(z);
 
@@ -61,6 +61,10 @@ export const contract = c.router({
   deleteBeforeTestStep: deleteBeforeTestStep,
 
   createTest: createTest,
+  readTest: readTest,
+  patchTest: patchTest,
+  deleteTest: deleteTest,
+
   createTestStep: createTestStep,
   createAfterTest: createAfterTest,
   createAfterTestStep: createAfterTestStep,

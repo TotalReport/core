@@ -173,7 +173,7 @@ export class BeforeTestsDAO {
    * @param id Id of the before test entity.
    */
   async deleteById(id: string): Promise<void> {
-    this.db.transaction(async (tx) => {
+    await this.db.transaction(async (tx) => {
       await new BeforeTestArgumentsDAO(tx).deleteByBeforeTestId(id);
       await tx.delete(beforeTests).where(eq(beforeTests.id, id));
     });
