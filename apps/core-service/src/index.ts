@@ -5,7 +5,7 @@ import cors from "cors";
 import express from "express";
 import { createAfterTestStep } from "./routes/after-test-steps.js";
 import { createAfterTest } from "./routes/after-tests.js";
-import { createBeforeTestStep, patchBeforeTestStep, readBeforeTestStep } from "./routes/before-test-steps.js";
+import { createBeforeTestStepRoute, deleteBeforeTestStepRoute, patchBeforeTestStepRoute, readBeforeTestStepRoute } from "./routes/before-test-steps.js";
 import { createBeforeTestRoute, deleteBeforeTestRoute, patchBeforeTestRoute, readBeforeTestRoute } from "./routes/before-tests.js";
 import { healthCheckRoute, setApiStarted } from "./routes/healthcheck.js";
 import {
@@ -65,9 +65,10 @@ const router = s.router(contract, {
   patchBeforeTest: patchBeforeTestRoute,
   deleteBeforeTest: deleteBeforeTestRoute,
 
-  createBeforeTestStep: createBeforeTestStep,
-  readBeforeTestStep: readBeforeTestStep,
-  patchBeforeTestStep: patchBeforeTestStep,
+  createBeforeTestStep: createBeforeTestStepRoute,
+  readBeforeTestStep: readBeforeTestStepRoute,
+  patchBeforeTestStep: patchBeforeTestStepRoute,
+  deleteBeforeTestStep: deleteBeforeTestStepRoute,
 
   createTest: createTest,
   createTestStep: createTestStep,

@@ -3,12 +3,13 @@ import { AppRouteImplementation } from "@ts-rest/express";
 import {
   BeforeTestStepEntity,
   BeforeTestStepsDAO,
+  CreateBeforeTestStep,
   PatchBeforeTestStep,
 } from "../db/before-test-steps.js";
 import { ClientInferResponseBody } from "@ts-rest/core";
 import { ServerInferRequest, ServerInferResponses } from "@ts-rest/core";
 
-export const createBeforeTestStep: CreateBeforeTestStepRoute = async ({
+export const createBeforeTestStepRoute: CreateBeforeTestStepRoute = async ({
   body,
 }) => {
   const request = {
@@ -16,13 +17,17 @@ export const createBeforeTestStep: CreateBeforeTestStepRoute = async ({
     createdTimestamp: body.createdTimestamp ?? new Date(),
   };
 
+  const createBeforeTestArgs = createRequestToCreateArgs({ body: request });
+
   return {
     status: 201,
-    body: convertToResponseBody(await new BeforeTestStepsDAO().create(request)),
+    body: convertToResponseBody(
+      await new BeforeTestStepsDAO().create(createBeforeTestArgs)
+    ),
   };
 };
 
-export const readBeforeTestStep: ReadBeforeTestStepRoute = async ({
+export const readBeforeTestStepRoute: ReadBeforeTestStepRoute = async ({
   params,
 }) => {
   const beforeTestStep = await new BeforeTestStepsDAO().findById(params.id);
@@ -42,7 +47,7 @@ export const readBeforeTestStep: ReadBeforeTestStepRoute = async ({
   };
 };
 
-export const patchBeforeTestStep: PatchBeforeTestStepRoute = async (
+export const patchBeforeTestStepRoute: PatchBeforeTestStepRoute = async (
   request
 ) => {
   return {
@@ -50,6 +55,17 @@ export const patchBeforeTestStep: PatchBeforeTestStepRoute = async (
     body: convertToResponseBody(
       await new BeforeTestStepsDAO().patch(patchRequestToPatchArgs(request))
     ),
+  };
+};
+
+export const deleteBeforeTestStepRoute: DeleteBeforeTestStepRoute = async ({
+  params,
+}) => {
+  await new BeforeTestStepsDAO().deleteById(params.id);
+
+  return {
+    status: 204,
+    body: undefined,
   };
 };
 
@@ -63,6 +79,10 @@ type ReadBeforeTestStepRoute = AppRouteImplementation<
 
 type PatchBeforeTestStepRoute = AppRouteImplementation<
   typeof contract.patchBeforeTestStep
+>;
+
+type DeleteBeforeTestStepRoute = AppRouteImplementation<
+  typeof contract.deleteBeforeTestStep
 >;
 
 type BeforeTestStepResponseBody = ClientInferResponseBody<
@@ -85,9 +105,33 @@ export const convertToResponseBody = (
   };
 };
 
+type CreateBeforeTestStepInput = Omit<
+  ServerInferRequest<typeof contract.createBeforeTestStep>,
+  "body.createdTimestamp"
+> & { body: { createdTimestamp: Date } };
+
 type PatchBeforeTestStepInput = ServerInferRequest<
   typeof contract.patchBeforeTestStep
 >;
+
+type Override<
+  Type,
+  NewType extends { [key in keyof Type]?: NewType[key] },
+> = Omit<Type, keyof NewType> & NewType;
+
+const createRequestToCreateArgs = (
+  input: CreateBeforeTestStepInput
+): CreateBeforeTestStep => {
+  return {
+    beforeTestId: input.body.beforeTestId,
+    title: input.body.title,
+    createdTimestamp: input.body.createdTimestamp,
+    startedTimestamp: input.body.startedTimestamp,
+    finishedTimestamp: input.body.finishedTimestamp,
+    isSuccessful: input.body.isSuccessful,
+    errorMessage: input.body.errorMessage,
+  };
+};
 
 const patchRequestToPatchArgs = (
   input: PatchBeforeTestStepInput

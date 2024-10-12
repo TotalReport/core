@@ -68,3 +68,17 @@ export const patchBeforeTestStep = contract.mutation({
     404: z.object({}),
   },
 });
+
+export const deleteBeforeTestStep = contract.mutation({
+  summary: "Delete the before test step by ID.",
+  method: "DELETE",
+  path: "/v1/before-tests-steps/:id",
+  pathParams: z.object({
+    id: z.coerce.number().int(),
+  }),
+  body: contract.type<void>(),
+  responses: {
+    204: contract.noBody(),
+    404: z.object({}),
+  },
+});

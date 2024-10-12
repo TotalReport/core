@@ -18,6 +18,12 @@ export class BeforeTestStepsDAO {
     this.db = db;
   }
 
+  /**
+   * Creates a before test step.
+   *
+   * @param args The fields of the before test step to create.
+   * @returns The created before test step.
+   */
   async create(args: CreateBeforeTestStep): Promise<BeforeTestStepEntity> {
     validate(args);
 
@@ -34,6 +40,12 @@ export class BeforeTestStepsDAO {
     };
   }
 
+  /**
+   * Finds a before test step by its ID.
+   *
+   * @param id The ID of the before test step to find.
+   * @returns The before test step.
+   */
   async findById(id: number): Promise<BeforeTestStepEntity | undefined> {
     const row = await this.db
       .select()
@@ -48,6 +60,12 @@ export class BeforeTestStepsDAO {
     return convertRowToEntity(row);
   }
 
+  /**
+   * Finds all before test steps for a before test.
+   *
+   * @param beforeTestId The ID of the before test to find steps for.
+   * @returns The before test steps.
+   */
   async findByBeforeTestId(beforeTestId: string): Promise<BeforeTestStepRow[]> {
     return await this.db
       .select()
@@ -55,6 +73,12 @@ export class BeforeTestStepsDAO {
       .where(eq(beforeTestSteps.beforeTestId, beforeTestId));
   }
 
+  /**
+   * Updates a before test step.
+   *
+   * @param args The fields to update.
+   * @returns The updated before test step.
+   */
   async patch(args: PatchBeforeTestStep): Promise<BeforeTestStepEntity> {
     return await this.db.transaction(async (tx) => {
       const row = await tx
@@ -80,12 +104,22 @@ export class BeforeTestStepsDAO {
     });
   }
 
+  /**
+   * Deletes all before test steps for a before test.
+   *
+   * @param beforeTestId The ID of the before test to delete steps for.
+   */
   async deleteByBeforeTestId(beforeTestId: string): Promise<void> {
     await this.db
       .delete(beforeTestSteps)
       .where(eq(beforeTestSteps.beforeTestId, beforeTestId));
   }
 
+  /**
+   * Deletes a before test step by its ID.
+   *
+   * @param id The ID of the before test step to delete.
+   */
   async deleteById(id: number): Promise<void> {
     await this.db.delete(beforeTestSteps).where(eq(beforeTestSteps.id, id));
   }
@@ -95,10 +129,10 @@ export type CreateBeforeTestStep = {
   beforeTestId: string;
   title: string;
   createdTimestamp: Date;
-  startedTimestamp?: Date;
-  finishedTimestamp?: Date;
-  isSuccessful?: boolean;
-  errorMessage?: string;
+  startedTimestamp: Date | undefined;
+  finishedTimestamp: Date | undefined;
+  isSuccessful: boolean | undefined;
+  errorMessage: string | undefined;
 };
 
 export type PatchBeforeTestStep = {
@@ -124,19 +158,37 @@ const applyPatch = (args: {
 }): BeforeTestStepRow => {
   return {
     id: args.row.id,
-    beforeTestId : args.row.beforeTestId,
+    beforeTestId: args.row.beforeTestId,
     title: firstNotUndefined(args.patch.title, args.row.title),
-    createdTimestamp: firstNotUndefined(args.patch.createdTimestamp, args.row.createdTimestamp),
-    startedTimestamp: firstNotUndefined(args.patch.startedTimestamp, args.row.startedTimestamp),
-    finishedTimestamp: firstNotUndefined(args.patch.finishedTimestamp, args.row.finishedTimestamp),
-    isSuccessful: firstNotUndefined(args.patch.isSuccessful, args.row.isSuccessful),
-    errorMessage: firstNotUndefined(args.patch.errorMessage, args.row.errorMessage),
+    createdTimestamp: firstNotUndefined(
+      args.patch.createdTimestamp,
+      args.row.createdTimestamp
+    ),
+    startedTimestamp: firstNotUndefined(
+      args.patch.startedTimestamp,
+      args.row.startedTimestamp
+    ),
+    finishedTimestamp: firstNotUndefined(
+      args.patch.finishedTimestamp,
+      args.row.finishedTimestamp
+    ),
+    isSuccessful: firstNotUndefined(
+      args.patch.isSuccessful,
+      args.row.isSuccessful
+    ),
+    errorMessage: firstNotUndefined(
+      args.patch.errorMessage,
+      args.row.errorMessage
+    ),
   };
 };
 
-const firstNotUndefined = <T>(arg1: NonUndefined<T> | undefined, arg2: NonUndefined<T>): NonUndefined<T> => {
+const firstNotUndefined = <T>(
+  arg1: NonUndefined<T> | undefined,
+  arg2: NonUndefined<T>
+): NonUndefined<T> => {
   return arg1 === undefined ? arg2 : arg1;
-}
+};
 
 type NonUndefined<T> = T extends undefined ? never : T;
 
@@ -153,9 +205,11 @@ const convertRowToEntity = (row: BeforeTestStepRow): BeforeTestStepEntity => {
   };
 };
 
-const nullToUndefined = <T>(value: NonNullable<T> | null): NonNullable<T> | undefined => {
+const nullToUndefined = <T>(
+  value: NonNullable<T> | null
+): NonNullable<T> | undefined => {
   return value === null ? undefined : value;
-}
+};
 
 const takeUpdateableFields = (args: PatchBeforeTestStep): UpdateableFields => {
   return {
