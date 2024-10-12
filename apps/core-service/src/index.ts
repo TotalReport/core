@@ -27,7 +27,7 @@ import {
   patchTestContextRoute,
   readTestContextRoute,
 } from "./routes/test-contexts.js";
-import { createTestStep } from "./routes/test-steps.js";
+import { createTestStepRoute, deleteTestStepRoute, patchTestStepRoute, readTestStepRoute } from "./routes/test-steps.js";
 import { createTestRoute, deleteTestRoute, patchTestRoute, readTestRoute } from "./routes/tests.js";
 
 const { urlencoded, json } = bodyParser;
@@ -74,7 +74,10 @@ const router = s.router(contract, {
   patchTest: patchTestRoute,
   deleteTest: deleteTestRoute,  
 
-  createTestStep: createTestStep,
+  createTestStep: createTestStepRoute,
+  readTestStep: readTestStepRoute,
+  patchTestStep: patchTestStepRoute,
+  deleteTestStep: deleteTestStepRoute,
 
   createAfterTest: createAfterTest,
   createAfterTestStep: createAfterTestStep,

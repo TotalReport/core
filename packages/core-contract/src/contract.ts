@@ -13,7 +13,7 @@ import {
 } from "./launches.js";
 import { createReport, deleteReport, readReport } from "./reports.js";
 import { createTestContext, deleteTestContext, patchTestContext, readTestContext } from "./test-contexts.js";
-import { createTestStep } from "./test-steps.js";
+import { createTestStep, deleteTestStep, patchTestStep, readTestStep } from "./test-steps.js";
 import { createTest, deleteTest, patchTest, readTest } from "./tests.js";
 
 extendZodWithOpenApi(z);
@@ -66,6 +66,10 @@ export const contract = c.router({
   deleteTest: deleteTest,
 
   createTestStep: createTestStep,
+  readTestStep: readTestStep,
+  patchTestStep: patchTestStep,
+  deleteTestStep: deleteTestStep,
+
   createAfterTest: createAfterTest,
   createAfterTestStep: createAfterTestStep,
 });
