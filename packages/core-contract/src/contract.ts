@@ -1,7 +1,12 @@
 import { extendZodWithOpenApi } from "@anatine/zod-openapi";
 import { initContract } from "@ts-rest/core";
 import { z } from "zod";
-import { createAfterTestStep } from "./after-test-steps.js";
+import {
+  createAfterTestStep,
+  deleteAfterTestStep,
+  patchAfterTestStep,
+  readAfterTestStep,
+} from "./after-test-steps.js";
 import {
   createAfterTest,
   deleteAfterTest,
@@ -101,4 +106,7 @@ export const contract = c.router({
   deleteAfterTest: deleteAfterTest,
 
   createAfterTestStep: createAfterTestStep,
+  readAfterTestStep: readAfterTestStep,
+  patchAfterTestStep: patchAfterTestStep,
+  deleteAfterTestStep: deleteAfterTestStep,
 });
