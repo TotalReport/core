@@ -42,7 +42,7 @@ export class TestContextsGenerator {
 }
 
 type CreateTestContext = {
-  launchId?: string;
+  launchId?: number;
   parentTestContextId?: number;
   title?: string;
   createdTimestamp?: Date;

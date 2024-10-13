@@ -2,7 +2,7 @@ import { initContract } from "@ts-rest/core";
 import { z } from "zod";
 
 export const CreateAfterTestStep = z.object({
-  afterTestId: z.string().uuid(),
+  afterTestId: z.number().int(),
   title: z.string(),
   createdTimestamp: z.coerce.date().optional(),
   startedTimestamp: z.coerce.date().optional(),
@@ -12,7 +12,7 @@ export const CreateAfterTestStep = z.object({
 });
 
 export const AfterTestStep = z.object({
-  afterTestId: z.string().uuid(),
+  afterTestId: z.number().int(),
   id: z.number().int(),
   title: z.string(),
   createdTimestamp: z.string().datetime({ offset: true }).optional(),

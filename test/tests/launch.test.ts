@@ -16,7 +16,7 @@ describe("launches", () => {
       headers: expect.anything(),
       status: 201,
       body: {
-        id: expect.a(String),
+        id: expect.a(Number),
         title: request.title,
         reportId: report.id,
         createdTimestamp: expect.isCloseToNow(3000),
@@ -41,7 +41,7 @@ describe("launches", () => {
       status: 201,
       body: {
         reportId: report.id,
-        id: expect.a(String),
+        id: expect.a(Number),
         title: request.title,
         createdTimestamp: request.createdTimestamp.toISOString(),
         startedTimestamp: request.startedTimestamp.toISOString(),
@@ -61,7 +61,7 @@ describe("launches", () => {
     };
     const createLaunchResponse = await client.createLaunch({ body: request });
     expect(createLaunchResponse.status).toEqual(201);
-    const launchId = (<{ id: string }>createLaunchResponse.body).id;
+    const launchId = (<{ id: number }>createLaunchResponse.body).id;
 
     const readLaunchById = await client.readLaunch({
       params: { id: launchId },

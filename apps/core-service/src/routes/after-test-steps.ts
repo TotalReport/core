@@ -1,13 +1,8 @@
 import { contract } from "@total-report/core-contract/contract";
+import { ClientInferResponseBody, ServerInferRequest } from "@ts-rest/core";
 import { AppRouteImplementation } from "@ts-rest/express";
-import {
-  AfterTestStepEntity,
-  AfterTestStepsDAO,
-  CreateAfterTestStep,
-  PatchAfterTestStep,
-} from "../db/after-test-steps.js";
-import { ClientInferResponseBody } from "@ts-rest/core";
-import { ServerInferRequest, ServerInferResponses } from "@ts-rest/core";
+import { AfterTestStepsDAO } from "../db/after-test-steps.js";
+import { CreateTestStep, PatchTestStep, TestStepEntity } from "../db-common/test-steps-common.js";
 
 export const createAfterTestStepRoute: CreateAfterTestStepRoute = async ({
   body,
@@ -91,10 +86,10 @@ type AfterTestStepResponseBody = ClientInferResponseBody<
 >;
 
 export const convertToResponseBody = (
-  afterTestStep: AfterTestStepEntity
+  afterTestStep: TestStepEntity
 ): AfterTestStepResponseBody => {
   return {
-    afterTestId: afterTestStep.afterTestId,
+    afterTestId: afterTestStep.testId,
     id: afterTestStep.id,
     title: afterTestStep.title,
     createdTimestamp: afterTestStep.createdTimestamp.toISOString(),
@@ -121,9 +116,9 @@ type Override<
 
 const createRequestToCreateArgs = (
   input: CreateAfterTestStepInput
-): CreateAfterTestStep => {
+): CreateTestStep => {
   return {
-    afterTestId: input.body.afterTestId,
+    testId: input.body.afterTestId,
     title: input.body.title,
     createdTimestamp: input.body.createdTimestamp,
     startedTimestamp: input.body.startedTimestamp,
@@ -135,7 +130,7 @@ const createRequestToCreateArgs = (
 
 const patchRequestToPatchArgs = (
   input: PatchAfterTestStepInput
-): PatchAfterTestStep => {
+): PatchTestStep => {
   return {
     id: input.params.id,
     title: input.body.title,

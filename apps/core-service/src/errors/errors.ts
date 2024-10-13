@@ -11,13 +11,13 @@ export class TitleIsEmptyError extends ValidationError {
 }
 
 export class ReportNotFoundError extends ValidationError {
-  constructor(reportId: string) {
+  constructor(reportId: number) {
     super("Report with id " + reportId + " is not found.");
   }
 }
 
 export class LaunchNotFoundError extends ValidationError {
-  constructor(launchId: string) {
+  constructor(launchId: number) {
     super("Launch with id " + launchId + " is not found.");
   }
 }
@@ -61,8 +61,8 @@ export class FinishedTimestampBeforeStartedTimestampError extends ValidationErro
 export class ParentTestContextBelongsToDifferentLaunchError extends ValidationError {
   constructor(args: {
     parentTestContextId: number;
-    parentTestContextLaunchId: string;
-    expectedLaunchId: string;
+    parentTestContextLaunchId: number;
+    expectedLaunchId: number;
   }) {
     super(
       `Parent test context ${args.parentTestContextId} belongs to different launch ${args.parentTestContextLaunchId}. Expected ${args.expectedLaunchId}.`
@@ -73,8 +73,8 @@ export class ParentTestContextBelongsToDifferentLaunchError extends ValidationEr
 export class TestContextBelongsToDifferentLaunchError extends ValidationError {
   constructor(args: {
     testContextId: number;
-    testContextLaunchId: string;
-    expectedLaunchId: string;
+    testContextLaunchId: number;
+    expectedLaunchId: number;
   }) {
     super(
       `Test context ${args.testContextId} belongs to different launch ${args.testContextLaunchId}. Expected ${args.expectedLaunchId}.`
@@ -107,19 +107,19 @@ export class SuccessIsSetButFinishedTimestampIsNotSetError extends ValidationErr
 }
 
 export class BeforeTestNotFoundError extends ValidationError {
-  constructor(beforeTestId: string) {
+  constructor(beforeTestId: number) {
     super("Before test with id " + beforeTestId + " is not found.");
   }
 }
 
 export class TestNotFoundError extends ValidationError {
-  constructor(testId: string) {
+  constructor(testId: number) {
     super("Test with id " + testId + " is not found.");
   }
 }
 
 export class AfterTestNotFoundError extends ValidationError {
-  constructor(afterTestId: string) {
+  constructor(afterTestId: number) {
     super("After test with id " + afterTestId + " is not found.");
   }
 }

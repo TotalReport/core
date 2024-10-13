@@ -2,7 +2,6 @@ import { launches } from "@total-report/core-schema/schema";
 import { eq } from "drizzle-orm";
 import { NodePgQueryResultHKT } from "drizzle-orm/node-postgres/session";
 import { PgDatabase } from "drizzle-orm/pg-core/db";
-import { v4 as uuidv4 } from "uuid";
 import { ReportNotFoundError } from "../errors/errors.js";
 import { validateTimestamps } from "../validations/validations.js";
 import { db as defaultDB } from "./setup.js";
@@ -23,7 +22,6 @@ export class LaunchesDAO {
       const found = await this.db
         .insert(launches)
         .values({
-          id: uuidv4(),
           title: args.title,
           reportId: args.reportId,
           createdTimestamp: args.createdTimestamp,
@@ -40,7 +38,7 @@ export class LaunchesDAO {
     }
   }
 
-  async findById(id: string): Promise<LaunchEntity | undefined> {
+  async findById(id: number): Promise<LaunchEntity | undefined> {
     const found = await this.db
       .select()
       .from(launches)
@@ -76,7 +74,7 @@ export class LaunchesDAO {
     return result;
   }
 
-  async deleteById(id: string): Promise<void> {
+  async deleteById(id: number): Promise<void> {
     await this.db.delete(launches).where(eq(launches.id, id));
   }
 }
@@ -95,7 +93,7 @@ const validateLaunch = (args: {
 };
 
 type CreateLaunch = {
-  reportId: string;
+  reportId: number;
   title: string;
   createdTimestamp: Date;
   startedTimestamp?: Date;
@@ -103,7 +101,7 @@ type CreateLaunch = {
 };
 
 type PatchLaunch = {
-  id: string;
+  id: number;
   title?: string;
   createdTimestamp?: Date;
   startedTimestamp?: Date | null;
@@ -118,8 +116,8 @@ type SetColumnsValues = {
 };
 
 type LaunchRow = {
-  reportId: string;
-  id: string;
+  reportId: number;
+  id: number;
   title: string;
   createdTimestamp: Date;
   startedTimestamp: Date | null;
@@ -127,8 +125,8 @@ type LaunchRow = {
 };
 
 type LaunchEntity = {
-  reportId: string;
-  id: string;
+  reportId: number;
+  id: number;
   title: string;
   createdTimestamp: Date;
   startedTimestamp?: Date;

@@ -83,7 +83,7 @@ export class TestContextsDAO {
 }
 
 export type CreateTestContext = {
-  launchId: string;
+  launchId: number;
   parentTestContextId?: number;
   title: string;
   createdTimestamp: Date;
@@ -93,7 +93,7 @@ export type CreateTestContext = {
 
 export type TestContextEntity = {
   parentTestContextId?: number;
-  launchId: string;
+  launchId: number;
   id: number;
   title: string;
   createdTimestamp: Date;
@@ -111,7 +111,7 @@ export type PatchTestContext = {
 
 type TestContextRow = {
   parentTestContextId: number | null;
-  launchId: string;
+  launchId: number;
   id: number;
   title: string;
   createdTimestamp: Date;

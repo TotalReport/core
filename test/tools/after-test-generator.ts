@@ -37,7 +37,7 @@ export class AfterTestsGenerator {
 }
 
 type CreateAfterTestArgs = {
-  launchId?: string;
+  launchId?: number;
   testContextId?: number;
   createdTimestamp?: Date;
   startedTimestamp?: Date;

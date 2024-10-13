@@ -1,6 +1,7 @@
 import { contract } from "@total-report/core-contract/contract";
 import { AppRouteImplementation } from "@ts-rest/express";
-import { TestEntity, TestsDAO } from "../db/tests.js";
+import { TestsDAO } from "../db/tests.js";
+import { TestEntity } from "../db-common/tests-common.js";
 
 export const createTestRoute: CreateTestRoute = async ({ body }) => {
   const request = {
@@ -48,16 +49,16 @@ export const deleteTestRoute: DeleteTestRoute = async ({ params }) => {
 
 const convertToResponseBody = (response: TestEntity) => {
   return {
+    launchId: response.launchId,
+    testContextId: response.testContextId ?? undefined,
     id: response.id,
     title: response.title,
     createdTimestamp: response.createdTimestamp.toISOString(),
-    startedTimestamp: response.startedTimestamp?.toISOString(),
-    finishedTimestamp: response.finishedTimestamp?.toISOString(),
-    launchId: response.launchId,
-    testContextId: response.testContextId,
-    statusId: response.statusId,
-    argumentsHash: response.argumentsHash,
-    arguments: response.arguments
+    startedTimestamp: response.startedTimestamp?.toISOString() ?? undefined,
+    finishedTimestamp: response.finishedTimestamp?.toISOString() ?? undefined,
+    statusId: response.statusId ?? undefined,
+    argumentsHash: response.argumentsHash ?? undefined,
+    arguments: response.arguments ?? undefined
   };
 };
 

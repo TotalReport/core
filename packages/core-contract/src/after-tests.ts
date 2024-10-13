@@ -4,7 +4,7 @@ import {
 import { z } from "zod";
 
 export const CreateAfterTestSchema = z.object({
-  launchId: z.string().uuid(),
+  launchId: z.number().int(),
   testContextId: z.number().int().optional(),
   title: z.string().min(1).max(256),
   createdTimestamp: z.coerce.date().optional(),
@@ -21,9 +21,9 @@ export const CreateAfterTestSchema = z.object({
 });
 
 export const AfterTestSchema = z.object({
-  launchId: z.string().uuid(),
+  launchId: z.number().int(),
   testContextId: z.number().int().optional(),
-  id: z.string().uuid(),
+  id: z.number().int(),
   title: z.string().min(1).max(256),
   createdTimestamp: z.string().datetime({ offset: true }),
   startedTimestamp: z.string().datetime({ offset: true }).optional(),
@@ -33,7 +33,7 @@ export const AfterTestSchema = z.object({
   arguments: z
     .array(
       z.object({
-        id: z.string(),
+        id: z.number().int(),
         name: z.string(),
         type: z.string(),
         value: z.string().nullable(),
@@ -67,10 +67,10 @@ export const readAfterTest = contract.query({
   method: "GET",
   path: "/v1/after-tests/:id",
   pathParams: z.object({
-    id: z.string().uuid(),
+    id: z.coerce.number().int(),
   }),
   responses: {
-    201: AfterTestSchema,
+    200: AfterTestSchema,
     404: z.object({}),
   },
 });
@@ -80,7 +80,7 @@ export const patchAfterTest = contract.mutation({
   method: "PATCH",
   path: "/v1/after-tests/:id",
   pathParams: z.object({
-    id: z.string().uuid(),
+    id: z.coerce.number().int(),
   }),
   body: PatchAfterTestSchema,
   responses: {
@@ -94,7 +94,7 @@ export const deleteAfterTest = contract.mutation({
   method: "DELETE",
   path: "/v1/after-tests/:id",
   pathParams: z.object({
-    id: z.string().uuid(),
+    id: z.coerce.number().int(),
   }),
   body: contract.type<void>(),
   responses: {

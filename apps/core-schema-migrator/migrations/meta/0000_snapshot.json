@@ -1,5 +1,5 @@
 {
-  "id": "df8cd718-1e9f-42a8-af18-7d945062cbe8",
+  "id": "a06b3df7-59ac-40ae-aa9c-1e1743b93f9a",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -8,15 +8,15 @@
       "name": "after_test_arguments",
       "schema": "",
       "columns": {
-        "before_test_id": {
-          "name": "before_test_id",
-          "type": "uuid",
+        "test_id": {
+          "name": "test_id",
+          "type": "bigint",
           "primaryKey": false,
           "notNull": true
         },
         "id": {
           "name": "id",
-          "type": "uuid",
+          "type": "bigserial",
           "primaryKey": true,
           "notNull": true
         },
@@ -47,12 +47,12 @@
       },
       "indexes": {},
       "foreignKeys": {
-        "after_test_arguments_before_test_id_after_tests_id_fk": {
-          "name": "after_test_arguments_before_test_id_after_tests_id_fk",
+        "after_test_arguments_test_id_after_tests_id_fk": {
+          "name": "after_test_arguments_test_id_after_tests_id_fk",
           "tableFrom": "after_test_arguments",
           "tableTo": "after_tests",
           "columnsFrom": [
-            "before_test_id"
+            "test_id"
           ],
           "columnsTo": [
             "id"
@@ -68,9 +68,9 @@
       "name": "after_test_steps",
       "schema": "",
       "columns": {
-        "after_test_id": {
-          "name": "after_test_id",
-          "type": "uuid",
+        "test_id": {
+          "name": "test_id",
+          "type": "bigint",
           "primaryKey": false,
           "notNull": true
         },
@@ -119,12 +119,12 @@
       },
       "indexes": {},
       "foreignKeys": {
-        "after_test_steps_after_test_id_after_tests_id_fk": {
-          "name": "after_test_steps_after_test_id_after_tests_id_fk",
+        "after_test_steps_test_id_after_tests_id_fk": {
+          "name": "after_test_steps_test_id_after_tests_id_fk",
           "tableFrom": "after_test_steps",
           "tableTo": "after_tests",
           "columnsFrom": [
-            "after_test_id"
+            "test_id"
           ],
           "columnsTo": [
             "id"
@@ -142,7 +142,7 @@
       "columns": {
         "launch_id": {
           "name": "launch_id",
-          "type": "uuid",
+          "type": "bigint",
           "primaryKey": false,
           "notNull": true
         },
@@ -154,7 +154,7 @@
         },
         "id": {
           "name": "id",
-          "type": "uuid",
+          "type": "bigserial",
           "primaryKey": true,
           "notNull": true
         },
@@ -244,15 +244,15 @@
       "name": "before_test_arguments",
       "schema": "",
       "columns": {
-        "before_test_id": {
-          "name": "before_test_id",
-          "type": "uuid",
+        "test_id": {
+          "name": "test_id",
+          "type": "bigint",
           "primaryKey": false,
           "notNull": true
         },
         "id": {
           "name": "id",
-          "type": "uuid",
+          "type": "bigserial",
           "primaryKey": true,
           "notNull": true
         },
@@ -283,12 +283,12 @@
       },
       "indexes": {},
       "foreignKeys": {
-        "before_test_arguments_before_test_id_before_tests_id_fk": {
-          "name": "before_test_arguments_before_test_id_before_tests_id_fk",
+        "before_test_arguments_test_id_before_tests_id_fk": {
+          "name": "before_test_arguments_test_id_before_tests_id_fk",
           "tableFrom": "before_test_arguments",
           "tableTo": "before_tests",
           "columnsFrom": [
-            "before_test_id"
+            "test_id"
           ],
           "columnsTo": [
             "id"
@@ -304,9 +304,9 @@
       "name": "before_test_steps",
       "schema": "",
       "columns": {
-        "before_test_id": {
-          "name": "before_test_id",
-          "type": "uuid",
+        "test_id": {
+          "name": "test_id",
+          "type": "bigint",
           "primaryKey": false,
           "notNull": true
         },
@@ -355,12 +355,12 @@
       },
       "indexes": {},
       "foreignKeys": {
-        "before_test_steps_before_test_id_before_tests_id_fk": {
-          "name": "before_test_steps_before_test_id_before_tests_id_fk",
+        "before_test_steps_test_id_before_tests_id_fk": {
+          "name": "before_test_steps_test_id_before_tests_id_fk",
           "tableFrom": "before_test_steps",
           "tableTo": "before_tests",
           "columnsFrom": [
-            "before_test_id"
+            "test_id"
           ],
           "columnsTo": [
             "id"
@@ -378,7 +378,7 @@
       "columns": {
         "launch_id": {
           "name": "launch_id",
-          "type": "uuid",
+          "type": "bigint",
           "primaryKey": false,
           "notNull": true
         },
@@ -390,7 +390,7 @@
         },
         "id": {
           "name": "id",
-          "type": "uuid",
+          "type": "bigserial",
           "primaryKey": true,
           "notNull": true
         },
@@ -482,13 +482,13 @@
       "columns": {
         "report_id": {
           "name": "report_id",
-          "type": "uuid",
+          "type": "bigint",
           "primaryKey": false,
           "notNull": true
         },
         "id": {
           "name": "id",
-          "type": "uuid",
+          "type": "bigserial",
           "primaryKey": true,
           "notNull": true
         },
@@ -542,13 +542,13 @@
       "columns": {
         "test_id": {
           "name": "test_id",
-          "type": "uuid",
+          "type": "bigint",
           "primaryKey": false,
           "notNull": false
         },
         "id": {
           "name": "id",
-          "type": "uuid",
+          "type": "bigserial",
           "primaryKey": true,
           "notNull": true
         },
@@ -590,7 +590,7 @@
       "columns": {
         "id": {
           "name": "id",
-          "type": "uuid",
+          "type": "bigserial",
           "primaryKey": true,
           "notNull": true
         },
@@ -618,13 +618,13 @@
       "columns": {
         "test_id": {
           "name": "test_id",
-          "type": "uuid",
+          "type": "bigint",
           "primaryKey": false,
           "notNull": true
         },
         "id": {
           "name": "id",
-          "type": "uuid",
+          "type": "bigserial",
           "primaryKey": true,
           "notNull": true
         },
@@ -678,7 +678,7 @@
       "columns": {
         "launch_id": {
           "name": "launch_id",
-          "type": "uuid",
+          "type": "bigint",
           "primaryKey": false,
           "notNull": true
         },
@@ -833,7 +833,7 @@
       "columns": {
         "test_id": {
           "name": "test_id",
-          "type": "uuid",
+          "type": "bigint",
           "primaryKey": false,
           "notNull": true
         },
@@ -905,7 +905,7 @@
       "columns": {
         "launch_id": {
           "name": "launch_id",
-          "type": "uuid",
+          "type": "bigint",
           "primaryKey": false,
           "notNull": true
         },
@@ -917,7 +917,7 @@
         },
         "id": {
           "name": "id",
-          "type": "uuid",
+          "type": "bigserial",
           "primaryKey": true,
           "notNull": true
         },

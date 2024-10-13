@@ -43,7 +43,7 @@ export class BeforeTestStepsGenerator {
 }
 
 type CreateBeforeTestStepArgs = {
-  beforeTestId?: string;
+  beforeTestId?: number;
   createdTimestamp?: Date;
   startedTimestamp?: Date;
   finishedTimestamp?: Date;

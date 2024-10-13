@@ -7,7 +7,7 @@ extendZodWithOpenApi(z);
 z.date;
 
 const CreateLaunchSchema = z.object({
-  reportId: z.string().uuid(),
+  reportId: z.number().int(),
   title: z.string().min(1).max(256),
   createdTimestamp: z.coerce.date().optional(),
   startedTimestamp: z.coerce.date().optional(),
@@ -22,8 +22,8 @@ const PatchLaunchSchema = z.object({
 });
 
 const LaunchSchema = z.object({
-  reportId: z.string().uuid(),
-  id: z.string().uuid(),
+  reportId: z.number().int(),
+  id: z.number().int(),
   title: z.string().min(1).max(256),
   createdTimestamp: z.string().datetime({ offset: true }),
   startedTimestamp: z.string().datetime({ offset: true }).optional(),
@@ -47,7 +47,7 @@ export const readLaunch = launchesContract.query({
   method: "GET",
   path: "/v1/launches/:id",
   pathParams: z.object({
-    id: z.string().uuid(),
+    id: z.coerce.number().int(),
   }),
   responses: {
     201: LaunchSchema,
@@ -60,7 +60,7 @@ export const patchLaunch = launchesContract.mutation({
   method: "PATCH",
   path: "/v1/launches/:id",
   pathParams: z.object({
-    id: z.string().uuid(),
+    id: z.coerce.number().int(),
   }),
   body: PatchLaunchSchema,
   responses: {
@@ -74,7 +74,7 @@ export const deleteLaunch = launchesContract.mutation({
   method: "DELETE",
   path: "/v1/launches/:id",
   pathParams: z.object({
-    id: z.string().uuid(),
+    id: z.coerce.number().int(),
   }),
   body: launchesContract.type<void>(),
   responses: {

@@ -14,14 +14,14 @@ export const testStatuses = pgTable("test_statuses", {
 });
 
 export const reports = pgTable("reports", {
-  id: uuid("id").primaryKey(),
+  id: bigserial("id", { mode: "number" }).primaryKey(),
   title: varchar("title", { length: 256 }).notNull(),
   createdTimestamp: timestamp("created_timestamp", { withTimezone: false, mode: "string" }).notNull(),
 });
 
 export const launches = pgTable("launches", {
-  reportId: uuid("report_id").references(() => reports.id).notNull(),
-  id: uuid("id").primaryKey(),
+  reportId: bigint("report_id", { mode: "number" }).references(() => reports.id).notNull(),
+  id: bigserial("id", { mode: "number" }).primaryKey(),
   title: varchar("title", { length: 256 }).notNull(),
   createdTimestamp: timestamp("created_timestamp", { withTimezone: false, mode: "date" }).notNull(),
   startedTimestamp: timestamp("started_timestamp", { withTimezone: false, mode: "date" }),
@@ -29,7 +29,7 @@ export const launches = pgTable("launches", {
 });
 
 export const testContexts = pgTable("test_contexts", {
-  launchId: uuid("launch_id").references(() => launches.id).notNull(),
+  launchId: bigint("launch_id", { mode: "number" }).references(() => launches.id).notNull(),
   parentTestContextId: bigint("parent_test_context_id", { mode: 'number' }).references((): AnyPgColumn => testContexts.id),
   id: bigserial("id", { mode: "number" }).primaryKey(),
   title: varchar("title", { length: 256 }).notNull(),
@@ -39,9 +39,9 @@ export const testContexts = pgTable("test_contexts", {
 });
 
 export const beforeTests = pgTable("before_tests", {
-  launchId: uuid("launch_id").references(() => launches.id).notNull(),
+  launchId: bigint("launch_id", { mode: "number" }).references(() => launches.id).notNull(),
   testContextId: bigint("test_context_id", { mode: 'number' }).references(() => testContexts.id),
-  id: uuid("id").primaryKey(),
+  id: bigserial("id", { mode: "number" }).primaryKey(),
   title: varchar("title", { length: 256 }).notNull(),
   createdTimestamp: timestamp("created_timestamp", { withTimezone: false, mode: "date" }).notNull(),
   startedTimestamp: timestamp("started_timestamp", { withTimezone: false, mode: "date" }),
@@ -51,8 +51,8 @@ export const beforeTests = pgTable("before_tests", {
 });
 
 export const beforeTestArguments = pgTable("before_test_arguments", {
-  beforeTestId: uuid("before_test_id").references(() => beforeTests.id).notNull(),
-  id: uuid("id").primaryKey(),
+  testId: bigint("test_id", { mode: "number" }).references(() => beforeTests.id).notNull(),
+  id: bigserial("id", { mode: "number" }).primaryKey(),
   index: integer("index").notNull(),
   name: varchar("name", { length: 256 }).notNull(),
   type: varchar("type", { length: 256 }).notNull(),
@@ -60,7 +60,7 @@ export const beforeTestArguments = pgTable("before_test_arguments", {
 });
 
 export const beforeTestSteps = pgTable("before_test_steps", {
-  beforeTestId: uuid("before_test_id").references(() => beforeTests.id).notNull(),
+  testId: bigint("test_id", { mode: "number" }).references(() => beforeTests.id).notNull(),
   id: bigserial("id", { mode: "number" }).primaryKey(),
   title: varchar("title", { length: 256 }).notNull(),
   createdTimestamp: timestamp("created_timestamp", { withTimezone: false, mode: "date" }).notNull(),
@@ -71,9 +71,9 @@ export const beforeTestSteps = pgTable("before_test_steps", {
 });
 
 export const tests = pgTable("tests", {
-  launchId: uuid("launch_id").references(() => launches.id).notNull(),
+  launchId: bigint("launch_id", { mode: "number" }).references(() => launches.id).notNull(),
   testContextId: bigint("test_context_id", { mode: 'number' }).references(() => testContexts.id),
-  id: uuid("id").primaryKey(),
+  id: bigserial("id", { mode: "number" }).primaryKey(),
   title: varchar("title", { length: 256 }).notNull(),
   createdTimestamp: timestamp("created_timestamp", { withTimezone: false, mode: "date" }).notNull(),
   startedTimestamp: timestamp("started_timestamp", { withTimezone: false, mode: "date" }),
@@ -83,8 +83,8 @@ export const tests = pgTable("tests", {
 });
 
 export const testArguments = pgTable("test_arguments", {
-  testId: uuid("test_id").references(() => tests.id).notNull(),
-  id: uuid("id").primaryKey(),
+  testId: bigint("test_id", { mode: "number" }).references(() => tests.id).notNull(),
+  id: bigserial("id", { mode: "number" }).primaryKey(),
   index: integer("index").notNull(),
   name: varchar("name", { length: 256 }).notNull(),
   type: varchar("type", { length: 256 }).notNull(),
@@ -92,7 +92,7 @@ export const testArguments = pgTable("test_arguments", {
 });
 
 export const testSteps = pgTable("test_steps", {
-  testId: uuid("test_id").references(() => tests.id).notNull(),
+  testId: bigint("test_id", { mode: "number" }).references(() => tests.id).notNull(),
   id: bigserial("id", { mode: "number" }).primaryKey(),
   title: varchar("title", { length: 256 }).notNull(),
   createdTimestamp: timestamp("created_timestamp", { withTimezone: false, mode: "date" }).notNull(),
@@ -103,9 +103,9 @@ export const testSteps = pgTable("test_steps", {
 });
 
 export const afterTests = pgTable("after_tests", {
-  launchId: uuid("launch_id").references(() => launches.id).notNull(),
+  launchId: bigint("launch_id", { mode: "number" }).references(() => launches.id).notNull(),
   testContextId: bigint("test_context_id", { mode: 'number' }).references(() => testContexts.id),
-  id: uuid("id").primaryKey(),
+  id: bigserial("id", { mode: "number" }).primaryKey(),
   title: varchar("title", { length: 256 }).notNull(),
   createdTimestamp: timestamp("created_timestamp", { withTimezone: false, mode: "date" }).notNull(),
   startedTimestamp: timestamp("started_timestamp", { withTimezone: false, mode: "date" }),
@@ -115,8 +115,8 @@ export const afterTests = pgTable("after_tests", {
 });
 
 export const afterTestArguments = pgTable("after_test_arguments", {
-  afterTestId: uuid("before_test_id").references(() => afterTests.id).notNull(),
-  id: uuid("id").primaryKey(),
+  testId: bigint("test_id", { mode: "number" }).references(() => afterTests.id).notNull(),
+  id: bigserial("id", { mode: "number" }).primaryKey(),
   index: integer("index").notNull(),
   name: varchar("name", { length: 256 }).notNull(),
   type: varchar("type", { length: 256 }).notNull(),
@@ -124,7 +124,7 @@ export const afterTestArguments = pgTable("after_test_arguments", {
 });
 
 export const afterTestSteps = pgTable("after_test_steps", {
-  afterTestId: uuid("after_test_id").references(() => afterTests.id).notNull(),
+  testId: bigint("test_id", { mode: "number" }).references(() => afterTests.id).notNull(),
   id: bigserial("id", { mode: "number" }).primaryKey(),
   title: varchar("title", { length: 256 }).notNull(),
   createdTimestamp: timestamp("created_timestamp", { withTimezone: false, mode: "date" }).notNull(),
@@ -135,8 +135,8 @@ export const afterTestSteps = pgTable("after_test_steps", {
 });
 
 export const paths = pgTable("paths", {
-  testId: uuid("test_id").references(() => tests.id),
-  id: uuid("id").primaryKey(),
+  testId: bigint("test_id", { mode: "number" }).references(() => tests.id),
+  id: bigserial("id", { mode: "number" }).primaryKey(),
   title: varchar("title", { length: 256 }).notNull(),
   createdTimestamp: timestamp("created_timestamp", { withTimezone: false, mode: "string" }).notNull(),
 });

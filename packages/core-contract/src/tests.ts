@@ -2,7 +2,7 @@ import { initContract } from "@ts-rest/core";
 import { z } from "zod";
 
 export const CreateTestSchema = z.object({
-  launchId: z.string().uuid(),
+  launchId: z.number().int(),
   testContextId: z.number().int().optional(),
   title: z.string().min(1).max(256),
   createdTimestamp: z.coerce.date().optional(),
@@ -21,9 +21,9 @@ export const CreateTestSchema = z.object({
 });
 
 export const TestSchema = z.object({
-  launchId: z.string().uuid(),
+  launchId: z.number().int(),
   testContextId: z.number().int().optional(),
-  id: z.string().uuid(),
+  id: z.number().int(),
   title: z.string().min(1).max(256),
   createdTimestamp: z.string().datetime({ offset: true }),
   startedTimestamp: z.string().datetime({ offset: true }).optional(),
@@ -33,7 +33,7 @@ export const TestSchema = z.object({
   arguments: z
     .array(
       z.object({
-        id: z.string(),
+        id: z.number().int(),
         name: z.string(),
         type: z.string(),
         value: z.string().nullable(),
@@ -67,7 +67,7 @@ export const readTest = contract.query({
   method: "GET",
   path: "/v1/tests/:id",
   pathParams: z.object({
-    id: z.string().uuid(),
+    id: z.coerce.number().int(),
   }),
   responses: {
     201: TestSchema,
@@ -80,7 +80,7 @@ export const patchTest = contract.mutation({
   method: "PATCH",
   path: "/v1/tests/:id",
   pathParams: z.object({
-    id: z.string().uuid(),
+    id: z.coerce.number().int(),
   }),
   body: PatchTestSchema,
   responses: {
@@ -94,7 +94,7 @@ export const deleteTest = contract.mutation({
   method: "DELETE",
   path: "/v1/tests/:id",
   pathParams: z.object({
-    id: z.string().uuid(),
+    id: z.coerce.number().int(),
   }),
   body: contract.type<void>(),
   responses: {

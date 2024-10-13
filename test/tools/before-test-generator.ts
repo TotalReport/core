@@ -37,7 +37,7 @@ export class BeforeTestsGenerator {
 }
 
 type CreateBeforeTestArgs = {
-  launchId?: string;
+  launchId?: number;
   testContextId?: number;
   createdTimestamp?: Date;
   startedTimestamp?: Date;

@@ -2,7 +2,7 @@ import { initContract } from "@ts-rest/core";
 import { z } from "zod";
 
 export const CreateTestContextSchema = z.object({
-  launchId: z.string().uuid(),
+  launchId: z.number().int(),
   parentTestContextId: z.number().int().optional(),
   title: z.string().min(1).max(256),
   createdTimestamp: z.coerce.date().optional(),
@@ -18,7 +18,7 @@ export const PatchTestContextSchema = z.object({
 });
 
 export const TestContextSchema = z.object({
-  launchId: z.string().uuid(),
+  launchId: z.number().int(),
   parentTestContextId: z.number().int().optional(),
   id: z.number().int(),
   title: z.string().min(1).max(256),

@@ -5,7 +5,7 @@ import { z } from "zod";
 extendZodWithOpenApi(z);
 
 const ReportSchema = z.object({
-  id: z.string(),
+  id: z.number().int(),
   title: z.string(),
   createdTimestamp: z.string(),
 });
@@ -28,7 +28,7 @@ export const readReport = reportContract.query({
   method: "GET",
   path: "/v1/reports/:id",
   pathParams: z.object({
-    id: z.string().uuid(),
+    id: z.coerce.number().int(),
   }),
   responses: {
     201: ReportSchema,
@@ -41,7 +41,7 @@ export const deleteReport = reportContract.mutation({
   method: "DELETE",
   path: "/v1/reports/:id",
   pathParams: z.object({
-    id: z.string().uuid(),
+    id: z.coerce.number().int(),
   }),
   responses: {
     204: reportContract.type<void>(),

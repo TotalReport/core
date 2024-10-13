@@ -32,20 +32,20 @@ describe("before tests", () => {
       status: 201,
       headers: expect.anything(),
       body: {
-        id: expect.a(String),
+        id: expect.a(Number),
         title: "New before test",
-        createdTimestamp: expect.a(String),
+        createdTimestamp: expect.isCloseToNow(3000),
         launchId: launch.id,
         argumentsHash: expect.a(String),
         arguments: [
           {
-            id: expect.a(String),
+            id: expect.a(Number),
             name: "Argument1",
             type: "String",
             value: "value1",
           },
           {
-            id: expect.a(String),
+            id: expect.a(Number),
             name: "Argument2",
             type: "Integer",
             value: "value2",

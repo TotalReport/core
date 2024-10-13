@@ -43,7 +43,7 @@ export class AfterTestStepsGenerator {
 }
 
 type CreateAfterTestStepArgs = {
-  afterTestId?: string;
+  afterTestId?: number;
   createdTimestamp?: Date;
   startedTimestamp?: Date;
   finishedTimestamp?: Date;

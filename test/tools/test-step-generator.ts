@@ -43,7 +43,7 @@ export class TestStepsGenerator {
 }
 
 type CreateTestStepArgs = {
-  testId?: string;
+  testId?: number;
   createdTimestamp?: Date;
   startedTimestamp?: Date;
   finishedTimestamp?: Date;

@@ -1,13 +1,11 @@
 import { contract } from "@total-report/core-contract/contract";
 import { AppRouteImplementation } from "@ts-rest/express";
 import {
-  TestStepEntity,
   TestStepsDAO,
-  CreateTestStep,
-  PatchTestStep,
 } from "../db/test-steps.js";
 import { ClientInferResponseBody } from "@ts-rest/core";
 import { ServerInferRequest, ServerInferResponses } from "@ts-rest/core";
+import { CreateTestStep, PatchTestStep, TestStepEntity } from "../db-common/test-steps-common.js";
 
 export const createTestStepRoute: CreateTestStepRoute = async ({
   body,

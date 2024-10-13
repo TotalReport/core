@@ -41,7 +41,7 @@ export class TestsGenerator {
 }
 
 type CreateTestArgs = {
-  launchId?: string;
+  launchId?: number;
   testContextId?: number;
   createdTimestamp?: Date;
   startedTimestamp?: Date;

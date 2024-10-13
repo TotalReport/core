@@ -1,6 +1,6 @@
 CREATE TABLE IF NOT EXISTS "after_test_arguments" (
-	"before_test_id" uuid NOT NULL,
-	"id" uuid PRIMARY KEY NOT NULL,
+	"test_id" bigint NOT NULL,
+	"id" bigserial PRIMARY KEY NOT NULL,
 	"index" integer NOT NULL,
 	"name" varchar(256) NOT NULL,
 	"type" varchar(256) NOT NULL,
@@ -8,7 +8,7 @@ CREATE TABLE IF NOT EXISTS "after_test_arguments" (
 );
 --> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "after_test_steps" (
-	"after_test_id" uuid NOT NULL,
+	"test_id" bigint NOT NULL,
 	"id" bigserial PRIMARY KEY NOT NULL,
 	"title" varchar(256) NOT NULL,
 	"created_timestamp" timestamp NOT NULL,
@@ -19,9 +19,9 @@ CREATE TABLE IF NOT EXISTS "after_test_steps" (
 );
 --> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "after_tests" (
-	"launch_id" uuid NOT NULL,
+	"launch_id" bigint NOT NULL,
 	"test_context_id" bigint,
-	"id" uuid PRIMARY KEY NOT NULL,
+	"id" bigserial PRIMARY KEY NOT NULL,
 	"title" varchar(256) NOT NULL,
 	"created_timestamp" timestamp NOT NULL,
 	"started_timestamp" timestamp,
@@ -31,8 +31,8 @@ CREATE TABLE IF NOT EXISTS "after_tests" (
 );
 --> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "before_test_arguments" (
-	"before_test_id" uuid NOT NULL,
-	"id" uuid PRIMARY KEY NOT NULL,
+	"test_id" bigint NOT NULL,
+	"id" bigserial PRIMARY KEY NOT NULL,
 	"index" integer NOT NULL,
 	"name" varchar(256) NOT NULL,
 	"type" varchar(256) NOT NULL,
@@ -40,7 +40,7 @@ CREATE TABLE IF NOT EXISTS "before_test_arguments" (
 );
 --> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "before_test_steps" (
-	"before_test_id" uuid NOT NULL,
+	"test_id" bigint NOT NULL,
 	"id" bigserial PRIMARY KEY NOT NULL,
 	"title" varchar(256) NOT NULL,
 	"created_timestamp" timestamp NOT NULL,
@@ -51,9 +51,9 @@ CREATE TABLE IF NOT EXISTS "before_test_steps" (
 );
 --> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "before_tests" (
-	"launch_id" uuid NOT NULL,
+	"launch_id" bigint NOT NULL,
 	"test_context_id" bigint,
-	"id" uuid PRIMARY KEY NOT NULL,
+	"id" bigserial PRIMARY KEY NOT NULL,
 	"title" varchar(256) NOT NULL,
 	"created_timestamp" timestamp NOT NULL,
 	"started_timestamp" timestamp,
@@ -63,8 +63,8 @@ CREATE TABLE IF NOT EXISTS "before_tests" (
 );
 --> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "launches" (
-	"report_id" uuid NOT NULL,
-	"id" uuid PRIMARY KEY NOT NULL,
+	"report_id" bigint NOT NULL,
+	"id" bigserial PRIMARY KEY NOT NULL,
 	"title" varchar(256) NOT NULL,
 	"created_timestamp" timestamp NOT NULL,
 	"started_timestamp" timestamp,
@@ -72,21 +72,21 @@ CREATE TABLE IF NOT EXISTS "launches" (
 );
 --> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "paths" (
-	"test_id" uuid,
-	"id" uuid PRIMARY KEY NOT NULL,
+	"test_id" bigint,
+	"id" bigserial PRIMARY KEY NOT NULL,
 	"title" varchar(256) NOT NULL,
 	"created_timestamp" timestamp NOT NULL
 );
 --> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "reports" (
-	"id" uuid PRIMARY KEY NOT NULL,
+	"id" bigserial PRIMARY KEY NOT NULL,
 	"title" varchar(256) NOT NULL,
 	"created_timestamp" timestamp NOT NULL
 );
 --> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "test_arguments" (
-	"test_id" uuid NOT NULL,
-	"id" uuid PRIMARY KEY NOT NULL,
+	"test_id" bigint NOT NULL,
+	"id" bigserial PRIMARY KEY NOT NULL,
 	"index" integer NOT NULL,
 	"name" varchar(256) NOT NULL,
 	"type" varchar(256) NOT NULL,
@@ -94,7 +94,7 @@ CREATE TABLE IF NOT EXISTS "test_arguments" (
 );
 --> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "test_contexts" (
-	"launch_id" uuid NOT NULL,
+	"launch_id" bigint NOT NULL,
 	"parent_test_context_id" bigint,
 	"id" bigserial PRIMARY KEY NOT NULL,
 	"title" varchar(256) NOT NULL,
@@ -117,7 +117,7 @@ CREATE TABLE IF NOT EXISTS "test_statuses" (
 );
 --> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "test_steps" (
-	"test_id" uuid NOT NULL,
+	"test_id" bigint NOT NULL,
 	"id" bigserial PRIMARY KEY NOT NULL,
 	"title" varchar(256) NOT NULL,
 	"created_timestamp" timestamp NOT NULL,
@@ -128,9 +128,9 @@ CREATE TABLE IF NOT EXISTS "test_steps" (
 );
 --> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "tests" (
-	"launch_id" uuid NOT NULL,
+	"launch_id" bigint NOT NULL,
 	"test_context_id" bigint,
-	"id" uuid PRIMARY KEY NOT NULL,
+	"id" bigserial PRIMARY KEY NOT NULL,
 	"title" varchar(256) NOT NULL,
 	"created_timestamp" timestamp NOT NULL,
 	"started_timestamp" timestamp,
@@ -140,13 +140,13 @@ CREATE TABLE IF NOT EXISTS "tests" (
 );
 --> statement-breakpoint
 DO $$ BEGIN
- ALTER TABLE "after_test_arguments" ADD CONSTRAINT "after_test_arguments_before_test_id_after_tests_id_fk" FOREIGN KEY ("before_test_id") REFERENCES "public"."after_tests"("id") ON DELETE no action ON UPDATE no action;
+ ALTER TABLE "after_test_arguments" ADD CONSTRAINT "after_test_arguments_test_id_after_tests_id_fk" FOREIGN KEY ("test_id") REFERENCES "public"."after_tests"("id") ON DELETE no action ON UPDATE no action;
 EXCEPTION
  WHEN duplicate_object THEN null;
 END $$;
 --> statement-breakpoint
 DO $$ BEGIN
- ALTER TABLE "after_test_steps" ADD CONSTRAINT "after_test_steps_after_test_id_after_tests_id_fk" FOREIGN KEY ("after_test_id") REFERENCES "public"."after_tests"("id") ON DELETE no action ON UPDATE no action;
+ ALTER TABLE "after_test_steps" ADD CONSTRAINT "after_test_steps_test_id_after_tests_id_fk" FOREIGN KEY ("test_id") REFERENCES "public"."after_tests"("id") ON DELETE no action ON UPDATE no action;
 EXCEPTION
  WHEN duplicate_object THEN null;
 END $$;
@@ -170,13 +170,13 @@ EXCEPTION
 END $$;
 --> statement-breakpoint
 DO $$ BEGIN
- ALTER TABLE "before_test_arguments" ADD CONSTRAINT "before_test_arguments_before_test_id_before_tests_id_fk" FOREIGN KEY ("before_test_id") REFERENCES "public"."before_tests"("id") ON DELETE no action ON UPDATE no action;
+ ALTER TABLE "before_test_arguments" ADD CONSTRAINT "before_test_arguments_test_id_before_tests_id_fk" FOREIGN KEY ("test_id") REFERENCES "public"."before_tests"("id") ON DELETE no action ON UPDATE no action;
 EXCEPTION
  WHEN duplicate_object THEN null;
 END $$;
 --> statement-breakpoint
 DO $$ BEGIN
- ALTER TABLE "before_test_steps" ADD CONSTRAINT "before_test_steps_before_test_id_before_tests_id_fk" FOREIGN KEY ("before_test_id") REFERENCES "public"."before_tests"("id") ON DELETE no action ON UPDATE no action;
+ ALTER TABLE "before_test_steps" ADD CONSTRAINT "before_test_steps_test_id_before_tests_id_fk" FOREIGN KEY ("test_id") REFERENCES "public"."before_tests"("id") ON DELETE no action ON UPDATE no action;
 EXCEPTION
  WHEN duplicate_object THEN null;
 END $$;
