@@ -9,7 +9,8 @@
       "outputs": ["dist"]
     },
     "//#dev:setup": {
-      "passThroughEnv": ["ProgramW6432"] // on Windows docker build doesn't work without this      
+      "passThroughEnv": ["ProgramW6432"], // on Windows docker build doesn't work without this   
+      "cache": false   
     },
     "dev": {
       "persistent": true,
