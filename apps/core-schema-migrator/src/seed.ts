@@ -24,7 +24,15 @@ const seed = async (url: string) => {
     .insert(testStatusGroups)
     .values([
       {
-        ...TEST_STATUS_GROUPS.SUCCESS_GROUP,
+        ...TEST_STATUS_GROUPS.SUCCESSFUL_GROUP,
+        createdTimestamp: new Date().toISOString(),
+      },
+      {
+        ...TEST_STATUS_GROUPS.ABORTED_GROUP,
+        createdTimestamp: new Date().toISOString(),
+      },
+      {
+        ...TEST_STATUS_GROUPS.SKIPPED_GROUP,
         createdTimestamp: new Date().toISOString(),
       },
       {
@@ -59,7 +67,15 @@ const seed = async (url: string) => {
     .insert(testStatuses)
     .values([
       {
-        ...DEFAULT_TEST_STATUSES.SUCCESS,
+        ...DEFAULT_TEST_STATUSES.SUCCESSFUL,
+        createdTimestamp: new Date().toISOString(),
+      },
+      {
+        ...DEFAULT_TEST_STATUSES.ABORTED,
+        createdTimestamp: new Date().toISOString(),
+      },
+      {
+        ...DEFAULT_TEST_STATUSES.SKIPPED,
         createdTimestamp: new Date().toISOString(),
       },
       {
