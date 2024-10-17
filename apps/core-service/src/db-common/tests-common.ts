@@ -69,7 +69,7 @@ export class TestsCommonDAO {
    */
   async create(args: CreateTestArguments): Promise<TestEntity> {
     const result = await this.db.transaction(async (tx) => {
-      const argsHash = args.arguments == undefined ? null : MD5(args.arguments);
+      const argsHash = args.arguments == undefined || args.arguments.length == 0  ? null : MD5(args.arguments);
 
       if (args.testContextId) {
         const testContext = await new TestContextsDAO(tx).findById(
