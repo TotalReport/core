@@ -9,8 +9,8 @@
   },
   "exports": {
     "./contract": {
-      "types": "./src/contract.ts",
-      "default": "./dist/contract.js"
+      "default": "./dist/contract.js",
+      "types": "./dist/contract.d.ts"
     }
   },
   "scripts": {

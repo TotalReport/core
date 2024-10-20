@@ -4,7 +4,7 @@ import { z } from "zod";
 
 extendZodWithOpenApi(z);
 
-const ReportSchema = z.object({
+export const ReportSchema = z.object({
   id: z.number().int(),
   title: z.string(),
   createdTimestamp: z.string(),

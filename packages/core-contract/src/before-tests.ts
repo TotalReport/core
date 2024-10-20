@@ -42,7 +42,7 @@ export const BeforeTestSchema = z.object({
     .optional(),
 });
 
-const PatchBeforeTestSchema = z.object({
+export const PatchBeforeTestSchema = z.object({
   title: z.string().min(1).max(256).optional(),
   createdTimestamp: z.coerce.date().optional(),
   startedTimestamp: z.coerce.date().nullish(),

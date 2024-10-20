@@ -4,9 +4,7 @@ import { z } from "zod";
 
 extendZodWithOpenApi(z);
 
-z.date;
-
-const CreateLaunchSchema = z.object({
+export const CreateLaunchSchema = z.object({
   reportId: z.number().int(),
   title: z.string().min(1).max(256),
   createdTimestamp: z.coerce.date().optional(),
@@ -14,14 +12,14 @@ const CreateLaunchSchema = z.object({
   finishedTimestamp: z.coerce.date().optional(),
 });
 
-const PatchLaunchSchema = z.object({
+export const PatchLaunchSchema = z.object({
   title: z.string().min(1).max(256).optional(),
   createdTimestamp: z.coerce.date().optional(),
   startedTimestamp: z.coerce.date().nullish(),
   finishedTimestamp: z.coerce.date().nullish(),
 });
 
-const LaunchSchema = z.object({
+export const LaunchSchema = z.object({
   reportId: z.number().int(),
   id: z.number().int(),
   title: z.string().min(1).max(256),

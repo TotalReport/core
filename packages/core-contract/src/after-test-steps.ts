@@ -22,7 +22,7 @@ export const AfterTestStep = z.object({
   errorMessage: z.string().optional(),
 });
 
-const PatchAfterTestStep = z.object({
+export const PatchAfterTestStep = z.object({
   title: z.string().min(1).max(256).optional(),
   createdTimestamp: z.coerce.date().optional(),
   startedTimestamp: z.coerce.date().nullish(),
