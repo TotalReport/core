@@ -96,7 +96,7 @@ export const deleteAfterTest = contract.mutation({
   pathParams: z.object({
     id: z.coerce.number().int(),
   }),
-  body: contract.type<void>(),
+  body: contract.noBody(),
   responses: {
     204: contract.noBody(),
     404: z.object({}),

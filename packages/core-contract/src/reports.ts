@@ -10,9 +10,9 @@ export const ReportSchema = z.object({
   createdTimestamp: z.string(),
 });
 
-const reportContract = initContract();
+const contract = initContract();
 
-export const createReport = reportContract.mutation({
+export const createReport = contract.mutation({
   method: "POST",
   path: "/v1/reports",
   responses: {
@@ -24,7 +24,7 @@ export const createReport = reportContract.mutation({
   summary: "Create the report.",
 });
 
-export const readReport = reportContract.query({
+export const readReport = contract.query({
   method: "GET",
   path: "/v1/reports/:id",
   pathParams: z.object({
@@ -37,16 +37,16 @@ export const readReport = reportContract.query({
   summary: "Read the report by ID.",
 });
 
-export const deleteReport = reportContract.mutation({
+export const deleteReport = contract.mutation({
+  summary: "Delete the report by ID.",
   method: "DELETE",
   path: "/v1/reports/:id",
   pathParams: z.object({
     id: z.coerce.number().int(),
   }),
+  body: contract.noBody(),
   responses: {
-    204: reportContract.type<void>(),
+    204: contract.noBody(),
     404: z.object({}),
   },
-  body: reportContract.type<void>(),
-  summary: "Delete the report by ID.",
 });

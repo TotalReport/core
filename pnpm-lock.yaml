@@ -61,14 +61,14 @@ importers:
         specifier: workspace:*
         version: link:../../packages/core-schema
       '@ts-rest/core':
-        specifier: ^3.45.2
-        version: 3.45.2(zod@3.23.8)
+        specifier: ^3.51.0
+        version: 3.51.0(@types/node@20.14.10)(zod@3.23.8)
       '@ts-rest/express':
-        specifier: ^3.45.2
-        version: 3.45.2(express@4.19.2)(zod@3.23.8)
+        specifier: ^3.51.0
+        version: 3.51.0(@ts-rest/core@3.51.0(@types/node@20.14.10)(zod@3.23.8))(express@4.19.2)(zod@3.23.8)
       '@ts-rest/open-api':
-        specifier: ^3.45.2
-        version: 3.45.2(zod@3.23.8)
+        specifier: ^3.51.0
+        version: 3.51.0(@ts-rest/core@3.51.0(@types/node@20.14.10)(zod@3.23.8))(zod@3.23.8)
       body-parser:
         specifier: ^1.20.2
         version: 1.20.2
@@ -128,8 +128,8 @@ importers:
         specifier: ^2.2.6
         version: 2.2.6(openapi3-ts@2.0.2)(zod@3.23.8)
       '@ts-rest/core':
-        specifier: ^3.45.2
-        version: 3.45.2(zod@3.23.8)
+        specifier: ^3.51.0
+        version: 3.51.0(@types/node@20.14.10)(zod@3.23.8)
       zod:
         specifier: ^3.23.8
         version: 3.23.8
@@ -184,8 +184,8 @@ importers:
         specifier: workspace:*
         version: link:../packages/typescript-config
       '@ts-rest/core':
-        specifier: ^3.45.2
-        version: 3.45.2(zod@3.23.8)
+        specifier: ^3.51.0
+        version: 3.51.0(@types/node@20.14.10)(zod@3.23.8)
       '@types/mocha':
         specifier: ^10.0.7
         version: 10.0.7
@@ -648,26 +648,31 @@ packages:
     resolution: {integrity: sha512-+1VkjdD0QBLPodGrJUeqarH8VAIvQODIbwh9XpP5Syisf7YoQgsJKPNFoqqLQlu+VQ/tVSshMR6loPMn8U+dPg==}
     engines: {node: '>=14'}
 
-  '@ts-rest/core@3.45.2':
-    resolution: {integrity: sha512-Eiv+Sa23MbsAd1Gx9vNJ+IFCDyLZNdJ+UuGMKbFvb+/NmgcBR1VL1UIVtEkd5DJxpYMMd8SLvW91RgB2TS8iPw==}
+  '@ts-rest/core@3.51.0':
+    resolution: {integrity: sha512-v6lnWEcpZj1UgN9wb84XQ+EORP1QEtncFumoXMJjno5ZUV6vdjKze3MYcQN0C6vjBpIJPQEaI/gab2jr4/0KzQ==}
     peerDependencies:
+      '@types/node': ^18.18.7 || >=20.8.4
       zod: ^3.22.3
     peerDependenciesMeta:
+      '@types/node':
+        optional: true
       zod:
         optional: true
 
-  '@ts-rest/express@3.45.2':
-    resolution: {integrity: sha512-GypL5auYuh3WS2xCc58J9OpgpYYJoPY2NvBxJxHOLdhMOoGHhYI8oIUtxfxIxWZcPJOAokrrQJ2zb2hrPUuR1A==}
+  '@ts-rest/express@3.51.0':
+    resolution: {integrity: sha512-osOo040EHoCMNMFBbEwZ6XheeEhG/zJGF4k3FOYUtaYSdxxYp5XkP8jQoV6I+Lu+O5jopnOQWoCpmNrrraIO8g==}
     peerDependencies:
+      '@ts-rest/core': ~3.51.0
       express: ^4.0.0
       zod: ^3.22.3
     peerDependenciesMeta:
       zod:
         optional: true
 
-  '@ts-rest/open-api@3.45.2':
-    resolution: {integrity: sha512-TG5GvD0eyicMR3HjEAMTO2ulO7x/ADSn5bfLF/ZDdVXla48PiQdwhG4NsjVbsUDCghwx+6y5u2aTYjypzdiXQg==}
+  '@ts-rest/open-api@3.51.0':
+    resolution: {integrity: sha512-fvpvRr6HIbAMNZR//QQQi75z5qTxMEBMRtmbaBXVi5e1WVVwOK7P6YBaGWTQp6DXSvsZVULX5VZXmsDd1Z1dew==}
     peerDependencies:
+      '@ts-rest/core': ~3.51.0
       zod: ^3.22.3
 
   '@types/body-parser@1.19.5':
@@ -1963,19 +1968,22 @@ snapshots:
   '@pkgjs/parseargs@0.11.0':
     optional: true
 
-  '@ts-rest/core@3.45.2(zod@3.23.8)':
+  '@ts-rest/core@3.51.0(@types/node@20.14.10)(zod@3.23.8)':
     optionalDependencies:
+      '@types/node': 20.14.10
       zod: 3.23.8
 
-  '@ts-rest/express@3.45.2(express@4.19.2)(zod@3.23.8)':
+  '@ts-rest/express@3.51.0(@ts-rest/core@3.51.0(@types/node@20.14.10)(zod@3.23.8))(express@4.19.2)(zod@3.23.8)':
     dependencies:
+      '@ts-rest/core': 3.51.0(@types/node@20.14.10)(zod@3.23.8)
       express: 4.19.2
     optionalDependencies:
       zod: 3.23.8
 
-  '@ts-rest/open-api@3.45.2(zod@3.23.8)':
+  '@ts-rest/open-api@3.51.0(@ts-rest/core@3.51.0(@types/node@20.14.10)(zod@3.23.8))(zod@3.23.8)':
     dependencies:
       '@anatine/zod-openapi': 1.14.2(openapi3-ts@2.0.2)(zod@3.23.8)
+      '@ts-rest/core': 3.51.0(@types/node@20.14.10)(zod@3.23.8)
       openapi3-ts: 2.0.2
       zod: 3.23.8
 

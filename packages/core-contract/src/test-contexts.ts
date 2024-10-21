@@ -27,9 +27,9 @@ export const TestContextSchema = z.object({
   finishedTimestamp: z.string().datetime({ offset: true }).optional()
 });
 
-const testContextContract = initContract();
+const contract = initContract();
 
-export const createTestContext = testContextContract.mutation({
+export const createTestContext = contract.mutation({
   summary: "Create the test context.",
   method: "POST",
   path: "/v1/test-contexts",
@@ -42,7 +42,7 @@ export const createTestContext = testContextContract.mutation({
   },
 });
 
-export const readTestContext = testContextContract.query({
+export const readTestContext = contract.query({
   summary: "Read the test context by ID.",
   method: "GET",
   path: "/v1/test-contexts/:id",
@@ -55,7 +55,7 @@ export const readTestContext = testContextContract.query({
   },
 });
 
-export const patchTestContext = testContextContract.mutation({
+export const patchTestContext = contract.mutation({
   summary: "Patch the test context fields.",
   method: "PATCH",
   path: "/v1/test-contexts/:id",
@@ -69,16 +69,16 @@ export const patchTestContext = testContextContract.mutation({
   },
 });
 
-export const deleteTestContext = testContextContract.mutation({
+export const deleteTestContext = contract.mutation({
   summary: "Delete the test context by ID.",
   method: "DELETE",
   path: "/v1/test-contexts/:id",
   pathParams: z.object({
     id: z.coerce.number().int(),
   }),
-  body: testContextContract.type<void>(),
+  body: contract.noBody(),
   responses: {
-    204: testContextContract.noBody(),
+    204: contract.noBody(),
     404: z.object({}),
   },
 });

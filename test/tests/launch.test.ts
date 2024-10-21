@@ -93,7 +93,7 @@ describe("launches", () => {
       createdTimestamp: new Date("2024-08-21T06:47:32Z"),
       startedTimestamp: new Date("2024-08-21T06:51:35Z"),
       finishedTimestamp: new Date("2024-08-21T06:52:21Z"),
-    }
+    };
 
     const patchResponse = await client.patchLaunch({
       params: { id: launch.id },
@@ -109,7 +109,7 @@ describe("launches", () => {
         title: patchRequest.title,
         createdTimestamp: patchRequest.createdTimestamp.toISOString(),
         startedTimestamp: patchRequest.startedTimestamp.toISOString(),
-        finishedTimestamp: patchRequest.finishedTimestamp.toISOString()
+        finishedTimestamp: patchRequest.finishedTimestamp.toISOString(),
       },
     });
   });
@@ -119,7 +119,6 @@ describe("launches", () => {
 
     const deleteLaunchResponse = await client.deleteLaunch({
       params: { id: launch.id },
-      body: undefined,
     });
 
     expect(deleteLaunchResponse).toEqual({

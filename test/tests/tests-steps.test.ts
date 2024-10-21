@@ -121,7 +121,6 @@ describe("test steps", () => {
 
     const response = await client.deleteTestStep({
       params: { id: testStep.id },
-      body: undefined,
     });
 
     expect(response).toEqual({
@@ -137,7 +136,7 @@ describe("test steps", () => {
     expect(testStepByIdAfterDeleteResponse).toEqual({
       headers: expect.anything(),
       status: 404,
-      body: {message: "Test step not found."},
+      body: { message: "Test step not found." },
     });
   });
 });

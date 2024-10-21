@@ -140,7 +140,6 @@ describe("test contexts", () => {
 
     const deleteTestContextResponse = await client.deleteTestContext({
       params: { id: testContextToDelete.id },
-      body: undefined,
     });
 
     expect(deleteTestContextResponse).toEqual({

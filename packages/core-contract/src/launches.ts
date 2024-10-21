@@ -28,9 +28,9 @@ export const LaunchSchema = z.object({
   finishedTimestamp: z.string().datetime({ offset: true }).optional(),
 });
 
-const launchesContract = initContract();
+const contract = initContract();
 
-export const createLaunch = launchesContract.mutation({
+export const createLaunch = contract.mutation({
   summary: "Create the launch.",
   method: "POST",
   path: "/v1/launches",
@@ -40,7 +40,7 @@ export const createLaunch = launchesContract.mutation({
   },
 });
 
-export const readLaunch = launchesContract.query({
+export const readLaunch = contract.query({
   summary: "Read the launch by ID.",
   method: "GET",
   path: "/v1/launches/:id",
@@ -53,7 +53,7 @@ export const readLaunch = launchesContract.query({
   },
 });
 
-export const patchLaunch = launchesContract.mutation({
+export const patchLaunch = contract.mutation({
   summary: "Patch the launch fields.",
   method: "PATCH",
   path: "/v1/launches/:id",
@@ -67,16 +67,16 @@ export const patchLaunch = launchesContract.mutation({
   },
 });
 
-export const deleteLaunch = launchesContract.mutation({
+export const deleteLaunch = contract.mutation({
   summary: "Delete the launch by ID.",
   method: "DELETE",
   path: "/v1/launches/:id",
   pathParams: z.object({
     id: z.coerce.number().int(),
   }),
-  body: launchesContract.type<void>(),
+  body: contract.noBody(),
   responses: {
-    204: launchesContract.noBody(),
+    204: contract.noBody(),
     404: z.object({}),
   },
 });

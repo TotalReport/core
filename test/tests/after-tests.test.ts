@@ -169,7 +169,7 @@ describe("after tests", () => {
       createdTimestamp: new Date("2024-07-21T06:52:32Z"),
       startedTimestamp: new Date("2024-07-21T06:52:35Z"),
       finishedTimestamp: new Date("2024-07-21T06:53:21Z"),
-      statusId: DEFAULT_TEST_STATUSES.SUCCESS.id,
+      statusId: DEFAULT_TEST_STATUSES.SUCCESSFUL.id,
       arguments: [
         {
           name: "Argument1",
@@ -226,7 +226,7 @@ describe("after tests", () => {
       createdTimestamp: new Date("2024-07-21T06:52:32Z"),
       startedTimestamp: new Date("2024-07-21T06:52:35Z"),
       finishedTimestamp: new Date("2024-07-21T06:53:21Z"),
-      statusId: DEFAULT_TEST_STATUSES.SUCCESS.id,
+      statusId: DEFAULT_TEST_STATUSES.SUCCESSFUL.id,
       arguments: [
         {
           name: "Argument1",
@@ -243,7 +243,6 @@ describe("after tests", () => {
 
     const deleteLaunchResponse = await client.deleteAfterTest({
       params: { id: afterTest.id },
-      body: undefined,
     });
 
     expect(deleteLaunchResponse).toEqual({

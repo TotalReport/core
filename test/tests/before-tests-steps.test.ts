@@ -121,7 +121,6 @@ describe("before test steps", () => {
 
     const response = await client.deleteBeforeTestStep({
       params: { id: beforeTestStep.id },
-      body: undefined,
     });
 
     expect(response).toEqual({
@@ -130,14 +129,15 @@ describe("before test steps", () => {
       body: expect.a(Blob),
     });
 
-    const beforeTestStepByIdAfterDeleteResponse = await client.readBeforeTestStep({
-      params: { id: beforeTestStep.id },
-    });
+    const beforeTestStepByIdAfterDeleteResponse =
+      await client.readBeforeTestStep({
+        params: { id: beforeTestStep.id },
+      });
 
     expect(beforeTestStepByIdAfterDeleteResponse).toEqual({
       headers: expect.anything(),
       status: 404,
-      body: {message: "Before test step not found."},
+      body: { message: "Before test step not found." },
     });
   });
 });

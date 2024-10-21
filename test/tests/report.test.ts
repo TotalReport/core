@@ -38,7 +38,6 @@ describe("reports", () => {
 
     const deleteReportResponse = await client.deleteReport({
       params: { id: report.id },
-      body: undefined,
     });
     expect(deleteReportResponse.status).toEqual(204);
 
@@ -57,7 +56,6 @@ describe("reports", () => {
 
     const deleteReportResponse = await client.deleteReport({
       params: { id: launch.reportId },
-      body: undefined,
     });
     expect(deleteReportResponse.status).toEqual(204);
 
