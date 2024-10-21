@@ -98,7 +98,7 @@ export const deleteTest = contract.mutation({
   }),
   body: contract.noBody(),
   responses: {
-    204: contract.noBody(),
+    204: z.void(),
     404: z.object({}),
   },
 });
