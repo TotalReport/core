@@ -1,13 +1,13 @@
+import { LaunchesGenerator } from "@total-report/core-entities-generator/launch";
+import { ReportsGenerator } from "@total-report/core-entities-generator/report";
 import { expect } from "earl";
 import { describe, test } from "mocha";
 import { client } from "../tools/client.js";
 import "../tools/earl-extensions.js";
-import { generateLaunch } from "../tools/launch-generator.js";
-import { generateReport } from "../tools/report-generator.js";
 
 describe("launches", () => {
   test("create launch with minimum fields", async () => {
-    const report = await generateReport();
+    const report = await new ReportsGenerator(client).create();
     const request = { title: "New launch", reportId: report.id };
 
     const response = await client.createLaunch({ body: request });
@@ -25,7 +25,7 @@ describe("launches", () => {
   });
 
   test("create launch with maximum fields", async () => {
-    const report = await generateReport();
+    const report = await new ReportsGenerator(client).create();
     const request = {
       reportId: report.id,
       title: "Launch 2",
@@ -51,7 +51,7 @@ describe("launches", () => {
   });
 
   test("read launch by id", async () => {
-    const report = await generateReport();
+    const report = await new ReportsGenerator(client).create();
     const request = {
       reportId: report.id,
       title: "Launch 2",
@@ -82,7 +82,7 @@ describe("launches", () => {
   });
 
   test("patch launch all fields", async () => {
-    const launch = await generateLaunch({
+    const launch = await new LaunchesGenerator(client).create({
       title: "Launch 1",
       createdTimestamp: new Date("2024-07-21T06:52:32Z"),
       startedTimestamp: new Date("2024-07-21T06:52:35Z"),
@@ -115,7 +115,7 @@ describe("launches", () => {
   });
 
   test("delete launch", async () => {
-    const launch = await generateLaunch();
+    const launch = await new LaunchesGenerator(client).create();
 
     const deleteLaunchResponse = await client.deleteLaunch({
       params: { id: launch.id },

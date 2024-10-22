@@ -1,9 +1,9 @@
+import { BeforeTestsGenerator } from "@total-report/core-entities-generator/before-test";
+import { BeforeTestStepsGenerator } from "@total-report/core-entities-generator/before-test-step";
 import { expect } from "earl";
 import { describe, test } from "mocha";
-import { BeforeTestsGenerator } from "../tools/before-test-generator.js";
 import { client } from "../tools/client.js";
 import "../tools/earl-extensions.js";
-import { BeforeTestStepsGenerator } from "../tools/before-test-step-generator.js";
 
 describe("before test steps", () => {
   test("create before test step", async () => {

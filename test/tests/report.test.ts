@@ -1,9 +1,9 @@
-import { describe, test } from "mocha";
+import { LaunchesGenerator } from "@total-report/core-entities-generator/launch";
+import { ReportsGenerator } from "@total-report/core-entities-generator/report";
 import { expect } from "earl";
-import { expect_toBe, expect_toBeCloseToNow } from "../tools/utils.js";
-import { generateReport } from "../tools/report-generator.js";
-import { generateLaunch } from "../tools/launch-generator.js";
+import { describe, test } from "mocha";
 import { client } from "../tools/client.js";
+import { expect_toBe, expect_toBeCloseToNow } from "../tools/utils.js";
 
 describe("reports", () => {
   test("create report", async () => {
@@ -23,7 +23,7 @@ describe("reports", () => {
   });
 
   test("read report by id", async () => {
-    let report = await generateReport();
+    let report = await new ReportsGenerator(client).create();
 
     const reportByIdResponse = await client.readReport({
       params: { id: report.id },
@@ -34,7 +34,7 @@ describe("reports", () => {
   });
 
   test("delete report", async () => {
-    let report = await generateReport();
+    let report = await new ReportsGenerator(client).create();
 
     const deleteReportResponse = await client.deleteReport({
       params: { id: report.id },
@@ -52,7 +52,7 @@ describe("reports", () => {
   });
 
   test("delete report with launches", async () => {
-    let launch = await generateLaunch();
+    let launch = await new LaunchesGenerator(client).create();
 
     const deleteReportResponse = await client.deleteReport({
       params: { id: launch.reportId },

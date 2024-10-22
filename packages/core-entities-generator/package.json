@@ -1,0 +1,67 @@
+{
+  "name": "@total-report/core-entities-generator",
+  "type": "module",
+  "version": "1.0.0",
+  "description": "",
+  "engines": {
+    "node": ">=20.15.0",
+    "pnpm": ">=9.5.0"
+  },
+  "exports": {
+    "./report": {
+      "default": "./dist/report-generator.js",
+      "types": "./dist/report-generator.d.ts"
+    },
+    "./launch": {
+      "default": "./dist/launch-generator.js",
+      "types": "./dist/launch-generator.d.ts"
+    },
+    "./test-context": {
+      "default": "./dist/test-context-generator.js",
+      "types": "./dist/test-context-generator.d.ts"
+    },
+    "./before-test": {
+      "default": "./dist/before-test-generator.js",
+      "types": "./dist/before-test-generator.d.ts"
+    },
+    "./before-test-step": {
+      "default": "./dist/before-test-step-generator.js",
+      "types": "./dist/before-test-step-generator.d.ts"
+    },
+    "./test": {
+      "default": "./dist/test-generator.js",
+      "types": "./dist/test-generator.d.ts"
+    },
+    "./test-step": {
+      "default": "./dist/test-step-generator.js",
+      "types": "./dist/test-step-generator.d.ts"
+    },
+    "./after-test": {
+      "default": "./dist/after-test-generator.js",
+      "types": "./dist/after-test-generator.d.ts"
+    },
+    "./after-test-step": {
+      "default": "./dist/after-test-step-generator.js",
+      "types": "./dist/after-test-step-generator.d.ts"
+    }
+  },
+
+  "scripts": {
+    "clean": "rimraf dist",
+    "dev": "tsc",
+    "build": "tsc"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@total-report/core-contract": "workspace:*",
+    "@ts-rest/core": "^3.51.0",
+    "@faker-js/faker": "^8.4.1"
+  },
+  "devDependencies": {
+    "@total-report/typescript-config": "workspace:*",
+    "rimraf": "^6.0.1",
+    "typescript": "5.5.3"
+  }
+}

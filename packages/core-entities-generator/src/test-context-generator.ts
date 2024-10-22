@@ -1,13 +1,11 @@
 import { faker } from "@faker-js/faker";
-import { contract } from "@total-report/core-contract/contract";
-import { initClient, InitClientArgs } from "@ts-rest/core";
-import { client } from "./client.js";
-import { generateLaunch } from "./launch-generator.js";
+import { ClientType } from "./types.js";
+import { LaunchesGenerator } from "./launch-generator.js";
+import { assertEquals } from "./utils.js";
 
-export type ClientType = ReturnType<
-  typeof initClient<typeof contract, InitClientArgs>
->;
-
+/**
+ * This class is responsible for generating test contexts.
+ */
 export class TestContextsGenerator {
   client: ClientType;
 
@@ -15,14 +13,20 @@ export class TestContextsGenerator {
     this.client = client;
   }
 
+  /**
+   * Creates a new test context.
+   * 
+   * @param args The arguments to create the test context with.
+   * @returns The created test context.
+   */
   async create(args: CreateTestContext | undefined = undefined) {
-    const launchId = args?.launchId ?? (await generateLaunch()).id;
+    const launchId = args?.launchId ?? (await new LaunchesGenerator(this.client).create()).id;
 
     const title =
       args?.title ??
       faker.word.noun() + " " + faker.word.verb() + " " + faker.date.recent();
 
-    const response = await client.createTestContext({
+    const response = await this.client.createTestContext({
       body: {
         parentTestContextId: args?.parentTestContextId,
         launchId: launchId,
@@ -32,16 +36,21 @@ export class TestContextsGenerator {
         finishedTimestamp: args?.finishedTimestamp,
       },
     });
-    if (response.status !== 201) {
-      throw new Error(
-        "Failed to create after test. Server response: " + response.body
-      );
-    }
+
+    assertEquals(
+      response.status,
+      201,
+      `Failed to create test context. Server response status ${response.status}, body ${JSON.stringify(response.body)}`
+    );
+
     return response.body;
   }
 }
 
-type CreateTestContext = {
+/**
+ * The arguments to create a test context with.
+ */
+export type CreateTestContext = {
   launchId?: number;
   parentTestContextId?: number;
   title?: string;

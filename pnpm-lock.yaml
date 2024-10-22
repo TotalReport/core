@@ -144,6 +144,28 @@ importers:
         specifier: 5.5.3
         version: 5.5.3
 
+  packages/core-entities-generator:
+    dependencies:
+      '@faker-js/faker':
+        specifier: ^8.4.1
+        version: 8.4.1
+      '@total-report/core-contract':
+        specifier: workspace:*
+        version: link:../core-contract
+      '@ts-rest/core':
+        specifier: ^3.51.0
+        version: 3.51.0(@types/node@20.14.10)(zod@3.23.8)
+    devDependencies:
+      '@total-report/typescript-config':
+        specifier: workspace:*
+        version: link:../typescript-config
+      rimraf:
+        specifier: ^6.0.1
+        version: 6.0.1
+      typescript:
+        specifier: 5.5.3
+        version: 5.5.3
+
   packages/core-schema:
     dependencies:
       drizzle-orm:
@@ -173,6 +195,9 @@ importers:
       '@total-report/core-contract':
         specifier: workspace:*
         version: link:../packages/core-contract
+      '@total-report/core-entities-generator':
+        specifier: workspace:*
+        version: link:../packages/core-entities-generator
       '@total-report/core-schema':
         specifier: workspace:*
         version: link:../packages/core-schema

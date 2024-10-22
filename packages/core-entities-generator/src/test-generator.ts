@@ -1,13 +1,11 @@
 import { faker } from "@faker-js/faker";
-import { contract } from "@total-report/core-contract/contract";
-import { initClient, InitClientArgs } from "@ts-rest/core";
-import { client } from "./client.js";
-import { generateLaunch } from "./launch-generator.js";
+import { ClientType } from "./types.js";
+import { LaunchesGenerator } from "./launch-generator.js";
+import { assertEquals } from "./utils.js";
 
-export type ClientType = ReturnType<
-  typeof initClient<typeof contract, InitClientArgs>
->;
-
+/**
+ * This class is responsible for generating tests.
+ */
 export class TestsGenerator {
   client: ClientType;
 
@@ -15,14 +13,20 @@ export class TestsGenerator {
     this.client = client;
   }
 
+  /**
+   * Creates a new test.
+   * 
+   * @param args The arguments to create the test with.
+   * @returns The created test.
+   */
   async create(args: CreateTestArgs | undefined = undefined) {
-    const launchId = args?.launchId ?? (await generateLaunch()).id;
+    const launchId = args?.launchId ?? (await new LaunchesGenerator(this.client).create()).id;
 
     const title =
       args?.title ??
       faker.word.noun() + " " + faker.word.verb() + " " + faker.date.recent();
 
-    const response = await client.createTest({
+    const response = await this.client.createTest({
       body: {
         ...args,
         launchId: launchId,
@@ -30,17 +34,20 @@ export class TestsGenerator {
       },
     });
 
-    if (response.status !== 201) {
-      throw new Error(
-        `Failed to create test. Server response status ${response.status} body ${JSON.stringify(response.body)}`
-      );
-    }
+    assertEquals(
+      response.status,
+      201,
+      `Failed to create test. Server response status ${response.status}, body ${JSON.stringify(response.body)}`
+    )
 
     return response.body;
   }
 }
 
-type CreateTestArgs = {
+/**
+ * The arguments to create a test with.
+ */
+export type CreateTestArgs = {
   launchId?: number;
   testContextId?: number;
   createdTimestamp?: Date;

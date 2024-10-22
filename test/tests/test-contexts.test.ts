@@ -1,13 +1,13 @@
+import { LaunchesGenerator } from "@total-report/core-entities-generator/launch";
+import { TestContextsGenerator } from "@total-report/core-entities-generator/test-context";
 import { expect } from "earl";
-import "../tools/earl-extensions.js";
 import { describe, test } from "mocha";
 import { client } from "../tools/client.js";
-import { generateLaunch } from "../tools/launch-generator.js";
-import { TestContextsGenerator } from "../tools/test-context-generator.js";
+import "../tools/earl-extensions.js";
 
 describe("test contexts", () => {
   test("create test context with minimum fields", async () => {
-    const launch = await generateLaunch();
+    const launch = await new LaunchesGenerator(client).create();
     const request = {
       title: "New test context",
       launchId: launch.id,
@@ -30,7 +30,7 @@ describe("test contexts", () => {
   });
 
   test("create test context with all fields", async () => {
-    const launch = await generateLaunch();
+    const launch = await new LaunchesGenerator(client).create();
     const parentTestContext = await new TestContextsGenerator(client).create({
       launchId: launch.id,
     });
@@ -61,7 +61,7 @@ describe("test contexts", () => {
   });
 
   test("read test context by id", async () => {
-    const launch = await generateLaunch();
+    const launch = await new LaunchesGenerator(client).create();
     const parentTestContext = await new TestContextsGenerator(client).create({
       launchId: launch.id,
     });

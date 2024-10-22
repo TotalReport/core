@@ -1,13 +1,11 @@
 import { faker } from "@faker-js/faker";
-import { contract } from "@total-report/core-contract/contract";
-import { initClient, InitClientArgs } from "@ts-rest/core";
 import { BeforeTestsGenerator } from "./before-test-generator.js";
-import { client } from "./client.js";
+import { ClientType } from "./types.js";
+import { assertEquals } from "./utils.js";
 
-export type ClientType = ReturnType<
-  typeof initClient<typeof contract, InitClientArgs>
->;
-
+/**
+ * This class is responsible for generating before test steps.
+ */
 export class BeforeTestStepsGenerator {
   client: ClientType;
 
@@ -15,14 +13,22 @@ export class BeforeTestStepsGenerator {
     this.client = client;
   }
 
+  /**
+   * Creates a new before test step.
+   *
+   * @param args The arguments to create the before test step with.
+   * @returns The created before test step.
+   */
   async create(args: CreateBeforeTestStepArgs | undefined = undefined) {
-    const beforeTestId = args?.beforeTestId ?? (await new BeforeTestsGenerator(client).create()).id;
-    
+    const beforeTestId =
+      args?.beforeTestId ??
+      (await new BeforeTestsGenerator(this.client).create()).id;
+
     const title =
       args?.title ??
       faker.word.noun() + " " + faker.word.verb() + " " + faker.date.recent();
 
-    const response = await client.createBeforeTestStep({
+    const response = await this.client.createBeforeTestStep({
       body: {
         beforeTestId: beforeTestId,
         title: title,
@@ -30,19 +36,24 @@ export class BeforeTestStepsGenerator {
         startedTimestamp: args?.startedTimestamp,
         finishedTimestamp: args?.finishedTimestamp,
         isSuccessful: args?.isSuccessful,
-        errorMessage: args?.errorMessage
+        errorMessage: args?.errorMessage,
       },
     });
-    if (response.status !== 201) {
-      throw new Error(
-        `Failed to create before test step. Server response status ${response.status} body ${JSON.stringify(response.body)}`
-      );
-    }
+
+    assertEquals(
+      response.status,
+      201,
+      `Failed to create before test step. Server response status ${response.status}, body ${JSON.stringify(response.body)}`
+    );
+
     return response.body;
   }
 }
 
-type CreateBeforeTestStepArgs = {
+/**
+ * The arguments to create a before test step with.
+ */
+export type CreateBeforeTestStepArgs = {
   beforeTestId?: number;
   createdTimestamp?: Date;
   startedTimestamp?: Date;

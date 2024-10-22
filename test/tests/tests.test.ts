@@ -1,15 +1,15 @@
+import { LaunchesGenerator } from "@total-report/core-entities-generator/launch";
+import { TestsGenerator } from "@total-report/core-entities-generator/test";
+import { TestContextsGenerator } from "@total-report/core-entities-generator/test-context";
+import { DEFAULT_TEST_STATUSES } from "@total-report/core-schema/constants";
 import { expect } from "earl";
-import "../tools/earl-extensions.js";
 import { describe, test } from "mocha";
 import { client } from "../tools/client.js";
-import { generateLaunch } from "../tools/launch-generator.js";
-import { TestsGenerator } from "../tools/test-generator.js";
-import { TestContextsGenerator } from "../tools/test-context-generator.js";
-import { DEFAULT_TEST_STATUSES } from "@total-report/core-schema/constants";
+import "../tools/earl-extensions.js";
 
 describe("tests", () => {
   test("create test", async () => {
-    const launch = await generateLaunch();
+    const launch = await new LaunchesGenerator(client).create();
     const response = await client.createTest({
       body: {
         title: "New test",
@@ -128,7 +128,7 @@ describe("tests", () => {
   });
 
   test("read test", async () => {
-    const launch = await generateLaunch();
+    const launch = await new LaunchesGenerator(client).create();
     const testContext = await new TestContextsGenerator(client).create({
       launchId: launch.id,
     });
@@ -216,7 +216,7 @@ describe("tests", () => {
   });
 
   test("delete test", async () => {
-    const launch = await generateLaunch();
+    const launch = await new LaunchesGenerator(client).create();
 
     const testContext = await new TestContextsGenerator(client).create({
       launchId: launch.id,
