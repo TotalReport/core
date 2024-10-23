@@ -1,5 +1,6 @@
 import { LaunchesGenerator } from "@total-report/core-entities-generator/launch";
 import { TestContextsGenerator } from "@total-report/core-entities-generator/test-context";
+import { add } from "date-fns";
 import { expect } from "earl";
 import { describe, test } from "mocha";
 import { client } from "../tools/client.js";
@@ -127,6 +128,81 @@ describe("test contexts", () => {
         createdTimestamp: patchRequest.createdTimestamp.toISOString(),
         startedTimestamp: patchRequest.startedTimestamp.toISOString(),
         finishedTimestamp: patchRequest.finishedTimestamp.toISOString(),
+      },
+    });
+  });
+
+  test("find test contexts by launch id returns only root contexts", async () => {
+    const timestamp = new Date("2024-07-21T06:52:32Z");
+    const launch = await new LaunchesGenerator(client).create();
+    const rootTestContexts = [];
+    for (let i = 0; i < 10; i++) {
+      if (i % 2 === 0) {
+        const context = await new TestContextsGenerator(client).create({
+          launchId: launch.id,
+          title: `Root test context ${i}`,
+          createdTimestamp: add(timestamp, { seconds: i }),
+        });
+        rootTestContexts.push(context);
+      } else {
+        const context = await new TestContextsGenerator(client).create({
+          launchId: launch.id,
+          title: `Root test context ${i}`,
+          createdTimestamp: add(timestamp, { seconds: i }),
+          startedTimestamp: add(timestamp, { seconds: i }),
+        });
+        rootTestContexts.push(context);
+      }
+      if (i % 3 === 0) {
+        const parentTestContext = rootTestContexts[i]!;
+        const context = await new TestContextsGenerator(client).create({
+          launchId: launch.id,
+          parentTestContextId: parentTestContext.id,
+          title: `Child test context ${i}`,
+          createdTimestamp: add(timestamp, { seconds: i }),
+          startedTimestamp: add(timestamp, { seconds: i }),
+        });
+      }
+    }
+
+    const findTestContextsResponse = await client.findTestContextsByLaunchId({
+      params: { launchId: launch.id },
+      query: {
+        limit: 10,
+        offset: 0,
+      },
+    });
+
+    expect(findTestContextsResponse).toEqual({
+      headers: expect.anything(),
+      status: 200,
+      body: {
+        pagination: {
+          limit: 10,
+          offset: 0,
+          total: 10,
+        },
+        items: rootTestContexts
+          .sort((c1, c2) => {
+            // if startedTimestamp is null, sort by createdTimestamp
+            if (c1.startedTimestamp == null && c2.startedTimestamp == null) {
+              return (
+                new Date(c1.createdTimestamp).getTime() -
+                new Date(c2.createdTimestamp).getTime()
+              );
+            }
+            // nulls last
+            if (c1.startedTimestamp == null) {
+              return 1;
+            }
+            if (c2.startedTimestamp == null) {
+              return -1;
+            }
+            return (
+              new Date(c1.startedTimestamp).getTime() -
+              new Date(c2.startedTimestamp).getTime()
+            );
+          })
       },
     });
   });

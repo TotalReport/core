@@ -1,5 +1,6 @@
 import { initContract } from "@ts-rest/core";
 import { z } from "zod";
+import { PAGINATION_DEFAULTS } from "./defaults.js";
 
 export const CreateTestContextSchema = z.object({
   launchId: z.number().int(),
@@ -7,14 +8,14 @@ export const CreateTestContextSchema = z.object({
   title: z.string().min(1).max(256),
   createdTimestamp: z.coerce.date().optional(),
   startedTimestamp: z.coerce.date().optional(),
-  finishedTimestamp: z.coerce.date().optional()
+  finishedTimestamp: z.coerce.date().optional(),
 });
 
 export const PatchTestContextSchema = z.object({
   title: z.string().min(1).max(256).optional(),
   createdTimestamp: z.coerce.date().optional(),
   startedTimestamp: z.coerce.date().nullish(),
-  finishedTimestamp: z.coerce.date().nullish()
+  finishedTimestamp: z.coerce.date().nullish(),
 });
 
 export const TestContextSchema = z.object({
@@ -24,7 +25,7 @@ export const TestContextSchema = z.object({
   title: z.string().min(1).max(256),
   createdTimestamp: z.string().datetime({ offset: true }),
   startedTimestamp: z.string().datetime({ offset: true }).optional(),
-  finishedTimestamp: z.string().datetime({ offset: true }).optional()
+  finishedTimestamp: z.string().datetime({ offset: true }).optional(),
 });
 
 const contract = initContract();
@@ -37,8 +38,8 @@ export const createTestContext = contract.mutation({
   responses: {
     201: TestContextSchema,
     400: z.object({
-      message: z.string()
-    })
+      message: z.string(),
+    }),
   },
 });
 
@@ -80,5 +81,28 @@ export const deleteTestContext = contract.mutation({
   responses: {
     204: z.void(),
     404: z.object({}),
+  },
+});
+
+export const findTestContextsByLaunchId = contract.query({
+  summary: "Get test contexts by launch ID. Only root level contexts are returned. Sort by start time then by creation time, nulls last.",
+  method: "GET",
+  path: "/v1/launches/:launchId/test-contexts",
+  pathParams: z.object({
+    launchId: z.coerce.number().int(),
+  }),
+  query: z.object({
+    limit: z.coerce.number().int().optional().default(PAGINATION_DEFAULTS.limit),
+    offset: z.coerce.number().int().optional().default(PAGINATION_DEFAULTS.limit),
+  }),
+  responses: {
+    200: z.object({
+      pagination: z.object({
+        total: z.number().int(),
+        limit: z.number().int(),
+        offset: z.number().int(),
+      }),
+      items: z.array(TestContextSchema),
+    }),
   },
 });

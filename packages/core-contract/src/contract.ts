@@ -37,6 +37,7 @@ import {
   deleteTestContext,
   patchTestContext,
   readTestContext,
+  findTestContextsByLaunchId,
 } from "./test-contexts.js";
 import {
   createTestStep,
@@ -78,6 +79,7 @@ export const contract = c.router({
   createTestContext: createTestContext,
   readTestContext: readTestContext,
   patchTestContext: patchTestContext,
+  findTestContextsByLaunchId: findTestContextsByLaunchId,
   deleteTestContext: deleteTestContext,
 
   createBeforeTest: createBeforeTest,

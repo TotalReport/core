@@ -1,4 +1,5 @@
 import { contract } from "@total-report/core-contract/contract";
+import { PAGINATION_DEFAULTS } from "@total-report/core-contract/defaults";
 import { AppRouteImplementation } from "@ts-rest/express";
 import { TestContextsDAO } from "../db/test-contexts.js";
 
@@ -84,6 +85,39 @@ export const patchTestContextRoute: PatchTestContextRoute = async ({
   };
 };
 
+export const findTestContextsByLaunchIdRoute: FindByLaunchIdRoute = async ({
+  params,
+  query,
+}) => {
+  const testContexts = await new TestContextsDAO().findByLaunchId(
+    params.launchId,
+    {
+      limit: query.limit?? PAGINATION_DEFAULTS.limit,
+      offset: query.offset?? PAGINATION_DEFAULTS.offset,
+    }
+  );
+
+  return {
+    status: 200,
+    body: {
+      items: testContexts.items.map((testContext) => ({
+        ...testContext,
+        parentTestContextId: testContext.parentTestContextId ?? undefined,
+        createdTimestamp: testContext.createdTimestamp.toISOString(),
+        startedTimestamp:
+          testContext.startedTimestamp?.toISOString() ?? undefined,
+        finishedTimestamp:
+          testContext.finishedTimestamp?.toISOString() ?? undefined,
+      })),
+      pagination: {
+        total: testContexts.pagination.total,
+        limit: testContexts.pagination.limit,
+        offset: testContexts.pagination.offset,
+      },
+    },
+  };
+};
+
 export const deleteTestContextRoute: DeleteTestContextRoute = async ({
   params,
 }) => {
@@ -108,4 +142,8 @@ type PatchTestContextRoute = AppRouteImplementation<
 
 type DeleteTestContextRoute = AppRouteImplementation<
   typeof contract.deleteTestContext
+>;
+
+type FindByLaunchIdRoute = AppRouteImplementation<
+  typeof contract.findTestContextsByLaunchId
 >;

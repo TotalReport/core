@@ -1,7 +1,8 @@
 import { testContexts } from "@total-report/core-schema/schema";
-import { eq } from "drizzle-orm";
+import { and, count, eq, isNull } from "drizzle-orm";
 import { NodePgQueryResultHKT } from "drizzle-orm/node-postgres/session";
 import { PgDatabase } from "drizzle-orm/pg-core/db";
+import { Paginated, PaginationParams } from "../db-common/types.js";
 import { db as defaultDB } from "../db/setup.js";
 import {
   ParentTestContextBelongsToDifferentLaunchError,
@@ -19,6 +20,12 @@ export class TestContextsDAO {
     this.db = db;
   }
 
+  /**
+   * Create the test context.
+   *
+   * @param args The create test context parameters.
+   * @returns The created test context.
+   */
   async create(args: CreateTestContext): Promise<TestContextEntity> {
     validateTitleAndTimestamps(args);
 
@@ -49,6 +56,12 @@ export class TestContextsDAO {
     ).at(0);
   }
 
+  /**
+   * Patch the test context fields.
+   *
+   * @param args The patch test context parameters.
+   * @returns The patched test context.
+   */
   async patch(args: PatchTestContext): Promise<TestContextEntity> {
     const result = await this.db.transaction(async (tx) => {
       const launchFromDb = await new TestContextsDAO(tx).findById(args.id);
@@ -77,6 +90,57 @@ export class TestContextsDAO {
     return convertToEntity(result);
   }
 
+  /**
+   * Find test contexts by launch ID.
+   *
+   * @param launchId The launch ID.
+   * @param pagination The pagination parameters.
+   * @returns The paginated list of test contexts.
+   */
+  async findByLaunchId(
+    launchId: number,
+    pagination: PaginationParams
+  ): Promise<Paginated<TestContextEntity>> {
+    const data = await this.db.transaction(async (tx) => {
+      const filter = and(
+        eq(testContexts.launchId, launchId),
+        isNull(testContexts.parentTestContextId)
+      );
+
+      const items = await tx
+        .select()
+        .from(testContexts)
+        .where(filter)
+        .orderBy(testContexts.startedTimestamp, testContexts.createdTimestamp)
+        .limit(pagination.limit)
+        .offset(pagination.offset);
+
+      const total =
+        (
+          await tx.select({ value: count() }).from(testContexts).where(filter)
+        ).at(0)?.value ?? 0;
+
+      return {
+        items,
+        total,
+      };
+    });
+
+    return {
+      pagination: {
+        total: data.total,
+        limit: pagination.limit,
+        offset: pagination.offset,
+      },
+      items: data.items.map(convertToEntity),
+    };
+  }
+
+  /**
+   * Delete the test context by ID.
+   *
+   * @param id The test context ID.
+   */
   async deleteById(id: number): Promise<void> {
     await this.db.delete(testContexts).where(eq(testContexts.id, id));
   }

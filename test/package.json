@@ -18,8 +18,9 @@
   "license": "ISC",
   "dependencies": {
     "@total-report/core-contract": "workspace:*",
+    "@total-report/core-entities-generator": "workspace:*",
     "@total-report/core-schema": "workspace:*",
-    "@total-report/core-entities-generator": "workspace:*"
+    "date-fns": "^4.1.0"
   },
   "devDependencies": {
     "@faker-js/faker": "^8.4.1",

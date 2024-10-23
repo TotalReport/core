@@ -24,6 +24,7 @@ import {
 import {
   createTestContextRoute,
   deleteTestContextRoute,
+  findTestContextsByLaunchIdRoute,
   patchTestContextRoute,
   readTestContextRoute,
 } from "./routes/test-contexts.js";
@@ -57,6 +58,7 @@ const router = s.router(contract, {
   createTestContext: createTestContextRoute,
   readTestContext: readTestContextRoute,
   patchTestContext: patchTestContextRoute,
+  findTestContextsByLaunchId: findTestContextsByLaunchIdRoute,
   deleteTestContext: deleteTestContextRoute,
 
   createBeforeTest: createBeforeTestRoute,

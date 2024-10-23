@@ -11,6 +11,10 @@
     "./contract": {
       "default": "./dist/contract.js",
       "types": "./dist/contract.d.ts"
+    },
+    "./defaults": {
+      "default": "./dist/defaults.js",
+      "types": "./dist/defaults.d.ts"
     }
   },
   "scripts": {
