@@ -1,5 +1,5 @@
 {
-  "id": "594a3d5c-2f76-4c85-9577-d6ce28dbaf30",
+  "id": "3f464681-e041-446c-a664-6c2252608c46",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -62,7 +62,8 @@
         }
       },
       "compositePrimaryKeys": {},
-      "uniqueConstraints": {}
+      "uniqueConstraints": {},
+      "checkConstraints": {}
     },
     "public.after_test_steps": {
       "name": "after_test_steps",
@@ -134,7 +135,8 @@
         }
       },
       "compositePrimaryKeys": {},
-      "uniqueConstraints": {}
+      "uniqueConstraints": {},
+      "checkConstraints": {}
     },
     "public.after_tests": {
       "name": "after_tests",
@@ -154,9 +156,10 @@
         },
         "id": {
           "name": "id",
-          "type": "bigserial",
+          "type": "bigint",
           "primaryKey": true,
-          "notNull": true
+          "notNull": true,
+          "default": "nextval('test_entities_id_seq')"
         },
         "title": {
           "name": "title",
@@ -238,7 +241,8 @@
         }
       },
       "compositePrimaryKeys": {},
-      "uniqueConstraints": {}
+      "uniqueConstraints": {},
+      "checkConstraints": {}
     },
     "public.before_test_arguments": {
       "name": "before_test_arguments",
@@ -298,7 +302,8 @@
         }
       },
       "compositePrimaryKeys": {},
-      "uniqueConstraints": {}
+      "uniqueConstraints": {},
+      "checkConstraints": {}
     },
     "public.before_test_steps": {
       "name": "before_test_steps",
@@ -370,7 +375,8 @@
         }
       },
       "compositePrimaryKeys": {},
-      "uniqueConstraints": {}
+      "uniqueConstraints": {},
+      "checkConstraints": {}
     },
     "public.before_tests": {
       "name": "before_tests",
@@ -390,9 +396,10 @@
         },
         "id": {
           "name": "id",
-          "type": "bigserial",
+          "type": "bigint",
           "primaryKey": true,
-          "notNull": true
+          "notNull": true,
+          "default": "nextval('test_entities_id_seq')"
         },
         "title": {
           "name": "title",
@@ -474,7 +481,8 @@
         }
       },
       "compositePrimaryKeys": {},
-      "uniqueConstraints": {}
+      "uniqueConstraints": {},
+      "checkConstraints": {}
     },
     "public.launches": {
       "name": "launches",
@@ -534,7 +542,8 @@
         }
       },
       "compositePrimaryKeys": {},
-      "uniqueConstraints": {}
+      "uniqueConstraints": {},
+      "checkConstraints": {}
     },
     "public.paths": {
       "name": "paths",
@@ -582,7 +591,8 @@
         }
       },
       "compositePrimaryKeys": {},
-      "uniqueConstraints": {}
+      "uniqueConstraints": {},
+      "checkConstraints": {}
     },
     "public.reports": {
       "name": "reports",
@@ -610,7 +620,8 @@
       "indexes": {},
       "foreignKeys": {},
       "compositePrimaryKeys": {},
-      "uniqueConstraints": {}
+      "uniqueConstraints": {},
+      "checkConstraints": {}
     },
     "public.test_arguments": {
       "name": "test_arguments",
@@ -670,7 +681,8 @@
         }
       },
       "compositePrimaryKeys": {},
-      "uniqueConstraints": {}
+      "uniqueConstraints": {},
+      "checkConstraints": {}
     },
     "public.test_contexts": {
       "name": "test_contexts",
@@ -690,9 +702,10 @@
         },
         "id": {
           "name": "id",
-          "type": "bigserial",
+          "type": "bigint",
           "primaryKey": true,
-          "notNull": true
+          "notNull": true,
+          "default": "nextval('test_entities_id_seq')"
         },
         "title": {
           "name": "title",
@@ -749,7 +762,8 @@
         }
       },
       "compositePrimaryKeys": {},
-      "uniqueConstraints": {}
+      "uniqueConstraints": {},
+      "checkConstraints": {}
     },
     "public.test_status_groups": {
       "name": "test_status_groups",
@@ -777,7 +791,8 @@
       "indexes": {},
       "foreignKeys": {},
       "compositePrimaryKeys": {},
-      "uniqueConstraints": {}
+      "uniqueConstraints": {},
+      "checkConstraints": {}
     },
     "public.test_statuses": {
       "name": "test_statuses",
@@ -825,7 +840,8 @@
         }
       },
       "compositePrimaryKeys": {},
-      "uniqueConstraints": {}
+      "uniqueConstraints": {},
+      "checkConstraints": {}
     },
     "public.test_steps": {
       "name": "test_steps",
@@ -897,7 +913,8 @@
         }
       },
       "compositePrimaryKeys": {},
-      "uniqueConstraints": {}
+      "uniqueConstraints": {},
+      "checkConstraints": {}
     },
     "public.tests": {
       "name": "tests",
@@ -917,9 +934,10 @@
         },
         "id": {
           "name": "id",
-          "type": "bigserial",
+          "type": "bigint",
           "primaryKey": true,
-          "notNull": true
+          "notNull": true,
+          "default": "nextval('test_entities_id_seq')"
         },
         "title": {
           "name": "title",
@@ -1001,12 +1019,72 @@
         }
       },
       "compositePrimaryKeys": {},
-      "uniqueConstraints": {}
+      "uniqueConstraints": {},
+      "checkConstraints": {}
     }
   },
   "enums": {},
   "schemas": {},
-  "sequences": {},
+  "sequences": {
+    "public.test_entities_id_seq": {
+      "name": "test_entities_id_seq",
+      "schema": "public",
+      "increment": "1",
+      "startWith": "1",
+      "minValue": "1",
+      "maxValue": "9223372036854775807",
+      "cache": "5",
+      "cycle": false
+    }
+  },
+  "views": {
+    "public.test_entities": {
+      "columns": {
+        "launch_id": {
+          "name": "launch_id",
+          "type": "bigint",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "id": {
+          "name": "id",
+          "type": "bigint",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "nextval('test_entities_id_seq')"
+        },
+        "title": {
+          "name": "title",
+          "type": "varchar(256)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "created_timestamp": {
+          "name": "created_timestamp",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "started_timestamp": {
+          "name": "started_timestamp",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "finished_timestamp": {
+          "name": "finished_timestamp",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "definition": "(((select \"launch_id\", \"parent_test_context_id\" as \"parent_context_id\", 'test context' as \"entity_type\", \"id\", \"title\", \"created_timestamp\", \"started_timestamp\", \"finished_timestamp\", null as \"status_id\" from \"test_contexts\") union all (select \"launch_id\", \"test_context_id\" as \"parent_context_id\", 'before test' as \"entity_type\", \"id\", \"title\", \"created_timestamp\", \"started_timestamp\", \"finished_timestamp\", \"status_id\" from \"before_tests\")) union all (select \"launch_id\", \"test_context_id\" as \"parent_context_id\", 'test' as \"entity_type\", \"id\", \"title\", \"created_timestamp\", \"started_timestamp\", \"finished_timestamp\", \"status_id\" from \"tests\")) union all (select \"launch_id\", \"test_context_id\" as \"parent_context_id\", 'after test' as \"entity_type\", \"id\", \"title\", \"created_timestamp\", \"started_timestamp\", \"finished_timestamp\", \"status_id\" from \"after_tests\")",
+      "name": "test_entities",
+      "schema": "public",
+      "isExisting": false,
+      "materialized": false
+    }
+  },
   "_meta": {
     "columns": {},
     "schemas": {},

@@ -8,6 +8,10 @@
     "pnpm": ">=9.5.0"
   },
   "exports": {
+    "./core-entities": {
+      "default": "./dist/core-entities-generator.js",
+      "types": "./dist/core-entities-generator.d.ts"
+    },
     "./report": {
       "default": "./dist/report-generator.js",
       "types": "./dist/report-generator.d.ts"

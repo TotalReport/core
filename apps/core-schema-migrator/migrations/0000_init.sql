@@ -1,3 +1,4 @@
+CREATE SEQUENCE "public"."test_entities_id_seq" INCREMENT BY 1 MINVALUE 1 MAXVALUE 9223372036854775807 START WITH 1 CACHE 5;--> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "after_test_arguments" (
 	"test_id" bigint NOT NULL,
 	"id" bigserial PRIMARY KEY NOT NULL,
@@ -21,7 +22,7 @@ CREATE TABLE IF NOT EXISTS "after_test_steps" (
 CREATE TABLE IF NOT EXISTS "after_tests" (
 	"launch_id" bigint NOT NULL,
 	"test_context_id" bigint,
-	"id" bigserial PRIMARY KEY NOT NULL,
+	"id" bigint PRIMARY KEY DEFAULT nextval('test_entities_id_seq') NOT NULL,
 	"title" varchar(256) NOT NULL,
 	"created_timestamp" timestamp NOT NULL,
 	"started_timestamp" timestamp,
@@ -53,7 +54,7 @@ CREATE TABLE IF NOT EXISTS "before_test_steps" (
 CREATE TABLE IF NOT EXISTS "before_tests" (
 	"launch_id" bigint NOT NULL,
 	"test_context_id" bigint,
-	"id" bigserial PRIMARY KEY NOT NULL,
+	"id" bigint PRIMARY KEY DEFAULT nextval('test_entities_id_seq') NOT NULL,
 	"title" varchar(256) NOT NULL,
 	"created_timestamp" timestamp NOT NULL,
 	"started_timestamp" timestamp,
@@ -96,7 +97,7 @@ CREATE TABLE IF NOT EXISTS "test_arguments" (
 CREATE TABLE IF NOT EXISTS "test_contexts" (
 	"launch_id" bigint NOT NULL,
 	"parent_test_context_id" bigint,
-	"id" bigserial PRIMARY KEY NOT NULL,
+	"id" bigint PRIMARY KEY DEFAULT nextval('test_entities_id_seq') NOT NULL,
 	"title" varchar(256) NOT NULL,
 	"created_timestamp" timestamp NOT NULL,
 	"started_timestamp" timestamp,
@@ -130,7 +131,7 @@ CREATE TABLE IF NOT EXISTS "test_steps" (
 CREATE TABLE IF NOT EXISTS "tests" (
 	"launch_id" bigint NOT NULL,
 	"test_context_id" bigint,
-	"id" bigserial PRIMARY KEY NOT NULL,
+	"id" bigint PRIMARY KEY DEFAULT nextval('test_entities_id_seq') NOT NULL,
 	"title" varchar(256) NOT NULL,
 	"created_timestamp" timestamp NOT NULL,
 	"started_timestamp" timestamp,
@@ -258,3 +259,5 @@ DO $$ BEGIN
 EXCEPTION
  WHEN duplicate_object THEN null;
 END $$;
+--> statement-breakpoint
+CREATE VIEW "public"."test_entities" AS ((((select "launch_id", "parent_test_context_id" as "parent_context_id", 'test context' as "entity_type", "id", "title", "created_timestamp", "started_timestamp", "finished_timestamp", null as "status_id" from "test_contexts") union all (select "launch_id", "test_context_id" as "parent_context_id", 'before test' as "entity_type", "id", "title", "created_timestamp", "started_timestamp", "finished_timestamp", "status_id" from "before_tests")) union all (select "launch_id", "test_context_id" as "parent_context_id", 'test' as "entity_type", "id", "title", "created_timestamp", "started_timestamp", "finished_timestamp", "status_id" from "tests")) union all (select "launch_id", "test_context_id" as "parent_context_id", 'after test' as "entity_type", "id", "title", "created_timestamp", "started_timestamp", "finished_timestamp", "status_id" from "after_tests"));

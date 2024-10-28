@@ -30,6 +30,7 @@ import {
 } from "./routes/test-contexts.js";
 import { createTestStepRoute, deleteTestStepRoute, patchTestStepRoute, readTestStepRoute } from "./routes/test-steps.js";
 import { createTestRoute, deleteTestRoute, patchTestRoute, readTestRoute } from "./routes/tests.js";
+import { findTestEntitiesRoute } from "./routes/test-entities.js";
 
 const { urlencoded, json } = bodyParser;
 
@@ -90,6 +91,8 @@ const router = s.router(contract, {
   readAfterTestStep: readAfterTestStepRoute,
   patchAfterTestStep: patchAfterTestStepRoute,
   deleteAfterTestStep: deleteAfterTestStepRoute,
+
+  findTestEntities: findTestEntitiesRoute
 });
 
 createExpressEndpoints(contract, router, app);

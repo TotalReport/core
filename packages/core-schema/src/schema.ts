@@ -1,4 +1,5 @@
-import { AnyPgColumn, bigint, bigserial, boolean, integer, pgTable, text, timestamp, uuid, varchar } from "drizzle-orm/pg-core";
+import { sql } from "drizzle-orm";
+import { AnyPgColumn, bigint, bigserial, boolean, integer, pgSequence, pgTable, pgView, text, timestamp, uuid, varchar } from "drizzle-orm/pg-core";
 
 export const testStatusGroups = pgTable("test_status_groups", {
   id: varchar("id", { length: 20 }).primaryKey(),
@@ -28,10 +29,13 @@ export const launches = pgTable("launches", {
   finishedTimestamp: timestamp("finished_timestamp", { withTimezone: false, mode: "date" })
 });
 
+export const testEnititesIdSeq = pgSequence("test_entities_id_seq", { cache: 5 });
+
 export const testContexts = pgTable("test_contexts", {
   launchId: bigint("launch_id", { mode: "number" }).references(() => launches.id).notNull(),
   parentTestContextId: bigint("parent_test_context_id", { mode: 'number' }).references((): AnyPgColumn => testContexts.id),
-  id: bigserial("id", { mode: "number" }).primaryKey(),
+  //FIXME drizzle-kit@0.26.2 doesn't support variables in the default, change to testEnititesIdSeq.name when it's supported
+  id: bigint("id", { mode: "number" }).primaryKey().default(sql`nextval('test_entities_id_seq')`),
   title: varchar("title", { length: 256 }).notNull(),
   createdTimestamp: timestamp("created_timestamp", { withTimezone: false, mode: "date" }).notNull(),
   startedTimestamp: timestamp("started_timestamp", { withTimezone: false, mode: "date" }),
@@ -41,7 +45,8 @@ export const testContexts = pgTable("test_contexts", {
 export const beforeTests = pgTable("before_tests", {
   launchId: bigint("launch_id", { mode: "number" }).references(() => launches.id).notNull(),
   testContextId: bigint("test_context_id", { mode: 'number' }).references(() => testContexts.id),
-  id: bigserial("id", { mode: "number" }).primaryKey(),
+  //FIXME drizzle-kit@0.26.2 doesn't support variables in the default, change to testEnititesIdSeq.name when it's supported
+  id: bigint("id", { mode: "number" }).primaryKey().default(sql`nextval('test_entities_id_seq')`),
   title: varchar("title", { length: 256 }).notNull(),
   createdTimestamp: timestamp("created_timestamp", { withTimezone: false, mode: "date" }).notNull(),
   startedTimestamp: timestamp("started_timestamp", { withTimezone: false, mode: "date" }),
@@ -73,7 +78,8 @@ export const beforeTestSteps = pgTable("before_test_steps", {
 export const tests = pgTable("tests", {
   launchId: bigint("launch_id", { mode: "number" }).references(() => launches.id).notNull(),
   testContextId: bigint("test_context_id", { mode: 'number' }).references(() => testContexts.id),
-  id: bigserial("id", { mode: "number" }).primaryKey(),
+  //FIXME drizzle-kit@0.26.2 doesn't support variables in the default, change to testEnititesIdSeq.name when it's supported
+  id: bigint("id", { mode: "number" }).primaryKey().default(sql`nextval('test_entities_id_seq')`),
   title: varchar("title", { length: 256 }).notNull(),
   createdTimestamp: timestamp("created_timestamp", { withTimezone: false, mode: "date" }).notNull(),
   startedTimestamp: timestamp("started_timestamp", { withTimezone: false, mode: "date" }),
@@ -105,7 +111,8 @@ export const testSteps = pgTable("test_steps", {
 export const afterTests = pgTable("after_tests", {
   launchId: bigint("launch_id", { mode: "number" }).references(() => launches.id).notNull(),
   testContextId: bigint("test_context_id", { mode: 'number' }).references(() => testContexts.id),
-  id: bigserial("id", { mode: "number" }).primaryKey(),
+  //FIXME drizzle-kit@0.26.2 doesn't support variables in the default, change to testEnititesIdSeq.name when it's supported
+  id: bigint("id", { mode: "number" }).primaryKey().default(sql`nextval('test_entities_id_seq')`),
   title: varchar("title", { length: 256 }).notNull(),
   createdTimestamp: timestamp("created_timestamp", { withTimezone: false, mode: "date" }).notNull(),
   startedTimestamp: timestamp("started_timestamp", { withTimezone: false, mode: "date" }),
@@ -140,3 +147,52 @@ export const paths = pgTable("paths", {
   title: varchar("title", { length: 256 }).notNull(),
   createdTimestamp: timestamp("created_timestamp", { withTimezone: false, mode: "string" }).notNull(),
 });
+
+export const testEntities = pgView("test_entities").as((qb) => 
+  qb.select({
+      launchId: testContexts.launchId,
+      parentContextId: sql<number | null>`${testContexts.parentTestContextId}`.as("parent_context_id"),
+      entityType: sql<string>`'test context'`.as("entity_type"),
+      id: testContexts.id,
+      title: testContexts.title,
+      createdTimestamp: testContexts.createdTimestamp,
+      startedTimestamp: testContexts.startedTimestamp,
+      finishedTimestamp: testContexts.finishedTimestamp,
+      statusId: sql<string | null>`null`.as("status_id")})
+    .from(testContexts)
+  .unionAll(
+    qb.select({
+        launchId: beforeTests.launchId,
+        parentContextId: sql<number | null>`${beforeTests.testContextId}`.as("parent_context_id"),
+        entityType: sql<string>`'before test'`.as("entity_type"),
+        id: beforeTests.id,
+        title: beforeTests.title,
+        createdTimestamp: beforeTests.createdTimestamp,
+        startedTimestamp: beforeTests.startedTimestamp,
+        finishedTimestamp: beforeTests.finishedTimestamp,
+        statusId: beforeTests.statusId})
+      .from(beforeTests))
+  .unionAll(
+    qb.select({
+        launchId: tests.launchId,
+        parentContextId: sql<number | null>`${tests.testContextId}`.as("parent_context_id"),
+        entityType: sql<string>`'test'`.as("entity_type"),
+        id: tests.id,
+        title: tests.title,
+        createdTimestamp: tests.createdTimestamp,
+        startedTimestamp: tests.startedTimestamp,
+        finishedTimestamp: tests.finishedTimestamp,
+        statusId: tests.statusId})
+      .from(tests))
+  .unionAll(
+    qb.select({
+        launchId: afterTests.launchId,
+        parentContextId: sql<number | null>`${afterTests.testContextId}`.as("parent_context_id"),
+        entityType: sql<string>`'after test'`.as("entity_type"),
+        id: afterTests.id,
+        title: afterTests.title,
+        createdTimestamp: afterTests.createdTimestamp,
+        startedTimestamp: afterTests.startedTimestamp,
+        finishedTimestamp: afterTests.finishedTimestamp,
+        statusId: afterTests.statusId})
+      .from(afterTests)))

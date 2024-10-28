@@ -85,15 +85,24 @@ export const deleteTestContext = contract.mutation({
 });
 
 export const findTestContextsByLaunchId = contract.query({
-  summary: "Get test contexts by launch ID. Only root level contexts are returned. Sort by start time then by creation time, nulls last.",
+  summary:
+    "Get test contexts by launch ID. Only root level contexts are returned. Sort by start time then by creation time, nulls last.",
   method: "GET",
   path: "/v1/launches/:launchId/test-contexts",
   pathParams: z.object({
     launchId: z.coerce.number().int(),
   }),
   query: z.object({
-    limit: z.coerce.number().int().optional().default(PAGINATION_DEFAULTS.limit),
-    offset: z.coerce.number().int().optional().default(PAGINATION_DEFAULTS.limit),
+    limit: z.coerce
+      .number()
+      .int()
+      .optional()
+      .default(PAGINATION_DEFAULTS.limit),
+    offset: z.coerce
+      .number()
+      .int()
+      .optional()
+      .default(PAGINATION_DEFAULTS.limit),
   }),
   responses: {
     200: z.object({

@@ -35,10 +35,11 @@ import { createReport, deleteReport, readReport } from "./reports.js";
 import {
   createTestContext,
   deleteTestContext,
+  findTestContextsByLaunchId,
   patchTestContext,
   readTestContext,
-  findTestContextsByLaunchId,
 } from "./test-contexts.js";
+import { findTestEntities } from "./test-entities.js";
 import {
   createTestStep,
   deleteTestStep,
@@ -111,4 +112,6 @@ export const contract = c.router({
   readAfterTestStep: readAfterTestStep,
   patchAfterTestStep: patchAfterTestStep,
   deleteAfterTestStep: deleteAfterTestStep,
+
+  findTestEntities: findTestEntities,
 });
