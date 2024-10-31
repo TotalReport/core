@@ -54,9 +54,6 @@ export class TestEntitiesDAO {
         .offset(pagination.offset)
         .orderBy(asc(testEntities.startedTimestamp), asc(testEntities.createdTimestamp));
 
-        
-      console.log("entities", JSON.stringify(entities));
-
       return {
         pagination: {
           total: entitiesCount,
