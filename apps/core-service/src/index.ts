@@ -19,6 +19,7 @@ import { openapiSchema } from "./routes/openapi_schema.js";
 import {
   createReportRoute,
   deleteReportRoute,
+  findReportsRoute,
   readReportRoute,
 } from "./routes/reports.js";
 import {
@@ -49,6 +50,7 @@ const router = s.router(contract, {
 
   createReport: createReportRoute,
   readReport: readReportRoute,
+  findReports: findReportsRoute,
   deleteReport: deleteReportRoute,
 
   createLaunch: createLaunchRoute,

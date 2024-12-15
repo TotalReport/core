@@ -14,7 +14,7 @@ export class ReportsGenerator {
 
   /**
    * Generates a new report.
-   * 
+   *
    * @param args The arguments to generate the report with.
    * @returns The generated report.
    */
@@ -42,6 +42,20 @@ export class ReportsGenerator {
     );
 
     return response.body;
+  }
+
+  /**
+   * Generates multiple reports.
+   * 
+   * @param count The number of reports to generate.
+   * @returns The generated reports.
+   */
+  async createMultiple(count: number) {
+    const result = [];
+    for (let i = 0; i < count; i++) {
+      result.push(await this.create());
+    }
+    return result;
   }
 }
 

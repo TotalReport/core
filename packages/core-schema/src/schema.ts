@@ -17,7 +17,7 @@ export const testStatuses = pgTable("test_statuses", {
 export const reports = pgTable("reports", {
   id: bigserial("id", { mode: "number" }).primaryKey(),
   title: varchar("title", { length: 256 }).notNull(),
-  createdTimestamp: timestamp("created_timestamp", { withTimezone: false, mode: "string" }).notNull(),
+  createdTimestamp: timestamp("created_timestamp", { withTimezone: false, mode: "date" }).notNull(),
 });
 
 export const launches = pgTable("launches", {

@@ -1,6 +1,7 @@
 import { extendZodWithOpenApi } from "@anatine/zod-openapi";
 import { initContract } from "@ts-rest/core";
 import { z } from "zod";
+import { PAGINATION_DEFAULTS } from "./defaults.js";
 
 extendZodWithOpenApi(z);
 
@@ -35,6 +36,34 @@ export const readReport = contract.query({
     404: z.object({}),
   },
   summary: "Read the report by ID.",
+});
+
+export const findReports = contract.query({
+  summary: "Find the reports.",
+  method: "GET",
+  path: "/v1/reports",
+  query: z.object({
+    limit: z.coerce
+      .number()
+      .int()
+      .optional()
+      .default(PAGINATION_DEFAULTS.limit),
+    offset: z.coerce
+      .number()
+      .int()
+      .optional()
+      .default(PAGINATION_DEFAULTS.limit),
+  }),
+  responses: {
+    200: z.object({
+      pagination: z.object({
+        total: z.number().int(),
+        limit: z.number().int(),
+        offset: z.number().int(),
+      }),
+      items: z.array(ReportSchema),
+    }),
+  },
 });
 
 export const deleteReport = contract.mutation({

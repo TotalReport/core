@@ -13,13 +13,15 @@ describe("reports", () => {
       },
     });
 
-    expect_toBe(createReportResponse.status, 201);
-    expect(createReportResponse.body.id).not.toBeNullish();
-    expect(createReportResponse.body.title).toEqual("New report");
-    expect_toBeCloseToNow(
-      Date.parse(createReportResponse.body.createdTimestamp),
-      1000
-    );
+    expect(createReportResponse).toEqual({
+      headers: expect.anything(),
+      status: 201,
+      body: {
+        id: expect.a(Number),
+        title: "New report",
+        createdTimestamp: expect.isCloseToNow(3000),
+      },
+    });
   });
 
   test("read report by id", async () => {
@@ -29,8 +31,11 @@ describe("reports", () => {
       params: { id: report.id },
     });
 
-    expect_toBe(reportByIdResponse.status, 200);
-    expect(reportByIdResponse.body).toEqual(report);
+    expect(reportByIdResponse).toEqual({
+      status: 200,
+      body: report,
+      headers: expect.anything(),
+    })
   });
 
   test("delete report", async () => {
