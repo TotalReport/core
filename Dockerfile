@@ -7,9 +7,9 @@ FROM base AS build
 COPY . /usr/src/app
 WORKDIR /usr/src/app
 RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install --frozen-lockfile
-RUN ls -l /usr/src/app/packages/core-contract
-RUN ls -l /usr/src/app/packages/core-contract/node_modules
-RUN pnpm run -r build
+RUN pnpm --filter "@total-report/core-service" run build
+RUN pnpm --filter "@total-report/core-schema-migrator" run build
+# RUN pnpm run -r build
 RUN pnpm deploy --filter=core-schema-migrator --prod /prod/total-report-core-schema-migrator
 RUN pnpm deploy --filter=core-service --prod /prod/total-report-core-service
 
