@@ -1,6 +1,7 @@
 import { extendZodWithOpenApi } from "@anatine/zod-openapi";
 import { initContract } from "@ts-rest/core";
 import { z } from "zod";
+import { PAGINATION_DEFAULTS } from "./defaults.js";
 
 extendZodWithOpenApi(z);
 
@@ -50,6 +51,35 @@ export const readLaunch = contract.query({
   responses: {
     201: LaunchSchema,
     404: z.object({}),
+  },
+});
+
+export const findLaunches = contract.query({
+  summary: "Find the launches.",
+  method: "GET",
+  path: "/v1/launches",
+  query: z.object({
+    limit: z.coerce
+      .number()
+      .int()
+      .optional()
+      .default(PAGINATION_DEFAULTS.limit),
+    offset: z.coerce
+      .number()
+      .int()
+      .optional()
+      .default(PAGINATION_DEFAULTS.limit),
+    reportId: z.coerce.number().int().optional(),
+  }),
+  responses: {
+    200: z.object({
+      pagination: z.object({
+        total: z.number().int(),
+        limit: z.number().int(),
+        offset: z.number().int(),
+      }),
+      items: z.array(LaunchSchema),
+    }),
   },
 });
 

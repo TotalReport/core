@@ -30,6 +30,31 @@ export const readLaunchRoute: ReadLaunchRoute = async ({ params }) => {
   };
 };
 
+export const findLaunchesRoute: FindLaunchRoute = async ({ query }) => {
+  const data = await new LaunchesDAO().find({
+    limit: query.limit,
+    offset: query.offset,
+    reportId: query.reportId,
+  });
+
+  return {
+    status: 200,
+    body: {
+      items: data.items.map((item) => ({
+        ...item,
+        createdTimestamp: item.createdTimestamp.toISOString(),
+        startedTimestamp: item.startedTimestamp?.toISOString(),
+        finishedTimestamp: item.finishedTimestamp?.toISOString(),
+      })),
+      pagination: {
+        total: data.pagination.total,
+        limit: data.pagination.limit,
+        offset: data.pagination.offset,
+      },
+    },
+  };
+};
+
 export const patchLaunchRoute: PatchLaunchRoute = async ({ params, body }) => {
   let result = await new LaunchesDAO().patch({
     ...body,
@@ -64,5 +89,6 @@ export const deleteLaunchRoute: DeleteLaunchRoute = async ({ params }) => {
 
 type CreateLaunchRoute = AppRouteImplementation<typeof contract.createLaunch>;
 type ReadLaunchRoute = AppRouteImplementation<typeof contract.readLaunch>;
+type FindLaunchRoute = AppRouteImplementation<typeof contract.findLaunches>;
 type DeleteLaunchRoute = AppRouteImplementation<typeof contract.deleteLaunch>;
 type PatchLaunchRoute = AppRouteImplementation<typeof contract.patchLaunch>;

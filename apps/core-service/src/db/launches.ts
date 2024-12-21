@@ -1,10 +1,11 @@
 import { launches } from "@total-report/core-schema/schema";
-import { eq } from "drizzle-orm";
+import { count, eq } from "drizzle-orm";
 import { NodePgQueryResultHKT } from "drizzle-orm/node-postgres/session";
 import { PgDatabase } from "drizzle-orm/pg-core/db";
 import { ReportNotFoundError } from "../errors/errors.js";
 import { validateTimestamps } from "../validations/validations.js";
 import { db as defaultDB } from "./setup.js";
+import { Paginated } from "../db-common/types.js";
 
 export class LaunchesDAO {
   db: PgDatabase<NodePgQueryResultHKT, Record<string, unknown>>;
@@ -47,6 +48,40 @@ export class LaunchesDAO {
       return undefined;
     }
     return convertToEntity(found[0]!);
+  }
+
+  async find(params: FindLaunches): Promise<Paginated<LaunchEntity>> {
+    const data = await this.db.transaction(async (tx) => {
+      const filter = params.reportId
+        ? eq(launches.reportId, params.reportId)
+        : undefined;
+
+      const items = await tx
+        .select()
+        .from(launches)
+        .where(filter)
+        .limit(params.limit)
+        .offset(params.offset)
+        .orderBy(launches.createdTimestamp);
+
+      const total =
+        (await tx.select({ value: count() }).from(launches).where(filter)).at(0)
+          ?.value ?? 0;
+
+      return {
+        items: items.map(convertToEntity),
+        total,
+      };
+    });
+
+    return {
+      items: data.items,
+      pagination: {
+        total: data.total,
+        limit: params.limit,
+        offset: params.offset,
+      },
+    };
   }
 
   async patch(args: PatchLaunch): Promise<LaunchEntity> {
@@ -98,6 +133,12 @@ type CreateLaunch = {
   createdTimestamp: Date;
   startedTimestamp?: Date;
   finishedTimestamp?: Date;
+};
+
+type FindLaunches = {
+  limit: number;
+  offset: number;
+  reportId?: number;
 };
 
 type PatchLaunch = {

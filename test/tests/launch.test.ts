@@ -81,6 +81,56 @@ describe("launches", () => {
     });
   });
 
+  test("find launches", async () => {
+    const report = await new ReportsGenerator(client).create();
+    const request1 = {
+      reportId: report.id,
+      title: "Launch 1",
+      createdTimestamp: new Date("2024-07-21T06:52:32Z"),
+      startedTimestamp: new Date("2024-07-21T06:52:35Z"),
+      finishedTimestamp: new Date("2024-07-21T06:53:21Z"),
+    };
+    const request2 = {
+      reportId: report.id,
+      title: "Launch 2",
+      createdTimestamp: new Date("2024-07-21T06:52:32Z"),
+      startedTimestamp: new Date("2024-07-21T06:52:35Z"),
+      finishedTimestamp: new Date("2024-07-21T06:53:21Z"),
+    };
+    const request3 = {
+      reportId: report.id,
+      title: "Launch 3",
+      createdTimestamp: new Date("2024-07-21T06:52:32Z"),
+      startedTimestamp: new Date("2024-07-21T06:52:35Z"),
+      finishedTimestamp: new Date("2024-07-21T06:53:21Z"),
+    };
+    const launch1 = await new LaunchesGenerator(client).create(request1);
+    const launch2 = await new LaunchesGenerator(client).create(request2);
+    const launch3 = await new LaunchesGenerator(client).create(request3);
+
+    const findLaunchesResponse = await client.findLaunches({ query: {
+      reportId: report.id,
+      limit: 2,
+      offset: 0,
+    } });
+
+    expect(findLaunchesResponse).toEqual({
+      headers: expect.anything(),
+      status: 200,
+      body: {
+        items: [
+          launch1,
+          launch2
+        ],
+        pagination: {
+          total: 3,
+          limit: 2,
+          offset: 0,
+        },
+      },
+    });
+  });
+
   test("patch launch all fields", async () => {
     const launch = await new LaunchesGenerator(client).create({
       title: "Launch 1",

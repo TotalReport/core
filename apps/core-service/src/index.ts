@@ -12,6 +12,7 @@ import { healthCheckRoute, setApiStarted } from "./routes/healthcheck.js";
 import {
   createLaunchRoute,
   deleteLaunchRoute,
+  findLaunchesRoute,
   patchLaunchRoute,
   readLaunchRoute,
 } from "./routes/launches.js";
@@ -55,6 +56,7 @@ const router = s.router(contract, {
 
   createLaunch: createLaunchRoute,
   readLaunch: readLaunchRoute,
+  findLaunches: findLaunchesRoute,
   patchLaunch: patchLaunchRoute,
   deleteLaunch: deleteLaunchRoute,
 
