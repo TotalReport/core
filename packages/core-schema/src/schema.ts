@@ -1,5 +1,6 @@
 import { sql } from "drizzle-orm";
 import { AnyPgColumn, bigint, bigserial, boolean, integer, pgSequence, pgTable, pgView, text, timestamp, uuid, varchar } from "drizzle-orm/pg-core";
+import { ENTITY_TYPES } from "./constants.js";
 
 export const testStatusGroups = pgTable("test_status_groups", {
   id: varchar("id", { length: 20 }).primaryKey(),
@@ -152,7 +153,7 @@ export const testEntities = pgView("test_entities").as((qb) =>
   qb.select({
       launchId: testContexts.launchId,
       parentContextId: sql<number | null>`${testContexts.parentTestContextId}`.as("parent_context_id"),
-      entityType: sql<string>`'test context'`.as("entity_type"),
+      entityType: sql<string>`${ENTITY_TYPES.TEST_CONTEXT}`.as("entity_type"),
       id: testContexts.id,
       title: testContexts.title,
       createdTimestamp: testContexts.createdTimestamp,
@@ -164,7 +165,7 @@ export const testEntities = pgView("test_entities").as((qb) =>
     qb.select({
         launchId: beforeTests.launchId,
         parentContextId: sql<number | null>`${beforeTests.testContextId}`.as("parent_context_id"),
-        entityType: sql<string>`'before test'`.as("entity_type"),
+        entityType: sql<string>`${ENTITY_TYPES.BEFORE_TEST}`.as("entity_type"),
         id: beforeTests.id,
         title: beforeTests.title,
         createdTimestamp: beforeTests.createdTimestamp,
@@ -176,7 +177,7 @@ export const testEntities = pgView("test_entities").as((qb) =>
     qb.select({
         launchId: tests.launchId,
         parentContextId: sql<number | null>`${tests.testContextId}`.as("parent_context_id"),
-        entityType: sql<string>`'test'`.as("entity_type"),
+        entityType: sql<string>`${ENTITY_TYPES.TEST}`.as("entity_type"),
         id: tests.id,
         title: tests.title,
         createdTimestamp: tests.createdTimestamp,
@@ -188,7 +189,7 @@ export const testEntities = pgView("test_entities").as((qb) =>
     qb.select({
         launchId: afterTests.launchId,
         parentContextId: sql<number | null>`${afterTests.testContextId}`.as("parent_context_id"),
-        entityType: sql<string>`'after test'`.as("entity_type"),
+        entityType: sql<string>`${ENTITY_TYPES.AFTER_TEST}`.as("entity_type"),
         id: afterTests.id,
         title: afterTests.title,
         createdTimestamp: afterTests.createdTimestamp,

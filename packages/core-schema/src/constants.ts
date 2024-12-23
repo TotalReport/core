@@ -75,3 +75,15 @@ export const DEFAULT_TEST_STATUSES = {
     groupId: TEST_STATUS_GROUPS.TO_INVESTIGATE_GROUP.id,
   },
 };
+
+export const ENTITY_TYPES: {
+  readonly TEST_CONTEXT: string;
+  readonly BEFORE_TEST: string;
+  readonly TEST: string;
+  readonly AFTER_TEST: string;
+} = {
+  TEST_CONTEXT: "test context",
+  BEFORE_TEST: "before test",
+  TEST: "test",
+  AFTER_TEST: "after test",
+};
