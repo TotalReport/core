@@ -13,6 +13,7 @@ import {
   createLaunchRoute,
   deleteLaunchRoute,
   findLaunchesRoute,
+  launchStatisticsRoute,
   patchLaunchRoute,
   readLaunchRoute,
 } from "./routes/launches.js";
@@ -57,6 +58,7 @@ const router = s.router(contract, {
   createLaunch: createLaunchRoute,
   readLaunch: readLaunchRoute,
   findLaunches: findLaunchesRoute,
+  launchStatistics: launchStatisticsRoute,
   patchLaunch: patchLaunchRoute,
   deleteLaunch: deleteLaunchRoute,
 

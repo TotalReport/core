@@ -1,9 +1,13 @@
-import { testEntities } from "@total-report/core-schema/schema";
+import {
+  testEntities,
+  testStatuses
+} from "@total-report/core-schema/schema";
 import { and, asc, count, eq, SQLWrapper } from "drizzle-orm";
 import { NodePgQueryResultHKT } from "drizzle-orm/node-postgres";
 import { PgDatabase } from "drizzle-orm/pg-core";
 import { Paginated, PaginationParams } from "../db-common/types.js";
 import { db as defaultDB } from "../db/setup.js";
+
 
 /**
  * Data access object for test entities. Test entities are contexts, before tests, tests, after tests.
@@ -19,7 +23,7 @@ export class TestEntitiesDAO {
 
   /**
    * Find test entities.
-   * 
+   *
    * @param search The search parameters.
    * @param pagination The pagination parameters.
    * @returns The paginated list of test entities.
@@ -52,7 +56,10 @@ export class TestEntitiesDAO {
         .where(and(...filters))
         .limit(pagination.limit)
         .offset(pagination.offset)
-        .orderBy(asc(testEntities.startedTimestamp), asc(testEntities.createdTimestamp));
+        .orderBy(
+          asc(testEntities.startedTimestamp),
+          asc(testEntities.createdTimestamp)
+        );
 
       return {
         pagination: {
@@ -63,6 +70,20 @@ export class TestEntitiesDAO {
         items: entities.map(rowToEntitty),
       };
     });
+  }
+
+  async statistics(params: StatisticsFilter): Promise<StatisticsEntry[]> {
+    const stat = await this.db
+      .select({
+        entityType: testEntities.entityType,
+        statusGroupId: testStatuses.groupId,
+        count: count(),
+      })
+      .from(testEntities)
+      .where(eq(testEntities.launchId, params.launchId))
+      .leftJoin(testStatuses, eq(testStatuses.id, testEntities.statusId))
+      .groupBy(testEntities.entityType, testStatuses.groupId);
+    return stat;
   }
 }
 
@@ -101,11 +122,23 @@ type TestEntityRow = {
   statusId: string | null;
 };
 
+type StatisticsFilter = {
+  launchId: number;
+};
+
+type StatisticsEntry = {
+  entityType: string;
+  statusGroupId: string | null;
+  count: number;
+};
+
 const rowToEntitty = (row: TestEntityRow) => {
   return {
     launchId: row.launchId,
     //FIXME for some reason the testEntities.parentContextId is a string in reality, due some bug of drizzle-orm probably
-    parentContextId: row.parentContextId ? parseInt(row.parentContextId as unknown as string) : undefined,
+    parentContextId: row.parentContextId
+      ? parseInt(row.parentContextId as unknown as string)
+      : undefined,
     id: row.id,
     entityType: row.entityType,
     title: row.title,

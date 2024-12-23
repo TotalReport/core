@@ -1,13 +1,18 @@
-import { LaunchesGenerator } from "@total-report/core-entities-generator/launch";
-import { ReportsGenerator } from "@total-report/core-entities-generator/report";
+import { CreateAfterTestArgs } from "@total-report/core-entities-generator/after-test";
+import { CreateBeforeTestArgs } from "@total-report/core-entities-generator/before-test";
+import { CoreEntititesGenerator } from "@total-report/core-entities-generator/core-entities";
+import { CreateTestArgs } from "@total-report/core-entities-generator/test";
+import { DEFAULT_TEST_STATUSES } from "@total-report/core-schema/constants";
 import { expect } from "earl";
 import { describe, test } from "mocha";
 import { client } from "../tools/client.js";
 import "../tools/earl-extensions.js";
 
+const generator = new CoreEntititesGenerator(client);
+
 describe("launches", () => {
   test("create launch with minimum fields", async () => {
-    const report = await new ReportsGenerator(client).create();
+    const report = await generator.reports.create();
     const request = { title: "New launch", reportId: report.id };
 
     const response = await client.createLaunch({ body: request });
@@ -25,7 +30,7 @@ describe("launches", () => {
   });
 
   test("create launch with maximum fields", async () => {
-    const report = await new ReportsGenerator(client).create();
+    const report = await generator.reports.create();
     const request = {
       reportId: report.id,
       title: "Launch 2",
@@ -51,7 +56,7 @@ describe("launches", () => {
   });
 
   test("read launch by id", async () => {
-    const report = await new ReportsGenerator(client).create();
+    const report = await generator.reports.create();
     const request = {
       reportId: report.id,
       title: "Launch 2",
@@ -82,7 +87,7 @@ describe("launches", () => {
   });
 
   test("find launches", async () => {
-    const report = await new ReportsGenerator(client).create();
+    const report = await generator.reports.create();
     const request1 = {
       reportId: report.id,
       title: "Launch 1",
@@ -104,24 +109,23 @@ describe("launches", () => {
       startedTimestamp: new Date("2024-07-21T06:52:35Z"),
       finishedTimestamp: new Date("2024-07-21T06:53:21Z"),
     };
-    const launch1 = await new LaunchesGenerator(client).create(request1);
-    const launch2 = await new LaunchesGenerator(client).create(request2);
-    const launch3 = await new LaunchesGenerator(client).create(request3);
+    const launch1 = await generator.launches.create(request1);
+    const launch2 = await generator.launches.create(request2);
+    const launch3 = await generator.launches.create(request3);
 
-    const findLaunchesResponse = await client.findLaunches({ query: {
-      reportId: report.id,
-      limit: 2,
-      offset: 0,
-    } });
+    const findLaunchesResponse = await client.findLaunches({
+      query: {
+        reportId: report.id,
+        limit: 2,
+        offset: 0,
+      },
+    });
 
     expect(findLaunchesResponse).toEqual({
       headers: expect.anything(),
       status: 200,
       body: {
-        items: [
-          launch1,
-          launch2
-        ],
+        items: [launch1, launch2],
         pagination: {
           total: 3,
           limit: 2,
@@ -131,8 +135,156 @@ describe("launches", () => {
     });
   });
 
+  // Test for launch statistics
+  test("launch statistics", async () => {
+    const report = await generator.reports.create();
+    const launch1 = await generator.launches.create({ reportId: report.id });
+    const testContext = await generator.contexts.create({
+      launchId: launch1.id,
+    });
+
+    const launch2 = await generator.launches.create({ reportId: report.id });
+    await generator.beforeTests.createMultiple(10, (index) => {
+      const args: CreateBeforeTestArgs = {
+        launchId: launch1.id,
+      };
+      if (index == 0) {
+        args.statusId = DEFAULT_TEST_STATUSES.SUCCESSFUL.id;
+      }
+      if (index == 1) {
+        args.statusId = DEFAULT_TEST_STATUSES.ABORTED.id;
+      }
+      if (index == 2) {
+        args.statusId = DEFAULT_TEST_STATUSES.SKIPPED.id;
+      }
+      if (index == 3) {
+        args.statusId = DEFAULT_TEST_STATUSES.PRODUCT_BUG.id;
+      }
+      if (index == 4) {
+        args.statusId = DEFAULT_TEST_STATUSES.AUTOMATION_BUG.id;
+      }
+      if (index == 5) {
+        args.statusId = DEFAULT_TEST_STATUSES.SYSTEM_ISSUE.id;
+      }
+      if (index == 6) {
+        args.statusId = DEFAULT_TEST_STATUSES.NO_DEFECT.id;
+      }
+      if (index == 7) {
+        args.statusId = DEFAULT_TEST_STATUSES.TO_INVESTIGATE.id;
+      }
+      return args;
+    });
+    await generator.tests.createMultiple(36, (index) => {
+      const args: CreateTestArgs = {
+        launchId: launch1.id,
+      };
+      if (index < 3) {
+        args.testContextId = testContext.id;
+      }
+      if (index == 0) {
+        args.statusId = DEFAULT_TEST_STATUSES.SUCCESSFUL.id;
+      }
+      if (1 <= index && index <= 1 + 1) {
+        args.statusId = DEFAULT_TEST_STATUSES.ABORTED.id;
+      }
+      if (3 <= index && index <= 3 + 2) {
+        args.statusId = DEFAULT_TEST_STATUSES.SKIPPED.id;
+      }
+      if (6 <= index && index <= 6 + 3) {
+        args.statusId = DEFAULT_TEST_STATUSES.PRODUCT_BUG.id;
+      }
+      if (10 <= index && index <= 10 + 4) {
+        args.statusId = DEFAULT_TEST_STATUSES.AUTOMATION_BUG.id;
+      }
+      if (15 <= index && index <= 15 + 5) {
+        args.statusId = DEFAULT_TEST_STATUSES.SYSTEM_ISSUE.id;
+      }
+      if (21 <= index && index <= 21 + 6) {
+        args.statusId = DEFAULT_TEST_STATUSES.NO_DEFECT.id;
+      }
+      if (28 <= index && index <= 28 + 7) {
+        args.statusId = DEFAULT_TEST_STATUSES.TO_INVESTIGATE.id;
+      }
+      return args;
+    });
+
+    await generator.afterTests.createMultiple(10, (index) => {
+      const args: CreateAfterTestArgs = {
+        launchId: launch1.id,
+      };
+      if (index == 0) {
+        args.statusId = DEFAULT_TEST_STATUSES.SUCCESSFUL.id;
+      }
+      if (index == 1) {
+        args.statusId = DEFAULT_TEST_STATUSES.ABORTED.id;
+      }
+      if (index == 2) {
+        args.statusId = DEFAULT_TEST_STATUSES.SKIPPED.id;
+      }
+      if (index == 3) {
+        args.statusId = DEFAULT_TEST_STATUSES.PRODUCT_BUG.id;
+      }
+      if (index == 4) {
+        args.statusId = DEFAULT_TEST_STATUSES.AUTOMATION_BUG.id;
+      }
+      if (index == 5) {
+        args.statusId = DEFAULT_TEST_STATUSES.SYSTEM_ISSUE.id;
+      }
+      if (index == 6) {
+        args.statusId = DEFAULT_TEST_STATUSES.NO_DEFECT.id;
+      }
+      if (index == 7) {
+        args.statusId = DEFAULT_TEST_STATUSES.TO_INVESTIGATE.id;
+      }
+      return args;
+    });
+
+    const statisticsResponse = await client.launchStatistics({
+      params: { id: launch1.id },
+    });
+
+    expect(statisticsResponse).toEqual({
+      headers: expect.anything(),
+      status: 200,
+      body: {
+        beforeTests: expect.equalUnsorted([
+          { statusGroupId: "SL", count: 1 },
+          { statusGroupId: "AD", count: 1 },
+          { statusGroupId: "SD", count: 1 },
+          { statusGroupId: "PB", count: 1 },
+          { statusGroupId: "AB", count: 1 },
+          { statusGroupId: "SI", count: 1 },
+          { statusGroupId: "ND", count: 1 },
+          { statusGroupId: "TI", count: 1 },
+          { statusGroupId: null, count: 2 },
+        ]),
+        tests: expect.equalUnsorted([
+          { statusGroupId: "SL", count: 1 },
+          { statusGroupId: "AD", count: 2 },
+          { statusGroupId: "SD", count: 3 },
+          { statusGroupId: "PB", count: 4 },
+          { statusGroupId: "AB", count: 5 },
+          { statusGroupId: "SI", count: 6 },
+          { statusGroupId: "ND", count: 7 },
+          { statusGroupId: "TI", count: 8 },
+        ]),
+        afterTests: expect.equalUnsorted([
+          { statusGroupId: "SL", count: 1 },
+          { statusGroupId: "AD", count: 1 },
+          { statusGroupId: "SD", count: 1 },
+          { statusGroupId: "PB", count: 1 },
+          { statusGroupId: "AB", count: 1 },
+          { statusGroupId: "SI", count: 1 },
+          { statusGroupId: "ND", count: 1 },
+          { statusGroupId: "TI", count: 1 },
+          { statusGroupId: null, count: 2 },
+        ]),
+      },
+    });
+  });
+
   test("patch launch all fields", async () => {
-    const launch = await new LaunchesGenerator(client).create({
+    const launch = await generator.launches.create({
       title: "Launch 1",
       createdTimestamp: new Date("2024-07-21T06:52:32Z"),
       startedTimestamp: new Date("2024-07-21T06:52:35Z"),
@@ -165,7 +317,7 @@ describe("launches", () => {
   });
 
   test("delete launch", async () => {
-    const launch = await new LaunchesGenerator(client).create();
+    const launch = await generator.launches.create();
 
     const deleteLaunchResponse = await client.deleteLaunch({
       params: { id: launch.id },

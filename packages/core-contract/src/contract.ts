@@ -29,6 +29,7 @@ import {
   createLaunch,
   deleteLaunch,
   findLaunches,
+  launchStatistics,
   patchLaunch,
   readLaunch,
 } from "./launches.js";
@@ -77,6 +78,7 @@ export const contract = c.router({
   createLaunch: createLaunch,
   readLaunch: readLaunch,
   findLaunches: findLaunches,
+  launchStatistics: launchStatistics,
   patchLaunch: patchLaunch,
   deleteLaunch: deleteLaunch,
 

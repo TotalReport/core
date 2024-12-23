@@ -1,6 +1,10 @@
 import { contract } from "@total-report/core-contract/contract";
 import { AppRouteImplementation } from "@ts-rest/express";
 import { LaunchesDAO } from "../db/launches.js";
+import { TestEntitiesDAO } from "../db/test-entities.js";
+
+import { ClientInferResponseBody } from "@ts-rest/core";
+import { ENTITY_TYPES } from "@total-report/core-schema/constants";
 
 export const createLaunchRoute: CreateLaunchRoute = async ({ body }) => {
   let createdTimestamp = body.createdTimestamp ?? new Date();
@@ -55,6 +59,46 @@ export const findLaunchesRoute: FindLaunchRoute = async ({ query }) => {
   };
 };
 
+export const launchStatisticsRoute: LaunchStatisticsRoute = async ({
+  params,
+}) => {
+  const data = await new TestEntitiesDAO().statistics({
+    launchId: params.id,
+  });
+
+  const responseBody = data.reduce<StatisticsResponseBody>(
+    (previous, current) => {
+      if (current.entityType == ENTITY_TYPES.BEFORE_TEST) {
+        previous.beforeTests.push({
+          statusGroupId: current.statusGroupId,
+          count: current.count,
+        });
+      } else if (current.entityType == ENTITY_TYPES.TEST) {
+        previous.tests.push({
+          statusGroupId: current.statusGroupId,
+          count: current.count,
+        });
+      } else if (current.entityType == ENTITY_TYPES.AFTER_TEST) {
+        previous.afterTests.push({
+          statusGroupId: current.statusGroupId,
+          count: current.count,
+        });
+      }
+      return previous;
+    },
+    {
+      beforeTests: [],
+      tests: [],
+      afterTests: [],
+    }
+  );
+
+  return {
+    status: 200,
+    body: responseBody,
+  };
+};
+
 export const patchLaunchRoute: PatchLaunchRoute = async ({ params, body }) => {
   let result = await new LaunchesDAO().patch({
     ...body,
@@ -92,3 +136,11 @@ type ReadLaunchRoute = AppRouteImplementation<typeof contract.readLaunch>;
 type FindLaunchRoute = AppRouteImplementation<typeof contract.findLaunches>;
 type DeleteLaunchRoute = AppRouteImplementation<typeof contract.deleteLaunch>;
 type PatchLaunchRoute = AppRouteImplementation<typeof contract.patchLaunch>;
+type LaunchStatisticsRoute = AppRouteImplementation<
+  typeof contract.launchStatistics
+>;
+
+type StatisticsResponseBody = ClientInferResponseBody<
+  typeof contract.launchStatistics,
+  200
+>;
