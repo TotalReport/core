@@ -1,5 +1,5 @@
 {
-  "id": "3f464681-e041-446c-a664-6c2252608c46",
+  "id": "4b2ccb52-f61a-4520-a575-3ac69943a02b",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -63,6 +63,7 @@
       },
       "compositePrimaryKeys": {},
       "uniqueConstraints": {},
+      "policies": {},
       "checkConstraints": {}
     },
     "public.after_test_steps": {
@@ -136,6 +137,7 @@
       },
       "compositePrimaryKeys": {},
       "uniqueConstraints": {},
+      "policies": {},
       "checkConstraints": {}
     },
     "public.after_tests": {
@@ -242,6 +244,7 @@
       },
       "compositePrimaryKeys": {},
       "uniqueConstraints": {},
+      "policies": {},
       "checkConstraints": {}
     },
     "public.before_test_arguments": {
@@ -303,6 +306,7 @@
       },
       "compositePrimaryKeys": {},
       "uniqueConstraints": {},
+      "policies": {},
       "checkConstraints": {}
     },
     "public.before_test_steps": {
@@ -376,6 +380,7 @@
       },
       "compositePrimaryKeys": {},
       "uniqueConstraints": {},
+      "policies": {},
       "checkConstraints": {}
     },
     "public.before_tests": {
@@ -482,6 +487,7 @@
       },
       "compositePrimaryKeys": {},
       "uniqueConstraints": {},
+      "policies": {},
       "checkConstraints": {}
     },
     "public.launches": {
@@ -506,6 +512,12 @@
           "primaryKey": false,
           "notNull": true
         },
+        "arguments": {
+          "name": "arguments",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
         "created_timestamp": {
           "name": "created_timestamp",
           "type": "timestamp",
@@ -523,6 +535,18 @@
           "type": "timestamp",
           "primaryKey": false,
           "notNull": false
+        },
+        "correlation_id": {
+          "name": "correlation_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "arguments_hash": {
+          "name": "arguments_hash",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
         }
       },
       "indexes": {},
@@ -543,6 +567,7 @@
       },
       "compositePrimaryKeys": {},
       "uniqueConstraints": {},
+      "policies": {},
       "checkConstraints": {}
     },
     "public.paths": {
@@ -592,6 +617,7 @@
       },
       "compositePrimaryKeys": {},
       "uniqueConstraints": {},
+      "policies": {},
       "checkConstraints": {}
     },
     "public.reports": {
@@ -621,6 +647,7 @@
       "foreignKeys": {},
       "compositePrimaryKeys": {},
       "uniqueConstraints": {},
+      "policies": {},
       "checkConstraints": {}
     },
     "public.test_arguments": {
@@ -682,6 +709,7 @@
       },
       "compositePrimaryKeys": {},
       "uniqueConstraints": {},
+      "policies": {},
       "checkConstraints": {}
     },
     "public.test_contexts": {
@@ -763,6 +791,7 @@
       },
       "compositePrimaryKeys": {},
       "uniqueConstraints": {},
+      "policies": {},
       "checkConstraints": {}
     },
     "public.test_status_groups": {
@@ -792,6 +821,7 @@
       "foreignKeys": {},
       "compositePrimaryKeys": {},
       "uniqueConstraints": {},
+      "policies": {},
       "checkConstraints": {}
     },
     "public.test_statuses": {
@@ -841,6 +871,7 @@
       },
       "compositePrimaryKeys": {},
       "uniqueConstraints": {},
+      "policies": {},
       "checkConstraints": {}
     },
     "public.test_steps": {
@@ -914,6 +945,7 @@
       },
       "compositePrimaryKeys": {},
       "uniqueConstraints": {},
+      "policies": {},
       "checkConstraints": {}
     },
     "public.tests": {
@@ -1020,6 +1052,7 @@
       },
       "compositePrimaryKeys": {},
       "uniqueConstraints": {},
+      "policies": {},
       "checkConstraints": {}
     }
   },
@@ -1037,6 +1070,8 @@
       "cycle": false
     }
   },
+  "roles": {},
+  "policies": {},
   "views": {
     "public.test_entities": {
       "columns": {

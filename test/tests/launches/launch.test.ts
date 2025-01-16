@@ -5,56 +5,12 @@ import { CreateTestArgs } from "@total-report/core-entities-generator/test";
 import { DEFAULT_TEST_STATUSES } from "@total-report/core-schema/constants";
 import { expect } from "earl";
 import { describe, test } from "mocha";
-import { client } from "../tools/client.js";
-import "../tools/earl-extensions.js";
+import { client } from "../../tools/client.js";
+import "../../tools/earl-extensions.js";
 
 const generator = new CoreEntititesGenerator(client);
 
 describe("launches", () => {
-  test("create launch with minimum fields", async () => {
-    const report = await generator.reports.create();
-    const request = { title: "New launch", reportId: report.id };
-
-    const response = await client.createLaunch({ body: request });
-
-    expect(response).toEqual({
-      headers: expect.anything(),
-      status: 201,
-      body: {
-        id: expect.a(Number),
-        title: request.title,
-        reportId: report.id,
-        createdTimestamp: expect.isCloseToNow(3000),
-      },
-    });
-  });
-
-  test("create launch with maximum fields", async () => {
-    const report = await generator.reports.create();
-    const request = {
-      reportId: report.id,
-      title: "Launch 2",
-      createdTimestamp: new Date("2024-07-21T06:52:32Z"),
-      startedTimestamp: new Date("2024-07-21T06:52:35Z"),
-      finishedTimestamp: new Date("2024-07-21T06:53:21Z"),
-    };
-
-    const response = await client.createLaunch({ body: request });
-
-    expect(response).toEqual({
-      headers: expect.anything(),
-      status: 201,
-      body: {
-        reportId: report.id,
-        id: expect.a(Number),
-        title: request.title,
-        createdTimestamp: request.createdTimestamp.toISOString(),
-        startedTimestamp: request.startedTimestamp.toISOString(),
-        finishedTimestamp: request.finishedTimestamp.toISOString(),
-      },
-    });
-  });
-
   test("read launch by id", async () => {
     const report = await generator.reports.create();
     const request = {
@@ -82,55 +38,8 @@ describe("launches", () => {
         createdTimestamp: request.createdTimestamp.toISOString(),
         startedTimestamp: request.startedTimestamp.toISOString(),
         finishedTimestamp: request.finishedTimestamp.toISOString(),
-      },
-    });
-  });
-
-  test("find launches", async () => {
-    const report = await generator.reports.create();
-    const request1 = {
-      reportId: report.id,
-      title: "Launch 1",
-      createdTimestamp: new Date("2024-07-21T06:52:32Z"),
-      startedTimestamp: new Date("2024-07-21T06:52:35Z"),
-      finishedTimestamp: new Date("2024-07-21T06:53:21Z"),
-    };
-    const request2 = {
-      reportId: report.id,
-      title: "Launch 2",
-      createdTimestamp: new Date("2024-07-21T06:52:32Z"),
-      startedTimestamp: new Date("2024-07-21T06:52:35Z"),
-      finishedTimestamp: new Date("2024-07-21T06:53:21Z"),
-    };
-    const request3 = {
-      reportId: report.id,
-      title: "Launch 3",
-      createdTimestamp: new Date("2024-07-21T06:52:32Z"),
-      startedTimestamp: new Date("2024-07-21T06:52:35Z"),
-      finishedTimestamp: new Date("2024-07-21T06:53:21Z"),
-    };
-    const launch1 = await generator.launches.create(request1);
-    const launch2 = await generator.launches.create(request2);
-    const launch3 = await generator.launches.create(request3);
-
-    const findLaunchesResponse = await client.findLaunches({
-      query: {
-        reportId: report.id,
-        limit: 2,
-        offset: 0,
-      },
-    });
-
-    expect(findLaunchesResponse).toEqual({
-      headers: expect.anything(),
-      status: 200,
-      body: {
-        items: [launch1, launch2],
-        pagination: {
-          total: 3,
-          limit: 2,
-          offset: 0,
-        },
+        argumentsHash: "bbb93ef2-6e3c-101f-f11c-dd21cab08a94",
+        correlationId: "89ca5a70-637a-b790-6d30-b4bcfdc4bf73",
       },
     });
   });
@@ -312,9 +221,12 @@ describe("launches", () => {
         createdTimestamp: patchRequest.createdTimestamp.toISOString(),
         startedTimestamp: patchRequest.startedTimestamp.toISOString(),
         finishedTimestamp: patchRequest.finishedTimestamp.toISOString(),
+        argumentsHash: "bbb93ef2-6e3c-101f-f11c-dd21cab08a94",
+        correlationId: "d8047e5c-4288-b647-c505-e5e6a9d22591",
       },
     });
   });
+
 
   test("delete launch", async () => {
     const launch = await generator.launches.create();

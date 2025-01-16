@@ -38,6 +38,9 @@ export class LaunchesGenerator {
         createdTimestamp: args?.createdTimestamp,
         startedTimestamp: args?.startedTimestamp,
         finishedTimestamp: args?.finishedTimestamp,
+        arguments: args?.arguments,
+        correlationId: args?.correlationId,
+        argumentsHash: args?.argumentsHash,
       },
     });
 
@@ -54,9 +57,12 @@ export class LaunchesGenerator {
 export type GenerateLaunch = {
   reportId?: number;
   title?: string;
+  arguments?: string;
   createdTimestamp?: Date;
   startedTimestamp?: Date;
   finishedTimestamp?: Date;
+  correlationId?: string;
+  argumentsHash?: string;
 };
 
 export type CreateLaunchResponse = ClientInferResponseBody<

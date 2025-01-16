@@ -1,6 +1,6 @@
 import { sql } from "drizzle-orm";
 import { AnyPgColumn, bigint, bigserial, boolean, integer, pgSequence, pgTable, pgView, text, timestamp, uuid, varchar } from "drizzle-orm/pg-core";
-import { ENTITY_TYPES } from "./constants.js";
+import { ENTITY_TYPES } from "@total-report/core-schema/constants";
 
 export const testStatusGroups = pgTable("test_status_groups", {
   id: varchar("id", { length: 20 }).primaryKey(),
@@ -25,9 +25,12 @@ export const launches = pgTable("launches", {
   reportId: bigint("report_id", { mode: "number" }).references(() => reports.id).notNull(),
   id: bigserial("id", { mode: "number" }).primaryKey(),
   title: varchar("title", { length: 256 }).notNull(),
+  arguments: text("arguments"),
   createdTimestamp: timestamp("created_timestamp", { withTimezone: false, mode: "date" }).notNull(),
   startedTimestamp: timestamp("started_timestamp", { withTimezone: false, mode: "date" }),
-  finishedTimestamp: timestamp("finished_timestamp", { withTimezone: false, mode: "date" })
+  finishedTimestamp: timestamp("finished_timestamp", { withTimezone: false, mode: "date" }),
+  correlationId: uuid("correlation_id").notNull(),
+  argumentsHash: uuid("arguments_hash").notNull(),
 });
 
 export const testEnititesIdSeq = pgSequence("test_entities_id_seq", { cache: 5 });
