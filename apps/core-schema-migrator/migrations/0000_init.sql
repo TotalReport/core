@@ -28,7 +28,8 @@ CREATE TABLE "after_tests" (
 	"started_timestamp" timestamp,
 	"finished_timestamp" timestamp,
 	"status_id" varchar,
-	"arguments_hash" uuid
+	"correlation_id" uuid NOT NULL,
+	"arguments_hash" uuid NOT NULL
 );
 --> statement-breakpoint
 CREATE TABLE "before_test_arguments" (
@@ -60,7 +61,8 @@ CREATE TABLE "before_tests" (
 	"started_timestamp" timestamp,
 	"finished_timestamp" timestamp,
 	"status_id" varchar,
-	"arguments_hash" uuid
+	"correlation_id" uuid NOT NULL,
+	"arguments_hash" uuid NOT NULL
 );
 --> statement-breakpoint
 CREATE TABLE "launches" (
@@ -140,7 +142,8 @@ CREATE TABLE "tests" (
 	"started_timestamp" timestamp,
 	"finished_timestamp" timestamp,
 	"status_id" varchar,
-	"arguments_hash" uuid
+	"correlation_id" uuid NOT NULL,
+	"arguments_hash" uuid NOT NULL
 );
 --> statement-breakpoint
 ALTER TABLE "after_test_arguments" ADD CONSTRAINT "after_test_arguments_test_id_after_tests_id_fk" FOREIGN KEY ("test_id") REFERENCES "public"."after_tests"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint

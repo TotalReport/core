@@ -56,7 +56,8 @@ export const beforeTests = pgTable("before_tests", {
   startedTimestamp: timestamp("started_timestamp", { withTimezone: false, mode: "date" }),
   finishedTimestamp: timestamp("finished_timestamp", { withTimezone: false, mode: "date" }),
   statusId: varchar("status_id").references(() => testStatuses.id),
-  argumentsHash: uuid("arguments_hash"),
+  correlationId: uuid("correlation_id").notNull(),
+  argumentsHash: uuid("arguments_hash").notNull(),
 });
 
 export const beforeTestArguments = pgTable("before_test_arguments", {
@@ -89,7 +90,8 @@ export const tests = pgTable("tests", {
   startedTimestamp: timestamp("started_timestamp", { withTimezone: false, mode: "date" }),
   finishedTimestamp: timestamp("finished_timestamp", { withTimezone: false, mode: "date" }),
   statusId: varchar("status_id").references(() => testStatuses.id),
-  argumentsHash: uuid("arguments_hash"),
+  correlationId: uuid("correlation_id").notNull(),
+  argumentsHash: uuid("arguments_hash").notNull(),
 });
 
 export const testArguments = pgTable("test_arguments", {
@@ -122,7 +124,8 @@ export const afterTests = pgTable("after_tests", {
   startedTimestamp: timestamp("started_timestamp", { withTimezone: false, mode: "date" }),
   finishedTimestamp: timestamp("finished_timestamp", { withTimezone: false, mode: "date" }),
   statusId: varchar("status_id").references(() => testStatuses.id),
-  argumentsHash: uuid("arguments_hash"),
+  correlationId: uuid("correlation_id").notNull(),
+  argumentsHash: uuid("arguments_hash").notNull(),
 });
 
 export const afterTestArguments = pgTable("after_test_arguments", {

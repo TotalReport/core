@@ -3,13 +3,16 @@ import {
   ServerInferResponseBody
 } from "@ts-rest/core";
 import { AppRouteImplementation } from "@ts-rest/express";
-import { TestEntity } from "../db-common/tests-common.js";
+import { CreateTestArguments, TestEntity } from "../db-common/tests-common.js";
 import { AfterTestsDAO } from "../db/after-tests.js";
+import { MD5 } from "object-hash";
 
 export const createAfterTestRoute: CreateAfterTestRoute = async ({ body }) => {
-  const request = {
+  const request: CreateTestArguments = {
     ...body,
     createdTimestamp: body.createdTimestamp ?? new Date(),
+    correlationId: body.correlationId ?? MD5(body.correlationId ?? null),
+    argumentsHash: body.argumentsHash ?? MD5(body.arguments ?? null)
   };
 
   return {
@@ -64,6 +67,7 @@ const convertToResponseBody = (response: TestEntity): AfterTestResponseBody => {
     statusId: response.statusId ?? undefined,
     argumentsHash: response.argumentsHash ?? undefined,
     arguments: response.arguments ?? undefined,
+    correlationId: response.correlationId,
   };
 };
 

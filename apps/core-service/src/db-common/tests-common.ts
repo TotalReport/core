@@ -6,7 +6,6 @@ import {
 import { eq } from "drizzle-orm";
 import { NodePgQueryResultHKT } from "drizzle-orm/node-postgres/session";
 import { PgDatabase } from "drizzle-orm/pg-core/db";
-import { MD5 } from "object-hash";
 import { TestContextsDAO } from "../db/test-contexts.js";
 import {
   TestContextBelongsToDifferentLaunchError,
@@ -69,8 +68,6 @@ export class TestsCommonDAO {
    */
   async create(args: CreateTestArguments): Promise<TestEntity> {
     const result = await this.db.transaction(async (tx) => {
-      const argsHash = args.arguments == undefined || args.arguments.length == 0  ? null : MD5(args.arguments);
-
       if (args.testContextId) {
         const testContext = await new TestContextsDAO(tx).findById(
           args.testContextId
@@ -91,7 +88,7 @@ export class TestsCommonDAO {
 
       validate(args);
 
-      const test = await this.insertRow(tx, args, argsHash);
+      const test = await this.insertRow(tx, args);
 
       const argumentsInDb =
         args.arguments && args.arguments.length > 0
@@ -216,8 +213,7 @@ export class TestsCommonDAO {
 
   protected insertRow = async (
     db: PgDatabase<NodePgQueryResultHKT, Record<string, unknown>>,
-    args: CreateTestArguments,
-    argsHash: string | null
+    args: CreateTestArguments
   ) => {
     return (
       await db
@@ -230,7 +226,8 @@ export class TestsCommonDAO {
           startedTimestamp: args.startedTimestamp,
           finishedTimestamp: args.finishedTimestamp,
           statusId: args.statusId,
-          argumentsHash: argsHash,
+          correlationId: args.correlationId,
+          argumentsHash: args.argumentsHash,
         })
         .returning()
     ).at(0)!;
@@ -250,6 +247,8 @@ export type CreateTestArguments = {
     type: string;
     value: string | null;
   }[];
+  correlationId: string;
+  argumentsHash: string;
 };
 
 export type TestEntity = ReplaceNullWithUndefined<TestsRow> & {
@@ -290,13 +289,14 @@ const convertToEntity = (args: {
     startedTimestamp: args.testRow.startedTimestamp ?? undefined,
     finishedTimestamp: args.testRow.finishedTimestamp ?? undefined,
     statusId: args.testRow.statusId ?? undefined,
-    argumentsHash: args.testRow.argumentsHash ?? undefined,
     arguments: args.argumentsRows?.map((arg) => ({
       id: arg.id,
       name: arg.name,
       type: arg.type,
       value: arg.value,
     })),
+    correlationId: args.testRow.correlationId,
+    argumentsHash: args.testRow.argumentsHash,
   };
 };
 

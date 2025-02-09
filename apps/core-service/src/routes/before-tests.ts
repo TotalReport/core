@@ -3,11 +3,16 @@ import { AppRouteImplementation } from "@ts-rest/express";
 import { BeforeTestsDAO } from "../db/before-tests.js";
 import { TestEntity } from "../db-common/tests-common.js";
 import { ServerInferResponseBody } from "@ts-rest/core";
+import { MD5 } from "object-hash";
 
-export const createBeforeTestRoute: CreateBeforeTestRoute = async ({ body }) => {
+export const createBeforeTestRoute: CreateBeforeTestRoute = async ({
+  body,
+}) => {
   const request = {
     ...body,
     createdTimestamp: body.createdTimestamp ?? new Date(),
+    correlationId: body.correlationId ?? MD5(body.correlationId ?? null),
+    argumentsHash: body.argumentsHash ?? MD5(body.arguments ?? null),
   };
 
   return {
@@ -42,13 +47,17 @@ export const patchBeforeTestRoute: PatchBeforeTestRoute = async ({
   };
 };
 
-export const deleteBeforeTestRoute: DeleteBeforeTestRoute = async ({ params }) => {
+export const deleteBeforeTestRoute: DeleteBeforeTestRoute = async ({
+  params,
+}) => {
   await new BeforeTestsDAO().deleteById(params.id);
 
   return { status: 204, body: undefined };
 };
 
-const convertToResponseBody = (response: TestEntity): BeforeTestResponseBody => {
+const convertToResponseBody = (
+  response: TestEntity
+): BeforeTestResponseBody => {
   return {
     launchId: response.launchId,
     testContextId: response.testContextId ?? undefined,
@@ -59,7 +68,8 @@ const convertToResponseBody = (response: TestEntity): BeforeTestResponseBody => 
     finishedTimestamp: response.finishedTimestamp?.toISOString() ?? undefined,
     statusId: response.statusId ?? undefined,
     argumentsHash: response.argumentsHash ?? undefined,
-    arguments: response.arguments ?? undefined
+    arguments: response.arguments ?? undefined,
+    correlationId: response.correlationId,
   };
 };
 

@@ -20,7 +20,7 @@ export class BeforeTestsGenerator {
    * @param args The arguments to create the before test with.
    * @returns The created before test.
    */
-  async create(args: CreateBeforeTestArgs | undefined = undefined) {
+  async create(args: CreateBeforeTestArgs | undefined = undefined): Promise<CreateBeforeTestResponse> {
     const launchId =
       args?.launchId ?? (await new LaunchesGenerator(this.client).create()).id;
 

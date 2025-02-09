@@ -1,6 +1,4 @@
-import {
-  initContract
-} from "@ts-rest/core";
+import { initContract } from "@ts-rest/core";
 import { z } from "zod";
 
 export const CreateBeforeTestSchema = z.object({
@@ -11,13 +9,30 @@ export const CreateBeforeTestSchema = z.object({
   startedTimestamp: z.coerce.date().optional(),
   finishedTimestamp: z.coerce.date().optional(),
   statusId: z.string().optional(),
-  arguments: z.array(
-    z.object({
-      name: z.string(),
-      type: z.string(),
-      value: z.string().nullable(),
-    })
-  ).optional(),
+  arguments: z
+    .array(
+      z.object({
+        name: z.string(),
+        type: z.string(),
+        value: z.string().nullable(),
+      })
+    )
+    .optional(),
+  correlationId: z
+    .string()
+    .uuid()
+    .optional()
+    .describe(
+      "The correlation ID is used together with arguments hash to identify the before tests suitable for compare." +
+        " If the correlation ID is not provided, it will be generated from the title."
+    ),
+  argumentsHash: z
+    .string()
+    .optional()
+    .describe(
+      "The hash of the arguments. Together with the correlation ID, it is used to identify the before tests suitable for compare." +
+        " If the arguments hash is not provided, it will be generated from the arguments."
+    ),
 });
 
 export const BeforeTestSchema = z.object({
@@ -29,7 +44,6 @@ export const BeforeTestSchema = z.object({
   startedTimestamp: z.string().datetime({ offset: true }).optional(),
   finishedTimestamp: z.string().datetime({ offset: true }).optional(),
   statusId: z.string().optional(),
-  argumentsHash: z.string().optional(),
   arguments: z
     .array(
       z.object({
@@ -40,6 +54,8 @@ export const BeforeTestSchema = z.object({
       })
     )
     .optional(),
+  correlationId: z.string().uuid(),
+  argumentsHash: z.string().uuid(),
 });
 
 export const PatchBeforeTestSchema = z.object({

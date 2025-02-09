@@ -2,11 +2,14 @@ import { contract } from "@total-report/core-contract/contract";
 import { AppRouteImplementation } from "@ts-rest/express";
 import { TestsDAO } from "../db/tests.js";
 import { TestEntity } from "../db-common/tests-common.js";
+import { MD5 } from "object-hash";
 
 export const createTestRoute: CreateTestRoute = async ({ body }) => {
   const request = {
     ...body,
     createdTimestamp: body.createdTimestamp ?? new Date(),
+    correlationId: body.correlationId ?? MD5(body.correlationId ?? null),
+    argumentsHash: body.argumentsHash ?? MD5(body.arguments ?? null),
   };
 
   return {
@@ -26,10 +29,7 @@ export const readTestRoute: ReadTestRoute = async ({ params }) => {
   return { status: 200, body: convertToResponseBody(entity) };
 };
 
-export const patchTestRoute: PatchTestRoute = async ({
-  params,
-  body,
-}) => {
+export const patchTestRoute: PatchTestRoute = async ({ params, body }) => {
   let updatedTest = await new TestsDAO().patch({
     ...body,
     id: params.id,
@@ -58,22 +58,15 @@ const convertToResponseBody = (response: TestEntity) => {
     finishedTimestamp: response.finishedTimestamp?.toISOString() ?? undefined,
     statusId: response.statusId ?? undefined,
     argumentsHash: response.argumentsHash ?? undefined,
-    arguments: response.arguments ?? undefined
+    arguments: response.arguments ?? undefined,
+    correlationId: response.correlationId,
   };
 };
 
-type CreateTestRoute = AppRouteImplementation<
-  typeof contract.createTest
->;
+type CreateTestRoute = AppRouteImplementation<typeof contract.createTest>;
 
-type ReadTestRoute = AppRouteImplementation<
-  typeof contract.readTest
->;
+type ReadTestRoute = AppRouteImplementation<typeof contract.readTest>;
 
-type PatchTestRoute = AppRouteImplementation<
-  typeof contract.patchTest
->;
+type PatchTestRoute = AppRouteImplementation<typeof contract.patchTest>;
 
-type DeleteTestRoute = AppRouteImplementation<
-  typeof contract.deleteTest
->;
+type DeleteTestRoute = AppRouteImplementation<typeof contract.deleteTest>;

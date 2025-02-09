@@ -18,6 +18,21 @@ export const CreateTestSchema = z.object({
       })
     )
     .optional(),
+  correlationId: z
+    .string()
+    .uuid()
+    .optional()
+    .describe(
+      "The correlation ID is used together with arguments hash to identify the tests suitable for compare." +
+        " If the correlation ID is not provided, it will be generated from the title."
+    ),
+  argumentsHash: z
+    .string()
+    .optional()
+    .describe(
+      "The hash of the arguments. Together with the correlation ID, it is used to identify the tests suitable for compare." +
+        " If the arguments hash is not provided, it will be generated from the arguments."
+    ),
 });
 
 export const TestSchema = z.object({
@@ -29,7 +44,6 @@ export const TestSchema = z.object({
   startedTimestamp: z.string().datetime({ offset: true }).optional(),
   finishedTimestamp: z.string().datetime({ offset: true }).optional(),
   statusId: z.string().optional(),
-  argumentsHash: z.string().optional(),
   arguments: z
     .array(
       z.object({
@@ -40,6 +54,8 @@ export const TestSchema = z.object({
       })
     )
     .optional(),
+  correlationId: z.string().uuid(),
+  argumentsHash: z.string().uuid(),
 });
 
 export const PatchTestSchema = z.object({
