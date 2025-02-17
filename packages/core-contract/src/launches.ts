@@ -107,6 +107,19 @@ export const findLaunches = contract.query({
   },
 });
 
+export const findLaunchesCount = contract.query({
+  summary: "Find the launches count.",
+  method: "GET",
+  path: "/v1/launches/count",
+  query: z.object({
+    reportId: z.coerce.number().int().optional().describe("The report ID the launches should belong to."),
+    distinct: z.coerce.boolean().optional().default(false).describe("Distinct is defined by uniqeness of combination correlation ID and arguments hash."),
+  }),
+  responses: {
+    200: z.object({count: z.number().int()}),
+  },
+});
+
 export const patchLaunch = contract.mutation({
   summary: "Patch the launch fields.",
   method: "PATCH",

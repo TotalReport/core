@@ -11,8 +11,13 @@ export const createLaunchRoute: CreateLaunchRoute = async ({ body }) => {
   let createdTimestamp = body.createdTimestamp ?? new Date();
   let correlationId = body.correlationId ?? MD5(body.title);
   let argumentsHash = body.argumentsHash ?? MD5(body.arguments ?? null);
-  
-  const launch = await new LaunchesDAO().create({ ...body, createdTimestamp, correlationId, argumentsHash });
+
+  const launch = await new LaunchesDAO().create({
+    ...body,
+    createdTimestamp,
+    correlationId,
+    argumentsHash,
+  });
   return {
     status: 201,
     body: {
@@ -62,6 +67,20 @@ export const findLaunchesRoute: FindLaunchRoute = async ({ query }) => {
         offset: data.pagination.offset,
       },
     },
+  };
+};
+
+export const findLaunchesCountRoute: FindLaunchesCountRoute = async ({
+  query,
+}) => {
+  const data = await new LaunchesDAO().findCount({
+    reportId: query.reportId,
+    distinct: query.distinct ?? false,
+  });
+
+  return {
+    status: 200,
+    body: { count: data },
   };
 };
 
@@ -140,6 +159,9 @@ export const deleteLaunchRoute: DeleteLaunchRoute = async ({ params }) => {
 type CreateLaunchRoute = AppRouteImplementation<typeof contract.createLaunch>;
 type ReadLaunchRoute = AppRouteImplementation<typeof contract.readLaunch>;
 type FindLaunchRoute = AppRouteImplementation<typeof contract.findLaunches>;
+type FindLaunchesCountRoute = AppRouteImplementation<
+  typeof contract.findLaunchesCount
+>;
 type DeleteLaunchRoute = AppRouteImplementation<typeof contract.deleteLaunch>;
 type PatchLaunchRoute = AppRouteImplementation<typeof contract.patchLaunch>;
 type LaunchStatisticsRoute = AppRouteImplementation<

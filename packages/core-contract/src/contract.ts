@@ -29,6 +29,7 @@ import {
   createLaunch,
   deleteLaunch,
   findLaunches,
+  findLaunchesCount,
   launchStatistics,
   patchLaunch,
   readLaunch,
@@ -76,6 +77,7 @@ export const contract = c.router({
   deleteReport: deleteReport,
 
   createLaunch: createLaunch,
+  findLaunchesCount: findLaunchesCount,
   readLaunch: readLaunch,
   findLaunches: findLaunches,
   launchStatistics: launchStatistics,

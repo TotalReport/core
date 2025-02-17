@@ -2,7 +2,7 @@ import { faker } from "@faker-js/faker";
 import { ClientType } from "./types.js";
 import { assertEquals } from "./utils.js";
 import { ReportsGenerator } from "./report-generator.js";
-import { ClientInferResponseBody } from "@ts-rest/core";
+import { ClientInferRequest, ClientInferResponseBody } from "@ts-rest/core";
 import { contract } from "@total-report/core-contract/contract";
 
 /**
@@ -52,18 +52,24 @@ export class LaunchesGenerator {
 
     return response.body;
   }
+
+  /**
+   * Creates multiple launches.
+   * 
+   * @param count The number of launches to create.
+   * @param args The arguments to create the launches with.
+   * @returns The created launches.
+   */
+  createMany(count: number, args?: GenerateLaunch): Promise<CreateLaunchResponse[]> {
+    return Promise.all(Array.from({ length: count }).map(() => this.create(args)));
+  }
 }
 
-export type GenerateLaunch = {
-  reportId?: number;
-  title?: string;
-  arguments?: string;
-  createdTimestamp?: Date;
-  startedTimestamp?: Date;
-  finishedTimestamp?: Date;
-  correlationId?: string;
-  argumentsHash?: string;
-};
+export type GenerateLaunch = Partial<CreateLaunchRequest>;
+
+export type CreateLaunchRequest = ClientInferRequest<
+  typeof contract.createLaunch
+>["body"];
 
 export type CreateLaunchResponse = ClientInferResponseBody<
   typeof contract.createLaunch,

@@ -1,5 +1,5 @@
 import { launches } from "@total-report/core-schema/schema";
-import { and, count, eq } from "drizzle-orm";
+import { and, count, countDistinct, eq, sql } from "drizzle-orm";
 import { NodePgQueryResultHKT } from "drizzle-orm/node-postgres/session";
 import { PgDatabase } from "drizzle-orm/pg-core/db";
 import { ReportNotFoundError } from "../errors/errors.js";
@@ -101,6 +101,37 @@ export class LaunchesDAO {
     };
   }
 
+  /**
+   * Find the count of launches.
+   *
+   * @param params The parameters to find the count of launches.
+   * @returns The count of launches.
+   */
+  async findCount(params: FindCountParams): Promise<number> {
+    const distinct = params.distinct;
+    const reportIdFilter = params.reportId
+      ? eq(launches.reportId, params.reportId)
+      : undefined;
+
+    let filter = reportIdFilter;
+
+    const result =
+      (
+        await this.db
+          .select({
+            value: distinct
+              ? countDistinct(
+                  sql` (${launches.correlationId},${launches.argumentsHash})`
+                )
+              : count(),
+          })
+          .from(launches)
+          .where(filter)
+      ).at(0)?.value ?? 0;
+
+    return result;
+  }
+
   async patch(args: PatchLaunch): Promise<LaunchEntity> {
     const result = await this.db.transaction(async (tx) => {
       const launchFromDb = await new LaunchesDAO(tx).findById(args.id);
@@ -161,6 +192,20 @@ type FindLaunches = {
   reportId?: number;
   correlationId?: string;
   argumentsHash?: string;
+};
+
+/**
+ * The parameters to find the count of launches.
+ */
+type FindCountParams = {
+  /**
+   * The report ID the launches are belongs to.
+   */
+  reportId?: number;
+  /**
+   * Distinct the launches by correlation ID and arguments hash.
+   */
+  distinct: boolean;
 };
 
 type PatchLaunch = {
