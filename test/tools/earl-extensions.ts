@@ -45,11 +45,7 @@ export function isCloseToNow(delta: number) {
 }
 
 export function equalUnsorted<T>(expected: Array<T>) {
-  return (value: unknown): boolean => {
-    console.log(JSON.stringify(Array.isArray(value)));
-    console.log(JSON.stringify((value as Array<any>).sort((a, b) => JSON.stringify(a).localeCompare(JSON.stringify(b)))));
-    console.log(JSON.stringify(expected.sort((a, b) => JSON.stringify(a).localeCompare(JSON.stringify(b)))));
-    
+  return (value: unknown): boolean => {    
     return Array.isArray(value) && isEqual(value.sort((a, b) => JSON.stringify(a).localeCompare(JSON.stringify(b))), expected.sort((a, b) => JSON.stringify(a).localeCompare(JSON.stringify(b))));
   };
 }
