@@ -2,7 +2,7 @@ import { faker } from "@faker-js/faker";
 import { LaunchesGenerator } from "./launch-generator.js";
 import { ClientType } from "./types.js";
 import { assertEquals } from "./utils.js";
-import { ClientInferResponseBody } from "@ts-rest/core";
+import { ClientInferRequest, ClientInferResponseBody } from "@ts-rest/core";
 import { contract } from "@total-report/core-contract/contract";
 
 /**
@@ -22,7 +22,7 @@ export class AfterTestsGenerator {
    * @returns The created after test.
    */
   async create(
-    args: CreateAfterTestArgs | undefined = undefined
+    args: GenerateAfterTestArgs | undefined = undefined
   ): Promise<CreateAfterTestResponse> {
     const launchId =
       args?.launchId ?? (await new LaunchesGenerator(this.client).create()).id;
@@ -81,7 +81,7 @@ export class AfterTestsGenerator {
    */
   async createMultiple(
     count: number,
-    argsProvider: (index: number) => CreateAfterTestArgs | undefined
+    argsProvider: (index: number) => GenerateAfterTestArgs | undefined
   ): Promise<Array<CreateAfterTestResponse>> {
     const result = Array.from({ length: count }).map(
       async (_, i) => await this.create(argsProvider(i))
@@ -93,20 +93,11 @@ export class AfterTestsGenerator {
 /**
  * The arguments to create an after test with.
  */
-export type CreateAfterTestArgs = {
-  launchId?: number;
-  testContextId?: number;
-  createdTimestamp?: Date;
-  startedTimestamp?: Date;
-  finishedTimestamp?: Date;
-  statusId?: string;
-  title?: string;
-  arguments?: Array<{
-    name: string;
-    type: string;
-    value: string;
-  }>;
-};
+export type GenerateAfterTestArgs = CreateAfterTestRequest;
+
+export type CreateAfterTestRequest = ClientInferRequest<
+  typeof contract.createTest
+>["body"];
 
 export type CreateAfterTestResponse = ClientInferResponseBody<
   typeof contract.createAfterTest,

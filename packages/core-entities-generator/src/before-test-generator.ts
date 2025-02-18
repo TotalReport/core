@@ -2,7 +2,7 @@ import { faker } from "@faker-js/faker";
 import { ClientType } from "./types.js";
 import { assertEquals } from "./utils.js";
 import { LaunchesGenerator } from "./launch-generator.js";
-import { ClientInferResponseBody } from "@ts-rest/core";
+import { ClientInferRequest, ClientInferResponseBody } from "@ts-rest/core";
 import { contract } from "@total-report/core-contract/contract";
 
 /**
@@ -20,7 +20,7 @@ export class BeforeTestsGenerator {
    * @param args The arguments to create the before test with.
    * @returns The created before test.
    */
-  async create(args: CreateBeforeTestArgs | undefined = undefined): Promise<CreateBeforeTestResponse> {
+  async create(args: GenerateBeforeTestArgs | undefined = undefined): Promise<CreateBeforeTestResponse> {
     const launchId =
       args?.launchId ?? (await new LaunchesGenerator(this.client).create()).id;
 
@@ -79,7 +79,7 @@ export class BeforeTestsGenerator {
    */
   async createMultiple(
     count: number,
-    argsProvider: (index: number) => CreateBeforeTestArgs | undefined
+    argsProvider: (index: number) => GenerateBeforeTestArgs | undefined
   ): Promise<Array<CreateBeforeTestResponse>> {
     const result = Array.from({ length: count }).map(
       async (_, i) => await this.create(argsProvider(i))
@@ -91,20 +91,11 @@ export class BeforeTestsGenerator {
 /**
  * The arguments to create a before test with.
  */
-export type CreateBeforeTestArgs = {
-  launchId?: number;
-  testContextId?: number;
-  createdTimestamp?: Date;
-  startedTimestamp?: Date;
-  finishedTimestamp?: Date;
-  statusId?: string;
-  title?: string;
-  arguments?: Array<{
-    name: string;
-    type: string;
-    value: string;
-  }>;
-};
+export type GenerateBeforeTestArgs = CreateBeforeTestRequest;
+
+export type CreateBeforeTestRequest = ClientInferRequest<
+  typeof contract.createTest
+>["body"];
 
 export type CreateBeforeTestResponse = ClientInferResponseBody<
   typeof contract.createBeforeTest,

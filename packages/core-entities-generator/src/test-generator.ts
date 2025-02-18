@@ -2,7 +2,7 @@ import { faker } from "@faker-js/faker";
 import { ClientType } from "./types.js";
 import { LaunchesGenerator } from "./launch-generator.js";
 import { assertEquals } from "./utils.js";
-import { ClientInferResponseBody } from "@ts-rest/core";
+import { ClientInferRequest, ClientInferResponseBody } from "@ts-rest/core";
 import { contract } from "@total-report/core-contract/contract";
 
 /**
@@ -22,7 +22,7 @@ export class TestsGenerator {
    * @returns The created test.
    */
   async create(
-    args: CreateTestArgs | undefined = undefined
+    args: GenerateTestArgs | undefined = undefined
   ): Promise<CreateTestResponse> {
     const launchId =
       args?.launchId ?? (await new LaunchesGenerator(this.client).create()).id;
@@ -82,7 +82,7 @@ export class TestsGenerator {
    */
   async createMultiple(
     count: number,
-    argsProvider: (index: number) => CreateTestArgs | undefined
+    argsProvider: (index: number) => GenerateTestArgs | undefined
   ): Promise<Array<CreateTestResponse>> {
     const result = Array.from({ length: count }).map(
       async (_, i) => await this.create(argsProvider(i))
@@ -94,20 +94,11 @@ export class TestsGenerator {
 /**
  * The arguments to create a test with.
  */
-export type CreateTestArgs = {
-  launchId?: number;
-  testContextId?: number;
-  createdTimestamp?: Date;
-  startedTimestamp?: Date;
-  finishedTimestamp?: Date;
-  statusId?: string;
-  title?: string;
-  arguments?: Array<{
-    name: string;
-    type: string;
-    value: string;
-  }>;
-};
+export type GenerateTestArgs = CreateTestRequest;
+
+export type CreateTestRequest = ClientInferRequest<
+  typeof contract.createTest
+>["body"];
 
 export type CreateTestResponse = ClientInferResponseBody<
   typeof contract.createTest,
