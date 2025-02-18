@@ -94,7 +94,7 @@ export class TestsGenerator {
 /**
  * The arguments to create a test with.
  */
-export type GenerateTestArgs = CreateTestRequest;
+export type GenerateTestArgs = Partial<CreateTestRequest>;
 
 export type CreateTestRequest = ClientInferRequest<
   typeof contract.createTest

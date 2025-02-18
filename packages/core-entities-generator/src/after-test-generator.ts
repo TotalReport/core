@@ -93,7 +93,7 @@ export class AfterTestsGenerator {
 /**
  * The arguments to create an after test with.
  */
-export type GenerateAfterTestArgs = CreateAfterTestRequest;
+export type GenerateAfterTestArgs = Partial<CreateAfterTestRequest>;
 
 export type CreateAfterTestRequest = ClientInferRequest<
   typeof contract.createTest

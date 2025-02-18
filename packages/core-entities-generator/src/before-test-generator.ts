@@ -91,7 +91,7 @@ export class BeforeTestsGenerator {
 /**
  * The arguments to create a before test with.
  */
-export type GenerateBeforeTestArgs = CreateBeforeTestRequest;
+export type GenerateBeforeTestArgs = Partial<CreateBeforeTestRequest>;
 
 export type CreateBeforeTestRequest = ClientInferRequest<
   typeof contract.createTest
