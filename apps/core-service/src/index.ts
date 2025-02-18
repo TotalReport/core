@@ -5,9 +5,9 @@ import cors from "cors";
 import express, { NextFunction, Request, Response } from "express";
 import { ValidationError } from "./errors/errors.js";
 import { createAfterTestStepRoute, deleteAfterTestStepRoute, patchAfterTestStepRoute, readAfterTestStepRoute } from "./routes/after-test-steps.js";
-import { createAfterTestRoute, deleteAfterTestRoute, patchAfterTestRoute, readAfterTestRoute } from "./routes/after-tests.js";
+import { createAfterTestRoute, deleteAfterTestRoute, findAfterTestsRoute, patchAfterTestRoute, readAfterTestRoute } from "./routes/after-tests.js";
 import { createBeforeTestStepRoute, deleteBeforeTestStepRoute, patchBeforeTestStepRoute, readBeforeTestStepRoute } from "./routes/before-test-steps.js";
-import { createBeforeTestRoute, deleteBeforeTestRoute, patchBeforeTestRoute, readBeforeTestRoute } from "./routes/before-tests.js";
+import { createBeforeTestRoute, deleteBeforeTestRoute, findBeforeTestsRoute, patchBeforeTestRoute, readBeforeTestRoute } from "./routes/before-tests.js";
 import { healthCheckRoute, setApiStarted } from "./routes/healthcheck.js";
 import {
   createLaunchRoute,
@@ -33,7 +33,7 @@ import {
   readTestContextRoute,
 } from "./routes/test-contexts.js";
 import { createTestStepRoute, deleteTestStepRoute, patchTestStepRoute, readTestStepRoute } from "./routes/test-steps.js";
-import { createTestRoute, deleteTestRoute, patchTestRoute, readTestRoute } from "./routes/tests.js";
+import { createTestRoute, deleteTestRoute, findTestsRoute, patchTestRoute, readTestRoute } from "./routes/tests.js";
 import { findTestEntitiesRoute } from "./routes/test-entities.js";
 
 const { urlencoded, json } = bodyParser;
@@ -71,6 +71,7 @@ const router = s.router(contract, {
   deleteTestContext: deleteTestContextRoute,
 
   createBeforeTest: createBeforeTestRoute,
+  findBeforeTests: findBeforeTestsRoute,
   readBeforeTest: readBeforeTestRoute,
   patchBeforeTest: patchBeforeTestRoute,
   deleteBeforeTest: deleteBeforeTestRoute,
@@ -81,9 +82,10 @@ const router = s.router(contract, {
   deleteBeforeTestStep: deleteBeforeTestStepRoute,
 
   createTest: createTestRoute,
+  findTests: findTestsRoute,
   readTest: readTestRoute,
   patchTest: patchTestRoute,
-  deleteTest: deleteTestRoute,  
+  deleteTest: deleteTestRoute,
 
   createTestStep: createTestStepRoute,
   readTestStep: readTestStepRoute,
@@ -91,6 +93,7 @@ const router = s.router(contract, {
   deleteTestStep: deleteTestStepRoute,
 
   createAfterTest: createAfterTestRoute,
+  findAfterTests: findAfterTestsRoute,
   readAfterTest: readAfterTestRoute,
   patchAfterTest: patchAfterTestRoute,
   deleteAfterTest: deleteAfterTestRoute,

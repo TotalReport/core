@@ -29,6 +29,31 @@ export const readTestRoute: ReadTestRoute = async ({ params }) => {
   return { status: 200, body: convertToResponseBody(entity) };
 };
 
+export const findTestsRoute: FindTestsRoute = async ({ query }) => {
+  const { limit, offset, reportId, launchId, testContextId, correlationId, argumentsHash } = query;
+  const { items, totalItems } = await new TestsDAO().find({
+    limit,
+    offset,
+    reportId,
+    launchId,
+    testContextId,
+    correlationId,
+    argumentsHash,
+  });
+
+  return {
+    status: 200,
+    body: {
+      pagination: {
+        total: totalItems,
+        limit,
+        offset,
+      },
+      items: items.map(convertToResponseBody),
+    },
+  };
+};
+
 export const patchTestRoute: PatchTestRoute = async ({ params, body }) => {
   let updatedTest = await new TestsDAO().patch({
     ...body,
@@ -66,6 +91,8 @@ const convertToResponseBody = (response: TestEntity) => {
 type CreateTestRoute = AppRouteImplementation<typeof contract.createTest>;
 
 type ReadTestRoute = AppRouteImplementation<typeof contract.readTest>;
+
+type FindTestsRoute = AppRouteImplementation<typeof contract.findTests>;
 
 type PatchTestRoute = AppRouteImplementation<typeof contract.patchTest>;
 

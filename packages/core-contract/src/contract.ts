@@ -10,6 +10,7 @@ import {
 import {
   createAfterTest,
   deleteAfterTest,
+  findAfterTests,
   patchAfterTest,
   readAfterTest,
 } from "./after-tests.js";
@@ -22,6 +23,7 @@ import {
 import {
   createBeforeTest,
   deleteBeforeTest,
+  findBeforeTests,
   patchBeforeTest,
   readBeforeTest,
 } from "./before-tests.js";
@@ -49,7 +51,7 @@ import {
   patchTestStep,
   readTestStep,
 } from "./test-steps.js";
-import { createTest, deleteTest, patchTest, readTest } from "./tests.js";
+import { createTest, deleteTest, findTests, patchTest, readTest } from "./tests.js";
 
 extendZodWithOpenApi(z);
 
@@ -92,6 +94,7 @@ export const contract = c.router({
 
   createBeforeTest: createBeforeTest,
   readBeforeTest: readBeforeTest,
+  findBeforeTests: findBeforeTests,
   patchBeforeTest: patchBeforeTest,
   deleteBeforeTest: deleteBeforeTest,
 
@@ -102,6 +105,7 @@ export const contract = c.router({
 
   createTest: createTest,
   readTest: readTest,
+  findTests: findTests,
   patchTest: patchTest,
   deleteTest: deleteTest,
 
@@ -112,6 +116,7 @@ export const contract = c.router({
 
   createAfterTest: createAfterTest,
   readAfterTest: readAfterTest,
+  findAfterTests: findAfterTests,
   patchAfterTest: patchAfterTest,
   deleteAfterTest: deleteAfterTest,
 

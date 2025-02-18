@@ -1,7 +1,7 @@
-import { CreateAfterTestArgs } from "@total-report/core-entities-generator/after-test";
-import { CreateBeforeTestArgs } from "@total-report/core-entities-generator/before-test";
+import { GenerateAfterTestArgs } from "@total-report/core-entities-generator/after-test";
+import { GenerateBeforeTestArgs } from "@total-report/core-entities-generator/before-test";
 import { CoreEntititesGenerator } from "@total-report/core-entities-generator/core-entities";
-import { CreateTestArgs } from "@total-report/core-entities-generator/test";
+import { GenerateTestArgs } from "@total-report/core-entities-generator/test";
 import { DEFAULT_TEST_STATUSES } from "@total-report/core-schema/constants";
 import { expect } from "earl";
 import { describe, test } from "mocha";
@@ -54,7 +54,7 @@ describe("launches", () => {
 
     const launch2 = await generator.launches.create({ reportId: report.id });
     await generator.beforeTests.createMultiple(10, (index) => {
-      const args: CreateBeforeTestArgs = {
+      const args: GenerateBeforeTestArgs = {
         launchId: launch1.id,
       };
       if (index == 0) {
@@ -84,7 +84,7 @@ describe("launches", () => {
       return args;
     });
     await generator.tests.createMultiple(36, (index) => {
-      const args: CreateTestArgs = {
+      const args: GenerateTestArgs = {
         launchId: launch1.id,
       };
       if (index < 3) {
@@ -118,7 +118,7 @@ describe("launches", () => {
     });
 
     await generator.afterTests.createMultiple(10, (index) => {
-      const args: CreateAfterTestArgs = {
+      const args: GenerateAfterTestArgs = {
         launchId: launch1.id,
       };
       if (index == 0) {

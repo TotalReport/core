@@ -1,9 +1,10 @@
 import {
   afterTests,
   beforeTests,
+  launches,
   tests,
 } from "@total-report/core-schema/schema";
-import { eq } from "drizzle-orm";
+import { and  , count, eq } from "drizzle-orm";
 import { NodePgQueryResultHKT } from "drizzle-orm/node-postgres/session";
 import { PgDatabase } from "drizzle-orm/pg-core/db";
 import { TestContextsDAO } from "../db/test-contexts.js";
@@ -140,6 +141,105 @@ export class TestsCommonDAO {
         argumentsRows: testArgs,
       });
     });
+  }
+
+  /**
+   * Find test entities based on the provided arguments.
+   *
+   * @param args Arguments for finding test entities.
+   * @returns Found test entities and total count.
+   */
+  async find(args: {
+    limit: number;
+    offset: number;
+    reportId?: number;
+    launchId?: number;
+    testContextId?: number;
+    correlationId?: string;
+    argumentsHash?: string;
+  }): Promise<{ items: TestEntity[]; totalItems: number }> {
+    const whereConditions = [
+      args.launchId ? eq(this.testTable.launchId, args.launchId) : undefined,
+      args.testContextId
+        ? eq(this.testTable.testContextId, args.testContextId)
+        : undefined,
+      args.correlationId
+        ? eq(this.testTable.correlationId, args.correlationId)
+        : undefined,
+      args.argumentsHash
+        ? eq(this.testTable.argumentsHash, args.argumentsHash)
+        : undefined,
+    ].filter(Boolean);
+
+    const items =
+      args.reportId != undefined
+        ? await this.db
+            .select({
+              id: this.testTable.id,
+              launchId: this.testTable.launchId,
+              testContextId: this.testTable.testContextId,
+              title: this.testTable.title,
+              createdTimestamp: this.testTable.createdTimestamp,
+              startedTimestamp: this.testTable.startedTimestamp,
+              finishedTimestamp: this.testTable.finishedTimestamp,
+              statusId: this.testTable.statusId,
+              correlationId: this.testTable.correlationId,
+              argumentsHash: this.testTable.argumentsHash,
+            })
+            .from(this.testTable)
+            .innerJoin(launches, eq(this.testTable.launchId, launches.id))
+            .where(
+              and(...whereConditions, eq(launches.reportId, args.reportId))
+            )
+            .limit(args.limit)
+            .offset(args.offset)
+            .execute()
+        : await this.db
+            .select()
+            .from(this.testTable)
+            .where(and(...whereConditions))
+            .limit(args.limit)
+            .offset(args.offset)
+            .execute();
+
+    const totalItems =
+      args.reportId != undefined
+        ? (
+            await this.db
+              .select({ count: count(this.testTable.id) })
+              .from(this.testTable)
+              .rightJoin(
+                launches,
+                and(
+                  eq(this.testTable.launchId, launches.id),
+                  eq(launches.reportId, args.reportId)
+                )
+              )
+              .where(and(...whereConditions))
+              .execute()
+          ).at(0)?.count ?? 0
+        : (
+            await this.db
+              .select({ count: count(this.testTable.id) })
+              .from(this.testTable)
+              .where(and(...whereConditions))
+              .execute()
+          ).at(0)?.count ?? 0;
+
+    // FIXME: HARDLY INNNEFICIENT! Optimize by moving arguments into JSON column of test
+    const responseItems = await Promise.all(
+      items.map(async (item) => {
+        const testArgs = await this.newTestArgumentsDAO(this.db).findByTestId(
+          item.id
+        );
+        return convertToEntity({ testRow: item, argumentsRows: testArgs });
+      })
+    );
+
+    return {
+      items: responseItems,
+      totalItems,
+    };
   }
 
   /**

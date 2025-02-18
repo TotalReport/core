@@ -1,5 +1,6 @@
 import { initContract } from "@ts-rest/core";
 import { z } from "zod";
+import { PAGINATION_DEFAULTS } from "./defaults.js";
 
 export const CreateBeforeTestSchema = z.object({
   launchId: z.number().int(),
@@ -88,6 +89,60 @@ export const readBeforeTest = contract.query({
   responses: {
     200: BeforeTestSchema,
     404: z.object({}),
+  },
+});
+
+export const findBeforeTests = contract.query({
+  summary: "Find the before tests.",
+  method: "GET",
+  path: "/v1/before-tests",
+  query: z.object({
+    reportId: z.coerce
+      .number()
+      .int()
+      .optional()
+      .describe("The report ID the before tests belong to."),
+    launchId: z.coerce
+      .number()
+      .int()
+      .optional()
+      .describe("The launch ID the before tests belong to."),
+    testContextId: z.coerce
+      .number()
+      .int()
+      .optional()
+      .describe("The test context ID the before tests belong to."),
+    correlationId: z.coerce
+      .string()
+      .uuid()
+      .optional()
+      .describe("The correlation ID the before tests have."),
+    argumentsHash: z.coerce
+      .string()
+      .optional()
+      .describe("The arguments hash the before tests have."),
+    limit: z.coerce
+      .number()
+      .int()
+      .optional()
+      .default(PAGINATION_DEFAULTS.limit)
+      .describe("The number of items to return."),
+    offset: z.coerce
+      .number()
+      .int()
+      .optional()
+      .default(PAGINATION_DEFAULTS.limit)
+      .describe("The number of items to skip."),
+  }),
+  responses: {
+    200: z.object({
+      pagination: z.object({
+        total: z.number().int(),
+        limit: z.number().int(),
+        offset: z.number().int(),
+      }),
+      items: z.array(BeforeTestSchema),
+    }),
   },
 });
 
