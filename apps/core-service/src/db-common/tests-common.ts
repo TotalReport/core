@@ -4,7 +4,7 @@ import {
   launches,
   tests,
 } from "@total-report/core-schema/schema";
-import { and  , count, eq } from "drizzle-orm";
+import { and, count, eq } from "drizzle-orm";
 import { NodePgQueryResultHKT } from "drizzle-orm/node-postgres/session";
 import { PgDatabase } from "drizzle-orm/pg-core/db";
 import { TestContextsDAO } from "../db/test-contexts.js";
@@ -187,10 +187,14 @@ export class TestsCommonDAO {
               argumentsHash: this.testTable.argumentsHash,
             })
             .from(this.testTable)
-            .innerJoin(launches, eq(this.testTable.launchId, launches.id))
-            .where(
-              and(...whereConditions, eq(launches.reportId, args.reportId))
+            .innerJoin(
+              launches,
+              and(
+                eq(this.testTable.launchId, launches.id),
+                eq(launches.reportId, args.reportId)
+              )
             )
+            .where(and(...whereConditions))
             .limit(args.limit)
             .offset(args.offset)
             .execute()

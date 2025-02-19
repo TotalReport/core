@@ -1,10 +1,10 @@
 import { CoreEntititesGenerator } from "@total-report/core-entities-generator/core-entities";
 import { describe, test } from "mocha";
-import { client } from "../tools/client.js";
+import { client } from "../../tools/client.js";
 import { ClientInferResponseBody } from "@ts-rest/core";
 import { expect } from "earl";
 import { contract } from "@total-report/core-contract/contract";
-import "../tools/earl-extensions.js";
+import "../../tools/earl-extensions.js";
 
 const generator = new CoreEntititesGenerator(client);
 
@@ -117,8 +117,6 @@ describe("test entities", () => {
       status: 200,
       body: {
         items: [
-          contextToEntity(rootContext11),
-          contextToEntity(context12InRootContext11),
           beforeTestToEntity(rootBeforeTest11),
           beforeTestToEntity(beforeTest12InRootContext11),
           beforeTestToEntity(beforeTest13InContext12),
@@ -132,14 +130,14 @@ describe("test entities", () => {
         pagination: {
           limit: 20,
           offset: 0,
-          total: 11,
+          total: 9,
         },
       },
     });
 
     const entitiesByRootContext = await client.findTestEntities({
       query: {
-        parentContextId: rootContext11.id,
+        contextId: rootContext11.id,
         limit: 20,
         offset: 0,
       },
@@ -150,7 +148,6 @@ describe("test entities", () => {
       status: 200,
       body: {
         items: [
-          contextToEntity(context12InRootContext11),
           beforeTestToEntity(beforeTest12InRootContext11),
           testToEntity(test12InRootContext11),
           afterTestToEntity(afterTest12InRootContext11),
@@ -158,14 +155,14 @@ describe("test entities", () => {
         pagination: {
           limit: 20,
           offset: 0,
-          total: 4,
+          total: 3,
         },
       },
     });
 
     const entitiesByNestedContext = await client.findTestEntities({
         query: {
-          parentContextId: context12InRootContext11.id,
+          contextId: context12InRootContext11.id,
           limit: 20,
           offset: 0,
         },
@@ -188,26 +185,270 @@ describe("test entities", () => {
         },
       });
   });
-});
 
-const contextToEntity = (entity: TestContext): TestEntity => {
-  return {
-    launchId: entity.launchId,
-    ...(entity.parentTestContextId
-      ? { parentContextId: entity.parentTestContextId }
-      : undefined),
-    entityType: "test context",
-    id: entity.id,
-    title: entity.title,
-    createdTimestamp: entity.createdTimestamp,
-    ...(entity.startedTimestamp
-      ? { startedTimestamp: entity.startedTimestamp }
-      : undefined),
-    ...(entity.finishedTimestamp
-      ? { finishedTimestamp: entity.finishedTimestamp }
-      : undefined),
-  };
-};
+  test("by reportId", async () => {
+    const report = await generator.reports.create();
+    const launch = await generator.launches.create({ reportId: report.id });
+    const created = await generator.tests.create({ launchId: launch.id });
+
+    // Record that should be filtered out
+    await generator.tests.create();
+
+    const limit = 10;
+    const offset = 0;
+
+    const response = await client.findTestEntities({
+      query: { reportId: report.id, limit, offset },
+    });
+
+    expect(response).toEqual({
+      headers: expect.anything(),
+      status: 200,
+      body: {
+        pagination: {
+          total: 1,
+          limit,
+          offset,
+        },
+        items: [testToEntity(created)],
+      },
+    });
+  });
+
+  test("by launchId", async () => {
+    const report = await generator.reports.create();
+    const launch = await generator.launches.create({ reportId: report.id });
+    const created = await generator.tests.create({ launchId: launch.id });
+
+    // Record that should be filtered out
+    const launch2 = await generator.launches.create({ reportId: report.id });
+    await generator.tests.create({ launchId: launch2.id });
+
+    const limit = 10;
+    const offset = 0;
+
+    const response = await client.findTestEntities({
+      query: { launchId: launch.id, limit, offset },
+    });
+
+    expect(response).toEqual({
+      headers: expect.anything(),
+      status: 200,
+      body: {
+        pagination: {
+          total: 1,
+          limit,
+          offset,
+        },
+        items: [testToEntity(created)],
+      },
+    });
+  });
+
+  test("by contextId", async () => {
+    const launch = await generator.launches.create();
+    const testContext = await generator.contexts.create({
+      launchId: launch.id,
+    });
+    const expectedRecord = await generator.tests.create({
+      testContextId: testContext.id,
+      launchId: launch.id,
+    });
+
+    // Record that should be filtered out
+    const testContext2 = await generator.contexts.create({
+      launchId: launch.id,
+    });
+    await generator.tests.create({ testContextId: testContext2.id });
+
+    const limit = 10;
+    const offset = 0;
+
+    const response = await client.findTestEntities({
+      query: { contextId: testContext.id, limit, offset },
+    });
+
+    expect(response).toEqual({
+      headers: expect.anything(),
+      status: 200,
+      body: {
+        pagination: {
+          total: 1,
+          limit,
+          offset,
+        },
+        items: [testToEntity(expectedRecord)],
+      },
+    });
+  });
+
+  test("by correlationId", async () => {
+    const launch = await generator.launches.create();
+    const correlationId = "cf11c6c2-ed80-46d6-ac55-d1181b59a69f";
+    const created = await generator.tests.create({
+      launchId: launch.id,
+      correlationId,
+    });
+
+    // Record that should be filtered out
+    await generator.tests.create({
+      launchId: launch.id,
+      correlationId: "0f4ae45f-69c4-4afc-9367-610dd423aa6c",
+    });
+
+    const limit = 10;
+    const offset = 0;
+
+    const response = await client.findTestEntities({
+      query: { correlationId, limit, offset },
+    });
+
+    expect(response).toEqual({
+      headers: expect.anything(),
+      status: 200,
+      body: {
+        pagination: {
+          total: 1,
+          limit,
+          offset,
+        },
+        items: [testToEntity(created)],
+      },
+    });
+  });
+
+  test("by argumentsHash", async () => {
+    const launch = await generator.launches.create();
+    const argumentsHash = "cf555a84-75b5-4d08-b5ce-639ec35015fd";
+    const created = await generator.tests.create({
+      launchId: launch.id,
+      argumentsHash,
+    });
+
+    // Record that should be filtered out
+    await generator.tests.create({
+      launchId: launch.id,
+      argumentsHash: "7daae764-6eca-44d8-9324-020a8fb4507a",
+    });
+
+    const limit = 10;
+    const offset = 0;
+
+    const response = await client.findTestEntities({
+      query: { argumentsHash, limit, offset },
+    });
+
+    expect(response).toEqual({
+      headers: expect.anything(),
+      status: 200,
+      body: {
+        pagination: {
+          total: 1,
+          limit,
+          offset,
+        },
+        items: [testToEntity(created)],
+      },
+    });
+  });
+
+  test("distinct entities", async () => {
+    const launch = await generator.launches.create();
+    const correlationId = "123e4567-e89b-12d3-a456-426614174000";
+    const argumentsHash = "6a6cd8dd-3dd7-4804-b98b-ce70cfb93496";
+    const created1 = await generator.tests.create({
+      launchId: launch.id,
+      correlationId,
+      argumentsHash,
+    });
+    const created2 = await generator.tests.create({
+      launchId: launch.id,
+      correlationId,
+      argumentsHash,
+    });
+
+    const limit = 10;
+    const offset = 0;
+
+    const response = await client.findTestEntities({
+      query: { correlationId, argumentsHash, distinct: true, limit, offset },
+    });
+
+    expect(response).toEqual({
+      headers: expect.anything(),
+      status: 200,
+      body: {
+        pagination: {
+          total: 1,
+          limit,
+          offset,
+        },
+        items: [testToEntity(created2)],
+      },
+    });
+  });
+
+  test("by entityType", async () => {
+    const launch = await generator.launches.create();
+    const beforeTest = await generator.beforeTests.create({ launchId: launch.id });
+    const test = await generator.tests.create({ launchId: launch.id });
+    const afterTest = await generator.afterTests.create({ launchId: launch.id });
+
+    const limit = 10;
+    const offset = 0;
+
+    const response = await client.findTestEntities({
+      query: { entityTypes: ["before test"], launchId: launch.id, limit, offset },
+    });
+
+    expect(response).toEqual({
+      headers: expect.anything(),
+      status: 200,
+      body: {
+        pagination: {
+          total: 1,
+          limit,
+          offset,
+        },
+        items: [beforeTestToEntity(beforeTest)],
+      },
+    });
+
+    const response2 = await client.findTestEntities({
+      query: { entityTypes: ["test"], launchId: launch.id, limit, offset },
+    });
+
+    expect(response2).toEqual({
+      headers: expect.anything(),
+      status: 200,
+      body: {
+        pagination: {
+          total: 1,
+          limit,
+          offset,
+        },
+        items: [testToEntity(test)],
+      },
+    });
+
+    const response3 = await client.findTestEntities({
+      query: { entityTypes: ["after test"], launchId: launch.id, limit, offset },
+    });
+
+    expect(response3).toEqual({
+      headers: expect.anything(),
+      status: 200,
+      body: {
+        pagination: {
+          total: 1,
+          limit,
+          offset,
+        },
+        items: [afterTestToEntity(afterTest)],
+      },
+    });
+  });
+});
 
 const beforeTestToEntity = (entity: BeforeTest): TestEntity => {
   return {
@@ -226,6 +467,8 @@ const beforeTestToEntity = (entity: BeforeTest): TestEntity => {
       ? { finishedTimestamp: entity.finishedTimestamp }
       : undefined),
     ...(entity.statusId ? { statusId: entity.statusId } : undefined),
+    ...(entity.correlationId ? { correlationId: entity.correlationId } : undefined),
+    ...(entity.argumentsHash ? { argumentsHash: entity.argumentsHash } : undefined),
   };
 };
 
@@ -246,6 +489,8 @@ const testToEntity = (entity: Test): TestEntity => {
       ? { finishedTimestamp: entity.finishedTimestamp }
       : undefined),
     ...(entity.statusId ? { statusId: entity.statusId } : undefined),
+    ...(entity.correlationId ? { correlationId: entity.correlationId } : undefined),
+    ...(entity.argumentsHash ? { argumentsHash: entity.argumentsHash } : undefined),
   };
 };
 
@@ -266,6 +511,8 @@ const afterTestToEntity = (entity: AfterTest): TestEntity => {
       ? { finishedTimestamp: entity.finishedTimestamp }
       : undefined),
     ...(entity.statusId ? { statusId: entity.statusId } : undefined),
+    ...(entity.correlationId ? { correlationId: entity.correlationId } : undefined),
+    ...(entity.argumentsHash ? { argumentsHash: entity.argumentsHash } : undefined),
   };
 };
 

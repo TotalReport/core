@@ -157,28 +157,18 @@ export const paths = pgTable("paths", {
 
 export const testEntities = pgView("test_entities").as((qb) => 
   qb.select({
-      launchId: testContexts.launchId,
-      parentContextId: sql<number | null>`${testContexts.parentTestContextId}`.as("parent_context_id"),
-      entityType: sql<string>`${ENTITY_TYPES.TEST_CONTEXT}`.as("entity_type"),
-      id: testContexts.id,
-      title: testContexts.title,
-      createdTimestamp: testContexts.createdTimestamp,
-      startedTimestamp: testContexts.startedTimestamp,
-      finishedTimestamp: testContexts.finishedTimestamp,
-      statusId: sql<string | null>`null`.as("status_id")})
-    .from(testContexts)
-  .unionAll(
-    qb.select({
-        launchId: beforeTests.launchId,
-        parentContextId: sql<number | null>`${beforeTests.testContextId}`.as("parent_context_id"),
-        entityType: sql<string>`${ENTITY_TYPES.BEFORE_TEST}`.as("entity_type"),
-        id: beforeTests.id,
-        title: beforeTests.title,
-        createdTimestamp: beforeTests.createdTimestamp,
-        startedTimestamp: beforeTests.startedTimestamp,
-        finishedTimestamp: beforeTests.finishedTimestamp,
-        statusId: beforeTests.statusId})
-      .from(beforeTests))
+      launchId: beforeTests.launchId,
+      parentContextId: sql<number | null>`${beforeTests.testContextId}`.as("parent_context_id"),
+      entityType: sql<string>`${ENTITY_TYPES.BEFORE_TEST}`.as("entity_type"),
+      id: beforeTests.id,
+      title: beforeTests.title,
+      createdTimestamp: beforeTests.createdTimestamp,
+      startedTimestamp: beforeTests.startedTimestamp,
+      finishedTimestamp: beforeTests.finishedTimestamp,
+      statusId: beforeTests.statusId,
+      correlationId: beforeTests.correlationId,
+      argumentsHash: beforeTests.argumentsHash})
+    .from(beforeTests)
   .unionAll(
     qb.select({
         launchId: tests.launchId,
@@ -189,7 +179,9 @@ export const testEntities = pgView("test_entities").as((qb) =>
         createdTimestamp: tests.createdTimestamp,
         startedTimestamp: tests.startedTimestamp,
         finishedTimestamp: tests.finishedTimestamp,
-        statusId: tests.statusId})
+        statusId: tests.statusId,
+        correlationId: tests.correlationId,
+        argumentsHash: tests.argumentsHash})
       .from(tests))
   .unionAll(
     qb.select({
@@ -201,5 +193,7 @@ export const testEntities = pgView("test_entities").as((qb) =>
         createdTimestamp: afterTests.createdTimestamp,
         startedTimestamp: afterTests.startedTimestamp,
         finishedTimestamp: afterTests.finishedTimestamp,
-        statusId: afterTests.statusId})
+        statusId: afterTests.statusId,
+        correlationId: afterTests.correlationId,
+        argumentsHash: afterTests.argumentsHash})
       .from(afterTests)))

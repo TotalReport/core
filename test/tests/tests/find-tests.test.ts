@@ -139,7 +139,7 @@ describe("find tests", () => {
 
   test("by correlationId", async () => {
     const launch = await generator.launches.create();
-    const correlationId = "123e4567-e89b-12d3-a456-426614174000";
+    const correlationId = "00ee066e-77dc-45ab-953a-d4e945239363";
     const created = await generator.tests.create({
       launchId: launch.id,
       correlationId,
@@ -148,7 +148,7 @@ describe("find tests", () => {
     // Record that should be filtered out
     await generator.tests.create({
       launchId: launch.id,
-      correlationId: "3cacd5b2-bb20-48d8-b0f3-d93f2d9c8c61",
+      correlationId: "d412cab5-913e-4e45-b357-06579075f095",
     });
 
     const limit = 10;
@@ -174,7 +174,7 @@ describe("find tests", () => {
 
   test("by argumentsHash", async () => {
     const launch = await generator.launches.create();
-    const argumentsHash = "6a6cd8dd-3dd7-4804-b98b-ce70cfb93496";
+    const argumentsHash = "f9561dd7-7da9-44ff-9007-a24cc7fd2de5";
     const created = await generator.tests.create({
       launchId: launch.id,
       argumentsHash,
@@ -183,7 +183,7 @@ describe("find tests", () => {
     // Record that should be filtered out
     await generator.tests.create({
       launchId: launch.id,
-      argumentsHash: "eed6bec8-ba3c-4265-b13a-f7e89d3658a0",
+      argumentsHash: "e0655bf8-d58c-4b15-a053-e2dd418c0392",
     });
 
     const limit = 10;

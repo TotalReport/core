@@ -1,5 +1,5 @@
 {
-  "id": "eec4be93-db4f-4d1f-841d-50cf229fcf35",
+  "id": "444bb7bb-614b-498d-9671-19e751decb9a",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -1144,9 +1144,27 @@
           "type": "timestamp",
           "primaryKey": false,
           "notNull": false
+        },
+        "status_id": {
+          "name": "status_id",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "correlation_id": {
+          "name": "correlation_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "arguments_hash": {
+          "name": "arguments_hash",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
         }
       },
-      "definition": "(((select \"launch_id\", \"parent_test_context_id\" as \"parent_context_id\", 'test context' as \"entity_type\", \"id\", \"title\", \"created_timestamp\", \"started_timestamp\", \"finished_timestamp\", null as \"status_id\" from \"test_contexts\") union all (select \"launch_id\", \"test_context_id\" as \"parent_context_id\", 'before test' as \"entity_type\", \"id\", \"title\", \"created_timestamp\", \"started_timestamp\", \"finished_timestamp\", \"status_id\" from \"before_tests\")) union all (select \"launch_id\", \"test_context_id\" as \"parent_context_id\", 'test' as \"entity_type\", \"id\", \"title\", \"created_timestamp\", \"started_timestamp\", \"finished_timestamp\", \"status_id\" from \"tests\")) union all (select \"launch_id\", \"test_context_id\" as \"parent_context_id\", 'after test' as \"entity_type\", \"id\", \"title\", \"created_timestamp\", \"started_timestamp\", \"finished_timestamp\", \"status_id\" from \"after_tests\")",
+      "definition": "((select \"launch_id\", \"test_context_id\" as \"parent_context_id\", 'before test' as \"entity_type\", \"id\", \"title\", \"created_timestamp\", \"started_timestamp\", \"finished_timestamp\", \"status_id\", \"correlation_id\", \"arguments_hash\" from \"before_tests\") union all (select \"launch_id\", \"test_context_id\" as \"parent_context_id\", 'test' as \"entity_type\", \"id\", \"title\", \"created_timestamp\", \"started_timestamp\", \"finished_timestamp\", \"status_id\", \"correlation_id\", \"arguments_hash\" from \"tests\")) union all (select \"launch_id\", \"test_context_id\" as \"parent_context_id\", 'after test' as \"entity_type\", \"id\", \"title\", \"created_timestamp\", \"started_timestamp\", \"finished_timestamp\", \"status_id\", \"correlation_id\", \"arguments_hash\" from \"after_tests\")",
       "name": "test_entities",
       "schema": "public",
       "isExisting": false,

@@ -12,8 +12,13 @@ export const findTestEntitiesRoute: FindTestEntitiesRoute = async ({
   };
 
   const search = {
+    entityTypes: query.entityTypes,
+    reportId: query.reportId,
     launchId: query.launchId,
-    parentContextId: query.parentContextId,
+    contextId: query.contextId,
+    correlationId: query.correlationId,
+    argumentsHash: query.argumentsHash,
+    distinct: query.distinct,
   };
 
   const searchResults = await new TestEntitiesDAO().find(search, pagination);
@@ -33,6 +38,8 @@ export const findTestEntitiesRoute: FindTestEntitiesRoute = async ({
           startedTimestamp: item.startedTimestamp?.toISOString(),
           finishedTimestamp: item.finishedTimestamp?.toISOString(),
           statusId: item.statusId,
+          correlationId: item.correlationId,
+          argumentsHash: item.argumentsHash,
         };
       }),
     },
