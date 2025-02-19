@@ -187,18 +187,25 @@ export class TestEntitiesDAO {
               argumentsHash: subquery.argumentsHash,
             })
             .from(subquery)
-            .where(eq(subquery.rank, 1));
+            .where(eq(subquery.rank, 1))
+            .limit(pagination.limit)
+            .offset(pagination.offset);
         } else {
           if (search.reportId != undefined)
-            return selectItems.innerJoin(
-              launchesAlias,
-              and(
-                eq(testEntities.launchId, launchesAlias.id),
-                eq(launchesAlias.reportId, search.reportId!)
+            return selectItems
+              .innerJoin(
+                launchesAlias,
+                and(
+                  eq(testEntities.launchId, launchesAlias.id),
+                  eq(launchesAlias.reportId, search.reportId!)
+                )
               )
-            );
+              .limit(pagination.limit)
+              .offset(pagination.offset);
           else {
-            return selectItems;
+            return selectItems
+              .limit(pagination.limit)
+              .offset(pagination.offset);
           }
         }
       };
