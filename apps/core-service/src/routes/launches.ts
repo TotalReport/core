@@ -50,6 +50,7 @@ export const findLaunchesRoute: FindLaunchRoute = async ({ query }) => {
     reportId: query.reportId,
     correlationId: query.correlationId,
     argumentsHash: query.argumentsHash,
+    titleContains: query["title~cnt"],
   });
 
   return {

@@ -94,6 +94,7 @@ export const findLaunches = contract.query({
     reportId: z.coerce.number().int().optional(),
     correlationId: z.string().uuid().optional(),
     argumentsHash: z.string().optional(),
+    "title~cnt": z.string().optional().describe("Search by substring in the title."),
   }),
   responses: {
     200: z.object({

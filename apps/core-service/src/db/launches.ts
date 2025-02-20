@@ -1,5 +1,5 @@
 import { launches } from "@total-report/core-schema/schema";
-import { and, count, countDistinct, eq, sql } from "drizzle-orm";
+import { and, count, countDistinct, eq, ilike, sql } from "drizzle-orm";
 import { NodePgQueryResultHKT } from "drizzle-orm/node-postgres/session";
 import { PgDatabase } from "drizzle-orm/pg-core/db";
 import { ReportNotFoundError } from "../errors/errors.js";
@@ -67,10 +67,15 @@ export class LaunchesDAO {
         ? eq(launches.argumentsHash, params.argumentsHash)
         : undefined;
 
+      const titleFilter = params.titleContains
+        ? ilike(launches.title, `%${params.titleContains.replace(/[%_]/g, '\\$&')}%`)
+        : undefined;
+
       let filter = and(
         reportIdFilter,
         correlationIdFilter,
-        argumentsHashFilter
+        argumentsHashFilter,
+        titleFilter
       );
 
       const items = await tx
@@ -192,6 +197,7 @@ type FindLaunches = {
   reportId?: number;
   correlationId?: string;
   argumentsHash?: string;
+  titleContains?: string;
 };
 
 /**
