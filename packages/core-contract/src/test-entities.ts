@@ -27,6 +27,7 @@ export const findTestEntities = contract.query({
   method: "GET",
   path: "/v1/test-entities",
   query: z.object({
+    "title~cnt": z.string().optional().describe("The title of the test entity contains the string."),
     entityTypes: z
       .array(z.enum(["before test", "test", "after test"]))
       .optional(),

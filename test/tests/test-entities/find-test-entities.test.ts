@@ -448,6 +448,49 @@ describe("test entities", () => {
       },
     });
   });
+
+  test("by title contains", async () => {
+    const launch = await generator.launches.create();
+    const test1 = await generator.tests.create({ launchId: launch.id, title: "Test Entity 1" });
+    const test2 = await generator.tests.create({ launchId: launch.id, title: "Another Test Entity" });
+
+    const limit = 10;
+    const offset = 0;
+
+    const response = await client.findTestEntities({
+      query: { "title~cnt": "Test", launchId: launch.id, limit, offset },
+    });
+
+    expect(response).toEqual({
+      headers: expect.anything(),
+      status: 200,
+      body: {
+        pagination: {
+          total: 2,
+          limit,
+          offset,
+        },
+        items: [testToEntity(test1), testToEntity(test2)],
+      },
+    });
+
+    const response2 = await client.findTestEntities({
+      query: { "title~cnt": "Another", launchId: launch.id, limit, offset },
+    });
+
+    expect(response2).toEqual({
+      headers: expect.anything(),
+      status: 200,
+      body: {
+        pagination: {
+          total: 1,
+          limit,
+          offset,
+        },
+        items: [testToEntity(test2)],
+      },
+    });
+  });
 });
 
 const beforeTestToEntity = (entity: BeforeTest): TestEntity => {

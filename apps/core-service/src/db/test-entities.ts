@@ -15,6 +15,7 @@ import {
   sql,
   max,
   aliasedTable,
+  ilike,
 } from "drizzle-orm";
 import { NodePgQueryResultHKT } from "drizzle-orm/node-postgres";
 import { PgDatabase } from "drizzle-orm/pg-core";
@@ -66,6 +67,11 @@ export class TestEntitiesDAO {
 
       if (search.entityTypes !== undefined) {
         filters.push(inArray(testEntities.entityType, search.entityTypes));
+      }
+
+      if (search.titleContains !== undefined) {
+        const escapedTitle = search.titleContains.replace(/%/g, '\\%').replace(/_/g, '\\_');
+        filters.push(ilike(testEntities.title, `%${escapedTitle}%`));
       }
 
       const entitiesCount =
@@ -249,6 +255,7 @@ export type TestEntitySearch = {
   correlationId?: string;
   argumentsHash?: string;
   distinct?: boolean;
+  titleContains?: string;
 };
 
 /**

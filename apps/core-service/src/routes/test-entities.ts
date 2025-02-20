@@ -19,6 +19,7 @@ export const findTestEntitiesRoute: FindTestEntitiesRoute = async ({
     correlationId: query.correlationId,
     argumentsHash: query.argumentsHash,
     distinct: query.distinct,
+    titleContains: query["title~cnt"],
   };
 
   const searchResults = await new TestEntitiesDAO().find(search, pagination);
