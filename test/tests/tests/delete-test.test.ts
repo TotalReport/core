@@ -22,7 +22,7 @@ describe("delete test", () => {
       createdTimestamp: new Date("2024-07-21T06:52:32Z"),
       startedTimestamp: new Date("2024-07-21T06:52:35Z"),
       finishedTimestamp: new Date("2024-07-21T06:53:21Z"),
-      statusId: DEFAULT_TEST_STATUSES.SUCCESSFUL.id,
+      statusId: DEFAULT_TEST_STATUSES.PASSED.id,
       arguments: [
         {
           name: "Argument1",

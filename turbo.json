@@ -32,7 +32,9 @@
     },
     "@total-report/test#test": {
       "dependsOn": ["//#dockerize", "@total-report/core-service#build"],
-      "passThroughEnv": ["ProgramW6432"] // on Windows docker build doesn't work without this
+      "passThroughEnv": ["ProgramW6432"], // on Windows docker build doesn't work without this
+      "env": ["DB_URL", "DB_HOST", "DB_PORT", "DB_USER", "DB_PASSWORD", "DB_NAME", "CORE_SERVICE_PORT"]
+
     },
     "//#test": {
       "dependsOn": ["@total-report/test#test"]

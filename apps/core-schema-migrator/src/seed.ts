@@ -24,37 +24,17 @@ const seed = async (url: string) => {
     .insert(testStatusGroups)
     .values([
       {
-        ...TEST_STATUS_GROUPS.SUCCESSFUL_GROUP,
+        ...TEST_STATUS_GROUPS.PASSED_GROUP,
         createdTimestamp: new Date().toISOString(),
       },
       {
-        ...TEST_STATUS_GROUPS.ABORTED_GROUP,
+        ...TEST_STATUS_GROUPS.FAILED_GROUP,
         createdTimestamp: new Date().toISOString(),
       },
       {
         ...TEST_STATUS_GROUPS.SKIPPED_GROUP,
         createdTimestamp: new Date().toISOString(),
-      },
-      {
-        ...TEST_STATUS_GROUPS.PRODUCT_BUG_GROUP,
-        createdTimestamp: new Date().toISOString(),
-      },
-      {
-        ...TEST_STATUS_GROUPS.AUTOMATION_BUG_GROUP,
-        createdTimestamp: new Date().toISOString(),
-      },
-      {
-        ...TEST_STATUS_GROUPS.SYSTEM_ISSUE_GROUP,
-        createdTimestamp: new Date().toISOString(),
-      },
-      {
-        ...TEST_STATUS_GROUPS.NO_DEFECT_GROUP,
-        createdTimestamp: new Date().toISOString(),
-      },
-      {
-        ...TEST_STATUS_GROUPS.TO_INVESTIGATE_GROUP,
-        createdTimestamp: new Date().toISOString(),
-      },
+      }
     ])
     .onConflictDoUpdate({
       target: testStatusGroups.id,
@@ -67,15 +47,15 @@ const seed = async (url: string) => {
     .insert(testStatuses)
     .values([
       {
-        ...DEFAULT_TEST_STATUSES.SUCCESSFUL,
+        ...DEFAULT_TEST_STATUSES.PASSED,
         createdTimestamp: new Date().toISOString(),
       },
       {
-        ...DEFAULT_TEST_STATUSES.ABORTED,
+        ...DEFAULT_TEST_STATUSES.PASSED_WITH_WARNING,
         createdTimestamp: new Date().toISOString(),
       },
       {
-        ...DEFAULT_TEST_STATUSES.SKIPPED,
+        ...DEFAULT_TEST_STATUSES.FAILED,
         createdTimestamp: new Date().toISOString(),
       },
       {
@@ -96,6 +76,14 @@ const seed = async (url: string) => {
       },
       {
         ...DEFAULT_TEST_STATUSES.TO_INVESTIGATE,
+        createdTimestamp: new Date().toISOString(),
+      },
+      {
+        ...DEFAULT_TEST_STATUSES.SKIPPED,
+        createdTimestamp: new Date().toISOString(),
+      },
+      {
+        ...DEFAULT_TEST_STATUSES.ABORTED,
         createdTimestamp: new Date().toISOString(),
       },
     ])
