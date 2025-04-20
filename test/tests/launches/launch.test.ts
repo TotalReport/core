@@ -2,7 +2,7 @@ import { GenerateAfterTestArgs } from "@total-report/core-entities-generator/aft
 import { GenerateBeforeTestArgs } from "@total-report/core-entities-generator/before-test";
 import { CoreEntititesGenerator } from "@total-report/core-entities-generator/core-entities";
 import { GenerateTestArgs } from "@total-report/core-entities-generator/test";
-import { DEFAULT_TEST_STATUSES } from "@total-report/core-schema/constants";
+import { DEFAULT_TEST_STATUSES, TEST_STATUS_GROUPS } from "@total-report/core-schema/constants";
 import { expect } from "earl";
 import { describe, test } from "mocha";
 import { client } from "../../tools/client.js";
@@ -58,7 +58,7 @@ describe("launches", () => {
         launchId: launch1.id,
       };
       if (index == 0) {
-        args.statusId = DEFAULT_TEST_STATUSES.SUCCESSFUL.id;
+        args.statusId = DEFAULT_TEST_STATUSES.PASSED.id;
       }
       if (index == 1) {
         args.statusId = DEFAULT_TEST_STATUSES.ABORTED.id;
@@ -91,7 +91,7 @@ describe("launches", () => {
         args.testContextId = testContext.id;
       }
       if (index == 0) {
-        args.statusId = DEFAULT_TEST_STATUSES.SUCCESSFUL.id;
+        args.statusId = DEFAULT_TEST_STATUSES.PASSED.id;
       }
       if (1 <= index && index <= 1 + 1) {
         args.statusId = DEFAULT_TEST_STATUSES.ABORTED.id;
@@ -122,7 +122,7 @@ describe("launches", () => {
         launchId: launch1.id,
       };
       if (index == 0) {
-        args.statusId = DEFAULT_TEST_STATUSES.SUCCESSFUL.id;
+        args.statusId = DEFAULT_TEST_STATUSES.PASSED.id;
       }
       if (index == 1) {
         args.statusId = DEFAULT_TEST_STATUSES.ABORTED.id;
@@ -157,35 +157,20 @@ describe("launches", () => {
       status: 200,
       body: {
         beforeTests: expect.equalUnsorted([
-          { statusGroupId: "SL", count: 1 },
-          { statusGroupId: "AD", count: 1 },
-          { statusGroupId: "SD", count: 1 },
-          { statusGroupId: "PB", count: 1 },
-          { statusGroupId: "AB", count: 1 },
-          { statusGroupId: "SI", count: 1 },
-          { statusGroupId: "ND", count: 1 },
-          { statusGroupId: "TI", count: 1 },
+          { statusGroupId: TEST_STATUS_GROUPS.PASSED_GROUP.id, count: 1 },
+          { statusGroupId: TEST_STATUS_GROUPS.FAILED_GROUP.id, count: 5 },
+          { statusGroupId: TEST_STATUS_GROUPS.SKIPPED_GROUP.id, count: 2 },
           { statusGroupId: null, count: 2 },
         ]),
         tests: expect.equalUnsorted([
-          { statusGroupId: "SL", count: 1 },
-          { statusGroupId: "AD", count: 2 },
-          { statusGroupId: "SD", count: 3 },
-          { statusGroupId: "PB", count: 4 },
-          { statusGroupId: "AB", count: 5 },
-          { statusGroupId: "SI", count: 6 },
-          { statusGroupId: "ND", count: 7 },
-          { statusGroupId: "TI", count: 8 },
+          { statusGroupId: TEST_STATUS_GROUPS.PASSED_GROUP.id, count: 1 },
+          { statusGroupId: TEST_STATUS_GROUPS.FAILED_GROUP.id, count: 30 },
+          { statusGroupId: TEST_STATUS_GROUPS.SKIPPED_GROUP.id, count: 5 },
         ]),
         afterTests: expect.equalUnsorted([
-          { statusGroupId: "SL", count: 1 },
-          { statusGroupId: "AD", count: 1 },
-          { statusGroupId: "SD", count: 1 },
-          { statusGroupId: "PB", count: 1 },
-          { statusGroupId: "AB", count: 1 },
-          { statusGroupId: "SI", count: 1 },
-          { statusGroupId: "ND", count: 1 },
-          { statusGroupId: "TI", count: 1 },
+          { statusGroupId: TEST_STATUS_GROUPS.PASSED_GROUP.id, count: 1 },
+          { statusGroupId: TEST_STATUS_GROUPS.FAILED_GROUP.id, count: 5 },
+          { statusGroupId: TEST_STATUS_GROUPS.SKIPPED_GROUP.id, count: 2 },
           { statusGroupId: null, count: 2 },
         ]),
       },
