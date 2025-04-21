@@ -13,12 +13,14 @@ interface LayoutProps {
   navCollapsedSize?: number;
   defaultLayout?: number[];
   defaultCollapsed?: boolean;
+  children?: React.ReactNode;
 }
 
 export const Layout = ({
   defaultLayout = [20],
   defaultCollapsed = true, //FIXME this doesn't work
   navCollapsedSize = 3,
+  children,
 }: LayoutProps) => {
   const [isCollapsed, setIsCollapsed] = React.useState(defaultCollapsed);
   return (
@@ -73,7 +75,9 @@ export const Layout = ({
           ></Nav>
         </ResizablePanel>
         <ResizableHandle withHandle />
-        <ResizablePanel>Content</ResizablePanel>
+        <ResizablePanel>
+          {children}
+        </ResizablePanel>
       </ResizablePanelGroup>
     </TooltipProvider>
   );
