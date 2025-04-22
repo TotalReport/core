@@ -2,8 +2,9 @@
   "name": "total-report",
   "private": true,
   "scripts": {
-    "dev:setup": "docker compose --env-file ./dev.env -f ./dev-db.docker-compose.yml up -d",
-    "dev:teardown": "docker compose --env-file ./dev.env -f ./dev-db.docker-compose.yml down",
+    "dev:setup": "docker compose --env-file ./.env.dev -f ./dev-db.docker-compose.yml up -d",
+    "dev:teardown": "docker compose --env-file ./.env.dev -f ./dev-db.docker-compose.yml down",
+    "dev": "dotenv -e .env.dev -- turbo run dev",
     "dockerize:core-schema-migrator": "docker build . --target total-report-core-schema-migrator --tag total-report-core-schema-migrator:latest",
     "dockerize:core-service": "docker build . --target total-report-core-service --tag total-report-core-service:latest",
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",

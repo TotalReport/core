@@ -10,13 +10,19 @@
     },
     "//#dev:setup": {
       "passThroughEnv": ["ProgramW6432"], // on Windows docker build doesn't work without this   
-      "cache": false   
+      "cache": false
+    },
+    "@total-report/core-schema-migrator#dev": {
+      "persistent": false,
+      "cache": false,
+      "dependsOn": ["//#dev:setup"],
+      "env": ["DB_URL"]
     },
     "dev": {
       "persistent": true,
       "cache": false,
-      "dependsOn": ["//#dev:setup"],
-      "env": ["DB_URL", "DB_HOST", "DB_PORT", "DB_USER", "DB_PASSWORD", "DB_NAME", "CORE_SERVICE_PORT"]
+      "dependsOn": ["//#dev:setup", "@total-report/core-schema-migrator#dev"],
+      "env": ["DB_URL", "DB_HOST", "DB_PORT", "DB_USER", "DB_PASSWORD", "DB_NAME", "CORE_SERVICE_PORT", "CORE_SERVICE_PORT"]
     },
     "//#dockerize:core-schema-migrator": {
       "passThroughEnv": ["ProgramW6432"] // on Windows docker build doesn't work without this

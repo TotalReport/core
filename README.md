@@ -5,7 +5,7 @@ This project is organized as a monorepo using pnpm workspaces and Turborepo for 
 ## Root Directory
 
 - `dev-db.docker-compose.yml`: Docker Compose configuration for development databases
-- `dev.env`: Environment variables for development
+- `.env.dev`: Environment variables for development
 - `Dockerfile`: Multi-stage Docker configuration for containerizing services
 - `package.json`: Root package configuration with scripts for development and CI
 - `pnpm-lock.yaml` & `pnpm-workspace.yaml`: pnpm workspace configuration
