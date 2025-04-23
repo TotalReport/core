@@ -21,11 +21,10 @@ export class ReportsGenerator {
   async create(args: CreateReportArgs | undefined = undefined) {
     const title =
       args?.title ??
-      faker.word.noun() +
-        " " +
-        faker.word.verb() +
-        " " +
-        faker.word.adjective();
+      faker.word.adjective() + " " + 
+      faker.word.noun() + " " + 
+      faker.word.verb() + " " + 
+      faker.word.adverb();
 
     const response = await this.client.createReport({
       body: {

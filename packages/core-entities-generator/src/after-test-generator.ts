@@ -28,7 +28,10 @@ export class AfterTestsGenerator {
       args?.launchId ?? (await new LaunchesGenerator(this.client).create()).id;
     const title =
       args?.title ??
-      faker.word.noun() + " " + faker.word.verb() + " " + faker.date.recent();
+      faker.word.adjective() + " " + 
+      faker.word.noun() + " " + 
+      faker.word.verb() + " " + 
+      faker.word.adverb();
 
     if (args?.statusId !== undefined) {
       const now = new Date();

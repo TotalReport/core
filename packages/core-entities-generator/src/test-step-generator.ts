@@ -24,7 +24,10 @@ export class TestStepsGenerator {
     
     const title =
       args?.title ??
-      faker.word.noun() + " " + faker.word.verb() + " " + faker.date.recent();
+      faker.word.adjective() + " " + 
+      faker.word.noun() + " " + 
+      faker.word.verb() + " " + 
+      faker.word.adverb();
 
     const response = await this.client.createTestStep({
       body: {

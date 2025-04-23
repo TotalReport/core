@@ -29,7 +29,10 @@ export class TestsGenerator {
 
     const title =
       args?.title ??
-      faker.word.noun() + " " + faker.word.verb() + " " + faker.date.recent();
+      faker.word.adjective() + " " + 
+      faker.word.noun() + " " + 
+      faker.word.verb() + " " + 
+      faker.word.adverb();
 
     if (args?.statusId !== undefined) {
       const now = new Date();
