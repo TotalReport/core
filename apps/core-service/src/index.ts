@@ -26,15 +26,21 @@ import {
   readReportRoute,
 } from "./routes/reports.js";
 import {
+  findTestStatusGroupsRoute,
+  findTestStatusesRoute,
+  readTestStatusGroupRoute,
+  readTestStatusRoute,
+} from "./routes/statuses.js";
+import {
   createTestContextRoute,
   deleteTestContextRoute,
   findTestContextsByLaunchIdRoute,
   patchTestContextRoute,
   readTestContextRoute,
 } from "./routes/test-contexts.js";
+import { findTestEntitiesRoute } from "./routes/test-entities.js";
 import { createTestStepRoute, deleteTestStepRoute, patchTestStepRoute, readTestStepRoute } from "./routes/test-steps.js";
 import { createTestRoute, deleteTestRoute, findTestsRoute, patchTestRoute, readTestRoute } from "./routes/tests.js";
-import { findTestEntitiesRoute } from "./routes/test-entities.js";
 
 const { urlencoded, json } = bodyParser;
 
@@ -103,7 +109,12 @@ const router = s.router(contract, {
   patchAfterTestStep: patchAfterTestStepRoute,
   deleteAfterTestStep: deleteAfterTestStepRoute,
 
-  findTestEntities: findTestEntitiesRoute
+  findTestStatusGroups: findTestStatusGroupsRoute,
+  findTestStatuses: findTestStatusesRoute,
+  readTestStatusGroup: readTestStatusGroupRoute,
+  readTestStatus: readTestStatusRoute,
+
+  findTestEntities: findTestEntitiesRoute,
 });
 
 createExpressEndpoints(contract, router, app);

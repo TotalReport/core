@@ -38,6 +38,12 @@ import {
 } from "./launches.js";
 import { createReport, deleteReport, findReports, readReport } from "./reports.js";
 import {
+  findTestStatusGroups,
+  findTestStatuses,
+  readTestStatus,
+  readTestStatusGroup,
+} from "./statuses.js";
+import {
   createTestContext,
   deleteTestContext,
   findTestContextsByLaunchId,
@@ -124,6 +130,11 @@ export const contract = c.router({
   readAfterTestStep: readAfterTestStep,
   patchAfterTestStep: patchAfterTestStep,
   deleteAfterTestStep: deleteAfterTestStep,
+
+  findTestStatusGroups: findTestStatusGroups,
+  findTestStatuses: findTestStatuses,
+  readTestStatusGroup: readTestStatusGroup,
+  readTestStatus: readTestStatus,
 
   findTestEntities: findTestEntities,
 });
