@@ -1,15 +1,31 @@
 import { cn } from "@/lib/utils";
-import { contract } from "@total-report/core-contract/contract";
-import type { ClientInferResponseBody } from "@ts-rest/core";
 import { formatDistanceToNow } from "date-fns";
 
-type TestEntity = ClientInferResponseBody<
-  typeof contract.findTestEntities,
-  200
->["items"][0];
+export type Entity = {
+  id: number;
+  title: string;
+  status:
+    | {
+        id: string;
+        name: string;
+        color: string;
+        group: {
+          id: string;
+          name: string;
+          color: string;
+        };
+      }
+    | undefined;
+  startedTimestamp?: string | null;
+  finishedTimestamp?: string | null;
+  createdTimestamp: string;
+  entityType: string;
+  correlationId?: string | null;
+  argumentsHash?: string | null;
+};
 
 type TestListItemProps = {
-  entity: TestEntity;
+  entity: Entity;
   selected: boolean;
 };
 
@@ -29,7 +45,26 @@ export const TestListItem = ({ entity, selected }: TestListItemProps) => {
         <div className="flex w-full flex-col gap-1">
           <div className="flex items-center">
             <div className="flex items-center gap-2">
-              <div className="font-semibold">{entity.statusId}</div>
+              {entity.status ? (
+                <div className="relative flex items-center">
+                  {/* Status pill with two colors */}
+                  <div className="flex h-2 overflow-hidden rounded-full border border-muted-foreground">
+                    {/* Left side (group color) */}
+                    <div 
+                      className="h-full w-2"
+                      style={{ backgroundColor: entity.status.group.color }}
+                    ></div>
+                    {/* Right side (status color) */}
+                    <div 
+                      className="h-full w-2"
+                      style={{ backgroundColor: entity.status.color }}
+                    ></div>
+                  </div>
+                  <span className="ml-2 font-semibold">{entity.status.name}</span>
+                </div>
+              ) : (
+                <div className="font-semibold">No Status</div>
+              )}
             </div>
             <div
               className={cn(
