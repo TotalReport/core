@@ -1,5 +1,5 @@
 {
-  "id": "444bb7bb-614b-498d-9671-19e751decb9a",
+  "id": "cebbed38-e158-49f5-bd9d-3d79df83f286",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -838,6 +838,12 @@
           "type": "timestamp",
           "primaryKey": false,
           "notNull": true
+        },
+        "color": {
+          "name": "color",
+          "type": "varchar(7)",
+          "primaryKey": false,
+          "notNull": true
         }
       },
       "indexes": {},
@@ -873,6 +879,12 @@
         "group_id": {
           "name": "group_id",
           "type": "varchar",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "color": {
+          "name": "color",
+          "type": "varchar(7)",
           "primaryKey": false,
           "notNull": true
         }

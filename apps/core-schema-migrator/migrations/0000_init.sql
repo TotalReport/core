@@ -112,14 +112,16 @@ CREATE TABLE "test_contexts" (
 CREATE TABLE "test_status_groups" (
 	"id" varchar(20) PRIMARY KEY NOT NULL,
 	"title" varchar(256) NOT NULL,
-	"created_timestamp" timestamp NOT NULL
+	"created_timestamp" timestamp NOT NULL,
+	"color" varchar(7) NOT NULL
 );
 --> statement-breakpoint
 CREATE TABLE "test_statuses" (
 	"id" varchar(256) PRIMARY KEY NOT NULL,
 	"title" varchar(256) NOT NULL,
 	"created_timestamp" timestamp NOT NULL,
-	"group_id" varchar NOT NULL
+	"group_id" varchar NOT NULL,
+	"color" varchar(7) NOT NULL
 );
 --> statement-breakpoint
 CREATE TABLE "test_steps" (
