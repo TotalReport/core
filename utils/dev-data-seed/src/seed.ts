@@ -22,17 +22,76 @@ const launch = await entities.launches.create({
 const testContext = await entities.contexts.create({
   launchId: launch.id
 });
-const beforeTest = await entities.beforeTests.create({
+
+await entities.beforeTests.create({
   launchId: launch.id,
   testContextId: testContext.id,
   statusId: DEFAULT_TEST_STATUSES.PASSED.id,
 });
-const test = await entities.tests.create({
+
+await entities.tests.create({
   launchId: launch.id,
   testContextId: testContext.id,
   statusId: DEFAULT_TEST_STATUSES.PASSED.id,
 });
-const afterTest = await entities.afterTests.create({
+
+await entities.tests.create({
+  launchId: launch.id,
+  testContextId: testContext.id,
+  statusId: DEFAULT_TEST_STATUSES.PASSED_WITH_WARNING.id,
+});
+
+await entities.tests.create({
+  launchId: launch.id,
+  testContextId: testContext.id,
+  statusId: DEFAULT_TEST_STATUSES.FAILED.id,
+});
+
+await entities.tests.create({
+  launchId: launch.id,
+  testContextId: testContext.id,
+  statusId: DEFAULT_TEST_STATUSES.AUTOMATION_BUG.id,
+});
+
+await entities.tests.create({
+  launchId: launch.id,
+  testContextId: testContext.id,
+  statusId: DEFAULT_TEST_STATUSES.PRODUCT_BUG.id,
+});
+
+await entities.tests.create({
+  launchId: launch.id,
+  testContextId: testContext.id,
+  statusId: DEFAULT_TEST_STATUSES.SYSTEM_ISSUE.id,
+});
+
+await entities.tests.create({
+  launchId: launch.id,
+  testContextId: testContext.id,
+  statusId: DEFAULT_TEST_STATUSES.NO_DEFECT.id,
+});
+
+await entities.tests.create({
+  launchId: launch.id,
+  testContextId: testContext.id,
+  statusId: DEFAULT_TEST_STATUSES.TO_INVESTIGATE.id,
+});
+
+await entities.tests.create({
+  launchId: launch.id,
+  testContextId: testContext.id,
+  statusId: DEFAULT_TEST_STATUSES.SKIPPED.id,
+});
+
+
+
+await entities.tests.create({
+  launchId: launch.id,
+  testContextId: testContext.id,
+  statusId: DEFAULT_TEST_STATUSES.ABORTED.id,
+});
+
+await entities.afterTests.create({
   launchId: launch.id,
   testContextId: testContext.id,
   statusId: DEFAULT_TEST_STATUSES.PASSED.id,
