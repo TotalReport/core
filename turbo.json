@@ -25,9 +25,24 @@
       "env": ["DB_URL", "DB_HOST", "DB_PORT", "DB_USER", "DB_PASSWORD", "DB_NAME", "CORE_SERVICE_PORT", "CORE_SERVICE_PORT"]
     },
     "//#dockerize:core-schema-migrator": {
+      "inputs": [
+        "./apps/core-schema-migrator/migrations/**/*",
+        "./apps/core-schema-migrator/src/**/*",
+        "./apps/core-schema-migrator/package.json",
+        "./apps/core-schema-migrator/tsconfig.json",
+        "./Dockerfile"
+      ],
+      "outputs": ["./apps/core-schema-migrator/dist/**/*"],
       "passThroughEnv": ["ProgramW6432"] // on Windows docker build doesn't work without this
     },
-    "//#dockerize:core-service": {
+    "//#dockerize:core-service": {      
+      "inputs": [
+        "./apps/core-service/src/**/*",
+        "./apps/core-service/package.json",
+        "./apps/core-service/tsconfig.json",
+        "./Dockerfile"
+      ],
+      "outputs": ["./apps/core-service/dist/**/*"],
       "passThroughEnv": ["ProgramW6432"] // on Windows docker build doesn't work without this
     },
     "//#dockerize": {
