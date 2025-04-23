@@ -19,7 +19,7 @@ export const TestListItem = ({ entity, selected }: TestListItemProps) => {
       <button
         key={entity.id}
         className={cn(
-          "flex flex-col items-start gap-2 rounded-lg border p-3 text-left text-sm transition-all hover:bg-accent",
+          "flex w-full flex-col items-start gap-2 rounded-lg border p-3 text-left text-sm transition-all hover:bg-accent",
           selected && "bg-muted"
         )}
         onClick={() => {
@@ -29,7 +29,7 @@ export const TestListItem = ({ entity, selected }: TestListItemProps) => {
         <div className="flex w-full flex-col gap-1">
           <div className="flex items-center">
             <div className="flex items-center gap-2">
-              <div className="font-semibold">{entity.title}</div>
+              <div className="font-semibold">{entity.statusId}</div>
             </div>
             <div
               className={cn(
@@ -46,7 +46,7 @@ export const TestListItem = ({ entity, selected }: TestListItemProps) => {
               )}
             </div>
           </div>
-          {/* <div className="text-xs font-medium">{item.subject}</div> */}
+          <div className="text-xs font-medium">{entity.title}</div>
         </div>
         <div className="line-clamp-2 text-xs text-muted-foreground">
           {/* {item.text.substring(0, 300)} */}
