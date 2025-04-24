@@ -16,8 +16,32 @@ import { Separator } from "./ui/separator";
 const Internal = () => {
   const tsrQueryClient = tsr.useQueryClient();
 
-  const [page, setPage] = useState(1);
-  const [pageSize, setPageSize] = useState(10);
+  const [page, setPage] = useState(() => {
+    if (typeof window !== 'undefined') {
+      const params = new URLSearchParams(window.location.search);
+      const pageParam = params.get('page');
+      return pageParam ? Math.max(1, parseInt(pageParam) || 1) : 1;
+    }
+    return 1;
+  });
+
+  const [pageSize, setPageSize] = useState(() => {
+    if (typeof window !== 'undefined') {
+      const params = new URLSearchParams(window.location.search);
+      const pageSizeParam = params.get('pageSize');
+      return pageSizeParam ? Math.max(1, parseInt(pageSizeParam) || 10) : 10;
+    }
+    return 10;
+  });
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const url = new URL(window.location.href);
+      url.searchParams.set('page', page.toString());
+      url.searchParams.set('pageSize', pageSize.toString());
+      window.history.replaceState({}, '', url.toString());
+    }
+  }, [page, pageSize]);
 
   useEffect(() => {
     if (page < 1) setPage(1);
@@ -41,6 +65,17 @@ const Internal = () => {
   const statusGroups = tsr.findTestStatusGroups.useQuery({
     queryKey: ["findTestStatusGroups"],
   });
+
+  // Function to generate URL for pagination links
+  const getHref = (newPage: number, newPageSize: number) => {
+    if (typeof window !== 'undefined') {
+      const url = new URL(window.location.href);
+      url.searchParams.set('page', newPage.toString());
+      url.searchParams.set('pageSize', newPageSize.toString());
+      return url.toString();
+    }
+    return "";
+  };
 
   return (
     <ResizablePanelGroup
@@ -81,6 +116,7 @@ const Internal = () => {
                 <div className="flex flex-col gap-2 p-2">
                   {data.body.items.map((test) => (
                     <TestListItem
+                      key={test.id}
                       entity={formatTest(
                         test,
                         statuses.data?.body.items!,
