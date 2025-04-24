@@ -27,9 +27,10 @@ export type Entity = {
 type TestListItemProps = {
   entity: Entity;
   selected: boolean;
+  onClick: () => void;
 };
 
-export const TestListItem = ({ entity, selected }: TestListItemProps) => {
+export const TestListItem = ({ entity, selected, onClick }: TestListItemProps) => {
   return (
     <div>
       <button
@@ -38,9 +39,7 @@ export const TestListItem = ({ entity, selected }: TestListItemProps) => {
           "flex w-full flex-col items-start gap-2 rounded-lg border p-3 text-left text-sm transition-all hover:bg-accent",
           selected && "bg-muted"
         )}
-        onClick={() => {
-          // TODO set selected test
-        }}
+        onClick={onClick}
       >
         <div className="flex w-full flex-col gap-1">
           <div className="flex items-center">

@@ -20,6 +20,7 @@ const Internal = () => {
 
   const [page, setPage] = useState(() => Math.max(1, getUrlParamNumber("page", 1)));
   const [pageSize, setPageSize] = useState(() => Math.max(1, getUrlParamNumber("pageSize", 10)));
+  const [selectedTestId, setSelectedTestId] = useState<number | null>(null);
 
   const testEntities = tsr.findTestEntities.useQuery({
     queryKey: [`tests?page=${page}&pageSize=${pageSize}`],
@@ -74,6 +75,18 @@ const Internal = () => {
     return "";
   };
 
+  const selectedTest = testEntities.data?.body?.items.find(
+    (test) => test.id === selectedTestId
+  );
+
+  const formattedSelectedTest = selectedTest
+    ? formatTest(
+        selectedTest,
+        statuses.data?.body.items || [],
+        statusGroups.data?.body.items || []
+      )
+    : null;
+
   return (
     <ResizablePanelGroup
       direction="horizontal"
@@ -127,7 +140,8 @@ const Internal = () => {
                         statuses.data?.body.items!,
                         statusGroups.data?.body.items!
                       )}
-                      selected={false}
+                      selected={test.id === selectedTestId}
+                      onClick={() => setSelectedTestId(test.id)}
                     />
                   ))}
                 </div>
@@ -143,8 +157,100 @@ const Internal = () => {
         </div>
       </ResizablePanel>
       <ResizableHandle withHandle />
-      <ResizablePanel></ResizablePanel>
+      <ResizablePanel>
+        <TestDetails test={formattedSelectedTest} />
+      </ResizablePanel>
     </ResizablePanelGroup>
+  );
+};
+
+// Component to display test details in the right panel
+const TestDetails = ({ test }: { test: Entity | null }) => {
+  if (!test) {
+    return (
+      <div className="flex items-center justify-center h-full">
+        <div className="text-center">
+          <p className="text-lg font-semibold text-muted-foreground">
+            Select a test to view details
+          </p>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="p-4 h-full">
+      <div className="flex flex-col gap-6">
+        <div>
+          <h2 className="text-2xl font-bold">{test.title}</h2>
+          {test.status && (
+            <div className="mt-2 flex items-center">
+              <div className="flex h-3 overflow-hidden rounded-full border border-muted-foreground">
+                <div
+                  className="h-full w-3"
+                  style={{ backgroundColor: test.status.group.color }}
+                ></div>
+                <div
+                  className="h-full w-3"
+                  style={{ backgroundColor: test.status.color }}
+                ></div>
+              </div>
+              <span className="ml-2 text-sm font-medium">
+                {test.status.name} ({test.status.group.name})
+              </span>
+            </div>
+          )}
+        </div>
+
+        <div className="grid grid-cols-2 gap-4 text-sm">
+          <div>
+            <p className="text-muted-foreground">ID</p>
+            <p className="font-medium">{test.id}</p>
+          </div>
+          <div>
+            <p className="text-muted-foreground">Type</p>
+            <p className="font-medium">{test.entityType}</p>
+          </div>
+          <div>
+            <p className="text-muted-foreground">Created</p>
+            <p className="font-medium">
+              {new Date(test.createdTimestamp).toLocaleString()}
+            </p>
+          </div>
+          {test.startedTimestamp && (
+            <div>
+              <p className="text-muted-foreground">Started</p>
+              <p className="font-medium">
+                {new Date(test.startedTimestamp).toLocaleString()}
+              </p>
+            </div>
+          )}
+          {test.finishedTimestamp && (
+            <div>
+              <p className="text-muted-foreground">Finished</p>
+              <p className="font-medium">
+                {new Date(test.finishedTimestamp).toLocaleString()}
+              </p>
+            </div>
+          )}
+          {test.correlationId && (
+            <div>
+              <p className="text-muted-foreground">Correlation ID</p>
+              <p className="font-medium">{test.correlationId}</p>
+            </div>
+          )}
+        </div>
+
+        {test.argumentsHash && (
+          <div>
+            <p className="text-muted-foreground">Arguments Hash</p>
+            <p className="font-mono text-xs bg-muted p-2 rounded mt-1 overflow-auto">
+              {test.argumentsHash}
+            </p>
+          </div>
+        )}
+      </div>
+    </div>
   );
 };
 
@@ -176,6 +282,8 @@ function formatTest(
     startedTimestamp: test.startedTimestamp,
     finishedTimestamp: test.finishedTimestamp,
     entityType: test.entityType,
+    correlationId: test.correlationId,
+    argumentsHash: test.argumentsHash,
   };
 }
 
