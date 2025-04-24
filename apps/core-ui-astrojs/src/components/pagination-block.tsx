@@ -72,7 +72,7 @@ export function PaginationBlock({
               onSubmit={(value) => {
                 setPage(Number(value));
               }}
-            />
+            /> / {totalPages}
 
             <PaginationItem>
               {getHref ? (
