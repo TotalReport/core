@@ -13,27 +13,13 @@ import {
 import { ScrollArea } from "./ui/scroll-area";
 import { Separator } from "./ui/separator";
 import { totalPagesCount } from "@/lib/pagination-utils";
+import { getUrlParamNumber } from "../lib/url-utils";
 
 const Internal = () => {
   const tsrQueryClient = tsr.useQueryClient();
 
-  const [page, setPage] = useState(() => {
-    if (typeof window !== "undefined") {
-      const params = new URLSearchParams(window.location.search);
-      const pageParam = params.get("page");
-      return pageParam ? Math.max(1, parseInt(pageParam) || 1) : 1;
-    }
-    return 1;
-  });
-
-  const [pageSize, setPageSize] = useState(() => {
-    if (typeof window !== "undefined") {
-      const params = new URLSearchParams(window.location.search);
-      const pageSizeParam = params.get("pageSize");
-      return pageSizeParam ? Math.max(1, parseInt(pageSizeParam) || 10) : 10;
-    }
-    return 10;
-  });
+  const [page, setPage] = useState(() => Math.max(1, getUrlParamNumber("page", 1)));
+  const [pageSize, setPageSize] = useState(() => Math.max(1, getUrlParamNumber("pageSize", 10)));
 
   const testEntities = tsr.findTestEntities.useQuery({
     queryKey: [`tests?page=${page}&pageSize=${pageSize}`],
