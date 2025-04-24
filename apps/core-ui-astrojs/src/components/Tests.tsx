@@ -12,43 +12,30 @@ import {
 } from "./ui/resizable";
 import { ScrollArea } from "./ui/scroll-area";
 import { Separator } from "./ui/separator";
+import { totalPagesCount } from "@/lib/pagination-utils";
 
 const Internal = () => {
   const tsrQueryClient = tsr.useQueryClient();
 
   const [page, setPage] = useState(() => {
-    if (typeof window !== 'undefined') {
+    if (typeof window !== "undefined") {
       const params = new URLSearchParams(window.location.search);
-      const pageParam = params.get('page');
+      const pageParam = params.get("page");
       return pageParam ? Math.max(1, parseInt(pageParam) || 1) : 1;
     }
     return 1;
   });
 
   const [pageSize, setPageSize] = useState(() => {
-    if (typeof window !== 'undefined') {
+    if (typeof window !== "undefined") {
       const params = new URLSearchParams(window.location.search);
-      const pageSizeParam = params.get('pageSize');
+      const pageSizeParam = params.get("pageSize");
       return pageSizeParam ? Math.max(1, parseInt(pageSizeParam) || 10) : 10;
     }
     return 10;
   });
 
-  useEffect(() => {
-    if (typeof window !== 'undefined') {
-      const url = new URL(window.location.href);
-      url.searchParams.set('page', page.toString());
-      url.searchParams.set('pageSize', pageSize.toString());
-      window.history.replaceState({}, '', url.toString());
-    }
-  }, [page, pageSize]);
-
-  useEffect(() => {
-    if (page < 1) setPage(1);
-    if (pageSize < 1) setPageSize(10);
-  }, [page, pageSize]);
-
-  const { data, isPending } = tsr.findTestEntities.useQuery({
+  const testEntities = tsr.findTestEntities.useQuery({
     queryKey: [`tests?page=${page}&pageSize=${pageSize}`],
     queryData: {
       query: {
@@ -57,6 +44,30 @@ const Internal = () => {
       },
     },
   });
+
+  useEffect(() => {
+    if (page < 1) setPage(1);
+    
+    if (pageSize < 1) setPageSize(10);
+    
+    if (!testEntities.isPending) {
+      const totalPages = totalPagesCount(
+        testEntities.data?.body.pagination.total || 0,
+        pageSize
+      );
+
+      if (page > totalPages) {
+        setPage(totalPages);
+      }
+    }
+    
+    if (typeof window !== "undefined") {
+      const url = new URL(window.location.href);
+      url.searchParams.set("page", page.toString());
+      url.searchParams.set("pageSize", pageSize.toString());
+      window.history.replaceState({}, "", url.toString());
+    }
+  }, [page, pageSize, testEntities]);
 
   const statuses = tsr.findTestStatuses.useQuery({
     queryKey: ["findTestStatuses"],
@@ -68,10 +79,10 @@ const Internal = () => {
 
   // Function to generate URL for pagination links
   const getHref = (newPage: number, newPageSize: number) => {
-    if (typeof window !== 'undefined') {
+    if (typeof window !== "undefined") {
       const url = new URL(window.location.href);
-      url.searchParams.set('page', newPage.toString());
-      url.searchParams.set('pageSize', newPageSize.toString());
+      url.searchParams.set("page", newPage.toString());
+      url.searchParams.set("pageSize", newPageSize.toString());
       return url.toString();
     }
     return "";
@@ -94,11 +105,15 @@ const Internal = () => {
           </div>
           <Separator />
           <ScrollArea className="flex-1 overflow-hidden">
-            {(isPending || statuses.isPending || statusGroups.isPending) && (
-              <p className="p-4">Loading...</p>
-            )}
-            {!(isPending || statuses.isPending || statusGroups.isPending) &&
-              data?.body?.items.length === 0 && (
+            {(testEntities.isPending ||
+              statuses.isPending ||
+              statusGroups.isPending) && <p className="p-4">Loading...</p>}
+            {!(
+              testEntities.isPending ||
+              statuses.isPending ||
+              statusGroups.isPending
+            ) &&
+              testEntities.data?.body?.items.length === 0 && (
                 <div className="flex items-center justify-center flex-grow">
                   <div className="text-center">
                     <p className="text-lg font-bold text-secondary-foreground">
@@ -110,11 +125,15 @@ const Internal = () => {
                   </div>
                 </div>
               )}
-            {!(isPending || statuses.isPending || statusGroups.isPending) &&
-              data?.body?.items != undefined &&
-              data?.body?.items.length > 0 && (
+            {!(
+              testEntities.isPending ||
+              statuses.isPending ||
+              statusGroups.isPending
+            ) &&
+              testEntities.data?.body?.items != undefined &&
+              testEntities.data?.body?.items.length > 0 && (
                 <div className="flex flex-col gap-2 p-2">
-                  {data.body.items.map((test) => (
+                  {testEntities.data.body.items.map((test) => (
                     <TestListItem
                       key={test.id}
                       entity={formatTest(
@@ -131,7 +150,7 @@ const Internal = () => {
           <PaginationBlock
             page={page}
             pageSize={pageSize}
-            totalItems={data?.body.pagination.total ?? 0}
+            totalItems={testEntities.data?.body.pagination.total!}
             setPage={setPage}
             setPageSize={setPageSize}
           ></PaginationBlock>
