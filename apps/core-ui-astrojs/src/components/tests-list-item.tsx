@@ -1,5 +1,6 @@
 import { cn } from "@/lib/utils";
 import { formatDistanceToNow } from "date-fns";
+import { StatusPill } from "./StatusPill";
 
 export type Entity = {
   id: number;
@@ -46,19 +47,11 @@ export const TestListItem = ({ entity, selected, onClick }: TestListItemProps) =
             <div className="flex items-center gap-2">
               {entity.status ? (
                 <div className="relative flex items-center">
-                  {/* Status pill with two colors */}
-                  <div className="flex h-2 overflow-hidden rounded-full border border-muted-foreground">
-                    {/* Left side (group color) */}
-                    <div 
-                      className="h-full w-2"
-                      style={{ backgroundColor: entity.status.group.color }}
-                    ></div>
-                    {/* Right side (status color) */}
-                    <div 
-                      className="h-full w-2"
-                      style={{ backgroundColor: entity.status.color }}
-                    ></div>
-                  </div>
+                  <StatusPill 
+                    groupColor={entity.status.group.color} 
+                    statusColor={entity.status.color} 
+                    size="sm"
+                  />
                   <span className="ml-2 font-semibold">{entity.status.name}</span>
                 </div>
               ) : (
@@ -92,6 +85,7 @@ export const TestListItem = ({ entity, selected, onClick }: TestListItemProps) =
                 {label}
               </Badge>
             ))}
+
           </div>
         ) : null} */}
       </button>

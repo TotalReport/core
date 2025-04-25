@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import { PaginationBlock } from "./pagination-block";
 import { RestAPIProvider } from "./RestAPIProvider";
 import { TestListItem, type Entity } from "./tests-list-item";
+import { StatusPill } from "./StatusPill";
 import {
   ResizableHandle,
   ResizablePanel,
@@ -185,16 +186,11 @@ const TestDetails = ({ test }: { test: Entity | null }) => {
           <h2 className="text-2xl font-bold">{test.title}</h2>
           {test.status && (
             <div className="mt-2 flex items-center">
-              <div className="flex h-3 overflow-hidden rounded-full border border-muted-foreground">
-                <div
-                  className="h-full w-3"
-                  style={{ backgroundColor: test.status.group.color }}
-                ></div>
-                <div
-                  className="h-full w-3"
-                  style={{ backgroundColor: test.status.color }}
-                ></div>
-              </div>
+              <StatusPill 
+                groupColor={test.status.group.color} 
+                statusColor={test.status.color} 
+                size="md"
+              />
               <span className="ml-2 text-sm font-medium">
                 {test.status.name} ({test.status.group.name})
               </span>
