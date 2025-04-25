@@ -21,7 +21,10 @@ const Internal = () => {
 
   const [page, setPage] = useState(() => Math.max(1, getUrlParamNumber("page", 1)));
   const [pageSize, setPageSize] = useState(() => Math.max(1, getUrlParamNumber("pageSize", 10)));
-  const [selectedTestId, setSelectedTestId] = useState<number | null>(null);
+  const [selectedTestId, setSelectedTestId] = useState<number | null>(() => {
+    const testId = getUrlParamNumber("testId", -1);
+    return testId > 0 ? testId : null;
+  });
 
   const testEntities = tsr.findTestEntities.useQuery({
     queryKey: [`tests?page=${page}&pageSize=${pageSize}`],
@@ -53,9 +56,14 @@ const Internal = () => {
       const url = new URL(window.location.href);
       url.searchParams.set("page", page.toString());
       url.searchParams.set("pageSize", pageSize.toString());
+      if (selectedTestId) {
+        url.searchParams.set("testId", selectedTestId.toString());
+      } else {
+        url.searchParams.delete("testId");
+      }
       window.history.replaceState({}, "", url.toString());
     }
-  }, [page, pageSize, testEntities]);
+  }, [page, pageSize, selectedTestId, testEntities]);
 
   const statuses = tsr.findTestStatuses.useQuery({
     queryKey: ["findTestStatuses"],
