@@ -202,7 +202,7 @@ const TestDetails = ({ test }: { test: Entity | null }) => {
           )}
         </div>
 
-        <div className="grid grid-cols-2 gap-4 text-sm">
+        <div className="grid grid-cols-[repeat(auto-fit,minmax(270px,1fr))] gap-4 text-sm">
           <div>
             <p className="text-muted-foreground">ID</p>
             <p className="font-medium">{test.id}</p>
