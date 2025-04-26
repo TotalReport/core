@@ -142,10 +142,11 @@ export const Nav = ({ links, bottomLinks, isCollapsed }: NavProps) => {
         )}
       </nav>
 
-      <ModeToggle />
-
       {currentBottomLinks && (
         <nav className="mt-auto grid gap-1 px-2 group-[[data-collapsed=true]]:justify-center group-[[data-collapsed=true]]:px-2">
+          <div>
+            <ModeToggle isCollapsed={isCollapsed} />
+          </div>
           {currentBottomLinks.map((link, index) =>
             isCollapsed ? (
               <Tooltip key={index} delayDuration={0}>
