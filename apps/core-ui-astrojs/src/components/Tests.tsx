@@ -221,10 +221,12 @@ function formatStatus(
     id: status.id,
     name: status.title,
     color: status.color,
+    createdTimestamp: status.createdTimestamp,
     group: {
       id: group.id,
       name: group.title,
       color: group.color,
+      createdTimestamp: group.createdTimestamp,
     },
   };
 }

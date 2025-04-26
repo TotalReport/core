@@ -1,15 +1,26 @@
 import { cn } from "@/lib/utils";
 
+export type StatusEntity = {
+  id: string;
+  name: string;
+  color: string;
+  createdTimestamp: String;
+  group: {
+    id: string;
+    name: string;
+    color: string;
+    createdTimestamp: String;
+  };
+}
+
 export type StatusPillProps = {
-  groupColor: string;
-  statusColor: string;
+  status: StatusEntity;
   size?: 'sm' | 'md';
   className?: string;
 };
 
 export const StatusPill = ({
-  groupColor,
-  statusColor,
+  status: { group: { color: groupColor }, color: statusColor },
   size = 'sm',
   className
 }: StatusPillProps) => {

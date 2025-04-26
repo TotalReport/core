@@ -26,8 +26,7 @@ export const TestDetails = ({ test }: TestDetailsProps) => {
           {test.status && (
             <div className="mt-2 flex items-center">
               <StatusPill 
-                groupColor={test.status.group.color} 
-                statusColor={test.status.color} 
+                status={test.status}
                 size="md"
               />
               <span className="ml-2 text-sm font-medium">

@@ -1,21 +1,12 @@
 import { cn } from "@/lib/utils";
 import { formatDistanceToNow } from "date-fns";
-import { StatusPill } from "./StatusPill";
+import { StatusPill, type StatusEntity } from "./StatusPill";
 
 export type Entity = {
   id: number;
   title: string;
   status:
-    | {
-        id: string;
-        name: string;
-        color: string;
-        group: {
-          id: string;
-          name: string;
-          color: string;
-        };
-      }
+    | StatusEntity
     | undefined;
   startedTimestamp?: string | null;
   finishedTimestamp?: string | null;
@@ -48,8 +39,7 @@ export const TestListItem = ({ entity, selected, onClick }: TestListItemProps) =
               {entity.status ? (
                 <div className="relative flex items-center">
                   <StatusPill 
-                    groupColor={entity.status.group.color} 
-                    statusColor={entity.status.color} 
+                    status={entity.status}
                     size="sm"
                   />
                   <span className="ml-2 font-semibold">{entity.status.name}</span>
