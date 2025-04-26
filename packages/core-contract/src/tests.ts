@@ -87,7 +87,7 @@ export const readTest = contract.query({
     id: z.coerce.number().int(),
   }),
   responses: {
-    201: TestSchema,
+    200: TestSchema,
     404: z.object({}),
   },
 });

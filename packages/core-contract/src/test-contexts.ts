@@ -51,7 +51,7 @@ export const readTestContext = contract.query({
     id: z.coerce.number().int(),
   }),
   responses: {
-    201: TestContextSchema,
+    200: TestContextSchema,
     404: z.object({}),
   },
 });
