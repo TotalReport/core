@@ -23,6 +23,7 @@ export const Layout = ({
   navCollapsedSize = 3,
 }: LayoutProps) => {
   const [isCollapsed, setIsCollapsed] = React.useState(defaultCollapsed);
+  
   return (
     <TooltipProvider delayDuration={0}>
       <ResizablePanelGroup
@@ -52,24 +53,24 @@ export const Layout = ({
               {
                 title: "Reports",
                 icon: ChartLine,
-                active: true,
+                href: "/reports",
               },
               {
                 title: "Launches",
                 icon: Rocket,
-                active: false,
+                href: "/launches",
               },
               {
                 title: "Tests",
                 icon: ListChecks,
-                active: false,
+                href: "/tests",
               },
             ]}
             bottomLinks={[
               {
                 title: "Settings",
                 icon: Settings,
-                active: false,
+                href: "/settings",
               },
             ]}
           ></Nav>
