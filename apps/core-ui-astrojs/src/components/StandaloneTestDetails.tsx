@@ -1,144 +1,47 @@
 import { tsr } from "@/lib/react-query";
 import { contract } from "@total-report/core-contract/contract";
 import type { ClientInferResponseBody } from "@ts-rest/core";
-import { useEffect, useState, useRef, useCallback } from "react";
-import { getNullableUrlParamNumber, getUrlParamNumber } from "../lib/url-utils";
 import { TestDetails } from "./TestDetails";
 import { RestAPIProvider } from "./RestAPIProvider";
 import { type Entity } from "./tests-list-item";
+import { useTestDetailsParams } from "@/lib/hooks/useUrlParam";
 
 // Define the possible test types
 type TestType = 'test' | 'beforeTest' | 'afterTest';
 
 const Internal = () => {
-  // Function to get current test parameters from URL
-  const getTestParamsFromUrl = () => {
-    const testId = getNullableUrlParamNumber("testId");
-    const beforeTestId = getNullableUrlParamNumber("beforeTestId");
-    const afterTestId = getNullableUrlParamNumber("afterTestId");
-    
-    // Determine which test type to show based on URL params
-    let currentType: TestType = 'test';
-    if (beforeTestId != null) currentType = 'beforeTest';
-    else if (afterTestId != null) currentType = 'afterTest';
-    
-    return {
-      testId: testId != null ? testId : null,
-      beforeTestId: beforeTestId != null ? beforeTestId : null,
-      afterTestId: afterTestId != null ? afterTestId : null,
-      currentType
-    };
-  };
-
-  // Get test IDs from URL parameters
-  const [testParams, setTestParams] = useState(() => getTestParamsFromUrl());
-  
-  // Use a callback for checking URL params to avoid recreating it on every render
-  const checkUrlParams = useCallback(() => {
-    const newParams = getTestParamsFromUrl();
-    
-    // Only update state if something has changed
-    if (
-      newParams.testId !== testParams.testId ||
-      newParams.beforeTestId !== testParams.beforeTestId ||
-      newParams.afterTestId !== testParams.afterTestId ||
-      newParams.currentType !== testParams.currentType
-    ) {
-      setTestParams(newParams);
-    }
-  }, [testParams]);
-
-  // Listen for URL changes
-  useEffect(() => {
-    // Check immediately on mount
-    checkUrlParams();
-    
-    // Function handler for URL changes
-    const handleUrlChange = () => {
-      checkUrlParams();
-    };
-    
-    // Listen for both our custom event and popstate
-    window.addEventListener('urlchange', handleUrlChange);
-    window.addEventListener('popstate', handleUrlChange);
-    
-    // Clean up
-    return () => {
-      window.removeEventListener('urlchange', handleUrlChange);
-      window.removeEventListener('popstate', handleUrlChange);
-    };
-  }, [checkUrlParams]);
-
-  // Skip URL updates from this component to avoid loops
-  const isUpdatingUrl = useRef(false);
-  
-  // Update URL when test IDs change
-  useEffect(() => {
-    if (typeof window !== "undefined" && !isUpdatingUrl.current) {
-      isUpdatingUrl.current = true;
-      
-      const url = new URL(window.location.href);
-      
-      // Keep page and pageSize parameters
-      const page = url.searchParams.get("page");
-      const pageSize = url.searchParams.get("pageSize");
-      
-      // Clear all test IDs first
-      url.searchParams.delete("testId");
-      url.searchParams.delete("beforeTestId");
-      url.searchParams.delete("afterTestId");
-      
-      // Then set the active one
-      if (testParams.currentType === 'test' && testParams.testId) {
-        url.searchParams.set("testId", testParams.testId.toString());
-      } else if (testParams.currentType === 'beforeTest' && testParams.beforeTestId) {
-        url.searchParams.set("beforeTestId", testParams.beforeTestId.toString());
-      } else if (testParams.currentType === 'afterTest' && testParams.afterTestId) {
-        url.searchParams.set("afterTestId", testParams.afterTestId.toString());
-      }
-      
-      // Restore page and pageSize if they existed
-      if (page) url.searchParams.set("page", page);
-      if (pageSize) url.searchParams.set("pageSize", pageSize);
-      
-      window.history.replaceState({}, "", url.toString());
-      
-      // Reset flag after a small delay to ensure events are processed
-      setTimeout(() => {
-        isUpdatingUrl.current = false;
-      }, 0);
-    }
-  }, [testParams]);
+  // Use our custom hook to manage test URL parameters
+  const { testId, beforeTestId, afterTestId, currentType } = useTestDetailsParams();
 
   // Fetch test data based on the current test type
   const testQuery = tsr.readTest.useQuery({
-    queryKey: [`test-${testParams.testId}`],
+    queryKey: [`test-${testId}`],
     queryData: {
       params: {
-        id: testParams.testId || 0,
+        id: testId || 0,
       },
     },
-    enabled: testParams.currentType === 'test' && testParams.testId !== null,
+    enabled: currentType === 'test' && testId !== null,
   });
 
   const beforeTestQuery = tsr.readBeforeTest.useQuery({
-    queryKey: [`beforeTest-${testParams.beforeTestId}`],
+    queryKey: [`beforeTest-${beforeTestId}`],
     queryData: {
       params: {
-        id: testParams.beforeTestId || 0,
+        id: beforeTestId || 0,
       },
     },
-    enabled: testParams.currentType === 'beforeTest' && testParams.beforeTestId !== null,
+    enabled: currentType === 'beforeTest' && beforeTestId !== null,
   });
 
   const afterTestQuery = tsr.readAfterTest.useQuery({
-    queryKey: [`afterTest-${testParams.afterTestId}`],
+    queryKey: [`afterTest-${afterTestId}`],
     queryData: {
       params: {
-        id: testParams.afterTestId || 0,
+        id: afterTestId || 0,
       },
     },
-    enabled: testParams.currentType === 'afterTest' && testParams.afterTestId !== null,
+    enabled: currentType === 'afterTest' && afterTestId !== null,
   });
 
   // Fetch statuses and status groups for formatting
@@ -152,7 +55,7 @@ const Internal = () => {
 
   // Get the current query based on test type
   const getCurrentQuery = () => {
-    switch (testParams.currentType) {
+    switch (currentType) {
       case 'test': return testQuery;
       case 'beforeTest': return beforeTestQuery;
       case 'afterTest': return afterTestQuery;
@@ -161,10 +64,10 @@ const Internal = () => {
 
   // Get the current test ID based on test type
   const getCurrentId = () => {
-    switch (testParams.currentType) {
-      case 'test': return testParams.testId;
-      case 'beforeTest': return testParams.beforeTestId;
-      case 'afterTest': return testParams.afterTestId;
+    switch (currentType) {
+      case 'test': return testId;
+      case 'beforeTest': return beforeTestId;
+      case 'afterTest': return afterTestId;
     }
   };
 
@@ -179,7 +82,7 @@ const Internal = () => {
           currentQuery.data.body,
           statuses.data?.body.items || [],
           statusGroups.data?.body.items || [],
-          testParams.currentType
+          currentType
         )
       : null;
 

@@ -1,82 +1,11 @@
 import { tsr } from "@/lib/react-query";
-import { getNullableUrlParamNumber } from "@/lib/url-utils";
 import { format } from "date-fns";
-import { useEffect, useState, useRef, useCallback } from "react";
+import { useNumericUrlParam } from "@/lib/hooks/useUrlParam";
 import { Separator } from "./ui/separator";
 
 export const StandaloneLaunchDetails = () => {
-  // Function to get current launch parameters from URL
-  const getLaunchParamsFromUrl = useCallback(() => {
-    return getNullableUrlParamNumber("launchId");
-  }, []);
-
-  const [launchId, setLaunchId] = useState<number | null>(() => {
-    return getLaunchParamsFromUrl();
-  });
-
-  // Use a callback for checking URL params to avoid recreating it on every render
-  const checkUrlParams = useCallback(() => {
-    const newLaunchId = getLaunchParamsFromUrl();
-    if (newLaunchId !== launchId) {
-      setLaunchId(newLaunchId);
-    }
-  }, [launchId, getLaunchParamsFromUrl]);
-
-  // Listen for URL changes
-  useEffect(() => {
-    // Check immediately on mount
-    checkUrlParams();
-
-    // Function handler for URL changes
-    const handleUrlChange = () => {
-      checkUrlParams();
-    };
-
-    // Listen for both our custom event and popstate
-    window.addEventListener("urlchange", handleUrlChange);
-    window.addEventListener("popstate", handleUrlChange);
-
-    // Clean up
-    return () => {
-      window.removeEventListener("urlchange", handleUrlChange);
-      window.removeEventListener("popstate", handleUrlChange);
-    };
-  }, [checkUrlParams]);
-
-  // Skip URL updates from this component to avoid loops
-  const isUpdatingUrl = useRef(false);
-
-  // Update URL when launch ID changes
-  useEffect(() => {
-    if (typeof window !== "undefined" && !isUpdatingUrl.current) {
-      isUpdatingUrl.current = true;
-
-      const url = new URL(window.location.href);
-
-      // Keep page and pageSize parameters
-      const page = url.searchParams.get("page");
-      const pageSize = url.searchParams.get("pageSize");
-
-      // Clear launch ID parameter first
-      url.searchParams.delete("launchId");
-
-      // Then set the active one if it exists
-      if (launchId !== null) {
-        url.searchParams.set("launchId", launchId.toString());
-      }
-
-      // Restore page and pageSize if they existed
-      if (page) url.searchParams.set("page", page);
-      if (pageSize) url.searchParams.set("pageSize", pageSize);
-
-      window.history.replaceState({}, "", url.toString());
-
-      // Reset flag after a small delay to ensure events are processed
-      setTimeout(() => {
-        isUpdatingUrl.current = false;
-      }, 0);
-    }
-  }, [launchId]);
+  // Use our custom hook to manage the launchId URL parameter
+  const [launchId, setLaunchId] = useNumericUrlParam("launchId");
 
   const launchQuery = tsr.readLaunch.useQuery({
     queryKey: [`/launches/${launchId}`],
@@ -89,7 +18,7 @@ export const StandaloneLaunchDetails = () => {
   const launchStatisticsQuery = tsr.launchStatistics.useQuery({
     queryKey: [`/launch-statistics/${launchId}`],
     queryData: {
-    params: { id: launchId || 0 },
+      params: { id: launchId || 0 },
     },
     enabled: launchId !== null && launchId > 0,
   });
