@@ -1,0 +1,15 @@
+---
+import Layout from "../layouts/Layout.astro";
+import { ReportsList } from "../components/Reports";
+import { Layout as PageLayout } from "../components/Layout.tsx";
+---
+
+<Layout title="Reports - Total Report">
+  <PageLayout client:only>
+    <div class="h-full flex flex-col">
+      <div class="flex-1">
+        <ReportsList client:load />
+      </div>
+    </div>
+  </PageLayout>
+</Layout>
