@@ -2,6 +2,7 @@ import { faker } from "@faker-js/faker";
 import { ClientType } from "./types.js";
 import { LaunchesGenerator } from "./launch-generator.js";
 import { assertEquals } from "./utils.js";
+import { capitalizeFirstLetter } from "./utils-string.js";
 
 /**
  * This class is responsible for generating test contexts.
@@ -24,10 +25,10 @@ export class TestContextsGenerator {
 
     const title =
       args?.title ??
-      faker.word.adjective() + " " + 
+      capitalizeFirstLetter(faker.word.adjective() + " " + 
       faker.word.noun() + " " + 
       faker.word.verb() + " " + 
-      faker.word.adverb();
+      faker.word.adverb());
 
     const response = await this.client.createTestContext({
       body: {

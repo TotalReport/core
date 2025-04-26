@@ -1,6 +1,7 @@
 import { faker } from "@faker-js/faker";
 import { TestsGenerator } from "./test-generator.js";
 import { ClientType } from "./types.js";
+import { capitalizeFirstLetter } from "./utils-string.js";
 
 
 /**
@@ -24,10 +25,10 @@ export class TestStepsGenerator {
     
     const title =
       args?.title ??
-      faker.word.adjective() + " " + 
+      capitalizeFirstLetter(faker.word.adjective() + " " + 
       faker.word.noun() + " " + 
       faker.word.verb() + " " + 
-      faker.word.adverb();
+      faker.word.adverb());
 
     const response = await this.client.createTestStep({
       body: {

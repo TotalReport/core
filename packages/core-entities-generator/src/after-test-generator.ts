@@ -4,6 +4,7 @@ import { ClientType } from "./types.js";
 import { assertEquals } from "./utils.js";
 import { ClientInferRequest, ClientInferResponseBody } from "@ts-rest/core";
 import { contract } from "@total-report/core-contract/contract";
+import { capitalizeFirstLetter } from "./utils-string.js";
 
 /**
  * This class is responsible for generating after tests.
@@ -28,10 +29,10 @@ export class AfterTestsGenerator {
       args?.launchId ?? (await new LaunchesGenerator(this.client).create()).id;
     const title =
       args?.title ??
-      faker.word.adjective() + " " + 
+      capitalizeFirstLetter(faker.word.adjective() + " " + 
       faker.word.noun() + " " + 
       faker.word.verb() + " " + 
-      faker.word.adverb();
+      faker.word.adverb());
 
     if (args?.statusId !== undefined) {
       const now = new Date();

@@ -1,6 +1,7 @@
 import { faker } from "@faker-js/faker";
 import { ClientType } from "./types.js";
 import { assertEquals } from "./utils.js";
+import { capitalizeFirstLetter } from "./utils-string.js";
 
 /**
  * This class is responsible for generating reports.
@@ -21,10 +22,10 @@ export class ReportsGenerator {
   async create(args: CreateReportArgs | undefined = undefined) {
     const title =
       args?.title ??
-      faker.word.adjective() + " " + 
+      capitalizeFirstLetter(faker.word.adjective() + " " + 
       faker.word.noun() + " " + 
       faker.word.verb() + " " + 
-      faker.word.adverb();
+      faker.word.adverb());
 
     const response = await this.client.createReport({
       body: {

@@ -4,6 +4,7 @@ import { assertEquals } from "./utils.js";
 import { ReportsGenerator } from "./report-generator.js";
 import { ClientInferRequest, ClientInferResponseBody } from "@ts-rest/core";
 import { contract } from "@total-report/core-contract/contract";
+import { capitalizeFirstLetter } from "./utils-string.js";
 
 /**
  * This class is responsible for generating launches.
@@ -29,10 +30,10 @@ export class LaunchesGenerator {
 
     const title =
       args?.title ??
-      faker.word.adjective() + " " + 
+      capitalizeFirstLetter(faker.word.adjective() + " " + 
       faker.word.noun() + " " + 
       faker.word.verb() + " " + 
-      faker.word.adverb();
+      faker.word.adverb());
 
     const response = await this.client.createLaunch({
       body: {

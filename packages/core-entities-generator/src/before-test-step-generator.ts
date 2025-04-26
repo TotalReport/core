@@ -2,6 +2,7 @@ import { faker } from "@faker-js/faker";
 import { BeforeTestsGenerator } from "./before-test-generator.js";
 import { ClientType } from "./types.js";
 import { assertEquals } from "./utils.js";
+import { capitalizeFirstLetter } from "./utils-string.js";
 
 /**
  * This class is responsible for generating before test steps.
@@ -26,10 +27,10 @@ export class BeforeTestStepsGenerator {
 
     const title =
       args?.title ??
-      faker.word.adjective() + " " + 
+      capitalizeFirstLetter(faker.word.adjective() + " " + 
       faker.word.noun() + " " + 
       faker.word.verb() + " " + 
-      faker.word.adverb();
+      faker.word.adverb());
 
     const response = await this.client.createBeforeTestStep({
       body: {
