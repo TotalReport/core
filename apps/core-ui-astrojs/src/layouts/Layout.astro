@@ -23,3 +23,30 @@ import "../styles/global.css";
 		height: 100%;
 	}
 </style>
+
+<script>
+	// Monkey-patch history methods to dispatch custom events when URL changes
+	(function(history) {
+	  // For replaceState
+	  const originalReplaceState = history.replaceState;
+	  history.replaceState = function() {
+		const result = originalReplaceState.apply(this, arguments);
+		// Dispatch a custom event after URL is changed
+		window.dispatchEvent(new Event('urlchange'));
+		return result;
+	  };
+  
+	  console.info('history.replaceState modified');
+	  
+	  // For pushState
+	  const originalPushState = history.pushState;
+	  history.pushState = function() {
+		const result = originalPushState.apply(this, arguments);
+		// Dispatch a custom event after URL is changed
+		window.dispatchEvent(new Event('urlchange'));
+		return result;
+	  };
+	})(window.history);
+  
+	console.info('history.pushState modified');
+</script>

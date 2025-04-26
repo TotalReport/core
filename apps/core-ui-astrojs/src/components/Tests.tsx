@@ -5,7 +5,6 @@ import { useEffect, useState } from "react";
 import { PaginationBlock } from "./pagination-block";
 import { RestAPIProvider } from "./RestAPIProvider";
 import { TestListItem, type Entity } from "./tests-list-item";
-import { StatusPill } from "./StatusPill";
 import {
   ResizableHandle,
   ResizablePanel,
@@ -15,16 +14,28 @@ import { ScrollArea } from "./ui/scroll-area";
 import { Separator } from "./ui/separator";
 import { totalPagesCount } from "@/lib/pagination-utils";
 import { getUrlParamNumber } from "../lib/url-utils";
-import { TestDetails } from "./TestDetails";
+import { StandaloneTestDetails } from "./StandaloneTestDetails";
 
 const Internal = () => {
   const tsrQueryClient = tsr.useQueryClient();
 
   const [page, setPage] = useState(() => Math.max(1, getUrlParamNumber("page", 1)));
   const [pageSize, setPageSize] = useState(() => Math.max(1, getUrlParamNumber("pageSize", 10)));
-  const [selectedTestId, setSelectedTestId] = useState<number | null>(() => {
+  
+  // Track selected test by type and ID
+  const [selectedTest, setSelectedTest] = useState<{
+    id: number | null;
+    type: string | null;
+  }>(() => {
     const testId = getUrlParamNumber("testId", -1);
-    return testId > 0 ? testId : null;
+    const beforeTestId = getUrlParamNumber("beforeTestId", -1);
+    const afterTestId = getUrlParamNumber("afterTestId", -1);
+    
+    if (testId > 0) return { id: testId, type: 'test' };
+    if (beforeTestId > 0) return { id: beforeTestId, type: 'before test' };
+    if (afterTestId > 0) return { id: afterTestId, type: 'after test' };
+    
+    return { id: null, type: null };
   });
 
   const testEntities = tsr.findTestEntities.useQuery({
@@ -57,14 +68,26 @@ const Internal = () => {
       const url = new URL(window.location.href);
       url.searchParams.set("page", page.toString());
       url.searchParams.set("pageSize", pageSize.toString());
-      if (selectedTestId) {
-        url.searchParams.set("testId", selectedTestId.toString());
-      } else {
-        url.searchParams.delete("testId");
+      
+      // Clear all test ID parameters first
+      url.searchParams.delete("testId");
+      url.searchParams.delete("beforeTestId");
+      url.searchParams.delete("afterTestId");
+      
+      // Set the appropriate test ID parameter based on selected test type
+      if (selectedTest.id && selectedTest.type) {
+        if (selectedTest.type === 'test') {
+          url.searchParams.set("testId", selectedTest.id.toString());
+        } else if (selectedTest.type === 'before test') {
+          url.searchParams.set("beforeTestId", selectedTest.id.toString());
+        } else if (selectedTest.type === 'after test') {
+          url.searchParams.set("afterTestId", selectedTest.id.toString());
+        }
       }
+      
       window.history.replaceState({}, "", url.toString());
     }
-  }, [page, pageSize, selectedTestId, testEntities]);
+  }, [page, pageSize, selectedTest, testEntities]);
 
   const statuses = tsr.findTestStatuses.useQuery({
     queryKey: ["findTestStatuses"],
@@ -85,17 +108,10 @@ const Internal = () => {
     return "";
   };
 
-  const selectedTest = testEntities.data?.body?.items.find(
-    (test) => test.id === selectedTestId
-  );
-
-  const formattedSelectedTest = selectedTest
-    ? formatTest(
-        selectedTest,
-        statuses.data?.body.items || [],
-        statusGroups.data?.body.items || []
-      )
-    : null;
+  // Handler for when a test item is clicked
+  const handleTestClick = (test: Entity) => {
+    setSelectedTest({ id: test.id, type: test.entityType });
+  };
 
   return (
     <ResizablePanelGroup
@@ -142,18 +158,24 @@ const Internal = () => {
               testEntities.data?.body?.items != undefined &&
               testEntities.data?.body?.items.length > 0 && (
                 <div className="flex flex-col gap-2 p-2">
-                  {testEntities.data.body.items.map((test) => (
-                    <TestListItem
-                      key={test.id}
-                      entity={formatTest(
-                        test,
-                        statuses.data?.body.items!,
-                        statusGroups.data?.body.items!
-                      )}
-                      selected={test.id === selectedTestId}
-                      onClick={() => setSelectedTestId(test.id)}
-                    />
-                  ))}
+                  {testEntities.data.body.items.map((test) => {
+                    const formattedTest = formatTest(
+                      test,
+                      statuses.data?.body.items!,
+                      statusGroups.data?.body.items!
+                    );
+                    return (
+                      <TestListItem
+                        key={test.id}
+                        entity={formattedTest}
+                        selected={
+                          test.id === selectedTest.id && 
+                          test.entityType === selectedTest.type
+                        }
+                        onClick={() => handleTestClick(formattedTest)}
+                      />
+                    );
+                  })}
                 </div>
               )}
           </ScrollArea>
@@ -168,7 +190,7 @@ const Internal = () => {
       </ResizablePanel>
       <ResizableHandle withHandle />
       <ResizablePanel>
-        <TestDetails test={formattedSelectedTest} />
+        <StandaloneTestDetails />
       </ResizablePanel>
     </ResizablePanelGroup>
   );
