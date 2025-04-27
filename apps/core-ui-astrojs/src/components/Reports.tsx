@@ -1,18 +1,19 @@
-import { tsr } from "@/lib/react-query";
 import { totalPagesCount } from "@/lib/pagination-utils";
+import { tsr } from "@/lib/react-query";
 import { getUrlParamNumber } from "@/lib/url-utils";
 import { useEffect, useState } from "react";
-import { PaginationBlock } from "./pagination-block";
 import { RestAPIProvider } from "./RestAPIProvider";
-import { ReportListItem, type ReportEntity } from "./reports-list-item";
+import { StandaloneReportDetails } from "./StandaloneReportDetails";
+import { PaginationBlock } from "./pagination-block";
+import { type ReportEntity } from "./reports-list-item";
+import { ReportsListItemFetcher } from "./reports-list-item-fetcher";
 import {
-  ResizableHandle,
-  ResizablePanel,
-  ResizablePanelGroup,
+    ResizableHandle,
+    ResizablePanel,
+    ResizablePanelGroup,
 } from "./ui/resizable";
 import { ScrollArea } from "./ui/scroll-area";
 import { Separator } from "./ui/separator";
-import { StandaloneReportDetails } from "./StandaloneReportDetails";
 
 const Internal = () => {
   const [page, setPage] = useState(() => Math.max(1, getUrlParamNumber("page", 1)));
@@ -107,7 +108,7 @@ const Internal = () => {
               reportsQuery.data?.body?.items.length > 0 && (
                 <div className="flex flex-col gap-2 p-2">
                   {reportsQuery.data.body.items.map((report) => (
-                    <ReportListItem
+                    <ReportsListItemFetcher
                       key={report.id}
                       report={report}
                       selected={report.id === selectedReportId}
