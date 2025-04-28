@@ -3,10 +3,11 @@ import { format } from "date-fns";
 import { useNumericUrlParam } from "@/lib/hooks/useUrlParam";
 import { Separator } from "./ui/separator";
 import { buttonVariants } from "./ui/button";
+import { ReportsParam } from "./reports-page-params";
 
 export const StandaloneReportDetails = () => {
   // Use hook to manage the reportId URL parameter
-  const [reportId, setReportId] = useNumericUrlParam("reportId");
+  const [reportId, setReportId] = useNumericUrlParam(ReportsParam.SELECTED_REPORT_ID);
 
   // Fetch report details
   const reportQuery = tsr.readReport.useQuery({

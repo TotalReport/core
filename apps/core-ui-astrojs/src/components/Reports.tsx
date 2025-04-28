@@ -14,6 +14,7 @@ import {
 } from "./ui/resizable";
 import { ScrollArea } from "./ui/scroll-area";
 import { Separator } from "./ui/separator";
+import { ReportsParam } from "./reports-page-params";
 
 const Internal = () => {
   const [page, setPage] = useState(() => Math.max(1, getUrlParamNumber("page", 1)));
@@ -21,7 +22,7 @@ const Internal = () => {
   
   // Track selected report ID
   const [selectedReportId, setSelectedReportId] = useState<number | null>(() => {
-    const reportId = getUrlParamNumber("reportId", -1);
+    const reportId = getUrlParamNumber(ReportsParam.SELECTED_REPORT_ID, -1);
     return reportId > 0 ? reportId : null;
   });
 
@@ -58,9 +59,9 @@ const Internal = () => {
       
       // Update reportId parameter
       if (selectedReportId) {
-        url.searchParams.set("reportId", selectedReportId.toString());
+        url.searchParams.set(ReportsParam.SELECTED_REPORT_ID, selectedReportId.toString());
       } else {
-        url.searchParams.delete("reportId");
+        url.searchParams.delete(ReportsParam.SELECTED_REPORT_ID);
       }
       
       window.history.replaceState({}, "", url.toString());
