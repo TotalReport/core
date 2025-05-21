@@ -70,7 +70,9 @@ export class TestEntitiesDAO {
       }
 
       if (search.titleContains !== undefined) {
-        const escapedTitle = search.titleContains.replace(/%/g, '\\%').replace(/_/g, '\\_');
+        const escapedTitle = search.titleContains
+          .replace(/%/g, "\\%")
+          .replace(/_/g, "\\_");
         filters.push(ilike(testEntities.title, `%${escapedTitle}%`));
       }
 
@@ -81,6 +83,7 @@ export class TestEntitiesDAO {
                 .select({
                   value: search.distinct
                     ? countDistinct(
+                        // FIXME: Is it a typo? Should it be `testEntities` instead of `launches`?
                         sql` (${launches.correlationId},${launches.argumentsHash})`
                       )
                     : count(),
@@ -242,7 +245,120 @@ export class TestEntitiesDAO {
       .groupBy(testEntities.entityType, testStatuses.groupId);
     return stat;
   }
+
+  async countsByStatuses(params: CountsByStatusesFilter) {
+    const testEntitiesFiltered =
+      params.distinct === true
+        ? this.db
+            .$with("test_entities_filtered")
+            .as(distinctFilterTestEntities(this.db, params.reportId))
+        : this.db
+            .$with("test_entities_filtered")
+            .as(filterTestEntities(this.db, params.reportId));
+
+    const result = await this.db
+      .with(testEntitiesFiltered)
+      .select({
+        entityType: testEntitiesFiltered.entityType,
+        statusId: testEntitiesFiltered.statusId,
+        count: count(),
+      })
+      .from(testEntitiesFiltered)
+      .groupBy(testEntitiesFiltered.entityType, testEntitiesFiltered.statusId)
+      .execute();
+
+    return result;
+  }
 }
+
+const distinctFilterTestEntities = (
+  db: PgDatabase<NodePgQueryResultHKT, Record<string, unknown>>,
+  reportId: number | undefined
+) => {
+  const testEntitiesWithDuplicationCounter = db
+    .$with("test_entities_with_duplication_counter")
+    .as(
+      db
+        .select({
+          reportId: launches.reportId,
+          launchId: testEntities.launchId,
+          contextId: testEntities.parentContextId,
+          id: testEntities.id,
+          title: testEntities.title,
+          createdTimestamp: testEntities.createdTimestamp,
+          startedTimestamp: testEntities.startedTimestamp,
+          finishedTimestamp: testEntities.finishedTimestamp,
+          entityType: testEntities.entityType,
+          statusId: testEntities.statusId,
+          //TODO: are this fields really needed?
+          launchCorrelationId: sql<string>`${launches.correlationId}`.as(
+            "launch_correlation_id"
+          ),
+          launchArgumentsHash: sql<string>`${launches.argumentsHash}`.as(
+            "launch_arguments_hash"
+          ),
+          correlationId: testEntities.correlationId,
+          argumentsHash: testEntities.argumentsHash,
+          repeatCounter:
+            sql`ROW_NUMBER() over (partition by ${testEntities.entityType}, ${launches.correlationId}, ${launches.argumentsHash}, ${testEntities.correlationId}, ${testEntities.argumentsHash} order by ${testEntities.finishedTimestamp} desc, ${testEntities.id} desc)`.as(
+              "repeat_counter"
+            ),
+        })
+        .from(testEntities)
+        .innerJoin(
+          launches,
+          and(
+            eq(testEntities.launchId, launches.id),
+            reportId != undefined ? eq(launches.reportId, reportId) : undefined
+          )
+        )
+    );
+
+  return db
+    .with(testEntitiesWithDuplicationCounter)
+    .select()
+    .from(testEntitiesWithDuplicationCounter)
+    .where(eq(testEntitiesWithDuplicationCounter.repeatCounter, 1));
+};
+
+const filterTestEntities = (
+  db: PgDatabase<NodePgQueryResultHKT, Record<string, unknown>>,
+  reportId: number | undefined
+) => {
+  return (
+    db
+      .select({
+        reportId: launches.reportId,
+        launchId: testEntities.launchId,
+        contextId: testEntities.parentContextId,
+        id: testEntities.id,
+        title: testEntities.title,
+        createdTimestamp: testEntities.createdTimestamp,
+        startedTimestamp: testEntities.startedTimestamp,
+        finishedTimestamp: testEntities.finishedTimestamp,
+        entityType: testEntities.entityType,
+        statusId: testEntities.statusId,
+        //TODO: are this fields really needed?
+        launchCorrelationId: sql<string>`${launches.correlationId}`.as(
+          "launch_correlation_id"
+        ),
+        launchArgumentsHash: sql<string>`${launches.argumentsHash}`.as(
+          "launch_arguments_hash"
+        ),
+        correlationId: testEntities.correlationId,
+        argumentsHash: testEntities.argumentsHash,
+      })
+      .from(testEntities)
+      //TODO: don't need join if reportId is not defined
+      .innerJoin(
+        launches,
+        and(
+          eq(testEntities.launchId, launches.id),
+          reportId != undefined ? eq(launches.reportId, reportId) : undefined
+        )
+      )
+  );
+};
 
 /**
  * Search parameters for finding test entities.
@@ -291,6 +407,11 @@ type TestEntityRow = {
 
 type StatisticsFilter = {
   launchId: number;
+};
+
+type CountsByStatusesFilter = {
+  reportId?: number;
+  distinct: boolean;
 };
 
 type StatisticsEntry = {

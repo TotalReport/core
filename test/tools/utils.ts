@@ -1,5 +1,10 @@
 import { expect } from "earl";
 
+/**
+ * Assert that the actual value is of the same type as the expected value.
+ * @param actual Actual value to check.
+ * @param expected Expected value to check against.
+ */
 export function expect_toBe<T>(
   actual: unknown,
   expected: T

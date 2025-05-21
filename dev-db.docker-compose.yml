@@ -1,5 +1,5 @@
 version: '3.9'
-name: total-report-core-test
+name: total-report-core-dev
 services:
   total-report-db-dev:
     image: postgres:16-alpine

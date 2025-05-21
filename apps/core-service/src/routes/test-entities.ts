@@ -47,6 +47,32 @@ export const findTestEntitiesRoute: FindTestEntitiesRoute = async ({
   };
 };
 
+export const findTestEntitiesCountsByStatusesRoute: FindTestEntitiesStatusesCountsByStatusesRoute = async ({
+  query,
+}) => {
+  const search = {
+    reportId: query.reportId,
+    distinct: query.distinct,
+  };
+
+  const searchResults = await new TestEntitiesDAO().countsByStatuses(search);
+
+  return {
+    status: 200,
+    body: searchResults.map((item) => {
+      return {
+        entityType: item.entityType,
+        statusId: item.statusId,
+        count: item.count,
+      };
+    }),
+  };
+};
+
 export type FindTestEntitiesRoute = AppRouteImplementation<
   typeof contract.findTestEntities
+>;
+
+export type FindTestEntitiesStatusesCountsByStatusesRoute = AppRouteImplementation<
+  typeof contract.findTestEntitiesCountsByStatuses
 >;

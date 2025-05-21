@@ -2,6 +2,7 @@ import { extendZodWithOpenApi } from "@anatine/zod-openapi";
 import { initContract } from "@ts-rest/core";
 import { z } from "zod";
 import { PAGINATION_DEFAULTS } from "./defaults.js";
+import { zBoolean } from "./utils/z-types.js";
 
 extendZodWithOpenApi(z);
 
@@ -27,7 +28,10 @@ export const findTestEntities = contract.query({
   method: "GET",
   path: "/v1/test-entities",
   query: z.object({
-    "title~cnt": z.string().optional().describe("The title of the test entity contains the string."),
+    "title~cnt": z
+      .string()
+      .optional()
+      .describe("The title of the test entity contains the string."),
     entityTypes: z
       .array(z.enum(["before test", "test", "after test"]))
       .optional(),
@@ -36,7 +40,7 @@ export const findTestEntities = contract.query({
     contextId: z.coerce.number().int().optional(),
     correlationId: z.coerce.string().optional(),
     argumentsHash: z.coerce.string().optional(),
-    distinct: z.coerce.boolean().optional().default(false),
+    distinct: zBoolean(z).default("false"),
     limit: z.coerce
       .number()
       .int()
@@ -57,5 +61,28 @@ export const findTestEntities = contract.query({
       }),
       items: z.array(TestEntitySchema),
     }),
+  },
+});
+
+export const StatusesCountsSchema = z.array(
+  z.object({
+    entityType: z.enum(["beforeTest", "test", "afterTest"]),
+    statusId: z.string().nullable(),
+    count: z.number().int(),
+  })
+);
+
+export const findTestEntitiesCountsByStatuses = contract.query({
+  summary:
+    "Get the test entities counts grouped by status and test entity type.",
+  method: "GET",
+  path: "/v1/test-entities/counts/statuses",
+  query: z.object({
+    reportId: z.coerce.number().int().optional(),
+    distinct: zBoolean(z),
+  }),
+  responses: {
+    200: StatusesCountsSchema,
+    404: z.object({}),
   },
 });

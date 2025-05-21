@@ -50,7 +50,7 @@ import {
   patchTestContext,
   readTestContext,
 } from "./test-contexts.js";
-import { findTestEntities } from "./test-entities.js";
+import { findTestEntities, findTestEntitiesCountsByStatuses } from "./test-entities.js";
 import {
   createTestStep,
   deleteTestStep,
@@ -137,4 +137,5 @@ export const contract = c.router({
   readTestStatus: readTestStatus,
 
   findTestEntities: findTestEntities,
+  findTestEntitiesCountsByStatuses: findTestEntitiesCountsByStatuses
 });

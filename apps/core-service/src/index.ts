@@ -38,7 +38,7 @@ import {
   patchTestContextRoute,
   readTestContextRoute,
 } from "./routes/test-contexts.js";
-import { findTestEntitiesRoute } from "./routes/test-entities.js";
+import { findTestEntitiesRoute, findTestEntitiesCountsByStatusesRoute } from "./routes/test-entities.js";
 import { createTestStepRoute, deleteTestStepRoute, patchTestStepRoute, readTestStepRoute } from "./routes/test-steps.js";
 import { createTestRoute, deleteTestRoute, findTestsRoute, patchTestRoute, readTestRoute } from "./routes/tests.js";
 
@@ -115,6 +115,7 @@ const router = s.router(contract, {
   readTestStatus: readTestStatusRoute,
 
   findTestEntities: findTestEntitiesRoute,
+  findTestEntitiesCountsByStatuses: findTestEntitiesCountsByStatusesRoute
 });
 
 createExpressEndpoints(contract, router, app);

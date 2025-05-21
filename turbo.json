@@ -40,6 +40,9 @@
         "./apps/core-service/src/**/*",
         "./apps/core-service/package.json",
         "./apps/core-service/tsconfig.json",
+        "./packages/core-contract/src/**/*",
+        "./packages/core-contract/package.json",
+        "./packages/core-contract/tsconfig.json",
         "./Dockerfile"
       ],
       "outputs": ["./apps/core-service/dist/**/*"],

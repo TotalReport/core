@@ -161,7 +161,7 @@ export const testEntities = pgView("test_entities").as((qb) =>
   qb.select({
       launchId: beforeTests.launchId,
       parentContextId: sql<number | null>`${beforeTests.testContextId}`.as("parent_context_id"),
-      entityType: sql<string>`${ENTITY_TYPES.BEFORE_TEST}`.as("entity_type"),
+      entityType: sql<"beforeTest"|"test"|"afterTest">`${ENTITY_TYPES.BEFORE_TEST}`.as("entity_type"),
       id: beforeTests.id,
       title: beforeTests.title,
       createdTimestamp: beforeTests.createdTimestamp,
@@ -175,7 +175,7 @@ export const testEntities = pgView("test_entities").as((qb) =>
     qb.select({
         launchId: tests.launchId,
         parentContextId: sql<number | null>`${tests.testContextId}`.as("parent_context_id"),
-        entityType: sql<string>`${ENTITY_TYPES.TEST}`.as("entity_type"),
+        entityType: sql<"beforeTest"|"test"|"afterTest">`${ENTITY_TYPES.TEST}`.as("entity_type"),
         id: tests.id,
         title: tests.title,
         createdTimestamp: tests.createdTimestamp,
@@ -189,7 +189,7 @@ export const testEntities = pgView("test_entities").as((qb) =>
     qb.select({
         launchId: afterTests.launchId,
         parentContextId: sql<number | null>`${afterTests.testContextId}`.as("parent_context_id"),
-        entityType: sql<string>`${ENTITY_TYPES.AFTER_TEST}`.as("entity_type"),
+        entityType: sql<"beforeTest"|"test"|"afterTest">`${ENTITY_TYPES.AFTER_TEST}`.as("entity_type"),
         id: afterTests.id,
         title: afterTests.title,
         createdTimestamp: afterTests.createdTimestamp,

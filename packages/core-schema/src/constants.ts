@@ -80,13 +80,11 @@ export const DEFAULT_TEST_STATUSES = {
 };
 
 export const ENTITY_TYPES: {
-  readonly TEST_CONTEXT: string;
   readonly BEFORE_TEST: string;
   readonly TEST: string;
   readonly AFTER_TEST: string;
 } = {
-  TEST_CONTEXT: "test context",
-  BEFORE_TEST: "before test",
+  BEFORE_TEST: "beforeTest",
   TEST: "test",
-  AFTER_TEST: "after test",
+  AFTER_TEST: "afterTest",
 };

@@ -1,5 +1,5 @@
 {
-  "id": "7a2111ea-3044-4e67-bd14-0b1b66dab8fa",
+  "id": "f688298a-0ffc-43b3-871b-d6e9054e15ed",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -1176,7 +1176,7 @@
           "notNull": true
         }
       },
-      "definition": "((select \"launch_id\", \"test_context_id\" as \"parent_context_id\", 'before test' as \"entity_type\", \"id\", \"title\", \"created_timestamp\", \"started_timestamp\", \"finished_timestamp\", \"status_id\", \"correlation_id\", \"arguments_hash\" from \"before_tests\") union all (select \"launch_id\", \"test_context_id\" as \"parent_context_id\", 'test' as \"entity_type\", \"id\", \"title\", \"created_timestamp\", \"started_timestamp\", \"finished_timestamp\", \"status_id\", \"correlation_id\", \"arguments_hash\" from \"tests\")) union all (select \"launch_id\", \"test_context_id\" as \"parent_context_id\", 'after test' as \"entity_type\", \"id\", \"title\", \"created_timestamp\", \"started_timestamp\", \"finished_timestamp\", \"status_id\", \"correlation_id\", \"arguments_hash\" from \"after_tests\")",
+      "definition": "((select \"launch_id\", \"test_context_id\" as \"parent_context_id\", 'beforeTest' as \"entity_type\", \"id\", \"title\", \"created_timestamp\", \"started_timestamp\", \"finished_timestamp\", \"status_id\", \"correlation_id\", \"arguments_hash\" from \"before_tests\") union all (select \"launch_id\", \"test_context_id\" as \"parent_context_id\", 'test' as \"entity_type\", \"id\", \"title\", \"created_timestamp\", \"started_timestamp\", \"finished_timestamp\", \"status_id\", \"correlation_id\", \"arguments_hash\" from \"tests\")) union all (select \"launch_id\", \"test_context_id\" as \"parent_context_id\", 'afterTest' as \"entity_type\", \"id\", \"title\", \"created_timestamp\", \"started_timestamp\", \"finished_timestamp\", \"status_id\", \"correlation_id\", \"arguments_hash\" from \"after_tests\")",
       "name": "test_entities",
       "schema": "public",
       "isExisting": false,

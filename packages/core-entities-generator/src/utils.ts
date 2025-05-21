@@ -10,5 +10,6 @@ export function assertEquals<T>(
   expected: T,
   message: string
 ): asserts actual is T {
-  console.assert(actual === expected, message);
+  if (actual === expected) return;
+  throw new Error(message);
 }
