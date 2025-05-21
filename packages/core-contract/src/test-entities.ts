@@ -33,7 +33,7 @@ export const findTestEntities = contract.query({
       .optional()
       .describe("The title of the test entity contains the string."),
     entityTypes: z
-      .array(z.enum(["before test", "test", "after test"]))
+      .array(z.enum(["beforeTest", "test", "afterTest"]))
       .optional(),
     reportId: z.coerce.number().int().optional(),
     launchId: z.coerce.number().int().optional(),

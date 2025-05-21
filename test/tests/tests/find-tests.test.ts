@@ -114,7 +114,8 @@ describe("find tests", () => {
     const testContext2 = await generator.contexts.create({
       launchId: launch.id,
     });
-    await generator.tests.create({ testContextId: testContext2.id });
+    await generator.tests.create({ testContextId: testContext2.id,
+      launchId: launch.id, });
 
     const limit = 10;
     const offset = 0;

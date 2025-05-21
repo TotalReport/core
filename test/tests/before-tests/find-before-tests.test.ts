@@ -94,7 +94,7 @@ describe("find before tests", () => {
           limit,
           offset,
         },
-        items: [{...created, arguments: []}],
+        items: [{ ...created, arguments: [] }],
       },
     });
   });
@@ -113,7 +113,10 @@ describe("find before tests", () => {
     const testContext2 = await generator.contexts.create({
       launchId: launch.id,
     });
-    await generator.beforeTests.create({ testContextId: testContext2.id });
+    await generator.beforeTests.create({
+      testContextId: testContext2.id,
+      launchId: launch.id,
+    });
 
     const limit = 10;
     const offset = 0;
@@ -131,7 +134,7 @@ describe("find before tests", () => {
           limit,
           offset,
         },
-        items: [{...expectedRecord, arguments: []}],
+        items: [{ ...expectedRecord, arguments: [] }],
       },
     });
   });
@@ -166,7 +169,7 @@ describe("find before tests", () => {
           limit,
           offset,
         },
-        items: [{...created, arguments: []}],
+        items: [{ ...created, arguments: [] }],
       },
     });
   });
@@ -201,7 +204,7 @@ describe("find before tests", () => {
           limit,
           offset,
         },
-        items: [{...created, arguments: []}],
+        items: [{ ...created, arguments: [] }],
       },
     });
   });

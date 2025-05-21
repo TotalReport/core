@@ -161,29 +161,29 @@ describe("test entities", () => {
     });
 
     const entitiesByNestedContext = await client.findTestEntities({
-        query: {
-          contextId: context12InRootContext11.id,
+      query: {
+        contextId: context12InRootContext11.id,
+        limit: 20,
+        offset: 0,
+      },
+    });
+
+    expect(entitiesByNestedContext).toEqual({
+      headers: expect.anything(),
+      status: 200,
+      body: {
+        items: [
+          beforeTestToEntity(beforeTest13InContext12),
+          testToEntity(test13InContext12),
+          afterTestToEntity(afterTest13InContext12),
+        ],
+        pagination: {
           limit: 20,
           offset: 0,
+          total: 3,
         },
-      });
-  
-      expect(entitiesByNestedContext).toEqual({
-        headers: expect.anything(),
-        status: 200,
-        body: {
-          items: [
-            beforeTestToEntity(beforeTest13InContext12),
-            testToEntity(test13InContext12),
-            afterTestToEntity(afterTest13InContext12),
-          ],
-          pagination: {
-            limit: 20,
-            offset: 0,
-            total: 3,
-          },
-        },
-      });
+      },
+    });
   });
 
   test("by reportId", async () => {
@@ -259,7 +259,10 @@ describe("test entities", () => {
     const testContext2 = await generator.contexts.create({
       launchId: launch.id,
     });
-    await generator.tests.create({ testContextId: testContext2.id });
+    await generator.tests.create({
+      testContextId: testContext2.id,
+      launchId: launch.id,
+    });
 
     const limit = 10;
     const offset = 0;
@@ -390,15 +393,24 @@ describe("test entities", () => {
 
   test("by entityType", async () => {
     const launch = await generator.launches.create();
-    const beforeTest = await generator.beforeTests.create({ launchId: launch.id });
+    const beforeTest = await generator.beforeTests.create({
+      launchId: launch.id,
+    });
     const test = await generator.tests.create({ launchId: launch.id });
-    const afterTest = await generator.afterTests.create({ launchId: launch.id });
+    const afterTest = await generator.afterTests.create({
+      launchId: launch.id,
+    });
 
     const limit = 10;
     const offset = 0;
 
     const response = await client.findTestEntities({
-      query: { entityTypes: ["before test"], launchId: launch.id, limit, offset },
+      query: {
+        entityTypes: ["beforeTest"],
+        launchId: launch.id,
+        limit,
+        offset,
+      },
     });
 
     expect(response).toEqual({
@@ -432,7 +444,12 @@ describe("test entities", () => {
     });
 
     const response3 = await client.findTestEntities({
-      query: { entityTypes: ["after test"], launchId: launch.id, limit, offset },
+      query: {
+        entityTypes: ["afterTest"],
+        launchId: launch.id,
+        limit,
+        offset,
+      },
     });
 
     expect(response3).toEqual({
@@ -451,8 +468,14 @@ describe("test entities", () => {
 
   test("by title contains", async () => {
     const launch = await generator.launches.create();
-    const test1 = await generator.tests.create({ launchId: launch.id, title: "Test Entity 1" });
-    const test2 = await generator.tests.create({ launchId: launch.id, title: "Another Test Entity" });
+    const test1 = await generator.tests.create({
+      launchId: launch.id,
+      title: "Test Entity 1",
+    });
+    const test2 = await generator.tests.create({
+      launchId: launch.id,
+      title: "Another Test Entity",
+    });
 
     const limit = 10;
     const offset = 0;
@@ -499,7 +522,7 @@ const beforeTestToEntity = (entity: BeforeTest): TestEntity => {
     ...(entity.testContextId
       ? { parentContextId: entity.testContextId }
       : undefined),
-    entityType: "before test",
+    entityType: "beforeTest",
     id: entity.id,
     title: entity.title,
     createdTimestamp: entity.createdTimestamp,
@@ -510,8 +533,12 @@ const beforeTestToEntity = (entity: BeforeTest): TestEntity => {
       ? { finishedTimestamp: entity.finishedTimestamp }
       : undefined),
     ...(entity.statusId ? { statusId: entity.statusId } : undefined),
-    ...(entity.correlationId ? { correlationId: entity.correlationId } : undefined),
-    ...(entity.argumentsHash ? { argumentsHash: entity.argumentsHash } : undefined),
+    ...(entity.correlationId
+      ? { correlationId: entity.correlationId }
+      : undefined),
+    ...(entity.argumentsHash
+      ? { argumentsHash: entity.argumentsHash }
+      : undefined),
   };
 };
 
@@ -532,8 +559,12 @@ const testToEntity = (entity: Test): TestEntity => {
       ? { finishedTimestamp: entity.finishedTimestamp }
       : undefined),
     ...(entity.statusId ? { statusId: entity.statusId } : undefined),
-    ...(entity.correlationId ? { correlationId: entity.correlationId } : undefined),
-    ...(entity.argumentsHash ? { argumentsHash: entity.argumentsHash } : undefined),
+    ...(entity.correlationId
+      ? { correlationId: entity.correlationId }
+      : undefined),
+    ...(entity.argumentsHash
+      ? { argumentsHash: entity.argumentsHash }
+      : undefined),
   };
 };
 
@@ -543,7 +574,7 @@ const afterTestToEntity = (entity: AfterTest): TestEntity => {
     ...(entity.testContextId
       ? { parentContextId: entity.testContextId }
       : undefined),
-    entityType: "after test",
+    entityType: "afterTest",
     id: entity.id,
     title: entity.title,
     createdTimestamp: entity.createdTimestamp,
@@ -554,8 +585,12 @@ const afterTestToEntity = (entity: AfterTest): TestEntity => {
       ? { finishedTimestamp: entity.finishedTimestamp }
       : undefined),
     ...(entity.statusId ? { statusId: entity.statusId } : undefined),
-    ...(entity.correlationId ? { correlationId: entity.correlationId } : undefined),
-    ...(entity.argumentsHash ? { argumentsHash: entity.argumentsHash } : undefined),
+    ...(entity.correlationId
+      ? { correlationId: entity.correlationId }
+      : undefined),
+    ...(entity.argumentsHash
+      ? { argumentsHash: entity.argumentsHash }
+      : undefined),
   };
 };
 
