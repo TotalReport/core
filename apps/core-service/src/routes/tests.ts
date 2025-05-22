@@ -8,7 +8,7 @@ export const createTestRoute: CreateTestRoute = async ({ body }) => {
   const request = {
     ...body,
     createdTimestamp: body.createdTimestamp ?? new Date(),
-    correlationId: body.correlationId ?? MD5(body.correlationId ?? null),
+    correlationId: body.correlationId ?? MD5(body.title),
     argumentsHash: body.argumentsHash ?? MD5(body.arguments ?? null),
   };
 

@@ -4,6 +4,7 @@ import { expect } from "earl";
 import { describe, test } from "mocha";
 import { client } from "../../tools/client.js";
 import "../../tools/earl-extensions.js";
+import { expect_toBe } from "../../tools/utils.js";
 
 const generator = new CoreEntititesGenerator(client);
 
@@ -23,7 +24,7 @@ describe("create test", () => {
         createdTimestamp: expect.isCloseToNow(3000),
         launchId: launch.id,
         argumentsHash: "bbb93ef2-6e3c-101f-f11c-dd21cab08a94",
-        correlationId: "bbb93ef2-6e3c-101f-f11c-dd21cab08a94",
+        correlationId: "a82e0cae-7b09-c036-14ef-82daed8fa042",
       },
     });
   });
@@ -89,6 +90,34 @@ describe("create test", () => {
     });
   });
 
+  test("correlationId is different for different names if not provided", async () => {
+    const launch = await generator.launches.create();
+    
+    const test1 = await client.createTest(
+      {
+        body: {
+          title: "Test1",
+          launchId: launch.id,
+        }
+      }
+    );
+
+    expect_toBe(test1.status, 201);
+    
+    const test2 = await client.createTest(
+      {
+        body: {
+          title: "Test2",
+          launchId: launch.id,
+        }
+      }
+    );
+
+    expect_toBe(test2.status, 201);
+
+    expect(test1.body.correlationId).not.toEqual(test2.body.correlationId);
+  });
+
   test("with arguments, but without argumentsHash", async () => {
     const launch = await generator.launches.create();
     const request = {
@@ -135,7 +164,7 @@ describe("create test", () => {
           },
         ],
         argumentsHash: "d5a4cc62-597d-4a85-6860-b5cbea7b529e",
-        correlationId: "bbb93ef2-6e3c-101f-f11c-dd21cab08a94",
+        correlationId: "a82e0cae-7b09-c036-14ef-82daed8fa042",
       },
     });
   });

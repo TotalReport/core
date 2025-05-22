@@ -3,6 +3,7 @@ import { DEFAULT_TEST_STATUSES } from "@total-report/core-schema/constants";
 import { expect } from "earl";
 import { describe, test } from "mocha";
 import { client } from "../../tools/client.js";
+import { expect_toBe } from "../../tools/utils.js";
 
 const generator = new CoreEntititesGenerator(client);
 
@@ -51,7 +52,7 @@ describe("create after test", () => {
             value: "value2",
           },
         ],
-        correlationId: "bbb93ef2-6e3c-101f-f11c-dd21cab08a94",
+        correlationId: "a17344f5-c71c-6cd7-4268-98071ec3d57a",
       },
     });
   });
@@ -115,6 +116,34 @@ describe("create after test", () => {
         correlationId: request.correlationId,
       },
     });
+  });
+
+  test("correlationId is different for different names if not provided", async () => {
+    const launch = await generator.launches.create();
+    
+    const afterTest1 = await client.createAfterTest(
+      {
+        body: {
+          title: "Test1",
+          launchId: launch.id,
+        }
+      }
+    );
+
+    expect_toBe(afterTest1.status, 201);
+    
+    const afterTest2 = await client.createAfterTest(
+      {
+        body: {
+          title: "Test2",
+          launchId: launch.id,
+        }
+      }
+    );
+
+    expect_toBe(afterTest2.status, 201);
+
+    expect(afterTest1.body.correlationId).not.toEqual(afterTest2.body.correlationId);
   });
 
   test("arguments hash is same for same arguments", async () => {

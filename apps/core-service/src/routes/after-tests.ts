@@ -11,7 +11,7 @@ export const createAfterTestRoute: CreateAfterTestRoute = async ({ body }) => {
   const request: CreateTestArguments = {
     ...body,
     createdTimestamp: body.createdTimestamp ?? new Date(),
-    correlationId: body.correlationId ?? MD5(body.correlationId ?? null),
+    correlationId: body.correlationId ?? MD5(body.title),
     argumentsHash: body.argumentsHash ?? MD5(body.arguments ?? null)
   };
 
