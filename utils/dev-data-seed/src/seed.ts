@@ -96,3 +96,9 @@ await entities.afterTests.create({
   testContextId: testContext.id,
   statusId: DEFAULT_TEST_STATUSES.PASSED.id,
 });
+
+
+await entities.tests.create({
+  launchId: launch.id,
+  testContextId: testContext.id,
+});
