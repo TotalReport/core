@@ -1,6 +1,6 @@
 import { totalPagesCount } from "@/lib/pagination-utils";
 import { tsr } from "@/lib/react-query";
-import { getUrlParamNumber } from "@/lib/url-utils";
+import { getUrlParamNumber, getUrlParamValue, updateUrlParams } from "@/lib/url-utils";
 import { useEffect, useState } from "react";
 import { RestAPIProvider } from "./RestAPIProvider";
 import { StandaloneReportDetails } from "./StandaloneReportDetails";
@@ -15,10 +15,12 @@ import {
 import { ScrollArea } from "./ui/scroll-area";
 import { Separator } from "./ui/separator";
 import { ReportsParam } from "./reports-page-params";
+import { ReportsFilter, type ReportFilters } from "./ReportsFilter";
 
 const Internal = () => {
   const [page, setPage] = useState(() => Math.max(1, getUrlParamNumber("page", 1)));
   const [pageSize, setPageSize] = useState(() => Math.max(1, getUrlParamNumber("pageSize", 10)));
+  const [titleFilter, setTitleFilter] = useState(() => getUrlParamValue("title~cnt", ""));
   
   // Track selected report ID
   const [selectedReportId, setSelectedReportId] = useState<number | null>(() => {
@@ -27,9 +29,10 @@ const Internal = () => {
   });
 
   const reportsQuery = tsr.findReports.useQuery({
-    queryKey: [`reports?page=${page}&pageSize=${pageSize}`],
+    queryKey: [`reports?page=${page}&pageSize=${pageSize}&title~cnt=${titleFilter}`],
     queryData: {
       query: {
+        "title~cnt": titleFilter || undefined,
         limit: pageSize,
         offset: (page - 1) * pageSize,
       },
@@ -53,24 +56,32 @@ const Internal = () => {
     }
     
     if (typeof window !== "undefined") {
-      const url = new URL(window.location.href);
-      url.searchParams.set("page", page.toString());
-      url.searchParams.set("pageSize", pageSize.toString());
+      const params: Record<string, string | null> = {
+        "page": page.toString(),
+        "pageSize": pageSize.toString(),
+        "title~cnt": titleFilter || null,
+      };
       
       // Update reportId parameter
       if (selectedReportId) {
-        url.searchParams.set(ReportsParam.SELECTED_REPORT_ID, selectedReportId.toString());
+        params[ReportsParam.SELECTED_REPORT_ID] = selectedReportId.toString();
       } else {
-        url.searchParams.delete(ReportsParam.SELECTED_REPORT_ID);
+        params[ReportsParam.SELECTED_REPORT_ID] = null;
       }
       
-      window.history.replaceState({}, "", url.toString());
+      updateUrlParams(params);
     }
-  }, [page, pageSize, selectedReportId, reportsQuery]);
+  }, [page, pageSize, titleFilter, selectedReportId, reportsQuery]);
 
   // Handler for when a report item is clicked
   const handleReportClick = (report: ReportEntity) => {
     setSelectedReportId(report.id);
+  };
+
+  // Handler for filter changes
+  const handleFilterChange = (filters: ReportFilters) => {
+    setTitleFilter(filters.titleFilter);
+    setPage(1); // Reset to first page when filters change
   };
 
   return (
@@ -85,8 +96,11 @@ const Internal = () => {
         minSize={25}
       >
         <div className="flex flex-col h-full">
-          <div className="flex items-center px-4 py-2">
+          <div className="flex items-center justify-between px-4 py-2">
             <h1 className="text-xl font-bold">Reports</h1>
+          </div>
+          <div className="px-4 pb-2">
+            <ReportsFilter onFilterChange={handleFilterChange} />
           </div>
           <Separator />
           <ScrollArea className="flex-1 overflow-hidden">
