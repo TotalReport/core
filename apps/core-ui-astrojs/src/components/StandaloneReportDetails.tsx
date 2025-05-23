@@ -4,6 +4,7 @@ import { useNumericUrlParam } from "@/lib/hooks/useUrlParam";
 import { Separator } from "./ui/separator";
 import { buttonVariants } from "./ui/button";
 import { ReportsParam } from "./reports-page-params";
+import { TestStatisticsList } from "./TestStatisticsList";
 
 export const StandaloneReportDetails = () => {
   // Use hook to manage the reportId URL parameter
@@ -29,6 +30,29 @@ export const StandaloneReportDetails = () => {
     enabled: reportId !== null && reportId > 0,
   });
 
+  // Fetch test status statistics for this report
+  const testEntityStatsQuery = tsr.findTestEntitiesCountsByStatuses.useQuery({
+    queryKey: [`testEntitiesCounts?reportId=${reportId}`],
+    queryData: {
+      query: {
+        reportId: reportId || 0,
+        distinct: true,
+      },
+    },
+    enabled: reportId !== null && reportId > 0,
+  });
+
+  // Fetch status groups and statuses for formatting
+  const statusesQuery = tsr.findTestStatuses.useQuery({
+    queryKey: ["testStatuses"],
+    enabled: reportId !== null && reportId > 0,
+  });
+
+  const statusGroupsQuery = tsr.findTestStatusGroups.useQuery({
+    queryKey: ["testStatusGroups"],
+    enabled: reportId !== null && reportId > 0,
+  });
+
   // Show placeholder when no report is selected
   if (!reportId) {
     return (
@@ -46,7 +70,7 @@ export const StandaloneReportDetails = () => {
   }
 
   // Show loading state
-  if (reportQuery.isPending) {
+  if (reportQuery.isPending || testEntityStatsQuery.isPending || statusesQuery.isPending || statusGroupsQuery.isPending) {
     return (
       <div className="h-full flex items-center justify-center">
         <div className="text-center">
@@ -76,6 +100,9 @@ export const StandaloneReportDetails = () => {
 
   const report = reportQuery.data.body;
   const launchesCount = launchesCountQuery.data?.body.count || 0;
+  const testEntityStats = testEntityStatsQuery.data?.body || [];
+  const statuses = statusesQuery.data?.body?.items || [];
+  const statusGroups = statusGroupsQuery.data?.body?.items || [];
 
   return (
     <div className="flex flex-col h-full p-6">
@@ -95,6 +122,16 @@ export const StandaloneReportDetails = () => {
           <h3 className="text-sm font-medium text-muted-foreground">Launches</h3>
           <p>{launchesCount}</p>
         </div>
+      </div>
+
+      {/* Test statistics section */}
+      <div className="mt-6">
+        <h3 className="text-md font-semibold mb-2">Test Statistics</h3>
+        <TestStatisticsList 
+          testEntityStats={testEntityStats}
+          statuses={statuses}
+          statusGroups={statusGroups}
+        />
       </div>
 
       <div className="mt-6">
