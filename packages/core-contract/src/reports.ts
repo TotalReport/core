@@ -43,6 +43,10 @@ export const findReports = contract.query({
   method: "GET",
   path: "/v1/reports",
   query: z.object({
+    "title~cnt": z
+      .string()
+      .optional()
+      .describe("The title of the report contains the string."),
     limit: z.coerce
       .number()
       .int()

@@ -33,7 +33,15 @@ export const readReportRoute: ReadReportRoute = async ({ params: { id } }) => {
 };
 
 export const findReportsRoute: FindReportsRoute = async ({ query }) => {
-  const reports = await new ReportsDAO().findReports(query);
+  const reports = await new ReportsDAO().findReports({
+    search: {
+      titleContains: query["title~cnt"],
+    },
+    pagination: {
+      limit: query.limit,
+      offset: query.offset,
+    },
+  });
   return {
     status: 200,
     body: {

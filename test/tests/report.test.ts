@@ -74,4 +74,44 @@ describe("reports", () => {
       headers: expect.anything(),
     });
   });
+
+  test("searches reports by title", async () => {
+    // Create reports with different titles
+    const reportsGenerator = new ReportsGenerator(client);
+    const reportWithTargetTitle1 = await reportsGenerator.create({
+      title: "Alpha Test Report Colibri2",
+    });
+    const reportWithTargetTitle2 = await reportsGenerator.create({
+      title: "Another Test Report Colibri2",
+    });
+    const reportWithoutTargetTitle = await reportsGenerator.create({
+      title: "Production Summary",
+    });
+
+    // Search for reports with "Colibri2" in the title
+    const findReportsResponse = await client.findReports({
+      query: {
+        "title~cnt": "Colibri2",
+        limit: 10,
+        offset: 0,
+      },
+    });
+
+    // Verify that only reports with "Colibri2" in the title are returned
+    expect(findReportsResponse).toEqual({
+      headers: expect.anything(),
+      status: 200,
+      body: {
+        pagination: {
+          total: 2,
+          limit: 10,
+          offset: 0,
+        },
+        items: [
+          reportWithTargetTitle1,
+          reportWithTargetTitle2,
+        ],
+      },
+    });
+  });
 });

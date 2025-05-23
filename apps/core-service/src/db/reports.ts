@@ -1,9 +1,10 @@
 import { launches, reports } from "@total-report/core-schema/schema";
-import { count, eq } from "drizzle-orm";
-import { Paginated, PaginationParams } from "../db-common/types.js";
-import { PgDatabase } from "drizzle-orm/pg-core/db";
+import { and, count, eq, ilike, SQLWrapper } from "drizzle-orm";
 import { NodePgQueryResultHKT } from "drizzle-orm/node-postgres/session";
+import { PgDatabase } from "drizzle-orm/pg-core/db";
+import { Paginated, PaginationParams } from "../db-common/types.js";
 import { db as defaultDB } from "../db/setup.js";
+import { escapeSqlLikeSpecialChars } from "../utils/sql-utils.js";
 
 export class ReportsDAO {
   db: PgDatabase<NodePgQueryResultHKT, Record<string, unknown>>;
@@ -39,19 +40,33 @@ export class ReportsDAO {
     return found[0];
   };
 
-  findReports = async (
-    pagination: PaginationParams
-  ): Promise<Paginated<ReportBaseInfo>> => {
+  findReports = async ({
+    search,
+    pagination,
+  }: FindReportsParams): Promise<Paginated<ReportBaseInfo>> => {
+    const filters: SQLWrapper[] = [];
+
+    if (search.titleContains !== undefined) {
+      const escapedTitle = escapeSqlLikeSpecialChars(search.titleContains);
+      filters.push(ilike(reports.title, `%${escapedTitle}%`));
+    }
+
     const data = await this.db.transaction(async (tx) => {
       const items = await tx
         .select()
         .from(reports)
+        .where(and(...filters))
         .limit(pagination.limit)
         .offset(pagination.offset)
         .orderBy(reports.createdTimestamp);
 
       const total =
-        (await tx.select({ value: count() }).from(reports)).at(0)?.value ?? 0;
+        (
+          await tx
+            .select({ value: count() })
+            .from(reports)
+            .where(and(...filters))
+        ).at(0)?.value ?? 0;
 
       return {
         items,
@@ -86,4 +101,16 @@ type ReportBaseInfo = {
   id: number;
   title: string;
   createdTimestamp: Date;
+};
+
+export type FindReportsParams = {
+  search: ReportsSearch;
+  pagination: PaginationParams;
+};
+
+/**
+ * Search parameters for finding reports.
+ */
+export type ReportsSearch = {
+  titleContains?: string;
 };
