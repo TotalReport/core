@@ -13,6 +13,7 @@ import {
 import { ScrollArea } from "./ui/scroll-area";
 import { Separator } from "./ui/separator";
 import { StandaloneLaunchDetails } from "./StandaloneLaunchDetails";
+import { ReportFilter } from "./ReportFilter";
 
 const Internal = () => {
   const [page, setPage] = useState(() => Math.max(1, getUrlParamNumber("page", 1)));
@@ -24,12 +25,21 @@ const Internal = () => {
     return launchId > 0 ? launchId : null;
   });
 
+  // Report filter state
+  const [selectedReportId, setSelectedReportId] = useState<number | null>(() => {
+    const reportId = getUrlParamNumber("reportId", -1);
+    return reportId > 0 ? reportId : null;
+  });
+  const [selectedReportTitle, setSelectedReportTitle] = useState<string>("");
+
+  // Launches query with report filter
   const launchesQuery = tsr.findLaunches.useQuery({
-    queryKey: [`launches?page=${page}&pageSize=${pageSize}`],
+    queryKey: [`launches?page=${page}&pageSize=${pageSize}&reportId=${selectedReportId}`],
     queryData: {
       query: {
         limit: pageSize,
         offset: (page - 1) * pageSize,
+        reportId: selectedReportId || undefined,
       },
     },
   });
@@ -62,9 +72,16 @@ const Internal = () => {
         url.searchParams.delete("launchId");
       }
       
+      // Update reportId parameter
+      if (selectedReportId) {
+        url.searchParams.set("reportId", selectedReportId.toString());
+      } else {
+        url.searchParams.delete("reportId");
+      }
+      
       window.history.replaceState({}, "", url.toString());
     }
-  }, [page, pageSize, selectedLaunchId, launchesQuery]);
+  }, [page, pageSize, selectedLaunchId, selectedReportId, launchesQuery]);
 
   // Handler for when a launch item is clicked
   const handleLaunchClick = (launch: LaunchEntity) => {
@@ -83,10 +100,21 @@ const Internal = () => {
         minSize={25}
       >
         <div className="flex flex-col h-full">
-          <div className="flex items-center px-4 py-2">
+          <div className="flex items-center justify-between px-4 py-2">
             <h1 className="text-xl font-bold">Launches</h1>
           </div>
           <Separator />
+          <div className="px-4 py-2">
+            <ReportFilter 
+              selectedReportId={selectedReportId}
+              selectedReportTitle={selectedReportTitle}
+              onReportSelect={(reportId, reportTitle) => {
+                setSelectedReportId(reportId);
+                setSelectedReportTitle(reportTitle);
+                setPage(1); // Reset to first page when filter changes
+              }}
+            />
+          </div>
           <ScrollArea className="flex-1 overflow-hidden">
             {launchesQuery.isPending && <p className="p-4">Loading...</p>}
             {!launchesQuery.isPending &&
