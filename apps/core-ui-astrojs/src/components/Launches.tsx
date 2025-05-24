@@ -1,10 +1,16 @@
-import { tsr } from "@/lib/react-query";
+import { useFindReport } from "@/lib/hooks/useFindReport";
 import { totalPagesCount } from "@/lib/pagination-utils";
+import { tsr } from "@/lib/react-query";
 import { getUrlParamNumber } from "@/lib/url-utils";
+import { Filter } from "lucide-react";
 import { useEffect, useState } from "react";
+import { LaunchListItem, type LaunchEntity } from "./launches-list-item";
+import { LaunchFilters, type FiltersData } from "./LaunchFilters";
 import { PaginationBlock } from "./pagination-block";
 import { RestAPIProvider } from "./RestAPIProvider";
-import { LaunchListItem, type LaunchEntity } from "./launches-list-item";
+import { StandaloneLaunchDetails } from "./StandaloneLaunchDetails";
+import { Badge } from "./ui/badge";
+import { Button } from "./ui/button";
 import {
   ResizableHandle,
   ResizablePanel,
@@ -12,125 +18,12 @@ import {
 } from "./ui/resizable";
 import { ScrollArea } from "./ui/scroll-area";
 import { Separator } from "./ui/separator";
-import { StandaloneLaunchDetails } from "./StandaloneLaunchDetails";
-import { ReportFilter, type Report } from "./ReportFilter";
-import { useFindReport } from "@/lib/hooks/useFindReport";
-import { useFindReports } from "@/lib/hooks/useFindReports";
-import { Filter } from "lucide-react";
-import { Button } from "./ui/button";
-
-// Enum for available filter types
-enum FilterType {
-  NONE = "none",
-  REPORT = "report"
-}
 
 // Type for possible view states in the left panel
 enum PanelView {
   LAUNCHES_LIST,
-  FILTERS_LIST,
-  FILTER_FORM
+  FILTERS_VIEW
 }
-
-// Available filter option component
-interface FilterOptionProps {
-  title: string;
-  description: string;
-  onClick: () => void;
-}
-
-const FilterOption = ({ title, description, onClick }: FilterOptionProps) => {
-  return (
-    <div 
-      className="border rounded-md p-4 cursor-pointer hover:bg-accent transition-colors"
-      onClick={onClick}
-    >
-      <h3 className="text-sm font-medium">{title}</h3>
-      <p className="text-xs text-muted-foreground mt-1">{description}</p>
-    </div>
-  );
-};
-
-// Filters list component
-interface FiltersListProps {
-  onSelectFilter: (filterType: FilterType) => void;
-}
-
-const FiltersList = ({ onSelectFilter }: FiltersListProps) => {
-  return (
-    <div className="p-4 space-y-4">
-      <h2 className="text-lg font-semibold">Available Filters</h2>
-      <div className="space-y-3">
-        <FilterOption
-          title="Report Filter"
-          description="Filter launches by report"
-          onClick={() => onSelectFilter(FilterType.REPORT)}
-        />
-      </div>
-    </div>
-  );
-};
-
-// Report filter form component
-interface ReportFilterFormProps {
-  onCancel: () => void;
-  onApply: (reportId: number | null, reportTitle: string) => void;
-  initialReportId: number | null;
-  initialReportTitle: string;
-}
-
-const ReportFilterForm = ({ 
-  onCancel, 
-  onApply,
-  initialReportId,
-  initialReportTitle
-}: ReportFilterFormProps) => {
-  const [selectedReportId, setSelectedReportId] = useState<number | null>(initialReportId);
-  const [selectedReportTitle, setSelectedReportTitle] = useState<string>(initialReportTitle);
-  const [reportSearchQuery, setReportSearchQuery] = useState<string|undefined>(undefined);
-
-  // Reports query for filter
-  const reportsQuery = useFindReports({
-    offset: 0,
-    limit: 10,
-    titleContains: reportSearchQuery
-  });
-
-  const handleReportSelect = (reportId: number | null, reportTitle: string) => {
-    setSelectedReportId(reportId);
-    setSelectedReportTitle(reportTitle);
-  };
-
-  // Create selected report object for ReportFilter
-  const selectedReport: Report | null = selectedReportId 
-    ? { id: selectedReportId, title: selectedReportTitle }
-    : null;
-
-  const handleApply = () => {
-    onApply(selectedReportId, selectedReportTitle);
-  };
-
-  return (
-    <div className="flex flex-col h-full">
-      <div className="p-4">
-        <h2 className="text-lg font-semibold mb-4">Filter by Report</h2>
-        
-        <ReportFilter 
-          selected={selectedReport}
-          reports={reportsQuery.data?.body?.items || []}
-          isLoading={reportsQuery.isPending}
-          onReportSelect={handleReportSelect}
-          onSearch={setReportSearchQuery}
-        />
-      </div>
-      
-      <div className="mt-auto p-4 border-t flex justify-end gap-2">
-        <Button variant="outline" onClick={onCancel}>Cancel</Button>
-        <Button onClick={handleApply}>Apply Filter</Button>
-      </div>
-    </div>
-  );
-};
 
 const Internal = () => {
   const [page, setPage] = useState(() => Math.max(1, getUrlParamNumber("page", 1)));
@@ -149,11 +42,8 @@ const Internal = () => {
   });
   const [selectedReportTitle, setSelectedReportTitle] = useState<string>("");
   
-  // Left panel view state (launches list, filters list, or filter form)
+  // Left panel view state (launches list or filters view)
   const [panelView, setPanelView] = useState<PanelView>(PanelView.LAUNCHES_LIST);
-  
-  // Active filter type when in filter form view
-  const [activeFilterType, setActiveFilterType] = useState<FilterType>(FilterType.NONE);
 
   // Fetch selected report title if we have an ID but no title
   useEffect(() => {
@@ -223,66 +113,71 @@ const Internal = () => {
 
   // Handler for filter button click
   const handleFilterButtonClick = () => {
-    setPanelView(PanelView.FILTERS_LIST);
-  };
-
-  // Handler for selecting a filter type from the filters list
-  const handleSelectFilter = (filterType: FilterType) => {
-    setActiveFilterType(filterType);
-    setPanelView(PanelView.FILTER_FORM);
-  };
-
-  // Handler for canceling filter form
-  const handleCancelFilter = () => {
-    setPanelView(PanelView.LAUNCHES_LIST);
-  };
-
-  // Handler for applying report filter
-  const handleApplyReportFilter = (reportId: number | null, reportTitle: string) => {
-    setSelectedReportId(reportId);
-    setSelectedReportTitle(reportTitle);
-    setPanelView(PanelView.LAUNCHES_LIST);
-    setPage(1); // Reset to first page when filter is applied
-  };
-
-  // Helper to render active filter badges
-  const renderFilterBadges = () => {
-    if (selectedReportId) {
-      return (
-        <div className="flex gap-2 px-4 py-2">
-          <div className="bg-primary/10 text-primary rounded-full px-3 py-1 text-xs flex items-center gap-1">
-            <span>Report: {selectedReportTitle || `#${selectedReportId}`}</span>
-          </div>
-        </div>
-      );
+    // Toggle between launches list and filters view
+    if (panelView === PanelView.LAUNCHES_LIST) {
+      setPanelView(PanelView.FILTERS_VIEW);
+    } else {
+      // If already in a filter view, cancel and return to launches list
+      setPanelView(PanelView.LAUNCHES_LIST);
     }
-    return null;
+  };
+
+  // Handler for canceling all filter changes
+  const handleCancelAllFilters = () => {
+    // Discard changes and return to launches list
+    setPanelView(PanelView.LAUNCHES_LIST);
+  };
+
+  // Handler for applying all filter changes
+  const handleApplyAllFilters = (filters: FiltersData) => {
+    // Apply filter values to the actual filters
+    setSelectedReportId(filters.report?.id || null);
+    setSelectedReportTitle(filters.report?.title || "");
+    
+    // Return to launches list
+    setPanelView(PanelView.LAUNCHES_LIST);
+    setPage(1); // Reset to first page when filters are applied
+    
+    // Force refetch to apply the new filter
+    launchesQuery.refetch();
+  };
+
+  // Calculate how many filters are active
+  const getActiveFiltersCount = (): number => {
+    let count = 0;
+    if (selectedReportId) count++;
+    return count;
+  };
+
+  // Get active filters count
+  const activeFiltersCount = getActiveFiltersCount();
+
+  // Get current filters data structure
+  const getCurrentFilters = (): FiltersData => {
+    return {
+      report: selectedReportId ? { 
+        id: selectedReportId, 
+        title: selectedReportTitle 
+      } : undefined
+    };
   };
 
   // Render appropriate content for the left panel based on current view
   const renderLeftPanelContent = () => {
     switch (panelView) {
-      case PanelView.FILTERS_LIST:
-        return <FiltersList onSelectFilter={handleSelectFilter} />;
-      
-      case PanelView.FILTER_FORM:
-        if (activeFilterType === FilterType.REPORT) {
-          return (
-            <ReportFilterForm 
-              initialReportId={selectedReportId}
-              initialReportTitle={selectedReportTitle}
-              onCancel={handleCancelFilter}
-              onApply={handleApplyReportFilter}
-            />
-          );
-        }
-        return null;
+      case PanelView.FILTERS_VIEW:
+        return (
+          <LaunchFilters 
+            initialFilters={getCurrentFilters()}
+            onApply={handleApplyAllFilters}
+            onCancel={handleCancelAllFilters}
+          />
+        );
       
       case PanelView.LAUNCHES_LIST:
       default:
         return (
           <>
-            {renderFilterBadges()}
             <ScrollArea className="flex-1 overflow-hidden">
               {launchesQuery.isPending && <p className="p-4">Loading...</p>}
               {!launchesQuery.isPending &&
@@ -339,12 +234,19 @@ const Internal = () => {
         <div className="flex flex-col h-full">
           <div className="flex items-center justify-between px-4 py-2">
             <h1 className="text-xl font-bold">Launches</h1>
-            {panelView === PanelView.LAUNCHES_LIST && (
-              <Button variant="outline" size="sm" onClick={handleFilterButtonClick}>
-                <Filter className="h-4 w-4 mr-2" />
-                <span>Filter</span>
-              </Button>
-            )}
+            <Button 
+              variant={panelView !== PanelView.LAUNCHES_LIST ? "default" : "outline"} 
+              size="sm" 
+              onClick={handleFilterButtonClick}
+            >
+              <Filter className="h-4 w-4 mr-2" />
+              <span>Filter</span>
+              {activeFiltersCount > 0 && (
+                <Badge variant="secondary" className="ml-1">
+                  {activeFiltersCount}
+                </Badge>
+              )}
+            </Button>
           </div>
           <Separator />
           {renderLeftPanelContent()}
