@@ -13,7 +13,9 @@ import {
 import { ScrollArea } from "./ui/scroll-area";
 import { Separator } from "./ui/separator";
 import { StandaloneLaunchDetails } from "./StandaloneLaunchDetails";
-import { ReportFilter } from "./ReportFilter";
+import { ReportFilter, type Report } from "./ReportFilter";
+import { useFindReport } from "@/lib/hooks/useFindReport";
+import { useFindReports } from "@/lib/hooks/useFindReports";
 
 const Internal = () => {
   const [page, setPage] = useState(() => Math.max(1, getUrlParamNumber("page", 1)));
@@ -31,6 +33,24 @@ const Internal = () => {
     return reportId > 0 ? reportId : null;
   });
   const [selectedReportTitle, setSelectedReportTitle] = useState<string>("");
+  const [reportSearchQuery, setReportSearchQuery] = useState<string|undefined>(undefined);
+
+  // Reports query
+  const reportsQuery = useFindReports({
+    offset: 0,
+    limit: 10,
+    titleContains: reportSearchQuery
+  });
+
+  // Fetch selected report title if we have an ID but no title
+  useEffect(() => {
+    if (selectedReportId && !selectedReportTitle) {
+      const result = useFindReport({id:selectedReportId});
+        if (result.data && result.data.status === 201) {
+          setSelectedReportTitle(result.data.body.title || `#${selectedReportId}`);
+        }
+    }
+  }, [selectedReportId, selectedReportTitle]);
 
   // Launches query with report filter
   const launchesQuery = tsr.findLaunches.useQuery({
@@ -88,6 +108,11 @@ const Internal = () => {
     setSelectedLaunchId(launch.id);
   };
 
+  // Create selected report object for ReportFilter
+  const selectedReport: Report | null = selectedReportId 
+    ? { id: selectedReportId, title: selectedReportTitle }
+    : null;
+
   return (
     <ResizablePanelGroup
       direction="horizontal"
@@ -106,13 +131,15 @@ const Internal = () => {
           <Separator />
           <div className="px-4 py-2">
             <ReportFilter 
-              selectedReportId={selectedReportId}
-              selectedReportTitle={selectedReportTitle}
+              selected={selectedReport}
+              reports={reportsQuery.data?.body?.items || []}
+              isLoading={reportsQuery.isPending}
               onReportSelect={(reportId, reportTitle) => {
                 setSelectedReportId(reportId);
                 setSelectedReportTitle(reportTitle);
                 setPage(1); // Reset to first page when filter changes
               }}
+              onSearch={setReportSearchQuery}
             />
           </div>
           <ScrollArea className="flex-1 overflow-hidden">
