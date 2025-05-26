@@ -84,10 +84,10 @@ export function CollapsibleButton({
           )}
         >
           {isCollapsed ? (
-            <Icon className="h-3.5 w-3.5" />
+            <Icon className="h-3.5 w-3.5" aria-hidden="false" />
           ) : (
             <>
-              <Icon className="mr-2 h-4 w-4" />
+              <Icon className="mr-2 h-4 w-4" aria-hidden="true" />
               {contentDisplay}
             </>
           )}

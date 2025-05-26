@@ -42,8 +42,8 @@ export function ModeToggle({ isCollapsed }: ModeToggleProps = {}) {
           {isCollapsed ? (
             <Button variant="ghost" size="icon" className="h-8 w-8">
               <div className="relative h-4 w-4">
-                <Sun className="h-4 w-4 rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
-                <Moon className="absolute top-0 left-0 h-4 w-4 rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
+                <Sun className="h-4 w-4 rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" aria-hidden="false" />
+                <Moon className="absolute top-0 left-0 h-4 w-4 rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" aria-hidden="false" />
               </div>
               <span className="sr-only">Toggle theme</span>
             </Button>
@@ -55,8 +55,8 @@ export function ModeToggle({ isCollapsed }: ModeToggleProps = {}) {
             >
               <div className="flex items-center w-full">
                 <div className="relative h-4 w-4">
-                  <Sun className="h-4 w-4 rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
-                  <Moon className="absolute top-0 left-0 h-4 w-4 rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
+                  <Sun className="h-4 w-4 rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" aria-hidden="true" />
+                  <Moon className="absolute top-0 left-0 h-4 w-4 rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" aria-hidden="true" />
                 </div>
                 <span className={cn("ml-4")}>Theme</span>
               </div>

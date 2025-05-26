@@ -1,4 +1,4 @@
-import { Layout } from "@/containers/Layout";
+import { Layout } from "@/containers/layout";
 import { ThemeProvider } from "@/components/theme/theme-provider";
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
@@ -37,7 +37,7 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           <Layout>
-            <main className="flex-1 overflow-auto p-4">{children}</main>
+            <main className="flex-1 overflow-auto">{children}</main>
           </Layout>
         </ThemeProvider>
       </body>
