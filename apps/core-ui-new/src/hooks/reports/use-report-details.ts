@@ -2,6 +2,7 @@
 
 import { tsr } from "@/lib/react-query";
 import { useFindReport } from "./use-find-report";
+import { useFindTestEntitiesStatusesCounts } from "../test-statistics/use-find-test-entities-statuses-counts";
 
 export const useReportDetails = (reportId: number | null) => {
   // Fetch report details
@@ -19,18 +20,12 @@ export const useReportDetails = (reportId: number | null) => {
         reportId: reportId || 0,
       },
     },
-    enabled: reportId !== null && reportId > 0,
-  });
-
-  //TODO move to separate hook
-  // Fetch test status statistics for this report
-  const testEntityStatsQuery = tsr.findTestEntitiesCountsByStatuses.useQuery({
-    queryKey: [`testEntitiesCounts?reportId=${reportId}`],
-    queryData: {
-      query: {
-        reportId: reportId || 0,
-        distinct: true,
-      },
+    enabled: reportId !== null && reportId > 0,  });
+    // Fetch test status statistics for this report
+  const testEntityStatsQuery = useFindTestEntitiesStatusesCounts({
+    filters: {
+      reportId,
+      distinct: true,
     },
     enabled: reportId !== null && reportId > 0,
   });
