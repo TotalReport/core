@@ -9,8 +9,7 @@ interface LaunchDetailsProps {
   launchId: number | null;
 }
 
-export default function LaunchDetails({ launchId }: LaunchDetailsProps) {
-  // Fetch launch details using the new hook
+export default function LaunchDetails({ launchId }: LaunchDetailsProps) {  // Fetch launch details using the new hook
   const launchQuery = useFindLaunch({
     filter: { id: launchId }
   });
@@ -21,9 +20,9 @@ export default function LaunchDetails({ launchId }: LaunchDetailsProps) {
   });
 
   // Derived states for easier use in the component
-  const launch = launchQuery.data?.body;
-  const launchLoading = launchQuery.isPending;
-  const launchError = launchQuery.error;
+  const launch = launchQuery.data;
+  const launchLoading = launchQuery.isLoading;
+  const launchError = launchQuery.isError;
   const statistics = statisticsQuery.data?.body;
 
   if (!launchId) {
@@ -52,7 +51,6 @@ export default function LaunchDetails({ launchId }: LaunchDetailsProps) {
       </div>
     );
   }
-
   if (launchError || !launch) {
     return (
       <div className="h-full flex items-center justify-center">
@@ -61,7 +59,7 @@ export default function LaunchDetails({ launchId }: LaunchDetailsProps) {
             Error loading launch details
           </p>
           <p className="text-sm text-muted-foreground mt-1">
-            {(launchError as Error)?.message || "Unable to fetch launch data"}
+            Unable to fetch launch data
           </p>
         </div>
       </div>
