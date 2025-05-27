@@ -71,7 +71,7 @@ export const readLaunch = contract.query({
     id: z.coerce.number().int(),
   }),
   responses: {
-    201: LaunchSchema,
+    200: LaunchSchema,
     404: z.object({}),
   },
 });

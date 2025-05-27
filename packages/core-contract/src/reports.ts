@@ -32,7 +32,7 @@ export const readReport = contract.query({
     id: z.coerce.number().int(),
   }),
   responses: {
-    201: ReportSchema,
+    200: ReportSchema,
     404: z.object({}),
   },
   summary: "Read the report by ID.",

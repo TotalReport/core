@@ -39,7 +39,12 @@ export const readLaunchRoute: ReadLaunchRoute = async ({ params }) => {
   }
   return {
     status: 200,
-    body: launch,
+    body: {
+      ...launch,
+      createdTimestamp: launch.createdTimestamp.toISOString(),
+      startedTimestamp: launch.startedTimestamp?.toISOString(),
+      finishedTimestamp: launch.finishedTimestamp?.toISOString(),
+    },
   };
 };
 
