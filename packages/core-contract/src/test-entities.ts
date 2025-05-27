@@ -79,6 +79,7 @@ export const findTestEntitiesCountsByStatuses = contract.query({
   path: "/v1/test-entities/counts/statuses",
   query: z.object({
     reportId: z.coerce.number().int().optional(),
+    launchId: z.coerce.number().int().optional(),
     distinct: zBoolean(z),
   }),
   responses: {

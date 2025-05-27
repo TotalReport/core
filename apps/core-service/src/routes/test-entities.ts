@@ -52,6 +52,7 @@ export const findTestEntitiesCountsByStatusesRoute: FindTestEntitiesStatusesCoun
 }) => {
   const search = {
     reportId: query.reportId,
+    launchId: query.launchId,
     distinct: query.distinct,
   };
 

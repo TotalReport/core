@@ -251,10 +251,10 @@ export class TestEntitiesDAO {
       params.distinct === true
         ? this.db
             .$with("test_entities_filtered")
-            .as(distinctFilterTestEntities(this.db, params.reportId))
+            .as(distinctFilterTestEntities(this.db, params.reportId, params.launchId))
         : this.db
             .$with("test_entities_filtered")
-            .as(filterTestEntities(this.db, params.reportId));
+            .as(filterTestEntities(this.db, params.reportId, params.launchId));
 
     const result = await this.db
       .with(testEntitiesFiltered)
@@ -273,7 +273,8 @@ export class TestEntitiesDAO {
 
 const distinctFilterTestEntities = (
   db: PgDatabase<NodePgQueryResultHKT, Record<string, unknown>>,
-  reportId: number | undefined
+  reportId: number | undefined,
+  launchId: number | undefined
 ) => {
   const testEntitiesWithDuplicationCounter = db
     .$with("test_entities_with_duplication_counter")
@@ -312,6 +313,11 @@ const distinctFilterTestEntities = (
             reportId != undefined ? eq(launches.reportId, reportId) : undefined
           )
         )
+        .where(
+          launchId == undefined
+            ? undefined
+            : eq(testEntities.launchId, launchId)
+        )
     );
 
   return db
@@ -323,7 +329,8 @@ const distinctFilterTestEntities = (
 
 const filterTestEntities = (
   db: PgDatabase<NodePgQueryResultHKT, Record<string, unknown>>,
-  reportId: number | undefined
+  reportId: number | undefined,
+  launchId: number | undefined
 ) => {
   return (
     db
@@ -356,6 +363,9 @@ const filterTestEntities = (
           eq(testEntities.launchId, launches.id),
           reportId != undefined ? eq(launches.reportId, reportId) : undefined
         )
+      )
+      .where(
+        launchId == undefined ? undefined : eq(testEntities.launchId, launchId)
       )
   );
 };
@@ -411,6 +421,7 @@ type StatisticsFilter = {
 
 type CountsByStatusesFilter = {
   reportId?: number;
+  launchId?: number;
   distinct: boolean;
 };
 

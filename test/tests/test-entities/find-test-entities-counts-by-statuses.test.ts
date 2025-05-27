@@ -500,18 +500,85 @@ describe("find test entities counts by statuses", () => {
       correlationId: testCorrelationId,
       argumentsHash: testArgumentsHash,
     });
+  });
 
-    const responseWithDistinct = await client.findTestEntitiesCountsByStatuses({
-      query: { distinct: true },
+  test("filters by launchId", async () => {
+    // Create a report with multiple launches
+    const report = await generator.reports.create();
+    
+    // Create two launches in the same report
+    const launch1 = await generator.launches.create({
+      reportId: report.id,
+      correlationId: "b0a1423d-7aba-4e8c-b6ad-f0c6a8e5b2d9",
+      argumentsHash: "6734e8a7-7c24-4b83-8c96-3b3a2a1fd5ab",
     });
-
-    expect_toBe(responseWithDistinct.status, 200);
-
-    const responseWithoutDistinct = await client.findTestEntitiesCountsByStatuses({
-      query: { distinct: true },
+    
+    const launch2 = await generator.launches.create({
+      reportId: report.id,
+      correlationId: "c2a90ec4-93f5-42e4-9d8b-f7ebd417c6f2", 
+      argumentsHash: "5b2e1f8d-c48a-4e67-98a3-76d4c9f01ef3",
     });
-
-    expect_toBe(responseWithoutDistinct.status, 200);
+    
+    // Create tests with same status across launches
+    const passedStatusId = DEFAULT_TEST_STATUSES.PASSED.id;
+    
+    // Two tests for launch1
+    await generator.tests.createMultiple(2, () => {
+      return {
+        launchId: launch1.id,
+        statusId: passedStatusId,
+        correlationId: "d7fe4a92-1c56-4b38-8a7e-9fd3c5e2a64b",
+        argumentsHash: "e91a38b5-4728-4f67-bcd2-3c7250d8e7f6",
+      };
+    });
+    
+    // Three tests for launch2
+    await generator.tests.createMultiple(3, () => {
+      return {
+        launchId: launch2.id,
+        statusId: passedStatusId,
+        correlationId: "84a6c95d-3e71-4b0f-9c2a-1d85fe7b3c6e",
+        argumentsHash: "2a9e31f8-7db6-4c05-b817-5e394fd87a2c",
+      };
+    });
+    
+    // Filter by launch1 ID
+    const responseLaunch1 = await client.findTestEntitiesCountsByStatuses({
+      query: { launchId: launch1.id, distinct: false },
+    });
+    
+    expect_toBe(responseLaunch1.status, 200);
+    
+    expect(responseLaunch1).toEqual({
+      headers: expect.anything(),
+      status: 200,
+      body: [
+        {
+          entityType: "test",
+          statusId: passedStatusId,
+          count: 2,
+        },
+      ],
+    });
+    
+    // Without filter - should return all 5 tests
+    const responseAll = await client.findTestEntitiesCountsByStatuses({
+      query: { reportId: report.id, distinct: false },
+    });
+    
+    expect_toBe(responseAll.status, 200);
+    
+    expect(responseAll).toEqual({
+      headers: expect.anything(),
+      status: 200,
+      body: [
+        {
+          entityType: "test",
+          statusId: passedStatusId,
+          count: 5, // 2 + 3
+        },
+      ],
+    });
   });
 
   test("handles multiple entity types within the same launch", async () => {
