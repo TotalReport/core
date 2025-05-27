@@ -2,6 +2,7 @@
 
 import type { LucideIcon } from "lucide-react";
 import { useEffect, useState } from "react";
+import { usePathname } from "next/navigation";
 import { ModeToggle } from "./mode-toggle";
 import { CollapsibleButton } from "@/components/ui/collapsible-button";
 
@@ -26,19 +27,29 @@ interface NavProps {
 export const Nav = ({ links, bottomLinks, isCollapsed }: NavProps) => {
   const [currentLinks, setCurrentLinks] = useState(links);
   const [currentBottomLinks, setCurrentBottomLinks] = useState(bottomLinks);
+  const pathname = usePathname(); // Use Next.js pathname hook to detect route changes
 
   // Update active state based on current URL
   useEffect(() => {
-    const updateActiveLinks = () => {
-      // Get the current pathname
-      const pathname = window.location.pathname;
+    // Extract the first segment of the path (e.g., "/tests/123" -> "tests")
+    const currentSection = pathname.split("/")[1] || "";
 
-      // Extract the first segment of the path (e.g., "/tests/123" -> "tests")
-      const currentSection = pathname.split("/")[1] || "";
+    // Update links with active state based on pathname
+    const updatedLinks = links.map((link) => {
+      // Extract the first segment from href (e.g., "/reports" -> "reports")
+      const linkSection = (link.href || "").split("/")[1] || "";
 
-      // Update links with active state based on pathname
-      const updatedLinks = links.map((link) => {
-        // Extract the first segment from href (e.g., "/reports" -> "reports")
+      return {
+        ...link,
+        active: linkSection === currentSection,
+      };
+    });
+
+    setCurrentLinks(updatedLinks);
+
+    // Update bottom links if they exist
+    if (bottomLinks) {
+      const updatedBottomLinks = bottomLinks.map((link) => {
         const linkSection = (link.href || "").split("/")[1] || "";
 
         return {
@@ -46,35 +57,9 @@ export const Nav = ({ links, bottomLinks, isCollapsed }: NavProps) => {
           active: linkSection === currentSection,
         };
       });
-
-      setCurrentLinks(updatedLinks);
-
-      // Update bottom links if they exist
-      if (bottomLinks) {
-        const updatedBottomLinks = bottomLinks.map((link) => {
-          const linkSection = (link.href || "").split("/")[1] || "";
-
-          return {
-            ...link,
-            active: linkSection === currentSection,
-          };
-        });
-        setCurrentBottomLinks(updatedBottomLinks);
-      }
-    };
-
-    // Update active state immediately
-    updateActiveLinks();
-
-    // Listen for URL changes
-    window.addEventListener("urlchange", updateActiveLinks);
-    window.addEventListener("popstate", updateActiveLinks);
-
-    return () => {
-      window.removeEventListener("urlchange", updateActiveLinks);
-      window.removeEventListener("popstate", updateActiveLinks);
-    };
-  }, [links, bottomLinks]);
+      setCurrentBottomLinks(updatedBottomLinks);
+    }
+  }, [pathname, links, bottomLinks]); // Re-run effect when pathname changes
 
   return (
     <div
