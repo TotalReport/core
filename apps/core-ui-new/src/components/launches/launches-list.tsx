@@ -48,18 +48,22 @@ export default function LaunchesList({
   const [panelView, setPanelView] = useState<PanelView>(
     PanelView.LAUNCHES_LIST
   );
-
   // Fetch launches data using the new hook
   const launchesQuery = useFindLaunches({
-    offset: (page - 1) * pageSize,
-    limit: pageSize,
-    reportId: selectedReportId || undefined,
+    pagination: {
+      offset: (page - 1) * pageSize,
+      limit: pageSize,
+    },
+    filters: {
+      reportId: selectedReportId || undefined,
+    },
+    enabled: true,
   });
 
   // Derived states from the query
-  const launchesData = launchesQuery.data?.body;
-  const launchesLoading = launchesQuery.isPending;
-  const launchesError = launchesQuery.error;
+  const launchesData = launchesQuery.data;
+  const launchesLoading = launchesQuery.isLoading;
+  const launchesError = launchesQuery.isError;
 
   // Update URL when pagination or filters change
   useEffect(() => {
@@ -132,8 +136,7 @@ export default function LaunchesList({
         return (
           <>
             <ScrollArea className="flex-1">
-              {launchesLoading && <p className="p-4">Loading launches...</p>}
-
+              {launchesLoading && <p className="p-4">Loading launches...</p>}{" "}
               {!launchesLoading && launchesError && (
                 <div className="flex items-center justify-center h-full">
                   <div className="text-center">
@@ -141,12 +144,11 @@ export default function LaunchesList({
                       Error loading launches
                     </p>
                     <p className="text-sm text-muted-foreground mt-1">
-                      {(launchesError as Error).message}
+                      Unable to fetch launch data
                     </p>
                   </div>
                 </div>
               )}
-
               {!launchesLoading &&
                 !launchesError &&
                 launchesData?.items?.length === 0 && (
@@ -161,7 +163,6 @@ export default function LaunchesList({
                     </div>
                   </div>
                 )}
-
               {!launchesLoading &&
                 !launchesError &&
                 launchesData?.items != undefined &&
