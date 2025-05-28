@@ -1,0 +1,13 @@
+diff --git a/compiled/watchpack/index.js b/compiled/watchpack/index.js
+index d6de72a815528e10ad23d2791a95e7b4f8af4706..5f9c3821b4b73ae6af04799daab2ce7fd9c3d6a5 100644
+--- a/compiled/watchpack/index.js
++++ b/compiled/watchpack/index.js
+@@ -9,7 +9,7 @@ module.exports = function (glob, opts) {
+     throw new TypeError('Expected a string');
+   }
+ 
+-  var str = String(glob);
++  var str = String(glob).replace(/\\/g, '/');
+ 
+   // The regexp we are building, as a string.
+   var reStr = "";
