@@ -232,6 +232,9 @@ importers:
       '@total-report/core-contract':
         specifier: workspace:*
         version: link:../../packages/core-contract
+      '@ts-rest/core':
+        specifier: ^3.51.0
+        version: 3.51.0(@types/node@18.11.19)(zod@3.24.3)
       class-variance-authority:
         specifier: ^0.7.1
         version: 0.7.1
@@ -12868,6 +12871,11 @@ snapshots:
       react: 19.1.0
 
   '@trysound/sax@0.2.0': {}
+
+  '@ts-rest/core@3.51.0(@types/node@18.11.19)(zod@3.24.3)':
+    optionalDependencies:
+      '@types/node': 18.11.19
+      zod: 3.24.3
 
   '@ts-rest/core@3.51.0(@types/node@20.14.10)(zod@3.24.3)':
     optionalDependencies:
