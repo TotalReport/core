@@ -2,7 +2,7 @@
 
 import { format } from 'date-fns';
 import { useFindLaunch } from '@/hooks/launches/use-find-launch';
-import { useLaunchStatistics } from '@/hooks/launches/use-launch-statistics';
+import { useLaunchStatistics } from '../../hooks/launches/use-launch-statistics';
 import { Separator } from '@/components/ui/separator';
 
 interface LaunchDetailsProps {
@@ -137,7 +137,7 @@ export default function LaunchDetails({ launchId }: LaunchDetailsProps) {  // Fe
                 Before Tests
               </h4>
               <ul className="mt-2 space-y-1">
-                {statistics.beforeTests.map((stat, index) => (
+                {statistics.beforeTests.map((stat: { statusGroupId: string | null; count: number }, index: number) => (
                   <li key={`before-${index}-${stat.statusGroupId}`} className="text-sm">
                     {stat.statusGroupId ? stat.statusGroupId : "No Group"}:{" "}
                     {stat.count}
@@ -154,7 +154,7 @@ export default function LaunchDetails({ launchId }: LaunchDetailsProps) {  // Fe
                 Tests
               </h4>
               <ul className="mt-2 space-y-1">
-                {statistics.tests.map((stat, index) => (
+                {statistics.tests.map((stat: { statusGroupId: string | null; count: number }, index: number) => (
                   <li key={`test-${index}-${stat.statusGroupId}`} className="text-sm">
                     {stat.statusGroupId ? stat.statusGroupId : "No Group"}:{" "}
                     {stat.count}
@@ -171,7 +171,7 @@ export default function LaunchDetails({ launchId }: LaunchDetailsProps) {  // Fe
                 After Tests
               </h4>
               <ul className="mt-2 space-y-1">
-                {statistics.afterTests.map((stat, index) => (
+                {statistics.afterTests.map((stat: { statusGroupId: string | null; count: number }, index: number) => (
                   <li key={`after-${index}-${stat.statusGroupId}`} className="text-sm">
                     {stat.statusGroupId ? stat.statusGroupId : "No Group"}:{" "}
                     {stat.count}

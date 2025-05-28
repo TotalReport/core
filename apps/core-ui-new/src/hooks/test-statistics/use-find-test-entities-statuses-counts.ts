@@ -8,22 +8,22 @@ export const useFindTestEntitiesStatusesCounts = ({
   filters,
   enabled = true,
 }: FindTestEntitiesStatusesCountsParams): FindTestEntitiesStatusesCountsResponse => {
-  const { reportId, distinct } = filters;
+  const { reportId, launchId, distinct } = filters;
   const query = tsr.findTestEntitiesCountsByStatuses.useQuery({
-    queryKey: ["test-entities/counts/statuses", distinct, reportId],
+    queryKey: ["test-entities/counts/statuses", distinct, reportId, launchId],
     queryData: {
       query: {
-        reportId: reportId || 0,
+        reportId: reportId,
+        launchId: launchId,
         distinct,
       },
     },
-    enabled:
-      enabled && reportId !== undefined && reportId !== null && reportId > 0,
+    enabled: enabled !== false,
   });
 
   return {
     // Loading state - when the query is in progress
-    isLoading: query.isPending,
+    isPending: query.isPending,
 
     // Error state - when the query has failed
     isError: query.isError,
@@ -39,7 +39,8 @@ export const useFindTestEntitiesStatusesCounts = ({
  */
 export type FindTestEntitiesStatusesCountsParams = {
   filters: {
-    reportId?: number | null;
+    reportId?: number;
+    launchId?: number;
     distinct: boolean;
   };
   enabled?: boolean;
@@ -49,7 +50,7 @@ export type FindTestEntitiesStatusesCountsParams = {
  * Types for the cleaned hook response
  */
 export type FindTestEntitiesStatusesCountsResponse = {
-  isLoading: boolean;
+  isPending: boolean;
   isError: boolean;
   data: FindTestEntitiesStatusesCountsResponseData | null;
 };

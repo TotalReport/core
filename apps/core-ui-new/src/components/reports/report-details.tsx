@@ -8,7 +8,7 @@ import Link from "next/link";
 import { TestStatisticsList } from "@/components/test-statistics/test-statistics-list";
 
 interface ReportDetailsProps {
-  reportId: number | null;
+  reportId?: number;
 }
 
 export const ReportDetails = ({ reportId }: ReportDetailsProps) => {
@@ -69,7 +69,7 @@ export const ReportDetails = ({ reportId }: ReportDetailsProps) => {
 
   const report = reportQuery.data.body;
   const launchesCount = launchesCountQuery.data?.body.count || 0;
-  const testEntityStats = testEntityStatsQuery.data?.body || [];
+  const testEntityStats = testEntityStatsQuery.data || [];
   const statuses = statusesQuery.data?.body?.items || [];
   const statusGroups = statusGroupsQuery.data?.body?.items || [];
 
