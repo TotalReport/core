@@ -2,8 +2,10 @@
 
 import { format } from 'date-fns';
 import { useFindLaunch } from '@/hooks/launches/use-find-launch';
-import { useLaunchStatistics } from '../../hooks/launches/use-launch-statistics';
+import { useFindTestEntitiesStatusesCounts } from '@/hooks/test-statistics/use-find-test-entities-statuses-counts';
 import { Separator } from '@/components/ui/separator';
+import { TestStatisticsList } from '@/components/test-statistics/test-statistics-list';
+import { tsr } from "@/lib/react-query";
 
 interface LaunchDetailsProps {
   launchId: number | null;
@@ -14,16 +16,33 @@ export default function LaunchDetails({ launchId }: LaunchDetailsProps) {  // Fe
     filter: { id: launchId }
   });
   
-  // Fetch launch statistics using the new hook
-  const statisticsQuery = useLaunchStatistics({
-    filter: { id: launchId }
+  // We need to fetch the data for the TestStatisticsList component
+  const testEntitiesStatsQuery = useFindTestEntitiesStatusesCounts({
+    filters: {
+      launchId: launchId || undefined,
+      distinct: false,
+    },
+    enabled: launchId !== null && launchId > 0,
+  });
+  
+  const statusesQuery = tsr.findTestStatuses.useQuery({
+    queryKey: ["testStatuses"],
+    enabled: launchId !== null && launchId > 0,
+  });
+  
+  const statusGroupsQuery = tsr.findTestStatusGroups.useQuery({
+    queryKey: ["testStatusGroups"],
+    enabled: launchId !== null && launchId > 0,
   });
 
   // Derived states for easier use in the component
   const launch = launchQuery.data;
   const launchLoading = launchQuery.isLoading;
   const launchError = launchQuery.isError;
-  const statistics = statisticsQuery.data?.body;
+  
+  const testEntityStats = testEntitiesStatsQuery.data || [];
+  const statuses = statusesQuery.data?.body?.items || [];
+  const statusGroups = statusGroupsQuery.data?.body?.items || [];
 
   if (!launchId) {
     return (
@@ -126,65 +145,20 @@ export default function LaunchDetails({ launchId }: LaunchDetailsProps) {  // Fe
         </div>
       </div>
 
-      {statistics && (
-        <>
-          <Separator className="my-4" />
-          <h3 className="text-lg font-semibold mb-2">Test Statistics</h3>
-
-          <div className="grid grid-cols-3 gap-4">
-            <div>
-              <h4 className="text-sm font-medium text-muted-foreground">
-                Before Tests
-              </h4>
-              <ul className="mt-2 space-y-1">
-                {statistics.beforeTests.map((stat: { statusGroupId: string | null; count: number }, index: number) => (
-                  <li key={`before-${index}-${stat.statusGroupId}`} className="text-sm">
-                    {stat.statusGroupId ? stat.statusGroupId : "No Group"}:{" "}
-                    {stat.count}
-                  </li>
-                ))}
-                {statistics.beforeTests.length === 0 && (
-                  <li className="text-sm text-muted-foreground">No data</li>
-                )}
-              </ul>
-            </div>
-
-            <div>
-              <h4 className="text-sm font-medium text-muted-foreground">
-                Tests
-              </h4>
-              <ul className="mt-2 space-y-1">
-                {statistics.tests.map((stat: { statusGroupId: string | null; count: number }, index: number) => (
-                  <li key={`test-${index}-${stat.statusGroupId}`} className="text-sm">
-                    {stat.statusGroupId ? stat.statusGroupId : "No Group"}:{" "}
-                    {stat.count}
-                  </li>
-                ))}
-                {statistics.tests.length === 0 && (
-                  <li className="text-sm text-muted-foreground">No data</li>
-                )}
-              </ul>
-            </div>
-
-            <div>
-              <h4 className="text-sm font-medium text-muted-foreground">
-                After Tests
-              </h4>
-              <ul className="mt-2 space-y-1">
-                {statistics.afterTests.map((stat: { statusGroupId: string | null; count: number }, index: number) => (
-                  <li key={`after-${index}-${stat.statusGroupId}`} className="text-sm">
-                    {stat.statusGroupId ? stat.statusGroupId : "No Group"}:{" "}
-                    {stat.count}
-                  </li>
-                ))}
-                {statistics.afterTests.length === 0 && (
-                  <li className="text-sm text-muted-foreground">No data</li>
-                )}
-              </ul>
-            </div>
-          </div>
-        </>
-      )}
+      <div className="mt-6">
+        <h3 className="text-md font-semibold mb-2">Test Statistics</h3>
+        {testEntityStats.length > 0 && !testEntitiesStatsQuery.isPending && !statusesQuery.isPending && !statusGroupsQuery.isPending ? (
+          <TestStatisticsList 
+            testEntityStats={testEntityStats}
+            statuses={statuses}
+            statusGroups={statusGroups}
+          />
+        ) : testEntitiesStatsQuery.isPending || statusesQuery.isPending || statusGroupsQuery.isPending ? (
+          <p className="text-muted-foreground">Loading test statistics...</p>
+        ) : (
+          <p className="text-muted-foreground">No test data available</p>
+        )}
+      </div>
     </div>
   );
 }
