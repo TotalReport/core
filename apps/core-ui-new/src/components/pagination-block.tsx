@@ -51,7 +51,7 @@ export function PaginationBlock({
                     "pointer-events-none text-muted-foreground": page <= 1,
                   })}
                 >
-                  <ChevronLeft className="h-4 w-4" />
+                  <ChevronLeft className="h-4 w-4" aria-hidden="false" aria-description="Previous page"/>
                 </PaginationLink>
               ) : (
                 <PaginationLink
@@ -60,7 +60,7 @@ export function PaginationBlock({
                     "pointer-events-none text-muted-foreground": page <= 1,
                   })}
                 >
-                  <ChevronLeft className="h-4 w-4" />
+                  <ChevronLeft className="h-4 w-4" aria-hidden="false" aria-description="Previous page"/>
                 </PaginationLink>
               )}
             </PaginationItem>
@@ -82,7 +82,7 @@ export function PaginationBlock({
                       page >= totalPages,
                   })}
                 >
-                  <ChevronRight className="h-4 w-4" />
+                  <ChevronRight className="h-4 w-4" aria-hidden="false" aria-description="Next page"/>
                 </PaginationLink>
               ) : (
                 <PaginationLink
@@ -92,7 +92,7 @@ export function PaginationBlock({
                       page >= totalPages,
                   })}
                 >
-                  <ChevronRight className="h-4 w-4" />
+                  <ChevronRight className="h-4 w-4" aria-hidden="false" aria-description="Next page"/>
                 </PaginationLink>
               )}
             </PaginationItem>
