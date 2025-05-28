@@ -135,28 +135,6 @@ export const patchLaunch = contract.mutation({
   },
 });
 
-export const statisticsEntry = z.object({
-  statusGroupId: z.string().nullable(),
-  count: z.number().int(),
-});
-
-export const launchStatistics = contract.query({
-  summary: "Get the launch statistics.",
-  method: "GET",
-  path: "/v1/launches/:id/statistics",
-  pathParams: z.object({
-    id: z.coerce.number().int(),
-  }),
-  responses: {
-    200: z.object({
-      beforeTests: z.array(statisticsEntry),
-      tests: z.array(statisticsEntry),
-      afterTests: z.array(statisticsEntry),
-    }),
-    404: z.object({}),
-  },
-});
-
 export const deleteLaunch = contract.mutation({
   summary: "Delete the launch by ID.",
   method: "DELETE",

@@ -32,7 +32,6 @@ import {
   deleteLaunch,
   findLaunches,
   findLaunchesCount,
-  launchStatistics,
   patchLaunch,
   readLaunch,
 } from "./launches.js";
@@ -88,7 +87,6 @@ export const contract = c.router({
   findLaunchesCount: findLaunchesCount,
   readLaunch: readLaunch,
   findLaunches: findLaunches,
-  launchStatistics: launchStatistics,
   patchLaunch: patchLaunch,
   deleteLaunch: deleteLaunch,
 

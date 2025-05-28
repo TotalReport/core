@@ -232,20 +232,6 @@ export class TestEntitiesDAO {
     });
   }
 
-  async statistics(params: StatisticsFilter): Promise<StatisticsEntry[]> {
-    const stat = await this.db
-      .select({
-        entityType: testEntities.entityType,
-        statusGroupId: testStatuses.groupId,
-        count: count(),
-      })
-      .from(testEntities)
-      .where(eq(testEntities.launchId, params.launchId))
-      .leftJoin(testStatuses, eq(testStatuses.id, testEntities.statusId))
-      .groupBy(testEntities.entityType, testStatuses.groupId);
-    return stat;
-  }
-
   async countsByStatuses(params: CountsByStatusesFilter) {
     const testEntitiesFiltered =
       params.distinct === true
@@ -415,20 +401,10 @@ type TestEntityRow = {
   argumentsHash: string;
 };
 
-type StatisticsFilter = {
-  launchId: number;
-};
-
 type CountsByStatusesFilter = {
   reportId?: number;
   launchId?: number;
   distinct: boolean;
-};
-
-type StatisticsEntry = {
-  entityType: string;
-  statusGroupId: string | null;
-  count: number;
 };
 
 const rowToEntitty = (row: TestEntityRow) => {
