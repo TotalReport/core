@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Input } from "./input";
+import { Input } from "./input.js";
 
 export interface EditableNumberProps {
   value: number;

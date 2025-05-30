@@ -1,10 +1,8 @@
-"use client"
-
 import * as React from "react"
 import { LucideIcon } from "lucide-react"
-import { ButtonProps, Button, buttonVariants } from "@/components/ui/button"
-import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip"
-import { cn } from "@/lib/utils"
+import { Button, ButtonProps, buttonVariants } from "@/components/ui/button.js"
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip.js"
+import { cn } from "@/lib/utils.js"
 
 interface CollapsibleButtonProps extends Omit<ButtonProps, 'children'> {
   icon: LucideIcon

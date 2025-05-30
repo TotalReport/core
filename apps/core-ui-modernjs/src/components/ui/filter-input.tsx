@@ -1,8 +1,6 @@
-'use client';
-
-import { Input } from '@/components/ui/input';
+import { Input } from '@/components/ui/input.js';
 import { X, Search } from 'lucide-react';
-import { Button } from './button';
+import { Button } from './button.js';
 
 interface FilterInputProps {
   value: string;

@@ -1,13 +1,13 @@
-import { EditableNumber } from "@/components/ui/editable-number";
-import { totalPagesCount } from "@/lib/pagination-utils";
-import { cn } from "@/lib/utils";
+import { EditableNumber } from "@/components/ui/editable-number.js";
+import { totalPagesCount } from "@/lib/pagination-utils.js";
+import { cn } from "@/lib/utils.js";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import {
     Pagination,
     PaginationContent,
     PaginationItem,
     PaginationLink,
-} from "./ui/pagination";
+} from "./pagination.js";
 
 export interface PaginationBlockProps {
   getHref?: (page: number, pageSize: number) => string;

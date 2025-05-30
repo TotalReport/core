@@ -11,7 +11,9 @@
       "@shared/*": [
         "./shared/*"
       ]
-    }
+    },
+    "moduleResolution": "NodeNext",
+    "module": "NodeNext",
   },
   "include": [
     "src",
