@@ -89,6 +89,23 @@ pnpm serve
 - **Component Design**: Follows a composable component architecture with shadcn/ui
 - **Styling**: Utilizes utility-first approach with Tailwind CSS
 
+### Component State Philosophy
+
+The application intentionally avoids global state management solutions in favor of a more modular and extensible approach:
+
+- **UI Components**: Pure presentation components that manage their internal state locally
+- **Container Components**: Data-fetching components that use API hooks to request exactly what they need
+- **Decentralized State**: Each component is responsible for its own data requirements
+- **API-Driven**: Components retrieve data directly through API hooks rather than from a global store
+
+This architecture was deliberately chosen to facilitate:
+
+1. **Extensibility**: Third-party plugins and extensions can easily integrate without depending on a complex global state
+2. **Predictability**: Components have clear data dependencies that are explicitly declared
+3. **Testability**: Isolated components are easier to test and maintain
+4. **Performance**: Only the necessary data is fetched and updated when needed
+5. **Maintainability**: Reduced coupling between components leads to more maintainable code
+
 ## Integration with Total Report
 
 This UI application is part of the Total Report monorepo and integrates with:
