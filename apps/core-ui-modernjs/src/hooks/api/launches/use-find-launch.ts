@@ -2,7 +2,7 @@ import { api } from "@/lib/api-client.js";
 import { contract } from "@total-report/core-contract/contract";
 import { ClientInferResponseBody } from "@ts-rest/core";
 
-export const useFindReport = ({
+export const useFindLaunch = ({
   filters: { id },
   enabled,
 }: FindLaunchParams): FindLaunchResponse => {

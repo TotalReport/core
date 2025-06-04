@@ -1,10 +1,13 @@
-import React from 'react';
+import React from "react";
+import LaunchesContainer from "@/containers/launches/launches-container.js";
+import { RestAPIProvider } from "@/components/providers/rest-api-provider.jsx";
+
+export const title = "Launches - Total Report";
 
 export default function Launches() {
   return (
-    <div className="p-6">
-      <h1 className="text-2xl font-bold">Launches</h1>
-      <p className="mt-4">This is the Launches page of Total Report.</p>
-    </div>
+    <RestAPIProvider>
+      <LaunchesContainer />
+    </RestAPIProvider>
   );
 }
