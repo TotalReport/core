@@ -22,7 +22,7 @@
   },
   "pnpm": {
     "patchedDependencies": {
-      "@rspack/core@1.3.10": "patches/@rspack__core@1.3.10.patch"
+      "@rspack/core": "patches/@rspack__core.patch"
     }
   }
 }

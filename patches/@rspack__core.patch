@@ -1,0 +1,61 @@
+diff --git a/compiled/watchpack/index.js b/compiled/watchpack/index.js
+index 408638c9e4ae72094c06552e244353afe6d209a9..4889d538e1c83b537e2e1f624ee4a0adae29c32f 100644
+--- a/compiled/watchpack/index.js
++++ b/compiled/watchpack/index.js
+@@ -9,7 +9,7 @@ module.exports = function (glob, opts) {
+     throw new TypeError('Expected a string');
+   }
+ 
+-  var str = String(glob);
++  var str = String(glob).replace(/\\/g, '/');
+ 
+   // The regexp we are building, as a string.
+   var reStr = "";
+@@ -2078,7 +2078,7 @@ module.exports = require("path");
+ /************************************************************************/
+ /******/ 	// The module cache
+ /******/ 	var __webpack_module_cache__ = {};
+-/******/ 	
++/******/
+ /******/ 	// The require function
+ /******/ 	function __nccwpck_require__(moduleId) {
+ /******/ 		// Check if module is in cache
+@@ -2092,7 +2092,7 @@ module.exports = require("path");
+ /******/ 			// no module.loaded needed
+ /******/ 			exports: {}
+ /******/ 		};
+-/******/ 	
++/******/
+ /******/ 		// Execute the module function
+ /******/ 		var threw = true;
+ /******/ 		try {
+@@ -2101,23 +2101,23 @@ module.exports = require("path");
+ /******/ 		} finally {
+ /******/ 			if(threw) delete __webpack_module_cache__[moduleId];
+ /******/ 		}
+-/******/ 	
++/******/
+ /******/ 		// Return the exports of the module
+ /******/ 		return module.exports;
+ /******/ 	}
+-/******/ 	
++/******/
+ /************************************************************************/
+ /******/ 	/* webpack/runtime/compat */
+-/******/ 	
++/******/
+ /******/ 	if (typeof __nccwpck_require__ !== 'undefined') __nccwpck_require__.ab = __dirname + "/";
+-/******/ 	
++/******/
+ /************************************************************************/
+-/******/ 	
++/******/
+ /******/ 	// startup
+ /******/ 	// Load entry module and return exports
+ /******/ 	// This entry module is referenced by other modules so it can't be inlined
+ /******/ 	var __webpack_exports__ = __nccwpck_require__(393);
+ /******/ 	module.exports = __webpack_exports__;
+-/******/ 	
++/******/
+ /******/ })()
+ ;
