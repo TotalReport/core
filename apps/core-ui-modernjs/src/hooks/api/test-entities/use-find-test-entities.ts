@@ -21,6 +21,7 @@ export const useFindTestEntities = ({
         limit: pagination.limit,
         "title~cnt": filters.titleContains,
         reportId: filters.reportId,
+        launchId: filters.launchId,
       },
     },
     enabled: enabled !== false,
@@ -36,6 +37,7 @@ export type FindTestEntitiesParams = {
   filters: {
     titleContains?: string;
     reportId?: number;
+    launchId?: number;
   };
   pagination: {
     offset: number;
