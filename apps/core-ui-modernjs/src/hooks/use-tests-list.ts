@@ -33,6 +33,11 @@ export function useTestsList() {
 
   // Filter state
   const [titleFilter, setTitleFilter] = useState(() => getParam('title~cnt') || '');
+  const [reportFilter, setReportFilter] = useState<{ id: number; title: string } | undefined>(() => {
+    const reportId = getNumericParam('reportId');
+    const reportTitle = getParam('reportTitle');
+    return reportId && reportTitle ? { id: reportId, title: reportTitle } : undefined;
+  });
 
   // Selected test state
   const [selectedTest, setSelectedTest] = useState<SelectedTest | null>(() => {
@@ -58,6 +63,7 @@ export function useTestsList() {
     },
     filters: {
       titleContains: titleFilter || undefined,
+      reportId: reportFilter?.id,
     },
   });
 
@@ -78,6 +84,8 @@ export function useTestsList() {
       page,
       pageSize,
       'title~cnt': titleFilter || null,
+      reportId: reportFilter?.id || null,
+      reportTitle: reportFilter?.title || null,
       testId: null,
       beforeTestId: null,
       afterTestId: null,
@@ -98,7 +106,7 @@ export function useTestsList() {
     }
 
     updateParams(params);
-  }, [page, pageSize, titleFilter, selectedTest, updateParams]);
+  }, [page, pageSize, titleFilter, reportFilter, selectedTest, updateParams]);
 
   // Auto-adjust page when needed
   useEffect(() => {
@@ -146,6 +154,7 @@ export function useTestsList() {
   const handleApplyAllFilters = (filters: TestFiltersData) => {
     // Apply filter values to the actual filters
     setTitleFilter(filters.title || '');
+    setReportFilter(filters.report);
     
     // Return to tests list
     setPanelView(PanelView.TESTS_LIST);
@@ -156,6 +165,7 @@ export function useTestsList() {
   const getActiveFiltersCount = (): number => {
     let count = 0;
     if (titleFilter) count++;
+    if (reportFilter) count++;
     return count;
   };
 
@@ -165,7 +175,8 @@ export function useTestsList() {
   // Get current filters data structure
   const getCurrentFilters = (): TestFiltersData => {
     return {
-      title: titleFilter || undefined
+      title: titleFilter || undefined,
+      report: reportFilter
     };
   };
 
@@ -174,6 +185,7 @@ export function useTestsList() {
     page,
     pageSize,
     titleFilter,
+    reportFilter,
     selectedTest,
     panelView,
     activeFiltersCount,
