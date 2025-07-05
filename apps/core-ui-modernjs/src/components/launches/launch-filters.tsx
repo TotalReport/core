@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Button } from '@/components/ui/button.js';
-import { FiltersData } from './launches-list.js';
+import { BaseFilterData } from '@/components/common/filters/types.js';
 import ReportFilter from '@/components/reports/report-filter.js';
 
 // Enum for available filter types
@@ -39,7 +39,7 @@ interface FiltersListProps {
   onSelectFilter: (filterType: FilterType) => void;
   onApply: () => void;
   onCancel: () => void;
-  filters: FiltersData;
+  filters: BaseFilterData;
 }
 
 function FiltersList({ onSelectFilter, onApply, onCancel, filters }: FiltersListProps) {
@@ -138,8 +138,8 @@ function ReportFilterForm({
 
 // Main LaunchFilters component that handles filter form display logic
 interface LaunchFiltersProps {
-  initialFilters: FiltersData;
-  onApply: (filters: FiltersData) => void;
+  initialFilters: BaseFilterData;
+  onApply: (filters: BaseFilterData) => void;
   onCancel: () => void;
 }
 
@@ -149,7 +149,7 @@ export default function LaunchFilters({
   onCancel
 }: LaunchFiltersProps) {
   // Internal state for current filters (working copy)
-  const [filters, setFilters] = useState<FiltersData>(initialFilters);
+  const [filters, setFilters] = useState<BaseFilterData>(initialFilters);
   // Internal state for view management
   const [filterPanelView, setFilterPanelView] = useState<FilterPanelView>(FilterPanelView.FILTERS_LIST);
   const [activeFilterType, setActiveFilterType] = useState<FilterType>(FilterType.NONE);

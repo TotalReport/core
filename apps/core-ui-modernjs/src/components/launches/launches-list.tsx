@@ -7,17 +7,17 @@ import { useUrlParams } from '@/hooks/url/use-url-params.jsx';
 import { Funnel } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { PaginationBlock } from '../ui/pagination-block.jsx';
-import LaunchFilters from './launch-filters.js';
+import { UnifiedFilter } from '@/components/common/filters/unified-filter.js';
+import { FilterType, FilterConfig, BaseFilterData } from '@/components/common/filters/types.js';
 import LaunchItem from './launch-item.js';
 import { usePageParam, usePageSizeParam } from '@/hooks/url/use-common-list-params.jsx';
 
-// Type for filters data
-export interface FiltersData {
-  report?: {
-    id: number;
-    title: string;
-  };
-}
+// Configuration for available filters in launches page
+const launchesFilterConfig: FilterConfig = {
+  availableFilters: [FilterType.TITLE, FilterType.REPORT],
+  entityName: 'launches',
+  showHeader: false // Don't show header since parent component already has one
+};
 
 // Type for possible view states in the left panel
 enum PanelView {
@@ -34,11 +34,14 @@ export default function LaunchesList({
   selectedLaunchId,
   onLaunchSelect,
 }: LaunchesListProps) {
-  const { getNumericParam, updateParams } = useUrlParams();
+  const { getNumericParam, getParam, updateParams } = useUrlParams();
 
   // Pagination state
   const [page, setPage] = usePageParam(1);
   const [pageSize, setPageSize] = usePageSizeParam(10);
+
+  // Title filter state
+  const [titleFilter, setTitleFilter] = useState<string>(() => getParam('title~cnt') || '');
 
   // Report filter state
   const [selectedReportId, setSelectedReportId] = useState<number | null>(
@@ -58,6 +61,7 @@ export default function LaunchesList({
     },
     filters: {
       reportId: selectedReportId ?? undefined,
+      titleContains: titleFilter || undefined,
     },
     enabled: true,
   });
@@ -74,12 +78,16 @@ export default function LaunchesList({
       pageSize: pageSize.toString(),
     };
 
+    if (titleFilter) {
+      params['title~cnt'] = titleFilter;
+    }
+
     if (selectedReportId) {
       params.reportId = selectedReportId.toString();
     }
 
     updateParams(params);
-  }, [page, pageSize, selectedReportId, updateParams]);
+  }, [page, pageSize, titleFilter, selectedReportId, updateParams]);
 
   // Handle launch click
   const handleLaunchClick = (launchId: number) => {
@@ -96,7 +104,8 @@ export default function LaunchesList({
   };
 
   // Handle applying all filters
-  const handleApplyFilters = (filters: FiltersData) => {
+  const handleApplyFilters = (filters: BaseFilterData) => {
+    setTitleFilter(filters.title || '');
     setSelectedReportId(filters.report?.id || null);
     setSelectedReportTitle(filters.report?.title || '');
     setPanelView(PanelView.LAUNCHES_LIST);
@@ -109,10 +118,11 @@ export default function LaunchesList({
   };
 
   // Calculate active filters count
-  const activeFiltersCount = selectedReportId ? 1 : 0;
+  const activeFiltersCount = (titleFilter ? 1 : 0) + (selectedReportId ? 1 : 0);
 
   // Get current filters
-  const getCurrentFilters = (): FiltersData => ({
+  const getCurrentFilters = (): BaseFilterData => ({
+    title: titleFilter || undefined,
     report: selectedReportId
       ? {
           id: selectedReportId,
@@ -126,10 +136,11 @@ export default function LaunchesList({
     switch (panelView) {
       case PanelView.FILTERS_VIEW:
         return (
-          <LaunchFilters
+          <UnifiedFilter
             initialFilters={getCurrentFilters()}
             onApply={handleApplyFilters}
             onCancel={handleCancelFilters}
+            config={launchesFilterConfig}
           />
         );
 

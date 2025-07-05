@@ -5,7 +5,7 @@ import { useFindStatuses } from '@/hooks/api/statuses/use-find-statuses.jsx';
 import { useFindStatusGroups } from '@/hooks/api/status-groups/use-find-status-groups.js';
 import { formatTestEntity, FormattedTestEntity, getTestTypeFromEntityType } from '@/lib/test-utils.js';
 import { totalPagesCount } from '@/lib/pagination-utils.js';
-import { TestFiltersData } from '@/components/tests/test-filter.jsx';
+import { BaseFilterData } from '@/components/common/filters/types.js';
 
 export type SelectedTest = {
   id: number;
@@ -159,7 +159,7 @@ export function useTestsList() {
   };
 
   // Handler for applying all filter changes
-  const handleApplyAllFilters = (filters: TestFiltersData) => {
+  const handleApplyAllFilters = (filters: BaseFilterData) => {
     // Apply filter values to the actual filters
     setTitleFilter(filters.title || '');
     setReportFilter(filters.report);
@@ -183,7 +183,7 @@ export function useTestsList() {
   const activeFiltersCount = getActiveFiltersCount();
 
   // Get current filters data structure
-  const getCurrentFilters = (): TestFiltersData => {
+  const getCurrentFilters = (): BaseFilterData => {
     return {
       title: titleFilter || undefined,
       report: reportFilter,

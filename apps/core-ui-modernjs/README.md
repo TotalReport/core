@@ -124,7 +124,7 @@ The tests page follows the same architectural patterns as the reports and launch
 
 - **TestsList**: Main component orchestrating the tests interface with resizable panels
 - **TestsListSidebar**: Left panel containing test list with filter button and pagination
-- **TestFilters**: Separate filter interface with structured filter management
+- **UnifiedFilter**: Shared filter interface with structured filter management
   - **FiltersList**: Main filter overview with active filters display
   - **TitleFilterForm**: Dedicated title search filter form
   - **ReportFilterForm**: Dedicated report selection filter form with search functionality
@@ -135,15 +135,87 @@ The tests page follows the same architectural patterns as the reports and launch
 
 ### Filter Architecture
 
-Following the same pattern as launches, the tests page implements a separate filter block:
+The application implements a unified, modular filter system that is shared across tests and launches pages:
 
-- **Panel View Management**: Toggle between tests list and filters view
-- **Filter Button**: Shows active filter count with badge indicator
-- **Structured Filters**: Organized filter options with individual edit forms
-  - **Title Filter**: Search tests by title with text input
-  - **Report Filter**: Filter tests by specific report with searchable selection
-  - **Launch Filter**: Filter tests by specific launch with searchable selection
+#### Shared Filter Components
+
+- **UnifiedFilter**: Main filter component that orchestrates the entire filter experience
+  - Manages filter state, panel view switching, and delegates to appropriate filter forms
+  - Uses generic type constraints to work with different filter data structures
+  - Configurable to show only relevant filters per entity type
+
+- **FiltersList**: Overview of all available and active filters
+  - Shows active filters with their current values and edit buttons
+  - Shows available filter options that can be added
+  - Provides Apply/Cancel actions for all filter changes
+
+- **Filter Forms**: Individual filter forms for each filter type
+  - **TitleFilterForm**: Text input for title/name searching with debouncing
+  - **ReportFilterForm**: Searchable report selection with API integration
+  - **LaunchFilterForm**: Searchable launch selection with API integration
+
+- **FilterOption**: Reusable component for displaying filter option cards
+
+#### Filter Configuration
+
+Each page specifies which filters are available using a `FilterConfig`:
+
+```typescript
+// Tests page - supports all three filter types without header
+const testsFilterConfig: FilterConfig = {
+  availableFilters: [FilterType.TITLE, FilterType.REPORT, FilterType.LAUNCH],
+  entityName: 'tests',
+  showHeader: false // Hide header since parent already provides one
+};
+
+// Launches page - supports title and report filtering without header
+const launchesFilterConfig: FilterConfig = {
+  availableFilters: [FilterType.TITLE, FilterType.REPORT],
+  entityName: 'launches',
+  showHeader: false // Hide header since parent already provides one
+};
+```
+
+#### Filter UI Features
+
+The unified filter system provides a consistent user experience:
+
+- **Consistent Header Display**: Both tests and launches pages maintain their headers when filters are active
+  - **Tests Page**: Header stays visible with filter button showing active state
+  - **Launches Page**: Header stays visible with filter button showing active state  
+- **Filter Button State**: Filter button changes appearance based on panel view and shows active filter count
+- **Navigation**: Filter components provide their own navigation within the filter panel
+- **Filter Overview**: Shows all available and active filters with their current values
+- **Individual Filter Forms**: Dedicated forms for each filter type with search functionality
 - **Apply/Cancel Actions**: Proper filter state management with confirmation
+- **Active Filter Count**: Badge indicator on the main filter button showing number of active filters
+
+#### Data Structure
+
+All filter data follows the shared `BaseFilterData` interface:
+
+```typescript
+interface BaseFilterData {
+  title?: string;
+  report?: FilterOption;
+  launch?: FilterOption;
+}
+
+interface FilterOption {
+  id: number;
+  title: string;
+}
+```
+
+#### Integration Points
+
+- **Panel View Management**: Toggle between entity list and filters view
+- **Filter Button**: Shows active filter count with badge indicator  
+- **Apply/Cancel Actions**: Proper filter state management with confirmation
+- **URL Synchronization**: All filter states are reflected in URL parameters
+- **Query Integration**: Filter changes trigger data refetch with all params included in query keys
+
+This unified system ensures consistent filtering behavior and UI across all entity pages while remaining extensible for future filter types. Both tests and launches now support title and report filtering through the same interface, providing a consistent user experience.
 
 ### API Integration
 
