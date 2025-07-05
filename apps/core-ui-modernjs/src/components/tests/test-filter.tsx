@@ -3,12 +3,14 @@ import { Button } from '@/components/ui/button.js';
 import { Input } from '@/components/ui/input.js';
 import { Search, Check } from 'lucide-react';
 import { useFindReports } from '@/hooks/api/reports/use-find-reports.js';
+import { useFindLaunches } from '@/hooks/api/launches/use-find-launches.js';
 
 // Enum for available filter types
 export enum FilterType {
   NONE = "none",
   TITLE = "title",
-  REPORT = "report"
+  REPORT = "report",
+  LAUNCH = "launch"
 }
 
 // Type for possible view states in the filter panel
@@ -44,6 +46,10 @@ interface FiltersListProps {
   filters: {
     title?: string;
     report?: {
+      id: number;
+      title: string;
+    };
+    launch?: {
       id: number;
       title: string;
     };
@@ -111,6 +117,33 @@ export const FiltersList = ({
               title="Report Filter"
               description="Filter tests by report"
               onClick={() => onSelectFilter(FilterType.REPORT)}
+            />
+          )}
+
+          {filters.launch ? (
+            // Show selected launch filter as an active filter
+            <div className="border rounded-md p-4 cursor-pointer hover:bg-accent transition-colors border-primary bg-accent/30">
+              <div className="flex justify-between">
+                <div>
+                  <h3 className="text-sm font-medium">Launch Filter</h3>
+                  <p className="text-xs font-medium mt-1 text-primary">{filters.launch.title}</p>
+                </div>
+                <Button 
+                  variant="ghost" 
+                  size="sm" 
+                  className="h-7" 
+                  onClick={() => onSelectFilter(FilterType.LAUNCH)}
+                >
+                  Edit
+                </Button>
+              </div>
+            </div>
+          ) : (
+            // Show option to add a launch filter
+            <FilterOption
+              title="Launch Filter"
+              description="Filter tests by launch"
+              onClick={() => onSelectFilter(FilterType.LAUNCH)}
             />
           )}
         </div>
@@ -301,10 +334,131 @@ export const ReportFilterForm = ({
   );
 };
 
+// Launch filter form component
+interface LaunchFilterFormProps {
+  onCancel: () => void;
+  onApply: (launch: { id: number; title: string } | undefined) => void;
+  initialLaunch?: { id: number; title: string };
+}
+
+export const LaunchFilterForm = ({ 
+  onCancel, 
+  onApply,
+  initialLaunch
+}: LaunchFilterFormProps) => {
+  const [selectedLaunch, setSelectedLaunch] = useState<{ id: number; title: string } | undefined>(initialLaunch);
+  const [searchTerm, setSearchTerm] = useState('');
+
+  // Fetch launches with search functionality
+  const launchesQuery = useFindLaunches({
+    pagination: { offset: 0, limit: 50 },
+    filters: { titleContains: searchTerm || undefined }
+  });
+
+  const handleSelectLaunch = (launch: { id: number; title: string }) => {
+    setSelectedLaunch(launch);
+  };
+
+  const handleClearSelection = () => {
+    setSelectedLaunch(undefined);
+  };
+
+  const handleApply = () => {
+    onApply(selectedLaunch);
+  };
+
+  return (
+    <div className="flex flex-col h-full">
+      <div className="p-4">
+        <h2 className="text-lg font-semibold mb-4">Filter by Launch</h2>
+        
+        <div className="space-y-4">
+          <div className="relative">
+            <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
+            <Input
+              placeholder="Search launches..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="pl-8"
+            />
+          </div>
+
+          {selectedLaunch && (
+            <div className="p-3 border rounded-md bg-accent/30 border-primary">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-medium">Selected Launch</p>
+                  <p className="text-xs text-muted-foreground">{selectedLaunch.title}</p>
+                </div>
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="sm"
+                  onClick={handleClearSelection}
+                >
+                  Clear
+                </Button>
+              </div>
+            </div>
+          )}
+
+          <div className="max-h-60 overflow-y-auto space-y-2">
+            {launchesQuery.isPending && (
+              <div className="text-center text-muted-foreground text-sm py-4">
+                Loading launches...
+              </div>
+            )}
+            
+            {launchesQuery.isError && (
+              <div className="text-center text-destructive text-sm py-4">
+                Error loading launches
+              </div>
+            )}
+
+            {launchesQuery.data?.items.map((launch) => (
+              <div
+                key={launch.id}
+                className={`p-3 border rounded-md cursor-pointer transition-colors ${
+                  selectedLaunch?.id === launch.id
+                    ? 'border-primary bg-accent/30'
+                    : 'hover:bg-accent'
+                }`}
+                onClick={() => handleSelectLaunch({ id: launch.id, title: launch.title })}
+              >
+                <div className="flex items-center justify-between">
+                  <p className="text-sm font-medium truncate">{launch.title}</p>
+                  {selectedLaunch?.id === launch.id && (
+                    <Check className="h-4 w-4 text-primary" />
+                  )}
+                </div>
+              </div>
+            ))}
+
+            {launchesQuery.data?.items.length === 0 && !launchesQuery.isPending && (
+              <div className="text-center text-muted-foreground text-sm py-4">
+                No launches found
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+      
+      <div className="mt-auto p-4 border-t flex justify-end gap-2">
+        <Button variant="outline" onClick={onCancel}>Cancel</Button>
+        <Button onClick={handleApply}>Apply</Button>
+      </div>
+    </div>
+  );
+};
+
 // Interface for filters data structure
 export interface TestFiltersData {
   title?: string;
   report?: {
+    id: number;
+    title: string;
+  };
+  launch?: {
     id: number;
     title: string;
   };
@@ -360,6 +514,16 @@ export const TestFilters = ({
     setActiveFilterType(FilterType.NONE);
   };
 
+  // Handler for applying launch filter changes
+  const handleApplyLaunchFilter = (launch: { id: number; title: string } | undefined) => {
+    setFilters(prev => ({
+      ...prev,
+      launch: launch
+    }));
+    setFilterPanelView(FilterPanelView.FILTERS_LIST);
+    setActiveFilterType(FilterType.NONE);
+  };
+
   // Handler for applying all filters and notifying parent
   const handleApplyAllFilters = () => {
     onApply(filters);
@@ -398,6 +562,15 @@ export const TestFilters = ({
             initialReport={filters.report}
             onCancel={handleCancelFilter}
             onApply={handleApplyReportFilter}
+          />
+        );
+      }
+      if (activeFilterType === FilterType.LAUNCH) {
+        return (
+          <LaunchFilterForm 
+            initialLaunch={filters.launch}
+            onCancel={handleCancelFilter}
+            onApply={handleApplyLaunchFilter}
           />
         );
       }

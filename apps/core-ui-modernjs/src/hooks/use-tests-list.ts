@@ -38,6 +38,11 @@ export function useTestsList() {
     const reportTitle = getParam('reportTitle');
     return reportId && reportTitle ? { id: reportId, title: reportTitle } : undefined;
   });
+  const [launchFilter, setLaunchFilter] = useState<{ id: number; title: string } | undefined>(() => {
+    const launchId = getNumericParam('launchId');
+    const launchTitle = getParam('launchTitle');
+    return launchId && launchTitle ? { id: launchId, title: launchTitle } : undefined;
+  });
 
   // Selected test state
   const [selectedTest, setSelectedTest] = useState<SelectedTest | null>(() => {
@@ -64,6 +69,7 @@ export function useTestsList() {
     filters: {
       titleContains: titleFilter || undefined,
       reportId: reportFilter?.id,
+      launchId: launchFilter?.id,
     },
   });
 
@@ -86,6 +92,8 @@ export function useTestsList() {
       'title~cnt': titleFilter || null,
       reportId: reportFilter?.id || null,
       reportTitle: reportFilter?.title || null,
+      launchId: launchFilter?.id || null,
+      launchTitle: launchFilter?.title || null,
       testId: null,
       beforeTestId: null,
       afterTestId: null,
@@ -106,7 +114,7 @@ export function useTestsList() {
     }
 
     updateParams(params);
-  }, [page, pageSize, titleFilter, reportFilter, selectedTest, updateParams]);
+  }, [page, pageSize, titleFilter, reportFilter, launchFilter, selectedTest, updateParams]);
 
   // Auto-adjust page when needed
   useEffect(() => {
@@ -155,6 +163,7 @@ export function useTestsList() {
     // Apply filter values to the actual filters
     setTitleFilter(filters.title || '');
     setReportFilter(filters.report);
+    setLaunchFilter(filters.launch);
     
     // Return to tests list
     setPanelView(PanelView.TESTS_LIST);
@@ -166,6 +175,7 @@ export function useTestsList() {
     let count = 0;
     if (titleFilter) count++;
     if (reportFilter) count++;
+    if (launchFilter) count++;
     return count;
   };
 
@@ -176,7 +186,8 @@ export function useTestsList() {
   const getCurrentFilters = (): TestFiltersData => {
     return {
       title: titleFilter || undefined,
-      report: reportFilter
+      report: reportFilter,
+      launch: launchFilter
     };
   };
 
@@ -186,6 +197,7 @@ export function useTestsList() {
     pageSize,
     titleFilter,
     reportFilter,
+    launchFilter,
     selectedTest,
     panelView,
     activeFiltersCount,

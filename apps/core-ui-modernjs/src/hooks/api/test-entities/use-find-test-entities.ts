@@ -14,6 +14,7 @@ export const useFindTestEntities = ({
       pagination.limit,
       filters.reportId,
       filters.titleContains,
+      filters.launchId, // Important: Include all filter params in queryKey to trigger refetch when filters change
     ],
     queryData: {
       query: {

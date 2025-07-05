@@ -128,6 +128,7 @@ The tests page follows the same architectural patterns as the reports and launch
   - **FiltersList**: Main filter overview with active filters display
   - **TitleFilterForm**: Dedicated title search filter form
   - **ReportFilterForm**: Dedicated report selection filter form with search functionality
+  - **LaunchFilterForm**: Dedicated launch selection filter form with search functionality
 - **TestDetailsContainer**: Right panel managing different test type queries and formatting
 - **TestDetails**: Pure presentation component for displaying test information
 - **TestListItem**: Individual test item component with status visualization
@@ -141,12 +142,14 @@ Following the same pattern as launches, the tests page implements a separate fil
 - **Structured Filters**: Organized filter options with individual edit forms
   - **Title Filter**: Search tests by title with text input
   - **Report Filter**: Filter tests by specific report with searchable selection
+  - **Launch Filter**: Filter tests by specific launch with searchable selection
 - **Apply/Cancel Actions**: Proper filter state management with confirmation
 
 ### API Integration
 
 - **useFindTestEntities**: Fetches paginated test entities with filtering
 - **useFindReports**: Fetches reports for filter selection
+- **useFindLaunches**: Fetches launches for filter selection
 - **useReadTest**: Fetches individual test details
 - **useReadBeforeTest**: Fetches before-test details 
 - **useReadAfterTest**: Fetches after-test details
@@ -156,7 +159,7 @@ Following the same pattern as launches, the tests page implements a separate fil
 ### State Management
 
 - **useTestsList**: Custom hook managing test list state, pagination, filters, and URL synchronization
-- **URL Parameters**: `page`, `pageSize`, `title~cnt`, `reportId`, `reportTitle`, `testId`, `beforeTestId`, `afterTestId`
+- **URL Parameters**: `page`, `pageSize`, `title~cnt`, `reportId`, `reportTitle`, `launchId`, `launchTitle`, `testId`, `beforeTestId`, `afterTestId`
 - **Selected Test State**: Tracks which test is selected and its type (test/before-test/after-test)
 - **Panel View State**: Manages switching between tests list and filters view
 
