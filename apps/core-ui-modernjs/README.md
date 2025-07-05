@@ -189,7 +189,6 @@ The unified filter system provides a consistent user experience:
 - **Individual Filter Forms**: Dedicated forms for each filter type with search functionality
 - **Apply/Cancel Actions**: Proper filter state management with confirmation
 - **Active Filter Count**: Badge indicator on the main filter button showing number of active filters
-- **Fixed Pagination**: Pagination controls remain visible at the bottom even with long lists of items
 
 #### Data Structure
 
@@ -232,7 +231,7 @@ This unified system ensures consistent filtering behavior and UI across all enti
 ### State Management
 
 - **useTestsList**: Custom hook managing test list state, pagination, filters, and URL synchronization
-- **URL Parameters**: `page`, `pageSize`, `title~cnt`, `reportId`, `reportTitle`, `launchId`, `launchTitle`, `testId`, `beforeTestId`, `afterTestId`
+- **URL Parameters**: `page`, `pageSize`, `title~cnt`, `reportId`, `launchId`, `testId`, `beforeTestId`, `afterTestId`
 - **Selected Test State**: Tracks which test is selected and its type (test/before-test/after-test)
 - **Panel View State**: Manages switching between tests list and filters view
 

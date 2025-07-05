@@ -35,13 +35,13 @@ export function useTestsList() {
   const [titleFilter, setTitleFilter] = useState(() => getParam('title~cnt') || '');
   const [reportFilter, setReportFilter] = useState<{ id: number; title: string } | undefined>(() => {
     const reportId = getNumericParam('reportId');
-    const reportTitle = getParam('reportTitle');
-    return reportId && reportTitle ? { id: reportId, title: reportTitle } : undefined;
+    // Only initialize with reportId from URL, title will be resolved when filter is applied
+    return reportId ? { id: reportId, title: '' } : undefined;
   });
   const [launchFilter, setLaunchFilter] = useState<{ id: number; title: string } | undefined>(() => {
     const launchId = getNumericParam('launchId');
-    const launchTitle = getParam('launchTitle');
-    return launchId && launchTitle ? { id: launchId, title: launchTitle } : undefined;
+    // Only initialize with launchId from URL, title will be resolved when filter is applied
+    return launchId ? { id: launchId, title: '' } : undefined;
   });
 
   // Selected test state
@@ -91,9 +91,7 @@ export function useTestsList() {
       pageSize,
       'title~cnt': titleFilter || null,
       reportId: reportFilter?.id || null,
-      reportTitle: reportFilter?.title || null,
       launchId: launchFilter?.id || null,
-      launchTitle: launchFilter?.title || null,
       testId: null,
       beforeTestId: null,
       afterTestId: null,
