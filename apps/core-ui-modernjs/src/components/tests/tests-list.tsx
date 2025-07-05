@@ -58,7 +58,7 @@ export const TestsList = () => {
       default:
         return (
           <>
-            <ScrollArea className="flex-1">
+            <ScrollArea className="flex-1 overflow-hidden">
               {/* Test list content without header - header is now at the top level */}
               {testEntitiesQuery.isPending && (
                 <p className="p-4">Loading tests...</p>
@@ -105,13 +105,15 @@ export const TestsList = () => {
             </ScrollArea>
 
             {testEntitiesQuery.data && (
-              <PaginationBlock
-                page={page}
-                pageSize={pageSize}
-                totalItems={testEntitiesQuery.data.pagination.total}
-                setPage={setPage}
-                setPageSize={setPageSize}
-              />
+              <div className="border-t">
+                <PaginationBlock
+                  page={page}
+                  pageSize={pageSize}
+                  totalItems={testEntitiesQuery.data.pagination.total}
+                  setPage={setPage}
+                  setPageSize={setPageSize}
+                />
+              </div>
             )}
           </>
         );

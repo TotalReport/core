@@ -148,7 +148,7 @@ export default function LaunchesList({
       default:
         return (
           <>
-            <ScrollArea className="flex-1">
+            <ScrollArea className="flex-1 overflow-hidden">
               {launchesLoading && <p className="p-4">Loading launches...</p>}
               {!launchesLoading && launchesError && (
                 <div className="flex items-center justify-center h-full">
@@ -194,13 +194,15 @@ export default function LaunchesList({
             </ScrollArea>
 
             {launchesData && (
-              <PaginationBlock
-                page={page}
-                pageSize={pageSize}
-                totalItems={launchesData.pagination.total}
-                setPage={setPage}
-                setPageSize={setPageSize}
-              />
+              <div className="border-t">
+                <PaginationBlock
+                  page={page}
+                  pageSize={pageSize}
+                  totalItems={launchesData.pagination.total}
+                  setPage={setPage}
+                  setPageSize={setPageSize}
+                />
+              </div>
             )}
           </>
         );
