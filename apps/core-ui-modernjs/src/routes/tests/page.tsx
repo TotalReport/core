@@ -1,10 +1,13 @@
 import React from 'react';
+import { RestAPIProvider } from '@/components/providers/rest-api-provider.jsx';
+import { TestsContainer } from '@/containers/tests/tests-container.jsx';
+
+export const title = "Tests - Total Report";
 
 export default function Tests() {
   return (
-    <div className="p-6">
-      <h1 className="text-2xl font-bold">Tests</h1>
-      <p className="mt-4">This is the Tests page of Total Report.</p>
-    </div>
+    <RestAPIProvider>
+      <TestsContainer />
+    </RestAPIProvider>
   );
 }

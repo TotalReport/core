@@ -115,3 +115,47 @@ This UI application is part of the Total Report monorepo and integrates with:
 - **Shared Types**: Utilizes shared type definitions across the monorepo
 
 For more information, see the [Modern.js documentation](https://modernjs.dev/en).
+
+## Tests Implementation
+
+The tests page follows the same architectural patterns as the reports and launches pages:
+
+### Key Components
+
+- **TestsList**: Main component orchestrating the tests interface with resizable panels
+- **TestsListSidebar**: Left panel containing test filters, list, and pagination
+- **TestDetailsContainer**: Right panel managing different test type queries and formatting
+- **TestDetails**: Pure presentation component for displaying test information
+- **TestListItem**: Individual test item component with status visualization
+- **TestFilter**: Search and filtering interface for tests
+
+### API Integration
+
+- **useFindTestEntities**: Fetches paginated test entities with filtering
+- **useReadTest**: Fetches individual test details
+- **useReadBeforeTest**: Fetches before-test details 
+- **useReadAfterTest**: Fetches after-test details
+- **useFindStatuses**: Fetches test status definitions
+- **useFindStatusGroups**: Fetches test status group definitions
+
+### State Management
+
+- **useTestsList**: Custom hook managing test list state, pagination, filters, and URL synchronization
+- **URL Parameters**: `page`, `pageSize`, `title~cnt`, `testId`, `beforeTestId`, `afterTestId`
+- **Selected Test State**: Tracks which test is selected and its type (test/before-test/after-test)
+
+### Test Types Support
+
+The implementation supports three test entity types:
+- **test**: Regular test entities
+- **beforeTest**: Before-test step entities  
+- **afterTest**: After-test step entities
+
+Each type has its own API endpoint and details are rendered consistently through shared formatting utilities.
+
+### Utilities
+
+- **formatTestEntity**: Transforms raw test data with status information
+- **formatTestDetails**: Formats individual test details with proper typing
+- **getTestTypeFromEntityType**: Maps entity types to URL parameter types
+- **StatusPill**: Visual status indicator with group and status colors
