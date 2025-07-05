@@ -1,6 +1,7 @@
-import { useTestsList } from '@/hooks/use-tests-list.js';
+import { useTestsList, PanelView } from '@/hooks/use-tests-list.js';
 import { TestsListSidebar } from './tests-list-sidebar.jsx';
 import { TestDetailsContainer } from './test-details-container.jsx';
+import { TestFilters } from './test-filter.jsx';
 import {
   ResizableHandle,
   ResizablePanel,
@@ -11,15 +12,60 @@ export const TestsList = () => {
   const {
     page,
     pageSize,
-    titleFilter,
     selectedTest,
+    panelView,
+    activeFiltersCount,
     testEntitiesQuery,
     formattedTestEntities,
     handleTestClick,
-    handleFilterChange,
+    handleFilterButtonClick,
+    handleApplyAllFilters,
+    handleCancelAllFilters,
+    getCurrentFilters,
     setPage,
     setPageSize,
   } = useTestsList();
+
+  // Render appropriate content for the left panel based on current view
+  const renderLeftPanelContent = () => {
+    switch (panelView) {
+      case PanelView.FILTERS_VIEW:
+        return (
+          <TestFilters 
+            initialFilters={getCurrentFilters()}
+            onApply={handleApplyAllFilters}
+            onCancel={handleCancelAllFilters}
+          />
+        );
+      
+      case PanelView.TESTS_LIST:
+      default:
+        return (
+          <TestsListSidebar
+            page={page}
+            pageSize={pageSize}
+            panelView={panelView}
+            activeFiltersCount={activeFiltersCount}
+            testEntitiesQuery={testEntitiesQuery}
+            formattedTestEntities={formattedTestEntities}
+            selectedTestId={selectedTest?.id || null}
+            selectedTestType={
+              selectedTest?.type === 'before-test'
+                ? 'beforeTest'
+                : selectedTest?.type === 'after-test'
+                ? 'afterTest'
+                : selectedTest?.type === 'test'
+                ? 'test'
+                : null
+            }
+            onTestClick={handleTestClick}
+            onFilterButtonClick={handleFilterButtonClick}
+            setPage={setPage}
+            setPageSize={setPageSize}
+          />
+        );
+    }
+  };
 
   return (
     <ResizablePanelGroup
@@ -27,27 +73,7 @@ export const TestsList = () => {
       className="h-full border items-stretch"
     >
       <ResizablePanel defaultSize={20} collapsible={false} minSize={25}>
-        <TestsListSidebar
-          page={page}
-          pageSize={pageSize}
-          titleFilter={titleFilter}
-          testEntitiesQuery={testEntitiesQuery}
-          formattedTestEntities={formattedTestEntities}
-          selectedTestId={selectedTest?.id || null}
-          selectedTestType={
-            selectedTest?.type === 'before-test'
-              ? 'beforeTest'
-              : selectedTest?.type === 'after-test'
-              ? 'afterTest'
-              : selectedTest?.type === 'test'
-              ? 'test'
-              : null
-          }
-          onTestClick={handleTestClick}
-          onFilterChange={handleFilterChange}
-          setPage={setPage}
-          setPageSize={setPageSize}
-        />
+        {renderLeftPanelContent()}
       </ResizablePanel>
       <ResizableHandle withHandle />
       <ResizablePanel>

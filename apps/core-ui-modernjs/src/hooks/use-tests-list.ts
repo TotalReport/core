@@ -5,11 +5,18 @@ import { useFindStatuses } from '@/hooks/api/statuses/use-find-statuses.jsx';
 import { useFindStatusGroups } from '@/hooks/api/status-groups/use-find-status-groups.js';
 import { formatTestEntity, FormattedTestEntity, getTestTypeFromEntityType } from '@/lib/test-utils.js';
 import { totalPagesCount } from '@/lib/pagination-utils.js';
+import { TestFiltersData } from '@/components/tests/test-filter.jsx';
 
 export type SelectedTest = {
   id: number;
   type: 'test' | 'before-test' | 'after-test';
 };
+
+// Type for possible view states in the left panel
+export enum PanelView {
+  TESTS_LIST,
+  FILTERS_VIEW
+}
 
 export function useTestsList() {
   const { getParam, getNumericParam, updateParams } = useUrlParams();
@@ -39,6 +46,9 @@ export function useTestsList() {
 
     return null;
   });
+
+  // Left panel view state (tests list or filters view)
+  const [panelView, setPanelView] = useState<PanelView>(PanelView.TESTS_LIST);
 
   // API queries
   const testEntitiesQuery = useFindTestEntities({
@@ -106,11 +116,6 @@ export function useTestsList() {
     setSelectedTest({ id: test.id, type: testType });
   };
 
-  const handleFilterChange = (filters: { titleFilter: string }) => {
-    setTitleFilter(filters.titleFilter);
-    setPage(1); // Reset to first page when filters change
-  };
-
   const handlePageChange = (newPage: number) => {
     setPage(Math.max(1, newPage));
   };
@@ -120,12 +125,58 @@ export function useTestsList() {
     setPage(1); // Reset to first page when page size changes
   };
 
+  // Handler for filter button click
+  const handleFilterButtonClick = () => {
+    // Toggle between tests list and filters view
+    if (panelView === PanelView.TESTS_LIST) {
+      setPanelView(PanelView.FILTERS_VIEW);
+    } else {
+      // If already in a filter view, cancel and return to tests list
+      setPanelView(PanelView.TESTS_LIST);
+    }
+  };
+
+  // Handler for canceling all filter changes
+  const handleCancelAllFilters = () => {
+    // Discard changes and return to tests list
+    setPanelView(PanelView.TESTS_LIST);
+  };
+
+  // Handler for applying all filter changes
+  const handleApplyAllFilters = (filters: TestFiltersData) => {
+    // Apply filter values to the actual filters
+    setTitleFilter(filters.title || '');
+    
+    // Return to tests list
+    setPanelView(PanelView.TESTS_LIST);
+    setPage(1); // Reset to first page when filters are applied
+  };
+
+  // Calculate how many filters are active
+  const getActiveFiltersCount = (): number => {
+    let count = 0;
+    if (titleFilter) count++;
+    return count;
+  };
+
+  // Get active filters count
+  const activeFiltersCount = getActiveFiltersCount();
+
+  // Get current filters data structure
+  const getCurrentFilters = (): TestFiltersData => {
+    return {
+      title: titleFilter || undefined
+    };
+  };
+
   return {
     // State
     page,
     pageSize,
     titleFilter,
     selectedTest,
+    panelView,
+    activeFiltersCount,
 
     // Data
     testEntitiesQuery,
@@ -140,9 +191,12 @@ export function useTestsList() {
 
     // Handlers
     handleTestClick,
-    handleFilterChange,
     handlePageChange,
     handlePageSizeChange,
+    handleFilterButtonClick,
+    handleApplyAllFilters,
+    handleCancelAllFilters,
+    getCurrentFilters,
     setPage: handlePageChange,
     setPageSize: handlePageSizeChange,
   };

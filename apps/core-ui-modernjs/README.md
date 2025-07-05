@@ -123,11 +123,22 @@ The tests page follows the same architectural patterns as the reports and launch
 ### Key Components
 
 - **TestsList**: Main component orchestrating the tests interface with resizable panels
-- **TestsListSidebar**: Left panel containing test filters, list, and pagination
+- **TestsListSidebar**: Left panel containing test list with filter button and pagination
+- **TestFilters**: Separate filter interface with structured filter management
+  - **FiltersList**: Main filter overview with active filters display
+  - **TitleFilterForm**: Dedicated title search filter form
 - **TestDetailsContainer**: Right panel managing different test type queries and formatting
 - **TestDetails**: Pure presentation component for displaying test information
 - **TestListItem**: Individual test item component with status visualization
-- **TestFilter**: Search and filtering interface for tests
+
+### Filter Architecture
+
+Following the same pattern as launches, the tests page implements a separate filter block:
+
+- **Panel View Management**: Toggle between tests list and filters view
+- **Filter Button**: Shows active filter count with badge indicator
+- **Structured Filters**: Organized filter options with individual edit forms
+- **Apply/Cancel Actions**: Proper filter state management with confirmation
 
 ### API Integration
 
@@ -143,6 +154,7 @@ The tests page follows the same architectural patterns as the reports and launch
 - **useTestsList**: Custom hook managing test list state, pagination, filters, and URL synchronization
 - **URL Parameters**: `page`, `pageSize`, `title~cnt`, `testId`, `beforeTestId`, `afterTestId`
 - **Selected Test State**: Tracks which test is selected and its type (test/before-test/after-test)
+- **Panel View State**: Manages switching between tests list and filters view
 
 ### Test Types Support
 
