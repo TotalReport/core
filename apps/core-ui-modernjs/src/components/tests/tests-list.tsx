@@ -18,7 +18,7 @@ import {
 
 // Configuration for available filters in tests page
 const testsFilterConfig: FilterConfig = {
-  availableFilters: [FilterType.TITLE, FilterType.REPORT, FilterType.LAUNCH],
+  availableFilters: [FilterType.TITLE, FilterType.REPORT, FilterType.LAUNCH, FilterType.ENTITY_TYPE],
   entityName: 'tests',
   showHeader: false // Don't show header since parent component already has one
 };

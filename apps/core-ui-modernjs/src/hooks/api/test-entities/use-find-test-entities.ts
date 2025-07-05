@@ -14,7 +14,8 @@ export const useFindTestEntities = ({
       pagination.limit,
       filters.reportId,
       filters.titleContains,
-      filters.launchId, // Important: Include all filter params in queryKey to trigger refetch when filters change
+      filters.launchId,
+      filters.entityTypes, // Important: Include all filter params in queryKey to trigger refetch when filters change
     ],
     queryData: {
       query: {
@@ -23,6 +24,7 @@ export const useFindTestEntities = ({
         "title~cnt": filters.titleContains,
         reportId: filters.reportId,
         launchId: filters.launchId,
+        entityTypes: filters.entityTypes,
       },
     },
     enabled: enabled !== false,
@@ -39,6 +41,7 @@ export type FindTestEntitiesParams = {
     titleContains?: string;
     reportId?: number;
     launchId?: number;
+    entityTypes?: ("beforeTest" | "test" | "afterTest")[]; // Add entity types filter with proper typing
   };
   pagination: {
     offset: number;

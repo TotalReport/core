@@ -153,6 +153,7 @@ The application implements a unified, modular filter system that is shared acros
   - **TitleFilterForm**: Text input for title/name searching with debouncing
   - **ReportFilterForm**: Searchable report selection with API integration
   - **LaunchFilterForm**: Searchable launch selection with API integration
+  - **EntityTypeFilterForm**: Multi-select for test entity types (beforeTest, test, afterTest)
 
 - **FilterOption**: Reusable component for displaying filter option cards
 
@@ -161,9 +162,9 @@ The application implements a unified, modular filter system that is shared acros
 Each page specifies which filters are available using a `FilterConfig`:
 
 ```typescript
-// Tests page - supports all three filter types without header
+// Tests page - supports all four filter types without header
 const testsFilterConfig: FilterConfig = {
-  availableFilters: [FilterType.TITLE, FilterType.REPORT, FilterType.LAUNCH],
+  availableFilters: [FilterType.TITLE, FilterType.REPORT, FilterType.LAUNCH, FilterType.ENTITY_TYPE],
   entityName: 'tests',
   showHeader: false // Hide header since parent already provides one
 };
@@ -199,6 +200,7 @@ interface BaseFilterData {
   title?: string;
   report?: FilterOption;
   launch?: FilterOption;
+  entityTypes?: string[]; // Entity types for test entities: "beforeTest", "test", "afterTest"
 }
 
 interface FilterOption {
@@ -215,7 +217,7 @@ interface FilterOption {
 - **URL Synchronization**: All filter states are reflected in URL parameters
 - **Query Integration**: Filter changes trigger data refetch with all params included in query keys
 
-This unified system ensures consistent filtering behavior and UI across all entity pages while remaining extensible for future filter types. Both tests and launches now support title and report filtering through the same interface, providing a consistent user experience.
+This unified system ensures consistent filtering behavior and UI across all entity pages while remaining extensible for future filter types. The tests page supports title, report, launch, and entity type filtering, while launches support title and report filtering through the same interface, providing a consistent user experience.
 
 ### API Integration
 
@@ -231,7 +233,7 @@ This unified system ensures consistent filtering behavior and UI across all enti
 ### State Management
 
 - **useTestsList**: Custom hook managing test list state, pagination, filters, and URL synchronization
-- **URL Parameters**: `page`, `pageSize`, `title~cnt`, `reportId`, `launchId`, `testId`, `beforeTestId`, `afterTestId`
+- **URL Parameters**: `page`, `pageSize`, `title~cnt`, `reportId`, `launchId`, `entityTypes`, `testId`, `beforeTestId`, `afterTestId`
 - **Selected Test State**: Tracks which test is selected and its type (test/before-test/after-test)
 - **Panel View State**: Manages switching between tests list and filters view
 

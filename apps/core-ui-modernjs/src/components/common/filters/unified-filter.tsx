@@ -3,6 +3,7 @@ import { FiltersList } from './filters-list.js';
 import { TitleFilterForm } from './title-filter-form.js';
 import { ReportFilterForm } from './report-filter-form.js';
 import { LaunchFilterForm } from './launch-filter-form.js';
+import { EntityTypeFilterForm } from './entity-type-filter-form.js';
 import { 
   FilterType, 
   FilterPanelView, 
@@ -65,6 +66,16 @@ export function UnifiedFilter<TFilterData extends BaseFilterData>({
     setActiveFilterType(FilterType.NONE);
   };
 
+  // Handler for applying entity type filter changes
+  const handleApplyEntityTypeFilter = (entityTypes: string[] | undefined) => {
+    setFilters(prev => ({
+      ...prev,
+      entityTypes: entityTypes
+    } as TFilterData));
+    setFilterPanelView(FilterPanelView.FILTERS_LIST);
+    setActiveFilterType(FilterType.NONE);
+  };
+
   // Handler for applying all filters and notifying parent
   const handleApplyAllFilters = () => {
     onApply(filters);
@@ -117,6 +128,17 @@ export function UnifiedFilter<TFilterData extends BaseFilterData>({
             initialValue={filters.launch}
             onCancel={handleCancelFilter}
             onApply={handleApplyLaunchFilter}
+            entityName={config.entityName}
+            showHeader={config.showHeader}
+          />
+        );
+      }
+      if (activeFilterType === FilterType.ENTITY_TYPE) {
+        return (
+          <EntityTypeFilterForm 
+            initialValue={filters.entityTypes}
+            onCancel={handleCancelFilter}
+            onApply={handleApplyEntityTypeFilter}
             entityName={config.entityName}
             showHeader={config.showHeader}
           />

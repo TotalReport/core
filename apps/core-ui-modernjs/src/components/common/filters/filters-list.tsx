@@ -101,6 +101,34 @@ export function FiltersList<TFilterData extends BaseFilterData>({
           />
         );
 
+      case FilterType.ENTITY_TYPE:
+        return filters.entityTypes && filters.entityTypes.length > 0 ? (
+          <div className="border rounded-md p-4 cursor-pointer hover:bg-accent transition-colors border-primary bg-accent/30">
+            <div className="flex justify-between">
+              <div>
+                <h3 className="text-sm font-medium">Entity Type Filter</h3>
+                <p className="text-xs font-medium mt-1 text-primary">
+                  {filters.entityTypes.length} type{filters.entityTypes.length !== 1 ? 's' : ''} selected
+                </p>
+              </div>
+              <Button 
+                variant="ghost" 
+                size="sm" 
+                className="h-7" 
+                onClick={() => onSelectFilter(FilterType.ENTITY_TYPE)}
+              >
+                Edit
+              </Button>
+            </div>
+          </div>
+        ) : (
+          <FilterOption
+            title="Entity Type Filter"
+            description={`Filter ${entityName} by entity type (beforeTest, test, afterTest)`}
+            onClick={() => onSelectFilter(FilterType.ENTITY_TYPE)}
+          />
+        );
+
       default:
         return null;
     }

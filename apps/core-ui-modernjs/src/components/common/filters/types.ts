@@ -5,6 +5,7 @@ export enum FilterType {
   TITLE = "title",
   REPORT = "report",
   LAUNCH = "launch",
+  ENTITY_TYPE = "entity_type",
 }
 
 export enum FilterPanelView {
@@ -23,6 +24,7 @@ export interface BaseFilterData {
   title?: string;
   report?: FilterOption;
   launch?: FilterOption;
+  entityTypes?: string[]; // Entity types for test entities: "beforeTest", "test", "afterTest"
 }
 
 // Configuration for available filters per entity

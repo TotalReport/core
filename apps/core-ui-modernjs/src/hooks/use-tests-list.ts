@@ -43,6 +43,16 @@ export function useTestsList() {
     // Only initialize with launchId from URL, title will be resolved when filter is applied
     return launchId ? { id: launchId, title: '' } : undefined;
   });
+  const [entityTypesFilter, setEntityTypesFilter] = useState<("beforeTest" | "test" | "afterTest")[]>(() => {
+    const entityTypesParam = getParam('entityTypes');
+    if (entityTypesParam) {
+      const types = entityTypesParam.split(',') as ("beforeTest" | "test" | "afterTest")[];
+      // Validate that all types are valid
+      const validTypes = types.filter(type => ['beforeTest', 'test', 'afterTest'].includes(type));
+      return validTypes;
+    }
+    return [];
+  });
 
   // Selected test state
   const [selectedTest, setSelectedTest] = useState<SelectedTest | null>(() => {
@@ -70,6 +80,7 @@ export function useTestsList() {
       titleContains: titleFilter || undefined,
       reportId: reportFilter?.id,
       launchId: launchFilter?.id,
+      entityTypes: entityTypesFilter.length > 0 ? entityTypesFilter : undefined,
     },
   });
 
@@ -92,6 +103,7 @@ export function useTestsList() {
       'title~cnt': titleFilter || null,
       reportId: reportFilter?.id || null,
       launchId: launchFilter?.id || null,
+      entityTypes: entityTypesFilter.length > 0 ? entityTypesFilter.join(',') : null,
       testId: null,
       beforeTestId: null,
       afterTestId: null,
@@ -112,7 +124,7 @@ export function useTestsList() {
     }
 
     updateParams(params);
-  }, [page, pageSize, titleFilter, reportFilter, launchFilter, selectedTest, updateParams]);
+  }, [page, pageSize, titleFilter, reportFilter, launchFilter, entityTypesFilter, selectedTest, updateParams]);
 
   // Auto-adjust page when needed
   useEffect(() => {
@@ -162,6 +174,7 @@ export function useTestsList() {
     setTitleFilter(filters.title || '');
     setReportFilter(filters.report);
     setLaunchFilter(filters.launch);
+    setEntityTypesFilter(filters.entityTypes ? filters.entityTypes as ("beforeTest" | "test" | "afterTest")[] : []);
     
     // Return to tests list
     setPanelView(PanelView.TESTS_LIST);
@@ -174,6 +187,7 @@ export function useTestsList() {
     if (titleFilter) count++;
     if (reportFilter) count++;
     if (launchFilter) count++;
+    if (entityTypesFilter.length > 0) count++;
     return count;
   };
 
@@ -185,7 +199,8 @@ export function useTestsList() {
     return {
       title: titleFilter || undefined,
       report: reportFilter,
-      launch: launchFilter
+      launch: launchFilter,
+      entityTypes: entityTypesFilter.length > 0 ? entityTypesFilter : undefined
     };
   };
 
@@ -196,6 +211,7 @@ export function useTestsList() {
     titleFilter,
     reportFilter,
     launchFilter,
+    entityTypesFilter,
     selectedTest,
     panelView,
     activeFiltersCount,
