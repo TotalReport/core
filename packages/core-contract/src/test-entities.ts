@@ -18,9 +18,9 @@ export const TestEntitySchema = z.object({
   startedTimestamp: z.string().optional(),
   finishedTimestamp: z.string().optional(),
   statusId: z.string().optional(),
-  correlationId: z.string().optional(),
-  argumentsHash: z.string().optional(),
-  externalArgumentsHash: z.string().optional(),
+  correlationId: z.string(),
+  argumentsHash: z.string(),
+  externalArgumentsHash: z.string(),
 });
 
 export const findTestEntities = contract.query({

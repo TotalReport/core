@@ -18,6 +18,7 @@ export const findTestEntitiesRoute: FindTestEntitiesRoute = async ({
     contextId: query.contextId,
     correlationId: query.correlationId,
     argumentsHash: query.argumentsHash,
+    externalArgumentsHash: query.externalArgumentsHash,
     distinct: query.distinct,
     titleContains: query["title~cnt"],
   };
@@ -41,6 +42,7 @@ export const findTestEntitiesRoute: FindTestEntitiesRoute = async ({
           statusId: item.statusId,
           correlationId: item.correlationId,
           argumentsHash: item.argumentsHash,
+          externalArgumentsHash: item.externalArgumentsHash,
         };
       }),
     },

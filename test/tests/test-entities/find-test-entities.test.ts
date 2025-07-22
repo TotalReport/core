@@ -355,6 +355,41 @@ describe("test entities", () => {
     });
   });
 
+  test("by externalArgumentsHash", async () => {
+    const launch = await generator.launches.create();
+    const externalArgumentsHash = "409cb2f4-2785-4a22-a55a-38d00cf3c619";
+    const created = await generator.tests.create({
+      launchId: launch.id,
+      externalArgumentsHash,
+    });
+
+    // Record that should be filtered out
+    await generator.tests.create({
+      launchId: launch.id,
+      externalArgumentsHash: "44fc3efe-0d5d-448c-9778-e76ccc9446e7",
+    });
+
+    const limit = 10;
+    const offset = 0;
+
+    const response = await client.findTestEntities({
+      query: { externalArgumentsHash, limit, offset },
+    });
+
+    expect(response).toEqual({
+      headers: expect.anything(),
+      status: 200,
+      body: {
+        pagination: {
+          total: 1,
+          limit,
+          offset,
+        },
+        items: [testToEntity(created)],
+      },
+    });
+  });
+
   test("distinct entities", async () => {
     const launch = await generator.launches.create();
     const correlationId = "123e4567-e89b-12d3-a456-426614174000";
@@ -539,6 +574,9 @@ const beforeTestToEntity = (entity: BeforeTest): TestEntity => {
     ...(entity.argumentsHash
       ? { argumentsHash: entity.argumentsHash }
       : undefined),
+    ...(entity.externalArgumentsHash
+      ? { externalArgumentsHash: entity.externalArgumentsHash }
+      : undefined),
   };
 };
 
@@ -565,6 +603,9 @@ const testToEntity = (entity: Test): TestEntity => {
     ...(entity.argumentsHash
       ? { argumentsHash: entity.argumentsHash }
       : undefined),
+    ...(entity.externalArgumentsHash
+      ? { externalArgumentsHash: entity.externalArgumentsHash }
+      : undefined),
   };
 };
 
@@ -590,6 +631,9 @@ const afterTestToEntity = (entity: AfterTest): TestEntity => {
       : undefined),
     ...(entity.argumentsHash
       ? { argumentsHash: entity.argumentsHash }
+      : undefined),
+    ...(entity.externalArgumentsHash
+      ? { externalArgumentsHash: entity.externalArgumentsHash }
       : undefined),
   };
 };

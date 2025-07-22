@@ -1,21 +1,17 @@
 import {
   launches,
-  reports,
-  testEntities,
-  testStatuses,
+  testEntities
 } from "@total-report/core-schema/schema";
 import {
-  inArray,
-  and,
-  asc,
-  count,
-  eq,
-  SQLWrapper,
-  countDistinct,
-  sql,
-  max,
   aliasedTable,
+  and,
+  count,
+  countDistinct,
+  eq,
   ilike,
+  inArray,
+  sql,
+  SQLWrapper
 } from "drizzle-orm";
 import { NodePgQueryResultHKT } from "drizzle-orm/node-postgres";
 import { PgDatabase } from "drizzle-orm/pg-core";
@@ -63,6 +59,10 @@ export class TestEntitiesDAO {
 
       if (search.argumentsHash !== undefined) {
         filters.push(eq(testEntities.argumentsHash, search.argumentsHash));
+      }
+
+      if (search.externalArgumentsHash !== undefined) {
+        filters.push(eq(testEntities.externalArgumentsHash, search.externalArgumentsHash));
       }
 
       if (search.entityTypes !== undefined) {
@@ -125,6 +125,7 @@ export class TestEntitiesDAO {
           statusId: testEntities.statusId,
           correlationId: testEntities.correlationId,
           argumentsHash: testEntities.argumentsHash,
+          externalArgumentsHash: testEntities.externalArgumentsHash,
         })
         .from(testEntities)
         .where(and(...filters));
@@ -146,7 +147,8 @@ export class TestEntitiesDAO {
                     statusId: testEntities.statusId,
                     correlationId: testEntities.correlationId,
                     argumentsHash: testEntities.argumentsHash,
-                    rank: sql`rank() over (partition by ${testEntities.correlationId},${testEntities.argumentsHash} order by ${testEntities.finishedTimestamp} desc, ${testEntities.id} desc)`.as(
+                    externalArgumentsHash: testEntities.externalArgumentsHash,
+                    rank: sql`rank() over (partition by ${testEntities.correlationId},${testEntities.argumentsHash},${testEntities.externalArgumentsHash} order by ${testEntities.finishedTimestamp} desc, ${testEntities.id} desc)`.as(
                       "rank"
                     ),
                   })
@@ -172,7 +174,8 @@ export class TestEntitiesDAO {
                     statusId: testEntities.statusId,
                     correlationId: testEntities.correlationId,
                     argumentsHash: testEntities.argumentsHash,
-                    rank: sql`rank() over (partition by ${testEntities.correlationId},${testEntities.argumentsHash} order by ${testEntities.finishedTimestamp} desc, ${testEntities.id} desc)`.as(
+                    externalArgumentsHash: testEntities.externalArgumentsHash,
+                    rank: sql`rank() over (partition by ${testEntities.correlationId},${testEntities.argumentsHash},${testEntities.externalArgumentsHash} order by ${testEntities.finishedTimestamp} desc, ${testEntities.id} desc)`.as(
                       "rank"
                     ),
                   })
@@ -193,6 +196,7 @@ export class TestEntitiesDAO {
               statusId: subquery.statusId,
               correlationId: subquery.correlationId,
               argumentsHash: subquery.argumentsHash,
+              externalArgumentsHash: subquery.externalArgumentsHash,
             })
             .from(subquery)
             .where(eq(subquery.rank, 1))
@@ -353,6 +357,7 @@ export type TestEntitySearch = {
   contextId?: number;
   correlationId?: string;
   argumentsHash?: string;
+  externalArgumentsHash?: string;
   distinct?: boolean;
   titleContains?: string;
 };
@@ -372,6 +377,7 @@ export type TestEntityEntity = {
   statusId: string | undefined;
   correlationId: string;
   argumentsHash: string;
+  externalArgumentsHash: string;
 };
 
 type TestEntityRow = {
@@ -386,6 +392,7 @@ type TestEntityRow = {
   statusId: string | null;
   correlationId: string;
   argumentsHash: string;
+  externalArgumentsHash: string;
 };
 
 type CountsByStatusesFilter = {
@@ -410,5 +417,6 @@ const rowToEntitty = (row: TestEntityRow) => {
     statusId: row.statusId ?? undefined,
     correlationId: row.correlationId,
     argumentsHash: row.argumentsHash,
+    externalArgumentsHash: row.externalArgumentsHash,
   };
 };
