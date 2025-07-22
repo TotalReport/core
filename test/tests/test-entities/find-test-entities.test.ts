@@ -568,15 +568,9 @@ const beforeTestToEntity = (entity: BeforeTest): TestEntity => {
       ? { finishedTimestamp: entity.finishedTimestamp }
       : undefined),
     ...(entity.statusId ? { statusId: entity.statusId } : undefined),
-    ...(entity.correlationId
-      ? { correlationId: entity.correlationId }
-      : undefined),
-    ...(entity.argumentsHash
-      ? { argumentsHash: entity.argumentsHash }
-      : undefined),
-    ...(entity.externalArgumentsHash
-      ? { externalArgumentsHash: entity.externalArgumentsHash }
-      : undefined),
+    ...{ correlationId: entity.correlationId },
+    ...{ argumentsHash: entity.argumentsHash },
+    ...{ externalArgumentsHash: entity.externalArgumentsHash },
   };
 };
 
@@ -597,15 +591,9 @@ const testToEntity = (entity: Test): TestEntity => {
       ? { finishedTimestamp: entity.finishedTimestamp }
       : undefined),
     ...(entity.statusId ? { statusId: entity.statusId } : undefined),
-    ...(entity.correlationId
-      ? { correlationId: entity.correlationId }
-      : undefined),
-    ...(entity.argumentsHash
-      ? { argumentsHash: entity.argumentsHash }
-      : undefined),
-    ...(entity.externalArgumentsHash
-      ? { externalArgumentsHash: entity.externalArgumentsHash }
-      : undefined),
+    ...{ correlationId: entity.correlationId },
+    ...{ argumentsHash: entity.argumentsHash },
+    ...{ externalArgumentsHash: entity.externalArgumentsHash },
   };
 };
 
@@ -626,15 +614,9 @@ const afterTestToEntity = (entity: AfterTest): TestEntity => {
       ? { finishedTimestamp: entity.finishedTimestamp }
       : undefined),
     ...(entity.statusId ? { statusId: entity.statusId } : undefined),
-    ...(entity.correlationId
-      ? { correlationId: entity.correlationId }
-      : undefined),
-    ...(entity.argumentsHash
-      ? { argumentsHash: entity.argumentsHash }
-      : undefined),
-    ...(entity.externalArgumentsHash
-      ? { externalArgumentsHash: entity.externalArgumentsHash }
-      : undefined),
+    ...{ correlationId: entity.correlationId },
+    ...{ argumentsHash: entity.argumentsHash },
+    ...{ externalArgumentsHash: entity.externalArgumentsHash },
   };
 };
 
