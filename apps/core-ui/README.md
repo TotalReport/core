@@ -5,7 +5,7 @@
 The project follows a modular architecture for better code organization and maintenance:
 
 ```
-core-ui-modernjs/
+core-ui/
 ├── src/                   # Source code directory
 │   ├── components/        # Reusable UI components
 │   │   ├── providers/     # Context providers
