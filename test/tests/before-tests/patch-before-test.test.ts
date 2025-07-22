@@ -58,6 +58,7 @@ describe("patch before test", () => {
         argumentsHash: beforeTest.argumentsHash,
         arguments: beforeTest.arguments,
         correlationId: beforeTest.correlationId,
+        externalArgumentsHash: beforeTest.externalArgumentsHash,
       },
     });
   });

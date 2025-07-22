@@ -19,6 +19,15 @@ export const CreateBeforeTestSchema = z.object({
       })
     )
     .optional(),
+  externalArguments: z
+    .array(
+      z.object({
+        name: z.string(),
+        type: z.string(),
+        value: z.string().nullable(),
+      })
+    )
+    .optional(),
   correlationId: z
     .string()
     .uuid()
@@ -34,6 +43,13 @@ export const CreateBeforeTestSchema = z.object({
       "The hash of the arguments. Together with the correlation ID, it is used to identify the before tests suitable for compare." +
         " If the arguments hash is not provided, it will be generated from the arguments."
     ),
+    externalArgumentsHash: z
+      .string()
+      .optional()
+      .describe(
+        "The hash of the external arguments. Together with the correlation ID, it is used to identify the before tests suitable for compare." +
+          " If the external arguments hash is not provided, it will be generated from the external arguments."
+      )
 });
 
 export const BeforeTestSchema = z.object({
@@ -55,8 +71,19 @@ export const BeforeTestSchema = z.object({
       })
     )
     .optional(),
+  externalArguments: z
+    .array(
+      z.object({
+        id: z.number().int(),
+        name: z.string(),
+        type: z.string(),
+        value: z.string().nullable(),
+      })
+    )
+    .optional(),
   correlationId: z.string().uuid(),
   argumentsHash: z.string().uuid(),
+  externalArgumentsHash: z.string().uuid(),
 });
 
 export const PatchBeforeTestSchema = z.object({
@@ -121,6 +148,10 @@ export const findBeforeTests = contract.query({
       .string()
       .optional()
       .describe("The arguments hash the before tests have."),
+    externalArgumentsHash: z.coerce
+      .string()
+      .optional()
+      .describe("The external arguments hash the before tests have."),
     limit: z.coerce
       .number()
       .int()

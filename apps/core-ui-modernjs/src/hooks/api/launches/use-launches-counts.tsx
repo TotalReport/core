@@ -3,7 +3,7 @@ import { contract } from "@total-report/core-contract/contract";
 import { ClientInferResponseBody } from "@ts-rest/core";
 
 export const useFindLaunchesCount = ({
-  filters: { reportId, distinct },
+  filters: { reportId },
   enabled = true,
 }: FindLaunchesCountParams): FindLaunchesCountResponse => {
   const query = api.findLaunchesCount.useQuery({
@@ -11,7 +11,6 @@ export const useFindLaunchesCount = ({
     queryData: {
       query: {
         reportId: reportId,
-        distinct: distinct,
       },
     },
     enabled: enabled !== false,
@@ -26,7 +25,6 @@ export const useFindLaunchesCount = ({
 export type FindLaunchesCountParams = {
   filters: {
     reportId?: number;
-    distinct: boolean;
   };
   enabled?: boolean;
 };

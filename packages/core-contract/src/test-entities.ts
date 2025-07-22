@@ -20,6 +20,7 @@ export const TestEntitySchema = z.object({
   statusId: z.string().optional(),
   correlationId: z.string().optional(),
   argumentsHash: z.string().optional(),
+  externalArgumentsHash: z.string().optional(),
 });
 
 export const findTestEntities = contract.query({
@@ -40,6 +41,7 @@ export const findTestEntities = contract.query({
     contextId: z.coerce.number().int().optional(),
     correlationId: z.coerce.string().optional(),
     argumentsHash: z.coerce.string().optional(),
+    externalArgumentsHash: z.coerce.string().optional(),
     distinct: zBoolean(z).default("false"),
     limit: z.coerce
       .number()

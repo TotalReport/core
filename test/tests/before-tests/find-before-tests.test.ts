@@ -64,7 +64,7 @@ describe("find before tests", () => {
           limit,
           offset,
         },
-        items: [{ ...created, arguments: [] }],
+        items: [{ ...created, arguments: [], externalArguments: [] }],
       },
     });
   });
@@ -94,7 +94,7 @@ describe("find before tests", () => {
           limit,
           offset,
         },
-        items: [{ ...created, arguments: [] }],
+        items: [{ ...created, arguments: [], externalArguments: [] }],
       },
     });
   });
@@ -134,7 +134,7 @@ describe("find before tests", () => {
           limit,
           offset,
         },
-        items: [{ ...expectedRecord, arguments: [] }],
+        items: [{ ...expectedRecord, arguments: [], externalArguments: [] }],
       },
     });
   });
@@ -169,7 +169,7 @@ describe("find before tests", () => {
           limit,
           offset,
         },
-        items: [{ ...created, arguments: [] }],
+        items: [{ ...created, arguments: [], externalArguments: [] }],
       },
     });
   });
@@ -204,7 +204,7 @@ describe("find before tests", () => {
           limit,
           offset,
         },
-        items: [{ ...created, arguments: [] }],
+        items: [{ ...created, arguments: [], externalArguments: [] }],
       },
     });
   });

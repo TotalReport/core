@@ -59,6 +59,7 @@ describe("patch test", () => {
         argumentsHash: test.argumentsHash,
         arguments: test.arguments,
         correlationId: test.correlationId,
+        externalArgumentsHash: test.externalArgumentsHash,
       },
     });
   });

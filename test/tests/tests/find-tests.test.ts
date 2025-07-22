@@ -65,7 +65,7 @@ describe("find tests", () => {
           limit,
           offset,
         },
-        items: [{ ...created, arguments: [] }],
+        items: [{ ...created, arguments: [], externalArguments: [] }],
       },
     });
   });
@@ -95,7 +95,7 @@ describe("find tests", () => {
           limit,
           offset,
         },
-        items: [{...created, arguments: []}],
+        items: [{...created, arguments: [], externalArguments: []}],
       },
     });
   });
@@ -133,7 +133,7 @@ describe("find tests", () => {
           limit,
           offset,
         },
-        items: [{...expectedRecord, arguments: []}],
+        items: [{...expectedRecord, arguments: [], externalArguments: []}],
       },
     });
   });
@@ -168,7 +168,7 @@ describe("find tests", () => {
           limit,
           offset,
         },
-        items: [{...created, arguments: []}],
+        items: [{...created, arguments: [], externalArguments: []}],
       },
     });
   });
@@ -203,7 +203,7 @@ describe("find tests", () => {
           limit,
           offset,
         },
-        items: [{...created, arguments: []}],
+        items: [{...created, arguments: [], externalArguments: []}],
       },
     });
   });

@@ -46,6 +46,7 @@ export const applyPatchToTestRow = (args: {
     ),
     correlationId: args.row.correlationId,
     argumentsHash: args.row.argumentsHash,
+    externalArgumentsHash: args.row.externalArgumentsHash,
   };
 };
 
@@ -86,6 +87,7 @@ type GenericTestRow = {
     testContextId: number | null;
     correlationId: string;
     argumentsHash: string;
+    externalArgumentsHash: string;
 }
 
 export type Override<

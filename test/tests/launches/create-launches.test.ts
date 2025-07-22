@@ -21,8 +21,6 @@ describe("create launches", () => {
         title: request.title,
         reportId: report.id,
         createdTimestamp: expect.isCloseToNow(3000),
-        argumentsHash: "bbb93ef2-6e3c-101f-f11c-dd21cab08a94",
-        correlationId: "e004f724-4921-921d-6512-785cd057c58d",
       },
     });
   });
@@ -36,8 +34,6 @@ describe("create launches", () => {
       createdTimestamp: new Date("2024-07-21T06:52:32Z"),
       startedTimestamp: new Date("2024-07-21T06:52:35Z"),
       finishedTimestamp: new Date("2024-07-21T06:53:21Z"),
-      argumentsHash: "6dc3765f-d191-4f04-aefc-30c760cfeb77",
-      correlationId: "d8b01d07-b9bb-4d91-967c-29534858c644",
     };
 
     const response = await client.createLaunch({ body: request });
@@ -53,8 +49,6 @@ describe("create launches", () => {
         createdTimestamp: request.createdTimestamp.toISOString(),
         startedTimestamp: request.startedTimestamp.toISOString(),
         finishedTimestamp: request.finishedTimestamp.toISOString(),
-        argumentsHash:  request.argumentsHash,
-        correlationId: request.correlationId,
       },
     });
   });

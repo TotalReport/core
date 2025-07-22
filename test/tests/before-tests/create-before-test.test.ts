@@ -53,6 +53,7 @@ describe("create before test", () => {
           },
         ],
         correlationId: "167e3735-1f27-5320-e63b-7f08e6e506d3",
+        externalArgumentsHash: "bbb93ef2-6e3c-101f-f11c-dd21cab08a94",
       },
     });
   });
@@ -82,6 +83,7 @@ describe("create before test", () => {
       ],
       correlationId: "bbb93ef2-6e3c-101f-f11c-dd21cab08a95",
       argumentsHash: "bbb93ef2-6e3c-101f-f11c-dd21cab08a96",
+      externalArgumentsHash: "bf6937eb-2a0f-40c9-bdf8-d7b614faf8cb",
     };
 
     const response = await client.createBeforeTest({ body: request });
@@ -114,6 +116,7 @@ describe("create before test", () => {
         ],
         argumentsHash: request.argumentsHash,
         correlationId: request.correlationId,
+        externalArgumentsHash: request.externalArgumentsHash,
       },
     });
   });

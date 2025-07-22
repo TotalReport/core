@@ -13,6 +13,7 @@ export const createBeforeTestRoute: CreateBeforeTestRoute = async ({
     createdTimestamp: body.createdTimestamp ?? new Date(),
     correlationId: body.correlationId ?? MD5(body.title),
     argumentsHash: body.argumentsHash ?? MD5(body.arguments ?? null),
+    externalArgumentsHash: body.externalArgumentsHash ?? MD5(body.externalArguments ?? null),
   };
 
   return {
@@ -94,6 +95,8 @@ const convertToResponseBody = (
     statusId: response.statusId ?? undefined,
     argumentsHash: response.argumentsHash ?? undefined,
     arguments: response.arguments ?? undefined,
+    externalArgumentsHash: response.externalArgumentsHash ?? undefined,
+    externalArguments: response.externalArguments ?? undefined,
     correlationId: response.correlationId,
   };
 };

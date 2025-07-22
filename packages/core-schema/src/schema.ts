@@ -31,8 +31,6 @@ export const launches = pgTable("launches", {
   createdTimestamp: timestamp("created_timestamp", { withTimezone: false, mode: "date" }).notNull(),
   startedTimestamp: timestamp("started_timestamp", { withTimezone: false, mode: "date" }),
   finishedTimestamp: timestamp("finished_timestamp", { withTimezone: false, mode: "date" }),
-  correlationId: uuid("correlation_id").notNull(),
-  argumentsHash: uuid("arguments_hash").notNull(),
 });
 
 export const testEnititesIdSeq = pgSequence("test_entities_id_seq", { cache: 5 });
@@ -60,9 +58,19 @@ export const beforeTests = pgTable("before_tests", {
   statusId: varchar("status_id").references(() => testStatuses.id),
   correlationId: uuid("correlation_id").notNull(),
   argumentsHash: uuid("arguments_hash").notNull(),
+  externalArgumentsHash: uuid("external_arguments_hash").notNull(),
 });
 
 export const beforeTestArguments = pgTable("before_test_arguments", {
+  testId: bigint("test_id", { mode: "number" }).references(() => beforeTests.id).notNull(),
+  id: bigserial("id", { mode: "number" }).primaryKey(),
+  index: integer("index").notNull(),
+  name: varchar("name", { length: 256 }).notNull(),
+  type: varchar("type", { length: 256 }).notNull(),
+  value: text("value"),
+});
+
+export const beforeTestExternalArguments = pgTable("before_test_external_arguments", {
   testId: bigint("test_id", { mode: "number" }).references(() => beforeTests.id).notNull(),
   id: bigserial("id", { mode: "number" }).primaryKey(),
   index: integer("index").notNull(),
@@ -94,9 +102,19 @@ export const tests = pgTable("tests", {
   statusId: varchar("status_id").references(() => testStatuses.id),
   correlationId: uuid("correlation_id").notNull(),
   argumentsHash: uuid("arguments_hash").notNull(),
+  externalArgumentsHash: uuid("external_arguments_hash").notNull(),
 });
 
 export const testArguments = pgTable("test_arguments", {
+  testId: bigint("test_id", { mode: "number" }).references(() => tests.id).notNull(),
+  id: bigserial("id", { mode: "number" }).primaryKey(),
+  index: integer("index").notNull(),
+  name: varchar("name", { length: 256 }).notNull(),
+  type: varchar("type", { length: 256 }).notNull(),
+  value: text("value"),
+});
+
+export const testExternalArguments = pgTable("test_external_arguments", {
   testId: bigint("test_id", { mode: "number" }).references(() => tests.id).notNull(),
   id: bigserial("id", { mode: "number" }).primaryKey(),
   index: integer("index").notNull(),
@@ -128,9 +146,19 @@ export const afterTests = pgTable("after_tests", {
   statusId: varchar("status_id").references(() => testStatuses.id),
   correlationId: uuid("correlation_id").notNull(),
   argumentsHash: uuid("arguments_hash").notNull(),
+  externalArgumentsHash: uuid("external_arguments_hash").notNull(),
 });
 
 export const afterTestArguments = pgTable("after_test_arguments", {
+  testId: bigint("test_id", { mode: "number" }).references(() => afterTests.id).notNull(),
+  id: bigserial("id", { mode: "number" }).primaryKey(),
+  index: integer("index").notNull(),
+  name: varchar("name", { length: 256 }).notNull(),
+  type: varchar("type", { length: 256 }).notNull(),
+  value: text("value"),
+});
+
+export const afterTestExternalArguments = pgTable("after_test_external_arguments", {
   testId: bigint("test_id", { mode: "number" }).references(() => afterTests.id).notNull(),
   id: bigserial("id", { mode: "number" }).primaryKey(),
   index: integer("index").notNull(),
@@ -169,7 +197,8 @@ export const testEntities = pgView("test_entities").as((qb) =>
       finishedTimestamp: beforeTests.finishedTimestamp,
       statusId: beforeTests.statusId,
       correlationId: beforeTests.correlationId,
-      argumentsHash: beforeTests.argumentsHash})
+      argumentsHash: beforeTests.argumentsHash,
+      externalArgumentsHash: beforeTests.externalArgumentsHash})
     .from(beforeTests)
   .unionAll(
     qb.select({
@@ -183,7 +212,9 @@ export const testEntities = pgView("test_entities").as((qb) =>
         finishedTimestamp: tests.finishedTimestamp,
         statusId: tests.statusId,
         correlationId: tests.correlationId,
-        argumentsHash: tests.argumentsHash})
+        argumentsHash: tests.argumentsHash,
+        externalArgumentsHash: tests.externalArgumentsHash
+      })
       .from(tests))
   .unionAll(
     qb.select({
@@ -197,5 +228,7 @@ export const testEntities = pgView("test_entities").as((qb) =>
         finishedTimestamp: afterTests.finishedTimestamp,
         statusId: afterTests.statusId,
         correlationId: afterTests.correlationId,
-        argumentsHash: afterTests.argumentsHash})
+        argumentsHash: afterTests.argumentsHash,
+        externalArgumentsHash: afterTests.externalArgumentsHash
+      })
       .from(afterTests)))

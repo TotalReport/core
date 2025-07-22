@@ -34,8 +34,6 @@ describe("launches", () => {
         createdTimestamp: request.createdTimestamp.toISOString(),
         startedTimestamp: request.startedTimestamp.toISOString(),
         finishedTimestamp: request.finishedTimestamp.toISOString(),
-        argumentsHash: "bbb93ef2-6e3c-101f-f11c-dd21cab08a94",
-        correlationId: "89ca5a70-637a-b790-6d30-b4bcfdc4bf73",
       },
     });
   });
@@ -69,8 +67,6 @@ describe("launches", () => {
         createdTimestamp: patchRequest.createdTimestamp.toISOString(),
         startedTimestamp: patchRequest.startedTimestamp.toISOString(),
         finishedTimestamp: patchRequest.finishedTimestamp.toISOString(),
-        argumentsHash: "bbb93ef2-6e3c-101f-f11c-dd21cab08a94",
-        correlationId: "d8047e5c-4288-b647-c505-e5e6a9d22591",
       },
     });
   });

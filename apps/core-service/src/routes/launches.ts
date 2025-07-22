@@ -1,22 +1,13 @@
 import { contract } from "@total-report/core-contract/contract";
 import { AppRouteImplementation } from "@ts-rest/express";
 import { LaunchesDAO } from "../db/launches.js";
-import { TestEntitiesDAO } from "../db/test-entities.js";
-
-import { ClientInferResponseBody } from "@ts-rest/core";
-import { ENTITY_TYPES } from "@total-report/core-schema/constants";
-import { MD5 } from "object-hash";
 
 export const createLaunchRoute: CreateLaunchRoute = async ({ body }) => {
   let createdTimestamp = body.createdTimestamp ?? new Date();
-  let correlationId = body.correlationId ?? MD5(body.title);
-  let argumentsHash = body.argumentsHash ?? MD5(body.arguments ?? null);
 
   const launch = await new LaunchesDAO().create({
     ...body,
     createdTimestamp,
-    correlationId,
-    argumentsHash,
   });
   return {
     status: 201,
@@ -53,8 +44,6 @@ export const findLaunchesRoute: FindLaunchRoute = async ({ query }) => {
     limit: query.limit,
     offset: query.offset,
     reportId: query.reportId,
-    correlationId: query.correlationId,
-    argumentsHash: query.argumentsHash,
     titleContains: query["title~cnt"],
   });
 
@@ -81,7 +70,6 @@ export const findLaunchesCountRoute: FindLaunchesCountRoute = async ({
 }) => {
   const data = await new LaunchesDAO().findCount({
     reportId: query.reportId,
-    distinct: query.distinct ?? false,
   });
 
   return {

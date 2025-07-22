@@ -1,11 +1,11 @@
 import { launches } from "@total-report/core-schema/schema";
-import { and, count, countDistinct, eq, ilike, sql } from "drizzle-orm";
+import { and, count, eq, ilike } from "drizzle-orm";
 import { NodePgQueryResultHKT } from "drizzle-orm/node-postgres/session";
 import { PgDatabase } from "drizzle-orm/pg-core/db";
+import { Paginated } from "../db-common/types.js";
 import { ReportNotFoundError } from "../errors/errors.js";
 import { validateTimestamps } from "../validations/validations.js";
 import { db as defaultDB } from "./setup.js";
-import { Paginated } from "../db-common/types.js";
 
 export class LaunchesDAO {
   db: PgDatabase<NodePgQueryResultHKT, Record<string, unknown>>;
@@ -29,8 +29,6 @@ export class LaunchesDAO {
           createdTimestamp: args.createdTimestamp,
           startedTimestamp: args.startedTimestamp,
           finishedTimestamp: args.finishedTimestamp,
-          correlationId: args.correlationId,
-          argumentsHash: args.argumentsHash,
         })
         .returning();
 
@@ -59,24 +57,14 @@ export class LaunchesDAO {
         ? eq(launches.reportId, params.reportId)
         : undefined;
 
-      const correlationIdFilter = params.correlationId
-        ? eq(launches.correlationId, params.correlationId)
-        : undefined;
-
-      const argumentsHashFilter = params.argumentsHash
-        ? eq(launches.argumentsHash, params.argumentsHash)
-        : undefined;
-
       const titleFilter = params.titleContains
-        ? ilike(launches.title, `%${params.titleContains.replace(/[%_]/g, '\\$&')}%`)
+        ? ilike(
+            launches.title,
+            `%${params.titleContains.replace(/[%_]/g, "\\$&")}%`
+          )
         : undefined;
 
-      let filter = and(
-        reportIdFilter,
-        correlationIdFilter,
-        argumentsHashFilter,
-        titleFilter
-      );
+      let filter = and(reportIdFilter, titleFilter);
 
       const items = await tx
         .select()
@@ -113,7 +101,6 @@ export class LaunchesDAO {
    * @returns The count of launches.
    */
   async findCount(params: FindCountParams): Promise<number> {
-    const distinct = params.distinct;
     const reportIdFilter = params.reportId
       ? eq(launches.reportId, params.reportId)
       : undefined;
@@ -124,11 +111,7 @@ export class LaunchesDAO {
       (
         await this.db
           .select({
-            value: distinct
-              ? countDistinct(
-                  sql` (${launches.correlationId},${launches.argumentsHash})`
-                )
-              : count(),
+            value: count(),
           })
           .from(launches)
           .where(filter)
@@ -184,8 +167,6 @@ type CreateLaunch = {
   reportId: number;
   title: string;
   arguments?: string;
-  argumentsHash: string;
-  correlationId: string;
   createdTimestamp: Date;
   startedTimestamp?: Date;
   finishedTimestamp?: Date;
@@ -208,10 +189,6 @@ type FindCountParams = {
    * The report ID the launches are belongs to.
    */
   reportId?: number;
-  /**
-   * Distinct the launches by correlation ID and arguments hash.
-   */
-  distinct: boolean;
 };
 
 type PatchLaunch = {
@@ -239,8 +216,6 @@ type LaunchEntity = {
   createdTimestamp: Date;
   startedTimestamp?: Date;
   finishedTimestamp?: Date;
-  correlationId: string;
-  argumentsHash: string;
 };
 
 const rowToEntity = (row: LaunchRow): LaunchEntity => {
@@ -252,8 +227,6 @@ const rowToEntity = (row: LaunchRow): LaunchEntity => {
     createdTimestamp: row.createdTimestamp,
     startedTimestamp: row.startedTimestamp ?? undefined,
     finishedTimestamp: row.finishedTimestamp ?? undefined,
-    correlationId: row.correlationId,
-    argumentsHash: row.argumentsHash,
   };
 };
 

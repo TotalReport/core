@@ -5,6 +5,7 @@ import { TestsCommonDAO } from "../db-common/tests-common.js";
 import { db as defaultDB } from "./setup.js";
 import { TestArgumentsDAO } from "./test-arguments.js";
 import { TestStepsDAO } from "./test-steps.js";
+import { TestExternalArgumentsDAO } from "./test-external-arguments.js";
 
 /**
  * Data access object for tests.
@@ -19,6 +20,7 @@ export class TestsDAO extends TestsCommonDAO {
       newTestsCommonDAO: (dbc) => new TestsDAO(dbc),
       newTestArgumentsDAO: (dbc) => new TestArgumentsDAO(dbc),
       newTestStepsDAO: (dbc) => new TestStepsDAO(dbc),
+      newTestExternalArgumentsDAO: (dbc) => new TestExternalArgumentsDAO(dbc),
     });
   }
 }

@@ -20,7 +20,7 @@ export const ReportDetails: React.FC<ReportDetailsProps> = ({ reportId }) => {
   });
 
   const launchesCountQuery = useFindLaunchesCount({
-    filters: { reportId, distinct: false }
+    filters: { reportId }
   });
 
   // Show loading state

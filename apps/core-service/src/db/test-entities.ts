@@ -83,8 +83,7 @@ export class TestEntitiesDAO {
                 .select({
                   value: search.distinct
                     ? countDistinct(
-                        // FIXME: Is it a typo? Should it be `testEntities` instead of `launches`?
-                        sql` (${launches.correlationId},${launches.argumentsHash})`
+                        sql` (${testEntities.correlationId}, ${testEntities.argumentsHash}, ${testEntities.externalArgumentsHash})`
                       )
                     : count(),
                 })
@@ -103,7 +102,7 @@ export class TestEntitiesDAO {
                 .select({
                   value: search.distinct
                     ? countDistinct(
-                        sql` (${testEntities.correlationId},${testEntities.argumentsHash})`
+                        sql` (${testEntities.correlationId}, ${testEntities.argumentsHash}, ${testEntities.externalArgumentsHash})`
                       )
                     : count(),
                 })
@@ -277,17 +276,11 @@ const distinctFilterTestEntities = (
           finishedTimestamp: testEntities.finishedTimestamp,
           entityType: testEntities.entityType,
           statusId: testEntities.statusId,
-          //TODO: are this fields really needed?
-          launchCorrelationId: sql<string>`${launches.correlationId}`.as(
-            "launch_correlation_id"
-          ),
-          launchArgumentsHash: sql<string>`${launches.argumentsHash}`.as(
-            "launch_arguments_hash"
-          ),
           correlationId: testEntities.correlationId,
           argumentsHash: testEntities.argumentsHash,
+          externalArgumentsHash: testEntities.externalArgumentsHash,
           repeatCounter:
-            sql`ROW_NUMBER() over (partition by ${testEntities.entityType}, ${launches.correlationId}, ${launches.argumentsHash}, ${testEntities.correlationId}, ${testEntities.argumentsHash} order by ${testEntities.finishedTimestamp} desc, ${testEntities.id} desc)`.as(
+            sql`ROW_NUMBER() over (partition by ${testEntities.entityType}, ${testEntities.externalArgumentsHash}, ${testEntities.correlationId}, ${testEntities.argumentsHash} order by ${testEntities.finishedTimestamp} desc, ${testEntities.id} desc)`.as(
               "repeat_counter"
             ),
         })
@@ -331,15 +324,9 @@ const filterTestEntities = (
         finishedTimestamp: testEntities.finishedTimestamp,
         entityType: testEntities.entityType,
         statusId: testEntities.statusId,
-        //TODO: are this fields really needed?
-        launchCorrelationId: sql<string>`${launches.correlationId}`.as(
-          "launch_correlation_id"
-        ),
-        launchArgumentsHash: sql<string>`${launches.argumentsHash}`.as(
-          "launch_arguments_hash"
-        ),
         correlationId: testEntities.correlationId,
         argumentsHash: testEntities.argumentsHash,
+        externalArgumentsHash: testEntities.externalArgumentsHash,
       })
       .from(testEntities)
       //TODO: don't need join if reportId is not defined

@@ -1,5 +1,5 @@
 {
-  "id": "f688298a-0ffc-43b3-871b-d6e9054e15ed",
+  "id": "f1cf33d8-b990-4fe1-80a3-f5244df0eaff",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -50,6 +50,69 @@
         "after_test_arguments_test_id_after_tests_id_fk": {
           "name": "after_test_arguments_test_id_after_tests_id_fk",
           "tableFrom": "after_test_arguments",
+          "tableTo": "after_tests",
+          "columnsFrom": [
+            "test_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.after_test_external_arguments": {
+      "name": "after_test_external_arguments",
+      "schema": "",
+      "columns": {
+        "test_id": {
+          "name": "test_id",
+          "type": "bigint",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "id": {
+          "name": "id",
+          "type": "bigserial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "index": {
+          "name": "index",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "name": {
+          "name": "name",
+          "type": "varchar(256)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "type": {
+          "name": "type",
+          "type": "varchar(256)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "value": {
+          "name": "value",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "after_test_external_arguments_test_id_after_tests_id_fk": {
+          "name": "after_test_external_arguments_test_id_after_tests_id_fk",
+          "tableFrom": "after_test_external_arguments",
           "tableTo": "after_tests",
           "columnsFrom": [
             "test_id"
@@ -206,6 +269,12 @@
           "type": "uuid",
           "primaryKey": false,
           "notNull": true
+        },
+        "external_arguments_hash": {
+          "name": "external_arguments_hash",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
         }
       },
       "indexes": {},
@@ -302,6 +371,69 @@
         "before_test_arguments_test_id_before_tests_id_fk": {
           "name": "before_test_arguments_test_id_before_tests_id_fk",
           "tableFrom": "before_test_arguments",
+          "tableTo": "before_tests",
+          "columnsFrom": [
+            "test_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.before_test_external_arguments": {
+      "name": "before_test_external_arguments",
+      "schema": "",
+      "columns": {
+        "test_id": {
+          "name": "test_id",
+          "type": "bigint",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "id": {
+          "name": "id",
+          "type": "bigserial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "index": {
+          "name": "index",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "name": {
+          "name": "name",
+          "type": "varchar(256)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "type": {
+          "name": "type",
+          "type": "varchar(256)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "value": {
+          "name": "value",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "before_test_external_arguments_test_id_before_tests_id_fk": {
+          "name": "before_test_external_arguments_test_id_before_tests_id_fk",
+          "tableFrom": "before_test_external_arguments",
           "tableTo": "before_tests",
           "columnsFrom": [
             "test_id"
@@ -458,6 +590,12 @@
           "type": "uuid",
           "primaryKey": false,
           "notNull": true
+        },
+        "external_arguments_hash": {
+          "name": "external_arguments_hash",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
         }
       },
       "indexes": {},
@@ -553,18 +691,6 @@
           "type": "timestamp",
           "primaryKey": false,
           "notNull": false
-        },
-        "correlation_id": {
-          "name": "correlation_id",
-          "type": "uuid",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "arguments_hash": {
-          "name": "arguments_hash",
-          "type": "uuid",
-          "primaryKey": false,
-          "notNull": true
         }
       },
       "indexes": {},
@@ -817,6 +943,69 @@
       "checkConstraints": {},
       "isRLSEnabled": false
     },
+    "public.test_external_arguments": {
+      "name": "test_external_arguments",
+      "schema": "",
+      "columns": {
+        "test_id": {
+          "name": "test_id",
+          "type": "bigint",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "id": {
+          "name": "id",
+          "type": "bigserial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "index": {
+          "name": "index",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "name": {
+          "name": "name",
+          "type": "varchar(256)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "type": {
+          "name": "type",
+          "type": "varchar(256)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "value": {
+          "name": "value",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "test_external_arguments_test_id_tests_id_fk": {
+          "name": "test_external_arguments_test_id_tests_id_fk",
+          "tableFrom": "test_external_arguments",
+          "tableTo": "tests",
+          "columnsFrom": [
+            "test_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
     "public.test_status_groups": {
       "name": "test_status_groups",
       "schema": "",
@@ -1050,6 +1239,12 @@
           "type": "uuid",
           "primaryKey": false,
           "notNull": true
+        },
+        "external_arguments_hash": {
+          "name": "external_arguments_hash",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
         }
       },
       "indexes": {},
@@ -1174,9 +1369,15 @@
           "type": "uuid",
           "primaryKey": false,
           "notNull": true
+        },
+        "external_arguments_hash": {
+          "name": "external_arguments_hash",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
         }
       },
-      "definition": "((select \"launch_id\", \"test_context_id\" as \"parent_context_id\", 'beforeTest' as \"entity_type\", \"id\", \"title\", \"created_timestamp\", \"started_timestamp\", \"finished_timestamp\", \"status_id\", \"correlation_id\", \"arguments_hash\" from \"before_tests\") union all (select \"launch_id\", \"test_context_id\" as \"parent_context_id\", 'test' as \"entity_type\", \"id\", \"title\", \"created_timestamp\", \"started_timestamp\", \"finished_timestamp\", \"status_id\", \"correlation_id\", \"arguments_hash\" from \"tests\")) union all (select \"launch_id\", \"test_context_id\" as \"parent_context_id\", 'afterTest' as \"entity_type\", \"id\", \"title\", \"created_timestamp\", \"started_timestamp\", \"finished_timestamp\", \"status_id\", \"correlation_id\", \"arguments_hash\" from \"after_tests\")",
+      "definition": "((select \"launch_id\", \"test_context_id\" as \"parent_context_id\", 'beforeTest' as \"entity_type\", \"id\", \"title\", \"created_timestamp\", \"started_timestamp\", \"finished_timestamp\", \"status_id\", \"correlation_id\", \"arguments_hash\", \"external_arguments_hash\" from \"before_tests\") union all (select \"launch_id\", \"test_context_id\" as \"parent_context_id\", 'test' as \"entity_type\", \"id\", \"title\", \"created_timestamp\", \"started_timestamp\", \"finished_timestamp\", \"status_id\", \"correlation_id\", \"arguments_hash\", \"external_arguments_hash\" from \"tests\")) union all (select \"launch_id\", \"test_context_id\" as \"parent_context_id\", 'afterTest' as \"entity_type\", \"id\", \"title\", \"created_timestamp\", \"started_timestamp\", \"finished_timestamp\", \"status_id\", \"correlation_id\", \"arguments_hash\", \"external_arguments_hash\" from \"after_tests\")",
       "name": "test_entities",
       "schema": "public",
       "isExisting": false,

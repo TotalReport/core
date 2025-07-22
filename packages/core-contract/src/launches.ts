@@ -8,25 +8,10 @@ extendZodWithOpenApi(z);
 export const CreateLaunchSchema = z.object({
   reportId: z.number().int(),
   title: z.string().min(1).max(256),
-  correlationId: z
-    .string()
-    .uuid()
-    .optional()
-    .describe(
-      "The correlation ID is used together with arguments hash to identify the runs suitable for compare." +
-        " If the correlation ID is not provided, it will be generated from the title."
-    ),
   arguments: z
     .string()
     .optional()
     .describe("The arguments which were used to start the run."),
-  argumentsHash: z
-    .string()
-    .optional()
-    .describe(
-      "The hash of the arguments. Together with the correlation ID, it is used to identify the runs suitable for compare." +
-        " If the arguments hash is not provided, it will be generated from the arguments."
-    ),
   createdTimestamp: z.coerce.date().optional(),
   startedTimestamp: z.coerce.date().optional(),
   finishedTimestamp: z.coerce.date().optional(),
@@ -46,9 +31,7 @@ export const LaunchSchema = z.object({
   createdTimestamp: z.string().datetime({ offset: true }),
   startedTimestamp: z.string().datetime({ offset: true }).optional(),
   finishedTimestamp: z.string().datetime({ offset: true }).optional(),
-  correlationId: z.string().uuid(),
   arguments: z.string().optional(),
-  argumentsHash: z.string(),
 });
 
 const contract = initContract();
@@ -92,8 +75,6 @@ export const findLaunches = contract.query({
       .optional()
       .default(PAGINATION_DEFAULTS.limit),
     reportId: z.coerce.number().int().optional(),
-    correlationId: z.string().uuid().optional(),
-    argumentsHash: z.string().optional(),
     "title~cnt": z.string().optional().describe("Search by substring in the title."),
   }),
   responses: {
@@ -114,7 +95,6 @@ export const findLaunchesCount = contract.query({
   path: "/v1/launches/count",
   query: z.object({
     reportId: z.coerce.number().int().optional().describe("The report ID the launches should belong to."),
-    distinct: z.coerce.boolean().optional().default(false).describe("Distinct is defined by uniqeness of combination correlation ID and arguments hash."),
   }),
   responses: {
     200: z.object({count: z.number().int()}),

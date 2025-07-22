@@ -43,8 +43,6 @@ export class LaunchesGenerator {
         startedTimestamp: args?.startedTimestamp,
         finishedTimestamp: args?.finishedTimestamp,
         arguments: args?.arguments,
-        correlationId: args?.correlationId,
-        argumentsHash: args?.argumentsHash,
       },
     });
 

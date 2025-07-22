@@ -25,6 +25,7 @@ describe("create test", () => {
         launchId: launch.id,
         argumentsHash: "bbb93ef2-6e3c-101f-f11c-dd21cab08a94",
         correlationId: "a82e0cae-7b09-c036-14ef-82daed8fa042",
+        externalArgumentsHash: "bbb93ef2-6e3c-101f-f11c-dd21cab08a94",
       },
     });
   });
@@ -54,6 +55,7 @@ describe("create test", () => {
       ],
       correlationId: "bbb93ef2-6e3c-101f-f11c-dd21cab08a95",
       argumentsHash: "bbb93ef2-6e3c-101f-f11c-dd21cab08a96",
+      externalArgumentsHash: "bbb93ef2-6e3c-101f-f11c-dd21cab08a94",
     };
 
     const response = await client.createTest({ body: request });
@@ -86,6 +88,7 @@ describe("create test", () => {
         ],
         argumentsHash: request.argumentsHash,
         correlationId: request.correlationId,
+        externalArgumentsHash: request.externalArgumentsHash,
       },
     });
   });
@@ -165,6 +168,7 @@ describe("create test", () => {
         ],
         argumentsHash: "d5a4cc62-597d-4a85-6860-b5cbea7b529e",
         correlationId: "a82e0cae-7b09-c036-14ef-82daed8fa042",
+        externalArgumentsHash: "bbb93ef2-6e3c-101f-f11c-dd21cab08a94",
       },
     });
   });

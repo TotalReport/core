@@ -1,4 +1,4 @@
-import { afterTestArguments, beforeTestArguments, testArguments } from "@total-report/core-schema/schema";
+import { afterTestArguments, afterTestExternalArguments, beforeTestArguments, beforeTestExternalArguments, testArguments, testExternalArguments } from "@total-report/core-schema/schema";
 import { eq } from "drizzle-orm";
 import { NodePgQueryResultHKT } from "drizzle-orm/node-postgres/session";
 import { PgDatabase } from "drizzle-orm/pg-core/db";
@@ -46,7 +46,7 @@ export class TestArgumentsCommonDAO {
   }
 }
 
-export type TestArgumentsTable = typeof beforeTestArguments | typeof testArguments | typeof afterTestArguments;
+export type TestArgumentsTable = typeof beforeTestArguments | typeof testArguments | typeof afterTestArguments | typeof beforeTestExternalArguments | typeof testExternalArguments | typeof afterTestExternalArguments;
 
 export type CreateTestArguments = {
   testId: number;

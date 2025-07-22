@@ -10,6 +10,7 @@ export const createTestRoute: CreateTestRoute = async ({ body }) => {
     createdTimestamp: body.createdTimestamp ?? new Date(),
     correlationId: body.correlationId ?? MD5(body.title),
     argumentsHash: body.argumentsHash ?? MD5(body.arguments ?? null),
+    externalArgumentsHash: body.externalArgumentsHash ?? MD5(body.externalArguments ?? null),
   };
 
   return {
@@ -83,7 +84,9 @@ const convertToResponseBody = (response: TestEntity) => {
     finishedTimestamp: response.finishedTimestamp?.toISOString() ?? undefined,
     statusId: response.statusId ?? undefined,
     argumentsHash: response.argumentsHash ?? undefined,
+    externalArgumentsHash: response.externalArgumentsHash ?? undefined,
     arguments: response.arguments ?? undefined,
+    externalArguments: response.externalArguments ?? undefined,
     correlationId: response.correlationId,
   };
 };

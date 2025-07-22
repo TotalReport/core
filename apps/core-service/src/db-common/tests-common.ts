@@ -43,6 +43,7 @@ export class TestsCommonDAO {
   testTable: TestsTable;
   newTestsCommonDAO: TestsDaoConstructor;
   newTestArgumentsDAO: TestArgumentsDaoConstructor;
+  newTestExternalArgumentsDAO: TestArgumentsDaoConstructor;
   newTestStepsDAO: TestStepsDaoConstructor;
 
   constructor(args: {
@@ -50,12 +51,14 @@ export class TestsCommonDAO {
     testTable: TestsTable;
     newTestsCommonDAO: TestsDaoConstructor;
     newTestArgumentsDAO: TestArgumentsDaoConstructor;
+    newTestExternalArgumentsDAO: TestArgumentsDaoConstructor;
     newTestStepsDAO: TestStepsDaoConstructor;
   }) {
     this.db = args.db;
     this.testTable = args.testTable;
     this.newTestsCommonDAO = args.newTestsCommonDAO;
     this.newTestArgumentsDAO = args.newTestArgumentsDAO;
+    this.newTestExternalArgumentsDAO = args.newTestExternalArgumentsDAO;
     this.newTestStepsDAO = args.newTestStepsDAO;
   }
 
@@ -185,6 +188,7 @@ export class TestsCommonDAO {
               statusId: this.testTable.statusId,
               correlationId: this.testTable.correlationId,
               argumentsHash: this.testTable.argumentsHash,
+              externalArgumentsHash: this.testTable.externalArgumentsHash,
             })
             .from(this.testTable)
             .innerJoin(
@@ -236,7 +240,10 @@ export class TestsCommonDAO {
         const testArgs = await this.newTestArgumentsDAO(this.db).findByTestId(
           item.id
         );
-        return convertToEntity({ testRow: item, argumentsRows: testArgs });
+        const testExternalArgs = await this.newTestExternalArgumentsDAO(this.db).findByTestId(
+          item.id
+        );
+        return convertToEntity({ testRow: item, argumentsRows: testArgs, externalArgumentsRows: testExternalArgs });
       })
     );
 
@@ -332,6 +339,7 @@ export class TestsCommonDAO {
           statusId: args.statusId,
           correlationId: args.correlationId,
           argumentsHash: args.argumentsHash,
+          externalArgumentsHash: args.externalArgumentsHash,
         })
         .returning()
     ).at(0)!;
@@ -351,12 +359,26 @@ export type CreateTestArguments = {
     type: string;
     value: string | null;
   }[];
+  externalArguments?: {
+    name: string;
+    type: string;
+    value: string | null;
+  }[];
   correlationId: string;
   argumentsHash: string;
+  externalArgumentsHash: string;
 };
 
 export type TestEntity = ReplaceNullWithUndefined<TestsRow> & {
   arguments:
+    | {
+        id: number;
+        name: string;
+        type: string;
+        value: string | null;
+      }[]
+    | undefined;
+  externalArguments:
     | {
         id: number;
         name: string;
@@ -383,6 +405,7 @@ const validate = (args: TestEntity | TestsRow | CreateTestArguments) => {
 const convertToEntity = (args: {
   testRow: TestsRow;
   argumentsRows?: TestArgumentsRow[];
+  externalArgumentsRows?: TestExternalArgumentsRow[];
 }): TestEntity => {
   return {
     launchId: args.testRow.launchId,
@@ -399,8 +422,15 @@ const convertToEntity = (args: {
       type: arg.type,
       value: arg.value,
     })),
+    externalArguments: args.externalArgumentsRows?.map((arg) => ({
+      id: arg.id,
+      name: arg.name,
+      type: arg.type,
+      value: arg.value,
+    })),
     correlationId: args.testRow.correlationId,
     argumentsHash: args.testRow.argumentsHash,
+    externalArgumentsHash: args.testRow.externalArgumentsHash,
   };
 };
 
@@ -425,6 +455,10 @@ type UpdateableFields = {
 type TestsRow = TestsTable["$inferSelect"];
 
 type TestArgumentsRow = Awaited<
+  ReturnType<typeof TestArgumentsCommonDAO.prototype.findByTestId>
+>[0];
+
+type TestExternalArgumentsRow = Awaited<
   ReturnType<typeof TestArgumentsCommonDAO.prototype.findByTestId>
 >[0];
 

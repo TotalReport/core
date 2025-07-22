@@ -58,6 +58,7 @@ describe("patch after test", () => {
         argumentsHash: afterTest.argumentsHash,
         arguments: afterTest.arguments,
         correlationId: afterTest.correlationId,
+        externalArgumentsHash: afterTest.externalArgumentsHash,
       },
     });
   });

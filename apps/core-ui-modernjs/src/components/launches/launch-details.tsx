@@ -93,12 +93,6 @@ export default function LaunchDetails({ launchId }: LaunchDetailsProps) {
           </div>
           <div>
             <h3 className="text-sm font-medium text-muted-foreground">
-              Correlation ID
-            </h3>
-            <p className="text-sm break-all">{launch.correlationId}</p>
-          </div>
-          <div>
-            <h3 className="text-sm font-medium text-muted-foreground">
               Created
             </h3>
             <p>{format(new Date(launch.createdTimestamp), "PPpp")}</p>
@@ -129,12 +123,6 @@ export default function LaunchDetails({ launchId }: LaunchDetailsProps) {
               </pre>
             </div>
           )}
-          <div>
-            <h3 className="text-sm font-medium text-muted-foreground">
-              Arguments Hash
-            </h3>
-            <p className="text-sm break-all">{launch.argumentsHash}</p>
-          </div>
 
           <div className="col-span-2">
             <h3 className="text-sm font-medium text-muted-foreground pb-2">
