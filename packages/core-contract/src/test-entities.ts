@@ -40,6 +40,7 @@ export const findTestEntities = contract.query({
     launchId: z.coerce.number().int().optional(),
     contextId: z.coerce.number().int().optional(),
     correlationId: z.coerce.string().optional(),
+    statusIds: z.array(z.coerce.string()).optional(),
     argumentsHash: z.coerce.string().optional(),
     externalArgumentsHash: z.coerce.string().optional(),
     distinct: zBoolean(z).default("false"),

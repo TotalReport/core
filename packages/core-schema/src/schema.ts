@@ -3,14 +3,14 @@ import { AnyPgColumn, bigint, bigserial, boolean, integer, pgSequence, pgTable, 
 import { ENTITY_TYPES } from "@total-report/core-schema/constants";
 
 export const testStatusGroups = pgTable("test_status_groups", {
-  id: varchar("id", { length: 20 }).primaryKey(),
+  id: varchar("id", { length: 4 }).primaryKey(),
   title: varchar("title", { length: 256 }).notNull(),
   createdTimestamp: timestamp("created_timestamp", { withTimezone: false, mode: "date" }).notNull(),
   color: varchar("color", { length: 7 }).notNull(),
 });
 
 export const testStatuses = pgTable("test_statuses", {
-  id: varchar("id", { length: 256 }).primaryKey(),
+  id: varchar("id", { length: 4 }).primaryKey(),
   title: varchar("title", { length: 256 }).notNull(),
   createdTimestamp: timestamp("created_timestamp", { withTimezone: false, mode: "date" }).notNull(),
   groupId: varchar("group_id").references(() => testStatusGroups.id).notNull(),

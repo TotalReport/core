@@ -19,6 +19,7 @@ export const findTestEntitiesRoute: FindTestEntitiesRoute = async ({
     correlationId: query.correlationId,
     argumentsHash: query.argumentsHash,
     externalArgumentsHash: query.externalArgumentsHash,
+    statusIds: query.statusIds,
     distinct: query.distinct,
     titleContains: query["title~cnt"],
   };

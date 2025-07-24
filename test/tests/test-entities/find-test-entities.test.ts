@@ -4,6 +4,7 @@ import { client } from "../../tools/client.js";
 import { ClientInferResponseBody } from "@ts-rest/core";
 import { expect } from "earl";
 import { contract } from "@total-report/core-contract/contract";
+import { DEFAULT_TEST_STATUSES } from "@total-report/core-schema/constants";
 import "../../tools/earl-extensions.js";
 
 const generator = new CoreEntititesGenerator(client);
@@ -546,6 +547,77 @@ describe("test entities", () => {
           offset,
         },
         items: [testToEntity(test2)],
+      },
+    });
+  });
+
+  test("by statusIds", async () => {
+    const launch = await generator.launches.create();
+    const passedTest = await generator.tests.create({
+      launchId: launch.id,
+      statusId: DEFAULT_TEST_STATUSES.PASSED.id,
+    });
+    const failedTest = await generator.tests.create({
+      launchId: launch.id,
+      statusId: DEFAULT_TEST_STATUSES.FAILED.id,
+    });
+    const productBugTest = await generator.tests.create({
+      launchId: launch.id,
+      statusId: DEFAULT_TEST_STATUSES.PRODUCT_BUG.id,
+    });
+    
+    // Record that should be filtered out (no status)
+    await generator.tests.create({
+      launchId: launch.id,
+      statusId: undefined,
+    });
+
+    const limit = 10;
+    const offset = 0;
+
+    // Test filtering by single status ID
+    const response1 = await client.findTestEntities({
+      query: { 
+        statusIds: [DEFAULT_TEST_STATUSES.PASSED.id], 
+        launchId: launch.id, 
+        limit, 
+        offset 
+      },
+    });
+
+    expect(response1).toEqual({
+      headers: expect.anything(),
+      status: 200,
+      body: {
+        pagination: {
+          total: 1,
+          limit,
+          offset,
+        },
+        items: [testToEntity(passedTest)],
+      },
+    });
+
+    // Test filtering by multiple status IDs
+    const response2 = await client.findTestEntities({
+      query: { 
+        statusIds: [DEFAULT_TEST_STATUSES.FAILED.id, DEFAULT_TEST_STATUSES.PRODUCT_BUG.id], 
+        launchId: launch.id, 
+        limit, 
+        offset 
+      },
+    });
+
+    expect(response2).toEqual({
+      headers: expect.anything(),
+      status: 200,
+      body: {
+        pagination: {
+          total: 2,
+          limit,
+          offset,
+        },
+        items: [testToEntity(failedTest), testToEntity(productBugTest)],
       },
     });
   });

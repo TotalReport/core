@@ -61,6 +61,10 @@ export class TestEntitiesDAO {
         filters.push(eq(testEntities.argumentsHash, search.argumentsHash));
       }
 
+      if (search.statusIds !== undefined) {
+        filters.push(inArray(testEntities.statusId, search.statusIds));
+      }
+
       if (search.externalArgumentsHash !== undefined) {
         filters.push(eq(testEntities.externalArgumentsHash, search.externalArgumentsHash));
       }
@@ -357,6 +361,7 @@ export type TestEntitySearch = {
   contextId?: number;
   correlationId?: string;
   argumentsHash?: string;
+  statusIds?: string[];
   externalArgumentsHash?: string;
   distinct?: boolean;
   titleContains?: string;
