@@ -24,8 +24,8 @@ export const TestListItem = ({ test, selected, onClick }: TestListItemProps) => 
             <div className="flex items-center gap-2">
               {test.status ? (
                 <div className="relative flex items-center">
-                  <StatusPill 
-                    status={test.status}
+                  <StatusPill
+                    statusId={test.status.id}
                     size="sm"
                   />
                   <span className="ml-2 font-semibold">{test.status.name}</span>

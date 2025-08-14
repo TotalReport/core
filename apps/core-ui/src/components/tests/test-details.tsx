@@ -1,7 +1,7 @@
-import { FormattedTestEntity } from '@/lib/test-utils.js';
-import { StatusPill } from '@/components/ui/status-pill.js';
 import { Separator } from '@/components/ui/separator.js';
+import { FormattedTestEntity } from '@/lib/test-utils.js';
 import { format } from 'date-fns';
+import { TestDetailsStatus } from './test-details-status.jsx';
 
 type TestDetailsProps = {
   test: FormattedTestEntity | null;
@@ -26,12 +26,7 @@ export const TestDetails = ({ test }: TestDetailsProps) => {
         <div>
           <h2 className="text-2xl font-bold">{test.title}</h2>
           {test.status && (
-            <div className="mt-2 flex items-center">
-              <StatusPill status={test.status} size="md" />
-              <span className="ml-2 text-sm font-medium">
-                {test.status.name} ({test.status.group.name})
-              </span>
-            </div>
+            <TestDetailsStatus statusId={test.status.id} />
           )}
         </div>
 
