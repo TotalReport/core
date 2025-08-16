@@ -4,7 +4,7 @@ import { useReadBeforeTest } from "@/hooks/api/before-tests/use-read-before-test
 import { useReadTest } from "@/hooks/api/tests/use-read-test.js";
 import { format } from "date-fns";
 import { TestDetailsStatus } from "./test-details-status.jsx";
-import { Skeleton } from "../ui/skeleton.jsx";
+import { Skeleton } from "../../components/ui/skeleton.jsx";
 
 type TestDetailsProps = {
   entityType: "beforeTest" | "test" | "afterTest";

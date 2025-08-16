@@ -4,8 +4,8 @@ import {
 import {
   useFindStatus
 } from "@/hooks/api/statuses/use-find-status.jsx";
-import { Skeleton } from "../ui/skeleton.jsx";
-import { StatusPill } from "../ui/status-pill.jsx";
+import { Skeleton } from "../../components/ui/skeleton.jsx";
+import { StatusPill } from "../../components/ui/status-pill.jsx";
 
 type TestDetailsStatusProps = {
   statusId: string | undefined;

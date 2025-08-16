@@ -12,7 +12,7 @@ import { ScrollArea } from "@/components/ui/scroll-area.js";
 import { Separator } from "@/components/ui/separator.js";
 import { PanelView, SelectedTest, useTestsList } from "@/hooks/use-tests-list.js";
 import { Filter } from "lucide-react";
-import { TestDetails } from "../test-details/test-details.jsx";
+import { TestDetails } from "../../containers/test-details/test-details.jsx";
 import { TestListItem } from "./test-list-item.jsx";
 
 // Configuration for available filters in tests page
