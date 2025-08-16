@@ -9,7 +9,7 @@ import { BaseFilterData } from '@/components/common/filters/types.js';
 
 export type SelectedTest = {
   id: number;
-  type: 'test' | 'before-test' | 'after-test';
+  type: 'test' | 'beforeTest' | 'afterTest';
 };
 
 // Type for possible view states in the left panel
@@ -61,8 +61,8 @@ export function useTestsList() {
     const afterTestId = getNumericParam('afterTestId');
 
     if (testId) return { id: testId, type: 'test' };
-    if (beforeTestId) return { id: beforeTestId, type: 'before-test' };
-    if (afterTestId) return { id: afterTestId, type: 'after-test' };
+    if (beforeTestId) return { id: beforeTestId, type: 'beforeTest' };
+    if (afterTestId) return { id: afterTestId, type: 'afterTest' };
 
     return null;
   });
@@ -114,10 +114,10 @@ export function useTestsList() {
         case 'test':
           params.testId = selectedTest.id;
           break;
-        case 'before-test':
+        case 'beforeTest':
           params.beforeTestId = selectedTest.id;
           break;
-        case 'after-test':
+        case 'afterTest':
           params.afterTestId = selectedTest.id;
           break;
       }

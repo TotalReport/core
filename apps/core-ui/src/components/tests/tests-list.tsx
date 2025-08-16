@@ -1,26 +1,30 @@
-import { useTestsList, PanelView } from '@/hooks/use-tests-list.js';
-import { TestsListSidebar } from './tests-list-sidebar.jsx';
-import { TestDetailsContainer } from './test-details-container.jsx';
-import { TestListItem } from './test-list-item.jsx';
-import { UnifiedFilter } from '@/components/common/filters/unified-filter.js';
-import { FilterType, FilterConfig } from '@/components/common/filters/types.js';
-import { Badge } from '@/components/ui/badge.js';
-import { Button } from '@/components/ui/button.js';
-import { Separator } from '@/components/ui/separator.js';
-import { ScrollArea } from '@/components/ui/scroll-area.js';
-import { PaginationBlock } from '@/components/ui/pagination-block.jsx';
-import { Filter } from 'lucide-react';
+import { FilterConfig, FilterType } from "@/components/common/filters/types.js";
+import { UnifiedFilter } from "@/components/common/filters/unified-filter.js";
+import { Badge } from "@/components/ui/badge.js";
+import { Button } from "@/components/ui/button.js";
+import { PaginationBlock } from "@/components/ui/pagination-block.jsx";
 import {
   ResizableHandle,
   ResizablePanel,
   ResizablePanelGroup,
-} from '@/components/ui/resizable.js';
+} from "@/components/ui/resizable.js";
+import { ScrollArea } from "@/components/ui/scroll-area.js";
+import { Separator } from "@/components/ui/separator.js";
+import { PanelView, SelectedTest, useTestsList } from "@/hooks/use-tests-list.js";
+import { Filter } from "lucide-react";
+import { TestDetails } from "../test-details/test-details.jsx";
+import { TestListItem } from "./test-list-item.jsx";
 
 // Configuration for available filters in tests page
 const testsFilterConfig: FilterConfig = {
-  availableFilters: [FilterType.TITLE, FilterType.REPORT, FilterType.LAUNCH, FilterType.ENTITY_TYPE],
-  entityName: 'tests',
-  showHeader: false // Don't show header since parent component already has one
+  availableFilters: [
+    FilterType.TITLE,
+    FilterType.REPORT,
+    FilterType.LAUNCH,
+    FilterType.ENTITY_TYPE,
+  ],
+  entityName: "tests",
+  showHeader: false, // Don't show header since parent component already has one
 };
 
 export const TestsList = () => {
@@ -46,14 +50,14 @@ export const TestsList = () => {
     switch (panelView) {
       case PanelView.FILTERS_VIEW:
         return (
-          <UnifiedFilter 
+          <UnifiedFilter
             initialFilters={getCurrentFilters()}
             onApply={handleApplyAllFilters}
             onCancel={handleCancelAllFilters}
             config={testsFilterConfig}
           />
         );
-      
+
       case PanelView.TESTS_LIST:
       default:
         return (
@@ -63,7 +67,7 @@ export const TestsList = () => {
               {testEntitiesQuery.isPending && (
                 <p className="p-4">Loading tests...</p>
               )}
-              
+
               {!testEntitiesQuery.isPending &&
                 formattedTestEntities.length === 0 && (
                   <div className="flex items-center justify-center h-40">
@@ -77,7 +81,7 @@ export const TestsList = () => {
                     </div>
                   </div>
                 )}
-              
+
               {!testEntitiesQuery.isPending &&
                 formattedTestEntities.length > 0 && (
                   <div className="flex flex-col gap-2 p-2">
@@ -87,15 +91,7 @@ export const TestsList = () => {
                         test={test}
                         selected={
                           test.id === (selectedTest?.id || null) &&
-                          test.entityType === (
-                            selectedTest?.type === 'before-test'
-                              ? 'beforeTest'
-                              : selectedTest?.type === 'after-test'
-                              ? 'afterTest'
-                              : selectedTest?.type === 'test'
-                              ? 'test'
-                              : null
-                          )
+                          test.entityType === selectedTest?.type
                         }
                         onClick={() => handleTestClick(test)}
                       />
@@ -152,22 +148,27 @@ export const TestsList = () => {
       </ResizablePanel>
       <ResizableHandle withHandle />
       <ResizablePanel>
-        {selectedTest == null && (
-          <div className="h-full flex items-center justify-center">
-            <div className="text-center">
-              <p className="text-lg font-bold text-secondary-foreground">
-                No test selected
-              </p>
-              <p className="text-sm text-muted-foreground mt-1">
-                Select a test from the list to view details
-              </p>
-            </div>
-          </div>
-        )}
-        {selectedTest != null && (
-          <TestDetailsContainer selectedTest={selectedTest} />
-        )}
+        {renderTestDetails(selectedTest)}
       </ResizablePanel>
     </ResizablePanelGroup>
   );
+};
+
+const renderTestDetails = (selectedTest: SelectedTest | null) => {
+  if (selectedTest == null) {
+    return (
+      <div className="h-full flex items-center justify-center">
+        <div className="text-center">
+          <p className="text-lg font-bold text-secondary-foreground">
+            No test selected
+          </p>
+          <p className="text-sm text-muted-foreground mt-1">
+            Select a test from the list to view details
+          </p>
+        </div>
+      </div>
+    );
+  }
+
+  return <TestDetails entityId={selectedTest?.id} entityType={selectedTest?.type} />;
 };

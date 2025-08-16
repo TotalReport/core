@@ -92,12 +92,12 @@ function formatStatus(
   };
 }
 
-export function getTestTypeFromEntityType(entityType: string): 'test' | 'before-test' | 'after-test' {
+export function getTestTypeFromEntityType(entityType: string): 'test' | 'beforeTest' | 'afterTest' {
   switch (entityType) {
     case 'beforeTest':
-      return 'before-test';
+      return 'beforeTest';
     case 'afterTest':
-      return 'after-test';
+      return 'afterTest';
     default:
       return 'test';
   }
