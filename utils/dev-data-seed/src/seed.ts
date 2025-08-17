@@ -27,6 +27,18 @@ await entities.beforeTests.create({
   launchId: launch.id,
   testContextId: testContext.id,
   statusId: DEFAULT_TEST_STATUSES.PASSED.id,
+  arguments: [
+    {
+      name: "arg1",
+      type: "string",
+      value: "value1"
+    },
+    {
+      name: "arg2",
+      type: "number",
+      value: "2"
+    }
+  ]
 });
 
 await entities.tests.create({
