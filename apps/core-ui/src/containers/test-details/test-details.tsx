@@ -1,17 +1,24 @@
+import { Button } from "@/components/ui/button.jsx";
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from "@/components/ui/collapsible.jsx";
 import { Separator } from "@/components/ui/separator.js";
 import { useReadAfterTest } from "@/hooks/api/after-tests/use-read-after-test.js";
 import { useReadBeforeTest } from "@/hooks/api/before-tests/use-read-before-test.js";
 import { useReadTest } from "@/hooks/api/tests/use-read-test.js";
 import { format } from "date-fns";
-import { TestDetailsStatus } from "./test-details-status.jsx";
+import { ChevronDown } from "lucide-react";
 import { Skeleton } from "../../components/ui/skeleton.jsx";
+import { TestDetailsStatus } from "./test-details-status.jsx";
 
 type TestDetailsProps = {
   entityType: "beforeTest" | "test" | "afterTest";
   entityId: number;
 };
 
-export const TestDetails = ({entityType, entityId}: TestDetailsProps) => {
+export const TestDetails = ({ entityType, entityId }: TestDetailsProps) => {
   const testQuery = useReadTest({
     enabled: entityType == "test",
     testId: entityId,
@@ -26,7 +33,6 @@ export const TestDetails = ({entityType, entityId}: TestDetailsProps) => {
     enabled: entityType == "afterTest",
     afterTestId: entityId,
   });
-
 
   // Determine current query and data
   const getCurrentQuery = () => {
@@ -43,11 +49,11 @@ export const TestDetails = ({entityType, entityId}: TestDetailsProps) => {
   const currentQuery = getCurrentQuery();
 
   if (currentQuery.isPending) {
-    return <Skeleton></Skeleton>
+    return <Skeleton></Skeleton>;
   }
 
   if (currentQuery.isError) {
-    return <div>Error while loading data</div>
+    return <div>Error while loading data</div>;
   }
 
   const test = currentQuery.data;
@@ -109,6 +115,7 @@ export const TestDetails = ({entityType, entityId}: TestDetailsProps) => {
             </p>
           </div>
         )}
+        {renderArguments(test?.arguments || [])}
       </div>
     </div>
   );
@@ -123,4 +130,50 @@ const entityTypeToText = (entityType: "beforeTest" | "test" | "afterTest") => {
     case "afterTest":
       return "After Test";
   }
+};
+
+const renderArguments = (testArguments: TestArgument[]) => {
+  return (
+    <Collapsible>
+      <p className="text-muted-foreground">
+        Arguments ({renderArgumentsCount(testArguments?.length)})
+        <CollapsibleTrigger>
+          <Button variant="ghost" className="w-full justify-start">
+            <ChevronDown className="mr-2 h-4 w-4" />
+          </Button>
+        </CollapsibleTrigger>
+      </p>
+
+      <CollapsibleContent>
+        <p className="font-mono text-xs bg-muted p-2 rounded mt-1 overflow-auto">
+          {testArguments.map((argument) => {
+            return (
+              <div key={argument.id} className="mb-2">
+                <p>
+                  <span className="text-muted-foreground">Argument </span>
+                  <span className="text-foreground">{argument.name}</span>{" "}
+                  <span className="text-muted-foreground">of type</span>{" "}
+                  <span className="text-foreground">{argument.type}</span>
+                  <span className="text-muted-foreground"> has value </span>
+                  <span className="text-foreground">{argument.value}</span>
+                </p>
+              </div>
+            );
+          })}
+        </p>
+      </CollapsibleContent>
+    </Collapsible>
+  );
+};
+
+const renderArgumentsCount = (count: number | undefined) => {
+  if (count === undefined || count === 0) return "No Arguments";
+  return `${count}`;
+};
+
+type TestArgument = {
+  id: number;
+  name: string;
+  type: string;
+  value: string | null;
 };
