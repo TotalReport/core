@@ -1,5 +1,5 @@
 {
-  "id": "3b60d930-4e73-4326-a656-ea610d9f7465",
+  "id": "e42bf395-52f7-4561-9f52-9c7ed0652b98",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -179,6 +179,18 @@
         "error_message": {
           "name": "error_message",
           "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "thread": {
+          "name": "thread",
+          "type": "varchar(256)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "process": {
+          "name": "process",
+          "type": "varchar(256)",
           "primaryKey": false,
           "notNull": false
         }
@@ -500,6 +512,18 @@
         "error_message": {
           "name": "error_message",
           "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "thread": {
+          "name": "thread",
+          "type": "varchar(256)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "process": {
+          "name": "process",
+          "type": "varchar(256)",
           "primaryKey": false,
           "notNull": false
         }
@@ -1149,6 +1173,18 @@
         "error_message": {
           "name": "error_message",
           "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "thread": {
+          "name": "thread",
+          "type": "varchar(256)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "process": {
+          "name": "process",
+          "type": "varchar(256)",
           "primaryKey": false,
           "notNull": false
         }

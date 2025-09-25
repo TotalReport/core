@@ -9,6 +9,8 @@ export const CreateTestStep = z.object({
   finishedTimestamp: z.coerce.date().optional(),
   isSuccessful: z.boolean().optional(),
   errorMessage: z.string().optional(),
+  thread: z.string().max(256).optional(),
+  process: z.string().max(256).optional(),
 });
 
 export const TestStep = z.object({
@@ -20,6 +22,8 @@ export const TestStep = z.object({
   finishedTimestamp: z.string().datetime({ offset: true }).optional(),
   isSuccessful: z.boolean().optional(),
   errorMessage: z.string().optional(),
+  thread: z.string().max(256).optional(),
+  process: z.string().max(256).optional(),
 });
 
 export const PatchTestStep = z.object({
@@ -29,6 +33,8 @@ export const PatchTestStep = z.object({
   finishedTimestamp: z.coerce.date().nullish(),
   isSuccessful: z.boolean().nullish(),
   errorMessage: z.string().nullish(),
+  thread: z.string().max(256).nullish(),
+  process: z.string().max(256).nullish(),
 });
 
 const contract = initContract();

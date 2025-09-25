@@ -46,6 +46,8 @@ export class TestStepsCommonDAO {
       finishedTimestamp: testStepsRow.finishedTimestamp ?? undefined,
       isSuccessful: testStepsRow.isSuccessful ?? undefined,
       errorMessage: testStepsRow.errorMessage ?? undefined,
+      thread: testStepsRow.thread ?? undefined,
+      process: testStepsRow.process ?? undefined,
     };
   }
 
@@ -144,6 +146,8 @@ export type CreateTestStep = {
   finishedTimestamp: Date | undefined;
   isSuccessful: boolean | undefined;
   errorMessage: string | undefined;
+  thread: string | undefined;
+  process: string | undefined;
 };
 
 export type PatchTestStep = {
@@ -154,6 +158,8 @@ export type PatchTestStep = {
   finishedTimestamp: Date | null | undefined;
   isSuccessful: boolean | null | undefined;
   errorMessage: string | null | undefined;
+  thread: string | null | undefined;
+  process: string | null | undefined;
 };
 
 export type TestStepEntity = ReplaceNullWithUndefined<TestStepsRow>;
@@ -166,6 +172,8 @@ const takeUpdateableFields = (args: PatchTestStep): UpdateableFields => {
     finishedTimestamp: args.finishedTimestamp,
     isSuccessful: args.isSuccessful,
     errorMessage: args.errorMessage,
+    thread: args.thread,
+    process: args.process,
   };
 };
 
@@ -203,6 +211,14 @@ const applyPatch = (args: {
       args.patch.errorMessage,
       args.row.errorMessage
     ),
+    thread: firstNotUndefined(
+      args.patch.thread,
+      args.row.thread
+    ),
+    process: firstNotUndefined(
+      args.patch.process,
+      args.row.process
+    ),
   };
 };
 
@@ -225,6 +241,8 @@ const convertRowToEntity = (row: TestStepsRow): TestStepEntity => {
     finishedTimestamp: nullToUndefined(row.finishedTimestamp),
     isSuccessful: nullToUndefined(row.isSuccessful),
     errorMessage: nullToUndefined(row.errorMessage),
+    thread: nullToUndefined(row.thread),
+    process: nullToUndefined(row.process),
   };
 };
 
@@ -249,6 +267,8 @@ type UpdateableFields = {
   finishedTimestamp: Date | null | undefined;
   isSuccessful: boolean | null | undefined;
   errorMessage: string | null | undefined;
+  thread: string | null | undefined;
+  process: string | null | undefined;
 };
 
 type ReplaceNullWithUndefined<T extends Object> = {

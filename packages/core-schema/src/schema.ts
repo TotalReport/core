@@ -88,6 +88,8 @@ export const beforeTestSteps = pgTable("before_test_steps", {
   finishedTimestamp: timestamp("finished_timestamp", { withTimezone: false, mode: "date" }),
   isSuccessful: boolean("is_successful"),
   errorMessage: text("error_message"),
+  thread: varchar("thread", { length: 256 }),
+  process: varchar("process", { length: 256 }),
 });
 
 export const tests = pgTable("tests", {
@@ -132,6 +134,8 @@ export const testSteps = pgTable("test_steps", {
   finishedTimestamp: timestamp("finished_timestamp", { withTimezone: false, mode: "date" }),
   isSuccessful: boolean("is_successful"),
   errorMessage: text("error_message"),
+  thread: varchar("thread", { length: 256 }),
+  process: varchar("process", { length: 256 }),
 });
 
 export const afterTests = pgTable("after_tests", {
@@ -176,6 +180,8 @@ export const afterTestSteps = pgTable("after_test_steps", {
   finishedTimestamp: timestamp("finished_timestamp", { withTimezone: false, mode: "date" }),
   isSuccessful: boolean("is_successful"),
   errorMessage: text("error_message"),
+  thread: varchar("thread", { length: 256 }),
+  process: varchar("process", { length: 256 }),
 });
 
 export const paths = pgTable("paths", {

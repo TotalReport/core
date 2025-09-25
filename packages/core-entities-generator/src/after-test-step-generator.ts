@@ -3,6 +3,8 @@ import { AfterTestsGenerator } from "./after-test-generator.js";
 import { ClientType } from "./types.js";
 import { assertEquals } from "./utils.js";
 import { capitalizeFirstLetter } from "./utils-string.js";
+import { ClientInferRequest } from "@ts-rest/core";
+import { contract } from "@total-report/core-contract/contract";
 
 /**
  * This class is responsible for generating after test steps.
@@ -16,29 +18,32 @@ export class AfterTestStepsGenerator {
 
   /**
    * Creates a new after test step.
-   * 
+   *
    * @param args The arguments to create the after test step with.
    * @returns The created after test step.
    */
-  async create(args: CreateAfterTestStepArgs | undefined = undefined) {
-    const afterTestId = args?.afterTestId ?? (await new AfterTestsGenerator(this.client).create()).id;
-    
+  async create(args: GenerateAfterTestStepArgs | undefined = undefined) {
+    const afterTestId =
+      args?.afterTestId ??
+      (await new AfterTestsGenerator(this.client).create()).id;
+
     const title =
       args?.title ??
-      capitalizeFirstLetter(faker.word.adjective() + " " + 
-      faker.word.noun() + " " + 
-      faker.word.verb() + " " + 
-      faker.word.adverb());
+      capitalizeFirstLetter(
+        faker.word.adjective() +
+          " " +
+          faker.word.noun() +
+          " " +
+          faker.word.verb() +
+          " " +
+          faker.word.adverb()
+      );
 
     const response = await this.client.createAfterTestStep({
       body: {
         afterTestId: afterTestId,
         title: title,
-        createdTimestamp: args?.createdTimestamp,
-        startedTimestamp: args?.startedTimestamp,
-        finishedTimestamp: args?.finishedTimestamp,
-        isSuccessful: args?.isSuccessful,
-        errorMessage: args?.errorMessage
+        ...args,
       },
     });
 
@@ -52,15 +57,8 @@ export class AfterTestStepsGenerator {
   }
 }
 
-/**
- * The arguments to create an after test step with.
- */
-export type CreateAfterTestStepArgs = {
-  afterTestId?: number;
-  createdTimestamp?: Date;
-  startedTimestamp?: Date;
-  finishedTimestamp?: Date;
-  title?: string;
-  isSuccessful?: boolean;
-  errorMessage?: string;
-};
+export type GenerateAfterTestStepArgs = Partial<CreateAfterTestStepRequest>;
+
+export type CreateAfterTestStepRequest = ClientInferRequest<
+  typeof contract.createAfterTestStep
+>["body"];

@@ -100,6 +100,8 @@ export const convertToResponseBody = (
     finishedTimestamp: beforeTestStep.finishedTimestamp?.toISOString(),
     isSuccessful: beforeTestStep.isSuccessful,
     errorMessage: beforeTestStep.errorMessage,
+    process: beforeTestStep.process,
+    thread: beforeTestStep.thread,
   };
 };
 
@@ -128,6 +130,8 @@ const createRequestToCreateArgs = (
     finishedTimestamp: input.body.finishedTimestamp,
     isSuccessful: input.body.isSuccessful,
     errorMessage: input.body.errorMessage,
+    process: input.body.process,
+    thread: input.body.thread,
   };
 };
 
@@ -142,5 +146,7 @@ const patchRequestToPatchArgs = (
     finishedTimestamp: input.body.finishedTimestamp,
     isSuccessful: input.body.isSuccessful,
     errorMessage: input.body.errorMessage,
+    process: input.body.process,
+    thread: input.body.thread,
   };
 };

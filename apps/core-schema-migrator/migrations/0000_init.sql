@@ -25,7 +25,9 @@ CREATE TABLE "after_test_steps" (
 	"started_timestamp" timestamp,
 	"finished_timestamp" timestamp,
 	"is_successful" boolean,
-	"error_message" text
+	"error_message" text,
+	"thread" varchar(256),
+	"process" varchar(256)
 );
 --> statement-breakpoint
 CREATE TABLE "after_tests" (
@@ -68,7 +70,9 @@ CREATE TABLE "before_test_steps" (
 	"started_timestamp" timestamp,
 	"finished_timestamp" timestamp,
 	"is_successful" boolean,
-	"error_message" text
+	"error_message" text,
+	"thread" varchar(256),
+	"process" varchar(256)
 );
 --> statement-breakpoint
 CREATE TABLE "before_tests" (
@@ -159,7 +163,9 @@ CREATE TABLE "test_steps" (
 	"started_timestamp" timestamp,
 	"finished_timestamp" timestamp,
 	"is_successful" boolean,
-	"error_message" text
+	"error_message" text,
+	"thread" varchar(256),
+	"process" varchar(256)
 );
 --> statement-breakpoint
 CREATE TABLE "tests" (

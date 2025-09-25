@@ -97,6 +97,8 @@ export const convertToResponseBody = (
     finishedTimestamp: afterTestStep.finishedTimestamp?.toISOString(),
     isSuccessful: afterTestStep.isSuccessful,
     errorMessage: afterTestStep.errorMessage,
+    process: afterTestStep.process,
+    thread: afterTestStep.thread,
   };
 };
 
@@ -125,6 +127,8 @@ const createRequestToCreateArgs = (
     finishedTimestamp: input.body.finishedTimestamp,
     isSuccessful: input.body.isSuccessful,
     errorMessage: input.body.errorMessage,
+    process: input.body.process,
+    thread: input.body.thread,
   };
 };
 
@@ -139,5 +143,7 @@ const patchRequestToPatchArgs = (
     finishedTimestamp: input.body.finishedTimestamp,
     isSuccessful: input.body.isSuccessful,
     errorMessage: input.body.errorMessage,
+    process: input.body.process,
+    thread: input.body.thread,
   };
 };
