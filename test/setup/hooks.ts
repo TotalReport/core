@@ -7,6 +7,7 @@ export const mochaHooks = {
     done();
   },
   afterAll(done: any) {
+    (<any>this).timeout(3000);
     execSync("pnpm run test:app:down");
     done();
   },

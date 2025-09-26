@@ -54,10 +54,22 @@ export const readAfterTestStep = contract.query({
   method: "GET",
   path: "/v1/after-test-steps/:id",
   pathParams: z.object({
-    id: z.coerce.number().int(),
+    id: z.coerce.number().int().describe("The after test step ID"),
   }),
   responses: {
     200: AfterTestStep,
+  },
+});
+
+export const findAfterTestSteps = contract.query({
+  summary: "Find after test steps.",
+  method: "GET",
+  path: "/v1/after-test-steps",
+  query: z.object({
+    afterTestId: z.coerce.number().int().describe("Filter by after test ID"),
+  }),
+  responses: {
+    200: z.array(AfterTestStep),
   },
 });
 

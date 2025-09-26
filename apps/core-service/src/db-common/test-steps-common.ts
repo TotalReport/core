@@ -77,11 +77,13 @@ export class TestStepsCommonDAO {
    * @param testId The ID of the test to find steps for.
    * @returns The test steps.
    */
-  async findByTestId(testId: number): Promise<TestStepsRow[]> {
+  async findByTestId(testId: number): Promise<TestStepEntity[]> {
     return await this.db
       .select()
       .from(this.testStepsTable)
-      .where(eq(this.testStepsTable.testId, testId));
+      .where(eq(this.testStepsTable.testId, testId))
+      .orderBy(this.testStepsTable.startedTimestamp, this.testStepsTable.finishedTimestamp, this.testStepsTable.createdTimestamp)
+      .then((rows) => rows.map(convertRowToEntity));
   }
 
   /**

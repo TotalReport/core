@@ -4,6 +4,7 @@ import { z } from "zod";
 import {
   createAfterTestStep,
   deleteAfterTestStep,
+  findAfterTestSteps,
   patchAfterTestStep,
   readAfterTestStep,
 } from "./after-test-steps.js";
@@ -126,6 +127,7 @@ export const contract = c.router({
 
   createAfterTestStep: createAfterTestStep,
   readAfterTestStep: readAfterTestStep,
+  findAfterTestSteps: findAfterTestSteps,
   patchAfterTestStep: patchAfterTestStep,
   deleteAfterTestStep: deleteAfterTestStep,
 

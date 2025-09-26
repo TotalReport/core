@@ -4,10 +4,33 @@ import bodyParser from "body-parser";
 import cors from "cors";
 import express, { NextFunction, Request, Response } from "express";
 import { ValidationError } from "./errors/errors.js";
-import { createAfterTestStepRoute, deleteAfterTestStepRoute, patchAfterTestStepRoute, readAfterTestStepRoute } from "./routes/after-test-steps.js";
-import { createAfterTestRoute, deleteAfterTestRoute, findAfterTestsRoute, patchAfterTestRoute, readAfterTestRoute } from "./routes/after-tests.js";
-import { createBeforeTestStepRoute, deleteBeforeTestStepRoute, patchBeforeTestStepRoute, readBeforeTestStepRoute } from "./routes/before-test-steps.js";
-import { createBeforeTestRoute, deleteBeforeTestRoute, findBeforeTestsRoute, patchBeforeTestRoute, readBeforeTestRoute } from "./routes/before-tests.js";
+import {
+  createAfterTestStepRoute,
+  deleteAfterTestStepRoute,
+  findAfterTestStepsRoute,
+  patchAfterTestStepRoute,
+  readAfterTestStepRoute,
+} from "./routes/after-test-steps.js";
+import {
+  createAfterTestRoute,
+  deleteAfterTestRoute,
+  findAfterTestsRoute,
+  patchAfterTestRoute,
+  readAfterTestRoute,
+} from "./routes/after-tests.js";
+import {
+  createBeforeTestStepRoute,
+  deleteBeforeTestStepRoute,
+  patchBeforeTestStepRoute,
+  readBeforeTestStepRoute,
+} from "./routes/before-test-steps.js";
+import {
+  createBeforeTestRoute,
+  deleteBeforeTestRoute,
+  findBeforeTestsRoute,
+  patchBeforeTestRoute,
+  readBeforeTestRoute,
+} from "./routes/before-tests.js";
 import { healthCheckRoute, setApiStarted } from "./routes/healthcheck.js";
 import {
   createLaunchRoute,
@@ -37,9 +60,23 @@ import {
   patchTestContextRoute,
   readTestContextRoute,
 } from "./routes/test-contexts.js";
-import { findTestEntitiesRoute, findTestEntitiesCountsByStatusesRoute } from "./routes/test-entities.js";
-import { createTestStepRoute, deleteTestStepRoute, patchTestStepRoute, readTestStepRoute } from "./routes/test-steps.js";
-import { createTestRoute, deleteTestRoute, findTestsRoute, patchTestRoute, readTestRoute } from "./routes/tests.js";
+import {
+  findTestEntitiesCountsByStatusesRoute,
+  findTestEntitiesRoute,
+} from "./routes/test-entities.js";
+import {
+  createTestStepRoute,
+  deleteTestStepRoute,
+  patchTestStepRoute,
+  readTestStepRoute,
+} from "./routes/test-steps.js";
+import {
+  createTestRoute,
+  deleteTestRoute,
+  findTestsRoute,
+  patchTestRoute,
+  readTestRoute,
+} from "./routes/tests.js";
 
 const { urlencoded, json } = bodyParser;
 
@@ -104,6 +141,7 @@ const router = s.router(contract, {
 
   createAfterTestStep: createAfterTestStepRoute,
   readAfterTestStep: readAfterTestStepRoute,
+  findAfterTestSteps: findAfterTestStepsRoute,
   patchAfterTestStep: patchAfterTestStepRoute,
   deleteAfterTestStep: deleteAfterTestStepRoute,
 
@@ -113,7 +151,7 @@ const router = s.router(contract, {
   readTestStatus: readTestStatusRoute,
 
   findTestEntities: findTestEntitiesRoute,
-  findTestEntitiesCountsByStatuses: findTestEntitiesCountsByStatusesRoute
+  findTestEntitiesCountsByStatuses: findTestEntitiesCountsByStatusesRoute,
 });
 
 createExpressEndpoints(contract, router, app);

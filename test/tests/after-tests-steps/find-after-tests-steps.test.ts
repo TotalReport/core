@@ -6,7 +6,7 @@ import "../../tools/earl-extensions.js";
 
 const generator = new CoreEntititesGenerator(client);
 
-describe("find test steps", () => {
+describe("find after test steps", () => {
   test("by id", async () => {
     const afterTest = await generator.afterTests.create();
     const afterTestStep = await generator.afterTestSteps.create({
@@ -36,6 +36,36 @@ describe("find test steps", () => {
         isSuccessful: afterTestStep.isSuccessful,
         errorMessage: afterTestStep.errorMessage,
       },
+    });
+  });
+
+  test("by afterTestId", async () => {
+    const afterTest1 = await generator.afterTests.create();
+    const afterTest2 = await generator.afterTests.create();
+    const step11 = await generator.afterTestSteps.create({
+      afterTestId: afterTest1.id,
+      title: "Step 1",
+    });
+    const step21 = await generator.afterTestSteps.create({
+      afterTestId: afterTest2.id,
+      title: "Step 2",
+    });
+    const step22 = await generator.afterTestSteps.create({
+      afterTestId: afterTest2.id,
+      title: "Step 3",
+    });
+
+    const response = await client.findAfterTestSteps({
+      query: { afterTestId: afterTest2.id },
+    });
+
+    expect(response).toEqual({
+      headers: expect.anything(),
+      status: 200,
+      body: [
+        step21,
+        step22,
+      ],
     });
   });
 });
