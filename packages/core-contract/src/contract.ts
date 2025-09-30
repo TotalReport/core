@@ -18,6 +18,7 @@ import {
 import {
   createBeforeTestStep,
   deleteBeforeTestStep,
+  findBeforeTestSteps,
   patchBeforeTestStep,
   readBeforeTestStep,
 } from "./before-test-steps.js";
@@ -105,6 +106,7 @@ export const contract = c.router({
 
   createBeforeTestStep: createBeforeTestStep,
   readBeforeTestStep: readBeforeTestStep,
+  findBeforeTestSteps: findBeforeTestSteps,
   patchBeforeTestStep: patchBeforeTestStep,
   deleteBeforeTestStep: deleteBeforeTestStep,
 

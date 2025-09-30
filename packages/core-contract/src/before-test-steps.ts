@@ -61,6 +61,18 @@ export const readBeforeTestStep = contract.query({
   },
 });
 
+export const findBeforeTestSteps = contract.query({
+  summary: "Find before test steps.",
+  method: "GET",
+  path: "/v1/before-test-steps",
+  query: z.object({
+    beforeTestId: z.coerce.number().int().describe("Filter by before test ID"),
+  }),
+  responses: {
+    200: z.array(BeforeTestStep),
+  },
+});
+
 export const patchBeforeTestStep = contract.mutation({
   summary: "Patch the before test step fields.",
   method: "PATCH",
