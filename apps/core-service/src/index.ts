@@ -68,6 +68,7 @@ import {
 import {
   createTestStepRoute,
   deleteTestStepRoute,
+  findTestStepsRoute,
   patchTestStepRoute,
   readTestStepRoute,
 } from "./routes/test-steps.js";
@@ -132,6 +133,7 @@ const router = s.router(contract, {
 
   createTestStep: createTestStepRoute,
   readTestStep: readTestStepRoute,
+  findTestSteps: findTestStepsRoute,
   patchTestStep: patchTestStepRoute,
   deleteTestStep: deleteTestStepRoute,
 

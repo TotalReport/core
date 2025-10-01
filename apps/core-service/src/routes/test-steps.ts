@@ -45,6 +45,17 @@ export const readTestStepRoute: ReadTestStepRoute = async ({
   };
 };
 
+export const findTestStepsRoute: FindTestStepsRoute = async ({
+  query,
+}) => {
+  const testSteps = await new TestStepsDAO().findByTestId(query.testId);
+
+  return {
+    status: 200,
+    body: testSteps.map(step => convertToResponseBody(step)),
+  };
+};
+
 export const patchTestStepRoute: PatchTestStepRoute = async (
   request
 ) => {
@@ -73,6 +84,10 @@ type CreateTestStepRoute = AppRouteImplementation<
 
 type ReadTestStepRoute = AppRouteImplementation<
   typeof contract.readTestStep
+>;
+
+type FindTestStepsRoute = AppRouteImplementation<
+  typeof contract.findTestSteps
 >;
 
 type PatchTestStepRoute = AppRouteImplementation<

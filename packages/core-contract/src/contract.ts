@@ -55,6 +55,7 @@ import { findTestEntities, findTestEntitiesCountsByStatuses } from "./test-entit
 import {
   createTestStep,
   deleteTestStep,
+  findTestSteps,
   patchTestStep,
   readTestStep,
 } from "./test-steps.js";
@@ -118,6 +119,7 @@ export const contract = c.router({
 
   createTestStep: createTestStep,
   readTestStep: readTestStep,
+  findTestSteps: findTestSteps,
   patchTestStep: patchTestStep,
   deleteTestStep: deleteTestStep,
 

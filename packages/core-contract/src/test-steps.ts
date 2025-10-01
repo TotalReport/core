@@ -61,6 +61,18 @@ export const readTestStep = contract.query({
   },
 });
 
+export const findTestSteps = contract.query({
+  summary: "Find test steps.",
+  method: "GET",
+  path: "/v1/test-steps",
+  query: z.object({
+    testId: z.coerce.number().int().describe("Filter by test ID"),
+  }),
+  responses: {
+    200: z.array(TestStep),
+  },
+});
+
 export const patchTestStep = contract.mutation({
   summary: "Patch the test step fields.",
   method: "PATCH",

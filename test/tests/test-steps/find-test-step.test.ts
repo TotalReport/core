@@ -1,14 +1,15 @@
-import { TestsGenerator } from "@total-report/core-entities-generator/test";
-import { TestStepsGenerator } from "@total-report/core-entities-generator/test-step";
+import { CoreEntititesGenerator } from "@total-report/core-entities-generator/core-entities";
 import { expect } from "earl";
 import { describe, test } from "mocha";
 import { client } from "../../tools/client.js";
 import "../../tools/earl-extensions.js";
 
+const generator = new CoreEntititesGenerator(client);
+
 describe("read test step", () => {
   test("by id", async () => {
-    const test = await new TestsGenerator(client).create();
-    const testStep = await new TestStepsGenerator(client).create({
+    const test = await generator.tests.create();
+    const testStep = await generator.testSteps.create({
       testId: test.id,
       title: "Step 1",
       createdTimestamp: new Date("2024-07-21T06:52:32Z"),
@@ -35,6 +36,33 @@ describe("read test step", () => {
         isSuccessful: testStep.isSuccessful,
         errorMessage: testStep.errorMessage,
       },
+    });
+  });
+
+  test("by testId", async () => {
+    const test1 = await generator.tests.create();
+    const test2 = await generator.tests.create();
+    const step11 = await generator.testSteps.create({
+      testId: test1.id,
+      title: "Step 1",
+    });
+    const step21 = await generator.testSteps.create({
+      testId: test2.id,
+      title: "Step 2",
+    });
+    const step22 = await generator.testSteps.create({
+      testId: test2.id,
+      title: "Step 3",
+    });
+
+    const response = await client.findTestSteps({
+      query: { testId: test2.id },
+    });
+
+    expect(response).toEqual({
+      headers: expect.anything(),
+      status: 200,
+      body: [step21, step22],
     });
   });
 });
