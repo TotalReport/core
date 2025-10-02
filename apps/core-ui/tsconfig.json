@@ -20,7 +20,8 @@
     "shared",
     "config",
     "modern.config.ts",
-    "tailwind.config.ts"
+    "tailwind.config.ts",
+    ".storybook/**/*"
   ],
   "exclude": [
     "**/node_modules"
