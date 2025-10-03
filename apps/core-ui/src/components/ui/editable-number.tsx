@@ -21,31 +21,15 @@ export function EditableNumber({
     setValue(initialValue);
   }, [initialValue]);
 
-  useEffect(() => {
-    if (min !== undefined && value < min) {
-      setValue(min);
-    }
-    if (max !== undefined && value > max) {
-      setValue(max);
-    }
-  }, [min, max, value]);
-
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setValue(Number(e.target.value));
+    const newValue = Number(e.target.value);
+    setValue(Math.round(newValue));
   };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter") {
       setIsEditing(false);
-      if (min !== undefined && value < min) {
-        setValue(min);
-        onSubmit(min);
-      } else if (max !== undefined && value > max) {
-        setValue(max);
-        onSubmit(max);
-      } else {
-        onSubmit(value);
-      }
+      onSubmit(value);
     }
   };
 
@@ -57,21 +41,18 @@ export function EditableNumber({
         <Input
           type="number"
           value={value}
+          min={min}
+          max={max}
           onChange={handleInputChange}
           onKeyDown={handleKeyDown}
           onBlur={() => {
             setIsEditing(false);
-            if (min !== undefined && value < min) {
-              setValue(min);
-              onSubmit(min);
-            } else if (max !== undefined && value > max) {
-              setValue(max);
-              onSubmit(max);
-            } else {
-              onSubmit(value);
-            }
+            onSubmit(value);
           }}
+          
           autoFocus
+          step={1}
+          pattern="[0-9]*"
           className="w-24 p-2 border border-foreground rounded-md"
         />
       ) : (
