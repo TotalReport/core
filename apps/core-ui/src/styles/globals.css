@@ -4,6 +4,7 @@
 
 @layer base {
   :root {
+    --skeleton: oklch(0.93 0.01 265);
     --radius: 0.625rem;
     --background: oklch(1 0 0);
     --foreground: oklch(0.145 0 0);
@@ -39,6 +40,7 @@
   }
 
   .dark {
+    --skeleton: oklch(0.93 0.01 265);
     --background: oklch(0.145 0 0);
     --foreground: oklch(0.985 0 0);
     --card: oklch(0.205 0 0);
@@ -71,6 +73,10 @@
     --sidebar-border: oklch(1 0 0 / 10%);
     --sidebar-ring: oklch(0.439 0 0);
   }
+}
+
+@theme inline {
+  --color-skeleton: var(--skeleton);
 }
 
 @layer base {

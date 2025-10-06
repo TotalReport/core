@@ -6,6 +6,7 @@ export default {
   theme: {
     extend: {
       colors: {
+        skeleton: "var(--skeleton)",
         background: "var(--background)",
         foreground: "var(--foreground)",
         card: {
