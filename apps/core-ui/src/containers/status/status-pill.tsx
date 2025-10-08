@@ -1,7 +1,7 @@
 import { useFindStatusGroup } from "@/hooks/api/status-groups/use-find-status-group.jsx";
 import { useFindStatus } from "@/hooks/api/statuses/use-find-status.jsx";
 import { cn } from "@/lib/utils.js";
-import { Skeleton } from "./skeleton.jsx";
+import { Skeleton } from "../../components/ui/skeleton.jsx";
 
 export type StatusPillProps = {
   statusId: string | undefined;
@@ -18,24 +18,58 @@ export const StatusPill = ({
     enabled: statusId != undefined,
     filters: { id: statusId == undefined ? "" : statusId },
   });
+
+  const groupId = statusQuery.data?.body?.groupId;
+
   const statusGroupQuery = useFindStatusGroup({
-    enabled: !statusQuery.isPending,
+    enabled: groupId != undefined,
     filters: {
-      id:
-        statusQuery.data?.groupId == undefined ? "" : statusQuery.data?.groupId,
+      id: groupId == undefined ? "" : groupId,
     },
   });
+
+  if (statusId == undefined) {
+    return (
+      <div
+        className={cn(
+          "flex items-center justify-center text-muted-foreground",
+          sizeClasses[size].undefinedText,
+          className
+        )}
+      >
+        - / -
+      </div>
+    );
+  }
 
   if (statusQuery.isPending || statusGroupQuery.isPending) {
     return (
       <div>
-        <Skeleton />
+        <Skeleton className={skeletonStyle(size)} />
       </div>
     );
   }
 
   if (statusQuery.isError || statusGroupQuery.isError) {
-    return <div>Error loading status information</div>;
+    const handleRetry = () => {
+      statusQuery.refetch();
+      statusGroupQuery.refetch();
+    };
+
+    return (
+      <button
+        onClick={handleRetry}
+        className={cn(
+          "flex items-center gap-1 text-error-foreground hover:brightness-200 focus:outline-none focus:ring-2 focus:ring-error-foreground focus:ring-offset-1 rounded transition-colors",
+          sizeClasses[size].undefinedText,
+          className
+        )}
+        title="Error loading status. Click to retry."
+      >
+        Err.
+        <span className="inline-block">↻</span>
+      </button>
+    );
   }
 
   return (
@@ -49,25 +83,35 @@ export const StatusPill = ({
       <div
         aria-label="Status Group Color"
         className={cn("h-full", sizeClasses[size].segment)}
-        style={getColorBackground(statusGroupQuery.data?.color)}
+        style={getColorBackground(statusGroupQuery.data?.body?.color)}
       ></div>
       <div
         aria-label="Status Color"
         className={cn("h-full", sizeClasses[size].segment)}
-        style={getColorBackground(statusQuery.data?.color)}
+        style={getColorBackground(statusQuery.data?.body?.color)}
       ></div>
     </div>
   );
 };
 
+function skeletonStyle(size: "sm" | "md") {
+  return cn(sizeClasses[size].skeleton);
+}
+
 const sizeClasses = {
   sm: {
     container: "h-2",
     segment: "w-2",
+    skeleton: "h-2 w-5",
+    undefinedWidth: "w-8",
+    undefinedText: "text-xs",
   },
   md: {
     container: "h-3",
     segment: "w-3",
+    skeleton: "h-3 w-7",
+    undefinedWidth: "w-10",
+    undefinedText: "text-sm",
   },
 };
 
