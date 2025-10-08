@@ -26,6 +26,15 @@ export class ApiMock {
     );
   }
 
+  readTestStatusCustom(statusId: string, responseCode: number, responseBody: any) {
+    return http.get(
+      `${this.baseUrl}${contract.readTestStatus.path.replace(":id", statusId)}`,
+      () => {
+        return HttpResponse.json(responseBody, { status: responseCode });
+      }
+    );
+  }
+
   readTestStatusInfinite(statusId: string) {
     return http.get(
       `${this.baseUrl}${contract.readTestStatus.path.replace(":id", statusId)}`,
@@ -42,6 +51,15 @@ export class ApiMock {
       `${this.baseUrl}${contract.readTestStatusGroup.path.replace(":id", statusGroupId)}`,
       () => {
         return HttpResponse.json(response);
+      }
+    );
+  }
+
+  readTestStatusGroupCustom(statusGroupId: string, responseCode: number, responseBody: any) {
+    return http.get(
+      `${this.baseUrl}${contract.readTestStatusGroup.path.replace(":id", statusGroupId)}`,
+      () => {
+        return HttpResponse.json(responseBody, { status: responseCode });
       }
     );
   }
