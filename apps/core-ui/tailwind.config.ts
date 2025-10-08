@@ -6,6 +6,9 @@ export default {
   theme: {
     extend: {
       colors: {
+        error:{
+          foreground: "var(--error-foreground)",
+        },
         skeleton: "var(--skeleton)",
         background: "var(--background)",
         foreground: "var(--foreground)",

@@ -4,6 +4,7 @@
 
 @layer base {
   :root {
+    --error-foreground: oklch(0.58 0.22 27);   
     --skeleton: oklch(0.93 0.01 265);
     --radius: 0.625rem;
     --background: oklch(1 0 0);
@@ -40,6 +41,7 @@
   }
 
   .dark {
+    --error-foreground: oklch(0.64 0.21 25);    
     --skeleton: oklch(0.93 0.01 265);
     --background: oklch(0.145 0 0);
     --foreground: oklch(0.985 0 0);
@@ -76,6 +78,7 @@
 }
 
 @theme inline {
+  --color-error-foreground: var(--error-foreground);
   --color-skeleton: var(--skeleton);
 }
 
