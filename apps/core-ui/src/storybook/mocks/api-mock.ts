@@ -27,6 +27,20 @@ export type AfterTestStepsResponse = ClientInferResponseBody<
   200
 >;
 
+export type TestResponse = ClientInferResponseBody<
+  typeof contract.readTest,
+  200
+>;
+export type BeforeTestResponse = ClientInferResponseBody<
+  typeof contract.readBeforeTest,
+  200
+>;
+
+export type AfterTestResponse = ClientInferResponseBody<
+  typeof contract.readAfterTest,
+  200
+>;
+
 export class ApiMock {
   constructor() {}
 
@@ -171,5 +185,97 @@ export class ApiMock {
       await delay("infinite");
       return HttpResponse.json({});
     });
+  }
+
+  readTest(testId: number, response: TestResponse) {
+    return http.get(
+      `${this.baseUrl}${contract.readTest.path.replace(":id", String(testId))}`,
+      () => {
+        return HttpResponse.json(response);
+      }
+    );
+  }
+
+  readTestCustom(testId: number, responseCode: number, responseBody: any) {
+    return http.get(
+      `${this.baseUrl}${contract.readTest.path.replace(":id", String(testId))}`,
+      () => {
+        return HttpResponse.json(responseBody, { status: responseCode });
+      }
+    );
+  }
+
+  readTestInfinite(testId: number) {
+    return http.get(
+      `${this.baseUrl}${contract.readTest.path.replace(":id", String(testId))}`,
+      async () => {
+        await delay("infinite");
+        return HttpResponse.json({});
+      }
+    );
+  }
+
+  readBeforeTest(beforeTestId: number, response: BeforeTestResponse) {
+    return http.get(
+      `${this.baseUrl}${contract.readBeforeTest.path.replace(":id", String(beforeTestId))}`,
+      () => {
+        return HttpResponse.json(response);
+      }
+    );
+  }
+
+  readBeforeTestCustom(
+    beforeTestId: number,
+    responseCode: number,
+    responseBody: any
+  ) {
+    return http.get(
+      `${this.baseUrl}${contract.readBeforeTest.path.replace(":id", String(beforeTestId))}`,
+      () => {
+        return HttpResponse.json(responseBody, { status: responseCode });
+      }
+    );
+  }
+
+  readBeforeTestInfinite(beforeTestId: number) {
+    return http.get(
+      `${this.baseUrl}${contract.readBeforeTest.path.replace(":id", String(beforeTestId))}`,
+      async () => {
+        await delay("infinite");
+        return HttpResponse.json({});
+      }
+    );
+  }
+
+  readAfterTest(afterTestId: number, response: AfterTestResponse) {
+    return http.get(
+      `${this.baseUrl}${contract.readAfterTest.path.replace(":id", String(afterTestId))}`,
+      () => {
+        return HttpResponse.json(response);
+      }
+    );
+  }
+
+  readAfterTestCustom(
+    afterTestId: number,
+    responseCode: number,
+    responseBody: any
+  ) {
+    return http.get(
+      `${this.baseUrl}${contract.readAfterTest.path.replace(":id", String(afterTestId))}`,
+      () => {
+        return HttpResponse.json(responseBody, { status: responseCode });
+      }
+    );
+  }
+
+  readAfterTestInfinite(afterTestId: number) {
+    return http.get(
+      `${this.baseUrl}${contract.readAfterTest.path.replace(":id", String(afterTestId))}`,
+      async () => {
+        await delay("infinite");
+        return HttpResponse.json({});
+      }
+    );
   }
 }

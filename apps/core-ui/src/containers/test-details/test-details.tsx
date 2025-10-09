@@ -49,11 +49,75 @@ export const TestDetails = ({ entityType, entityId }: TestDetailsProps) => {
   const currentQuery = getCurrentQuery();
 
   if (currentQuery.isPending) {
-    return <Skeleton></Skeleton>;
+    return (
+      <div className="p-6 h-full overflow-auto">
+        <div className="flex flex-col gap-6">
+          <div>
+            <Skeleton className="h-8 w-48" />
+            <div className="mt-2">
+              <Skeleton className="h-3 w-36" />
+            </div>
+          </div>
+
+          <Separator />
+
+          <div className="grid grid-cols-[repeat(auto-fit,minmax(270px,1fr))] gap-4 text-sm">
+            <div>
+              <p className="text-muted-foreground">ID</p>
+              <Skeleton className="h-4 w-20 mt-1" />
+            </div>
+            <div>
+              <p className="text-muted-foreground">Type</p>
+              <Skeleton className="h-4 w-24 mt-1" />
+            </div>
+            <div>
+              <p className="text-muted-foreground">Created</p>
+              <Skeleton className="h-4 w-40 mt-1" />
+            </div>
+            <div>
+              <p className="text-muted-foreground">Started</p>
+              <Skeleton className="h-4 w-40 mt-1" />
+            </div>
+            <div>
+              <p className="text-muted-foreground">Finished</p>
+              <Skeleton className="h-4 w-40 mt-1" />
+            </div>
+            <div>
+              <p className="text-muted-foreground">Correlation ID</p>
+              <Skeleton className="h-4 w-36 mt-1" />
+            </div>
+          </div>
+
+          <div>
+            <p className="text-muted-foreground">Arguments</p>
+            <Skeleton className="h-6 w-full mt-2" />
+          </div>
+        </div>
+      </div>
+    );
   }
 
   if (currentQuery.isError) {
-    return <div>Error while loading data</div>;
+    const handleRetry = () => {
+      currentQuery.refetch();
+    };
+
+    return (
+      <div className="p-6 h-full flex items-center justify-center">
+        <div className="text-center">
+          <div className="mt-3">
+            <button
+              onClick={handleRetry}
+              className="text-sm inline-flex items-center gap-2 text-error-foreground hover:brightness-200 focus:outline-none focus:ring-2 focus:ring-error-foreground focus:ring-offset-1 rounded transition-colors"
+              title="Retry"
+            >
+              <span>↻</span>
+              <span>Retry</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    );
   }
 
   const test = currentQuery.data;
@@ -62,8 +126,8 @@ export const TestDetails = ({ entityType, entityId }: TestDetailsProps) => {
     <div className="p-6 h-full overflow-auto">
       <div className="flex flex-col gap-6">
         <div>
-          <h2 className="text-2xl font-bold">{test.title}</h2>
-          <TestDetailsStatus statusId={test.statusId} />
+          <h2 className="text-2xl font-bold">{test.body.title}</h2>
+          <TestDetailsStatus statusId={test.body.statusId} />
         </div>
 
         <Separator />
@@ -71,7 +135,7 @@ export const TestDetails = ({ entityType, entityId }: TestDetailsProps) => {
         <div className="grid grid-cols-[repeat(auto-fit,minmax(270px,1fr))] gap-4 text-sm">
           <div>
             <p className="text-muted-foreground">ID</p>
-            <p className="font-medium">{test.id}</p>
+            <p className="font-medium">{test.body.id}</p>
           </div>
           <div>
             <p className="text-muted-foreground">Type</p>
@@ -80,42 +144,42 @@ export const TestDetails = ({ entityType, entityId }: TestDetailsProps) => {
           <div>
             <p className="text-muted-foreground">Created</p>
             <p className="font-medium">
-              {format(new Date(test.createdTimestamp), "PPpp")}
+              {format(new Date(test.body.createdTimestamp), "PPpp")}
             </p>
           </div>
-          {test.startedTimestamp && (
+          {test.body.startedTimestamp && (
             <div>
               <p className="text-muted-foreground">Started</p>
               <p className="font-medium">
-                {format(new Date(test.startedTimestamp), "PPpp")}
+                {format(new Date(test.body.startedTimestamp), "PPpp")}
               </p>
             </div>
           )}
-          {test.finishedTimestamp && (
+          {test.body.finishedTimestamp && (
             <div>
               <p className="text-muted-foreground">Finished</p>
               <p className="font-medium">
-                {format(new Date(test.finishedTimestamp), "PPpp")}
+                {format(new Date(test.body.finishedTimestamp), "PPpp")}
               </p>
             </div>
           )}
-          {test.correlationId && (
+          {test.body.correlationId && (
             <div>
               <p className="text-muted-foreground">Correlation ID</p>
-              <p className="font-medium">{test.correlationId}</p>
+              <p className="font-medium">{test.body.correlationId}</p>
             </div>
           )}
         </div>
 
-        {test.argumentsHash && (
+        {test.body.argumentsHash && (
           <div>
             <p className="text-muted-foreground">Arguments Hash</p>
             <p className="font-mono text-xs bg-muted p-2 rounded mt-1 overflow-auto">
-              {test.argumentsHash}
+              {test.body.argumentsHash}
             </p>
           </div>
         )}
-        {renderArguments(test?.arguments || [])}
+        {renderArguments(test.body.arguments || [])}
       </div>
     </div>
   );
