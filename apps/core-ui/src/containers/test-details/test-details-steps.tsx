@@ -14,7 +14,7 @@ type TestsDetailsStepsProps = {
   className?: string;
 };
 
-export const TestsDetailsSteps = ({ testId, testType, className }: TestsDetailsStepsProps) => {
+export const TestDetailsSteps = ({ testId, testType, className }: TestsDetailsStepsProps) => {
   // Only call the hook relevant to the selected testType. The id uniquely identifies an entity in that namespace.
   const beforeQuery =
     testType === "before"

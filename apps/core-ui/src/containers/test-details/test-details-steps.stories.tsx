@@ -1,6 +1,6 @@
 import React from "react";
 import type { Meta, StoryObj } from "@storybook/react";
-import { TestsDetailsSteps } from "./tests-details-steps.jsx";
+import { TestDetailsSteps } from "./test-details-steps.jsx";
 import { ApiMock } from "@/storybook/mocks/api-mock.js";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
@@ -12,9 +12,9 @@ const queryClient = new QueryClient({
   },
 });
 
-const meta: Meta<typeof TestsDetailsSteps> = {
+const meta: Meta<typeof TestDetailsSteps> = {
   title: "Containers/TestDetails/Steps",
-  component: TestsDetailsSteps,
+  component: TestDetailsSteps,
   decorators: [
     (Story) => {
       queryClient.clear();
@@ -28,7 +28,7 @@ const meta: Meta<typeof TestsDetailsSteps> = {
 };
 
 export default meta;
-type Story = StoryObj<typeof TestsDetailsSteps>;
+type Story = StoryObj<typeof TestDetailsSteps>;
 
 const beforeSteps = [
   {
