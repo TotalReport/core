@@ -42,14 +42,7 @@ export const StatusPill = ({
     );
   }
 
-  if (statusQuery.isPending || statusGroupQuery.isPending) {
-    return (
-      <div>
-        <Skeleton className={skeletonStyle(size)} />
-      </div>
-    );
-  }
-
+  // The order of checks is important here, because if status has error in response, the group can be in pending status, but we need to show error, not loading
   if (statusQuery.isError || statusGroupQuery.isError) {
     const handleRetry = () => {
       statusQuery.refetch();
@@ -69,6 +62,14 @@ export const StatusPill = ({
         Err.
         <span className="inline-block">↻</span>
       </button>
+    );
+  }
+
+  if (statusQuery.isPending || statusGroupQuery.isPending) {
+    return (
+      <div>
+        <Skeleton className={skeletonStyle(size)} />
+      </div>
     );
   }
 

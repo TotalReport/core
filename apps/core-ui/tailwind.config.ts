@@ -6,6 +6,9 @@ export default {
   theme: {
     extend: {
       colors: {
+        // step state colors
+        "step-successfull": "var(--step-successfull)",
+        "step-failed": "var(--step-failed)",
         error:{
           foreground: "var(--error-foreground)",
         },

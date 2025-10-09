@@ -12,6 +12,21 @@ export type StatusGroupResponse = ClientInferResponseBody<
   200
 >;
 
+export type TestStepsResponse = ClientInferResponseBody<
+  typeof contract.findTestSteps,
+  200
+>;
+
+export type BeforeTestStepsResponse = ClientInferResponseBody<
+  typeof contract.findBeforeTestSteps,
+  200
+>;
+
+export type AfterTestStepsResponse = ClientInferResponseBody<
+  typeof contract.findAfterTestSteps,
+  200
+>;
+
 export class ApiMock {
   constructor() {}
 
@@ -26,7 +41,11 @@ export class ApiMock {
     );
   }
 
-  readTestStatusCustom(statusId: string, responseCode: number, responseBody: any) {
+  readTestStatusCustom(
+    statusId: string,
+    responseCode: number,
+    responseBody: any
+  ) {
     return http.get(
       `${this.baseUrl}${contract.readTestStatus.path.replace(":id", statusId)}`,
       () => {
@@ -55,7 +74,11 @@ export class ApiMock {
     );
   }
 
-  readTestStatusGroupCustom(statusGroupId: string, responseCode: number, responseBody: any) {
+  readTestStatusGroupCustom(
+    statusGroupId: string,
+    responseCode: number,
+    responseBody: any
+  ) {
     return http.get(
       `${this.baseUrl}${contract.readTestStatusGroup.path.replace(":id", statusGroupId)}`,
       () => {
@@ -73,5 +96,80 @@ export class ApiMock {
         return HttpResponse.json({});
       }
     );
+  }
+
+  findBeforeTestSteps(beforeTestId: number, response: BeforeTestStepsResponse) {
+    // The API expects beforeTestId as a query parameter, not a path param
+    const url = `${this.baseUrl}${contract.findBeforeTestSteps.path}?beforeTestId=${beforeTestId}`;
+    return http.get(url, () => {
+      return HttpResponse.json(response);
+    });
+  }
+
+  findBeforeTestStepsCustom(
+    beforeTestId: number,
+    responseCode: number,
+    responseBody: any
+  ) {
+    const url = `${this.baseUrl}${contract.findBeforeTestSteps.path}?beforeTestId=${beforeTestId}`;
+    return http.get(url, () => {
+      return HttpResponse.json(responseBody, { status: responseCode });
+    });
+  }
+
+  findBeforeTestStepsInfinite(beforeTestId: number) {
+    const url = `${this.baseUrl}${contract.findBeforeTestSteps.path}?beforeTestId=${beforeTestId}`;
+    return http.get(url, async () => {
+      await delay("infinite");
+      return HttpResponse.json({});
+    });
+  }
+
+  findTestSteps(testId: number, response: TestStepsResponse) {
+    const url = `${this.baseUrl}${contract.findTestSteps.path}?testId=${testId}`;
+    return http.get(url, () => {
+      return HttpResponse.json(response);
+    });
+  }
+
+  findTestStepsCustom(testId: number, responseCode: number, responseBody: any) {
+    const url = `${this.baseUrl}${contract.findTestSteps.path}?testId=${testId}`;
+    return http.get(url, () => {
+      return HttpResponse.json(responseBody, { status: responseCode });
+    });
+  }
+
+  findTestStepsInfinite(testId: number) {
+    const url = `${this.baseUrl}${contract.findTestSteps.path}?testId=${testId}`;
+    return http.get(url, async () => {
+      await delay("infinite");
+      return HttpResponse.json({});
+    });
+  }
+
+  findAfterTestSteps(afterTestId: number, response: AfterTestStepsResponse) {
+    const url = `${this.baseUrl}${contract.findAfterTestSteps.path}?afterTestId=${afterTestId}`;
+    return http.get(url, () => {
+      return HttpResponse.json(response);
+    });
+  }
+
+  findAfterTestStepsCustom(
+    afterTestId: number,
+    responseCode: number,
+    responseBody: any
+  ) {
+    const url = `${this.baseUrl}${contract.findAfterTestSteps.path}?afterTestId=${afterTestId}`;
+    return http.get(url, () => {
+      return HttpResponse.json(responseBody, { status: responseCode });
+    });
+  }
+
+  findAfterTestStepsInfinite(afterTestId: number) {
+    const url = `${this.baseUrl}${contract.findAfterTestSteps.path}?afterTestId=${afterTestId}`;
+    return http.get(url, async () => {
+      await delay("infinite");
+      return HttpResponse.json({});
+    });
   }
 }

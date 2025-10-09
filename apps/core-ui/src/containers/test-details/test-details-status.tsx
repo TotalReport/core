@@ -30,7 +30,6 @@ export const TestDetailsStatus = ({ statusId }: TestDetailsStatusProps) => {
     );
   }
 
-  // Error: show retry affordance similar to StatusPill
   if (statusQuery.isError || statusGroupQuery.isError) {
     const handleRetry = () => {
       statusQuery.refetch();
