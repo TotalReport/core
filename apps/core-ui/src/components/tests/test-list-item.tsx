@@ -1,7 +1,7 @@
 import { cn } from '@/lib/utils.js';
 import { formatDistanceToNow } from 'date-fns';
 import { FormattedTestEntity } from '@/lib/test-utils.js';
-import { StatusPill } from '@/containers/status/status-pill.jsx';
+import { StatusPill } from '@/containers/test-status/test-status-pill.jsx';
 
 type TestListItemProps = {
   test: FormattedTestEntity;

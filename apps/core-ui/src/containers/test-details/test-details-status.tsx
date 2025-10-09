@@ -1,7 +1,7 @@
 import { useFindStatusGroup } from "@/hooks/api/status-groups/use-find-status-group.jsx";
 import { useFindStatus } from "@/hooks/api/statuses/use-find-status.jsx";
 import { Skeleton } from "../../components/ui/skeleton.jsx";
-import { StatusPill } from "../status/status-pill.jsx";
+import { StatusPill } from "../test-status/test-status-pill.jsx";
 
 type TestDetailsStatusProps = {
   statusId: string | undefined;

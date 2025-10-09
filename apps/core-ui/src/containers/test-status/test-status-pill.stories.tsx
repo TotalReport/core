@@ -9,7 +9,7 @@ import {
   DEFAULT_TEST_STATUSES,
   TEST_STATUS_GROUPS,
 } from "@total-report/core-schema/constants";
-import { StatusPill } from "./status-pill.jsx";
+import { StatusPill } from "./test-status-pill.jsx";
 
 const apiMock = new ApiMock();
 
