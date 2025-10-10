@@ -54,6 +54,64 @@ const testEntity = {
   arguments: [{ id: 1, name: "arg1", type: "string", value: "value1" }],
 };
 
+const testSteps = [
+  {
+    id: 101,
+    testId: 10,
+    title: "Step 1",
+    isSuccessful: true,
+    thread: "main",
+    process: "1",
+    createdTimestamp: new Date().toISOString(),
+    startedTimestamp: new Date().toISOString(),
+    finishedTimestamp: new Date().toISOString(),
+    // contract types expect string | undefined for errorMessage
+    errorMessage: undefined,
+  },
+  {
+    id: 102,
+    testId: 10,
+    title: "Step 2",
+    isSuccessful: false,
+    thread: "worker-1",
+    process: "2",
+    createdTimestamp: new Date().toISOString(),
+    startedTimestamp: new Date().toISOString(),
+    finishedTimestamp: new Date().toISOString(),
+    errorMessage: "Something went wrong",
+  },
+];
+
+const beforeSteps = [
+  {
+    id: 201,
+    beforeTestId: 10,
+    title: "Before Step 1",
+    isSuccessful: true,
+    thread: "main",
+    process: "1",
+    createdTimestamp: new Date().toISOString(),
+    startedTimestamp: new Date().toISOString(),
+    finishedTimestamp: new Date().toISOString(),
+    errorMessage: undefined,
+  },
+];
+
+const afterSteps = [
+  {
+    id: 301,
+    afterTestId: 10,
+    title: "After Step 1",
+    isSuccessful: true,
+    thread: "main",
+    process: "1",
+    createdTimestamp: new Date().toISOString(),
+    startedTimestamp: new Date().toISOString(),
+    finishedTimestamp: new Date().toISOString(),
+    errorMessage: undefined,
+  },
+];
+
 // Entities for before/after tests require additional fields (launchId, externalArgumentsHash)
 const beforeEntity = {
   ...testEntity,
@@ -81,6 +139,9 @@ export const Success: Story = {
           toStatusGroupResponse(TEST_STATUS_GROUPS.PASSED_GROUP)
         ),
         apiMock.readTest(10, testEntity),
+  apiMock.findTestSteps(10, testSteps),
+  apiMock.findBeforeTestSteps(10, beforeSteps),
+  apiMock.findAfterTestSteps(10, afterSteps),
         apiMock.readBeforeTest(10, beforeEntity),
         apiMock.readAfterTest(10, afterEntity),
       ],
@@ -97,7 +158,12 @@ export const Loading: Story = {
   args: { entityType: "test", entityId: 10 },
   parameters: {
     msw: {
-      handlers: [apiMock.readTestInfinite(10)],
+      handlers: [
+        apiMock.readTestInfinite(10),
+        apiMock.findTestStepsInfinite(10),
+        apiMock.findBeforeTestStepsInfinite(10),
+        apiMock.findAfterTestStepsInfinite(10),
+      ],
     },
     docs: {
       description: { story: "Shows skeleton while test is being fetched." },
@@ -109,7 +175,12 @@ export const Error: Story = {
   args: { entityType: "test", entityId: 10 },
   parameters: {
     msw: {
-      handlers: [apiMock.readTestCustom(10, 500, { error: "server error" })],
+      handlers: [
+  apiMock.readTestCustom(10, 500, { error: "server error" }),
+  apiMock.findTestStepsCustom(10, 500, { error: "server error" }),
+  apiMock.findBeforeTestStepsCustom(10, 500, { error: "server error" }),
+  apiMock.findAfterTestStepsCustom(10, 500, { error: "server error" }),
+      ],
     },
     docs: { description: { story: "Error state when test cannot be loaded." } },
   },

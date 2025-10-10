@@ -51,7 +51,7 @@ export const TestDetailsSteps = ({ testId, testType, className }: TestsDetailsSt
     <div className={cn("flex flex-col gap-3", className)}>
       <Collapsible>
         <div className="flex items-center justify-between">
-          <h4 className="text-xs font-semibold text-muted-foreground">
+          <p className="text-muted-foreground">
             Steps
             {isLoading ? (
               <span className="ml-2 inline-block">
@@ -61,7 +61,15 @@ export const TestDetailsSteps = ({ testId, testType, className }: TestsDetailsSt
               // Only show count when query has data and is not loading or errored
               <span className="ml-2">({count})</span>
             ) : null}
-          </h4>
+
+            {!isError && (
+              <CollapsibleTrigger>
+                <Button variant="ghost" className="w-full justify-start">
+                  <ChevronDown className="mr-2 h-4 w-4" />
+                </Button>
+              </CollapsibleTrigger>
+            )}
+          </p>
 
           {isError ? (
             <div className="ml-3">
@@ -74,13 +82,7 @@ export const TestDetailsSteps = ({ testId, testType, className }: TestsDetailsSt
                 <span className="inline-block">↻</span>
               </button>
             </div>
-          ) : (
-            <CollapsibleTrigger>
-              <Button variant="ghost" className="p-0">
-                <ChevronDown className="h-4 w-4" />
-              </Button>
-            </CollapsibleTrigger>
-          )}
+          ) : null}
         </div>
 
         {!isError && (

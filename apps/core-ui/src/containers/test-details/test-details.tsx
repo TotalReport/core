@@ -12,6 +12,7 @@ import { format } from "date-fns";
 import { ChevronDown } from "lucide-react";
 import { Skeleton } from "../../components/ui/skeleton.jsx";
 import { TestDetailsStatus } from "./test-details-status.jsx";
+import { TestDetailsSteps } from "./test-details-steps.jsx";
 
 type TestDetailsProps = {
   entityType: "beforeTest" | "test" | "afterTest";
@@ -180,6 +181,12 @@ export const TestDetails = ({ entityType, entityId }: TestDetailsProps) => {
           </div>
         )}
         {renderArguments(test.body.arguments || [])}
+        {/* <div> */}
+          <TestDetailsSteps
+            testId={test.body.id}
+            testType={entityType === "beforeTest" ? "before" : entityType === "afterTest" ? "after" : "test"}
+          />
+        {/* </div> */}
       </div>
     </div>
   );

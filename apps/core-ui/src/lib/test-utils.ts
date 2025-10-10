@@ -1,9 +1,6 @@
 import { StatusEntity } from "@/hooks/api/statuses/use-find-statuses.jsx";
 import { StatusGroupEntity } from "@/hooks/api/status-groups/use-find-status-groups.js";
 import { TestEntity } from "@/hooks/api/test-entities/use-find-test-entities.js";
-import { ReadTestResponseData } from "@/hooks/api/tests/use-read-test.js";
-import { ReadBeforeTestResponseData } from "@/hooks/api/before-tests/use-read-before-test.js";
-import { ReadAfterTestResponseData } from "@/hooks/api/after-tests/use-read-after-test.js";
 
 export type FormattedTestEntity = {
   id: number;
@@ -47,7 +44,7 @@ export function formatTestEntity(
 }
 
 export function formatTestDetails(
-  test: ReadTestResponseData | ReadBeforeTestResponseData | ReadAfterTestResponseData,
+  test: any,
   statuses: StatusEntity[],
   statusGroups: StatusGroupEntity[],
   entityType: string
