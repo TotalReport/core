@@ -70,6 +70,7 @@ export const findTestEntities = contract.query({
 export const StatusesCountsSchema = z.array(
   z.object({
     entityType: z.enum(["beforeTest", "test", "afterTest"]),
+    statusGroupId: z.string().nullable(),
     statusId: z.string().nullable(),
     count: z.number().int(),
   })

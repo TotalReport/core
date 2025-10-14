@@ -1,6 +1,8 @@
 import {
   launches,
-  testEntities
+  testEntities,
+  testStatuses,
+  testStatusGroups
 } from "@total-report/core-schema/schema";
 import {
   aliasedTable,
@@ -253,11 +255,16 @@ export class TestEntitiesDAO {
       .with(testEntitiesFiltered)
       .select({
         entityType: testEntitiesFiltered.entityType,
+        statusGroupId: testStatuses.groupId,
         statusId: testEntitiesFiltered.statusId,
         count: count(),
       })
       .from(testEntitiesFiltered)
-      .groupBy(testEntitiesFiltered.entityType, testEntitiesFiltered.statusId)
+      .leftJoin(
+        testStatuses,
+        eq(testEntitiesFiltered.statusId, testStatuses.id)
+      )
+      .groupBy(testEntitiesFiltered.entityType, testStatuses.groupId, testEntitiesFiltered.statusId)
       .execute();
 
     return result;

@@ -5,9 +5,9 @@ import { type ClientInferResponseBody } from "@ts-rest/core";
 export const useFindTestEntitiesStatusesCounts = ({
   filters,
   enabled = true,
-}: FindTestEntitiesStatusesCountsParams): FindTestEntitiesStatusesCountsResponse => {
+}: FindTestEntitiesStatusesCountsParams) => {
   const { reportId, launchId, distinct } = filters;
-  const query = api.findTestEntitiesCountsByStatuses.useQuery({
+  return api.findTestEntitiesCountsByStatuses.useQuery({
     queryKey: ["test-entities/counts/statuses", distinct, reportId, launchId],
     queryData: {
       query: {
@@ -18,28 +18,6 @@ export const useFindTestEntitiesStatusesCounts = ({
     },
     enabled: enabled !== false,
   });
-
-  if (query.isPending) {
-    return {
-      isPending: true,
-      isError: false,
-      data: null,
-    };
-  }
-
-  if (query.isError || query.data?.status !== 200) {
-    return {
-      isPending: false,
-      isError: true,
-      data: null,
-    };
-  }
-
-  return {
-    isPending: false,
-    isError: false,
-    data: query.data.body,
-  };
 };
 
 export type FindTestEntitiesStatusesCountsParams = {
@@ -53,23 +31,6 @@ export type FindTestEntitiesStatusesCountsParams = {
 
 export type TestEntityType =
   FindTestEntitiesStatusesCountsResponseData[0]["entityType"];
-
-export type FindTestEntitiesStatusesCountsResponse =
-  | {
-      isPending: true;
-      isError: false;
-      data: null;
-    }
-  | {
-      isPending: false;
-      isError: true;
-      data: null;
-    }
-  | {
-      isPending: false;
-      isError: false;
-      data: FindTestEntitiesStatusesCountsResponseData;
-    };
 
 export type FindTestEntitiesStatusesCountsResponseData =
   ClientInferResponseBody<

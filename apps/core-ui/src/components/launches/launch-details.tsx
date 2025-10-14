@@ -1,7 +1,7 @@
 import { useFindLaunch } from "@/hooks/api/launches/use-find-launch.js";
 import { format } from "date-fns";
 import { Pencil, Trash2 } from "lucide-react";
-import { TestsStatisticsContainer } from "../test-statistics/test-statistics-container.jsx";
+import { TestsStatistics } from "../../containers/test-statistics/tests-statistics.jsx";
 import { Button } from "../ui/button.jsx";
 
 interface LaunchDetailsProps {
@@ -128,7 +128,7 @@ export default function LaunchDetails({ launchId }: LaunchDetailsProps) {
             <h3 className="text-sm font-medium text-muted-foreground pb-2">
               Statistics
             </h3>
-            <TestsStatisticsContainer launchId={launch.id} />
+            <TestsStatistics launchId={launch.id} />
           </div>
         </div>
       </div>

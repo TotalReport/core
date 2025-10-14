@@ -15,6 +15,7 @@ export const useFindStatuses = (
       isPending: true,
       isError: false,
       data: null,
+      refetch: () => query.refetch(),
     };
   }
 
@@ -23,6 +24,7 @@ export const useFindStatuses = (
       isPending: false,
       isError: true,
       data: null,
+      refetch: () => query.refetch(),
     };
   }
 
@@ -30,6 +32,7 @@ export const useFindStatuses = (
     isPending: false,
     isError: false,
     data: query.data.body,
+    refetch: () => query.refetch(),
   };
 };
 
@@ -42,16 +45,19 @@ export type FindStatusesResponse =
       isPending: true;
       isError: false;
       data: null;
+      refetch: () => void;
     }
   | {
       isPending: false;
       isError: true;
       data: null;
+      refetch: () => void;
     }
   | {
       isPending: false;
       isError: false;
       data: FindStatusesResponseData;
+      refetch: () => void;
     };
 
 export type StatusEntity = FindStatusesResponseData["items"][0];

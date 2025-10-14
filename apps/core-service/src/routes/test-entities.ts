@@ -65,9 +65,7 @@ export const findTestEntitiesCountsByStatusesRoute: FindTestEntitiesStatusesCoun
     status: 200,
     body: searchResults.map((item) => {
       return {
-        entityType: item.entityType,
-        statusId: item.statusId,
-        count: item.count,
+        ...item,
       };
     }),
   };

@@ -5,7 +5,7 @@ import { ClientInferResponseBody } from "@ts-rest/core";
 import { expect } from "earl";
 import { contract } from "@total-report/core-contract/contract";
 import "../../tools/earl-extensions.js";
-import { DEFAULT_TEST_STATUSES } from "@total-report/core-schema/constants";
+import { DEFAULT_TEST_STATUSES, TEST_STATUS_GROUPS } from "@total-report/core-schema/constants";
 import { expect_toBe } from "../../tools/utils.js";
 import { add } from "date-fns/add";
 import { sub } from "date-fns/sub";
@@ -52,6 +52,7 @@ describe("find test entities counts by statuses", () => {
       body: [
         {
           entityType: "test",
+          statusGroupId: DEFAULT_TEST_STATUSES.PASSED.groupId,
           statusId: passedStatusId,
           count: 2,
         },
@@ -70,6 +71,7 @@ describe("find test entities counts by statuses", () => {
       body: [
         {
           entityType: "test",
+          statusGroupId: DEFAULT_TEST_STATUSES.PASSED.groupId,
           statusId: passedStatusId,
           count: 5,
         },
@@ -120,11 +122,13 @@ describe("find test entities counts by statuses", () => {
       body: [
         {
           entityType: "test",
+          statusGroupId: null,
           statusId: null,
           count: 1,
         },
         {
           entityType: "test",
+          statusGroupId: DEFAULT_TEST_STATUSES.PASSED.groupId,
           statusId: DEFAULT_TEST_STATUSES.PASSED.id,
           count: 1,
         },
@@ -148,11 +152,13 @@ describe("find test entities counts by statuses", () => {
       body: [
         {
           entityType: "test",
+          statusGroupId: null,
           statusId: null,
           count: 2,
         },
         {
           entityType: "test",
+          statusGroupId: DEFAULT_TEST_STATUSES.PASSED.groupId,
           statusId: DEFAULT_TEST_STATUSES.PASSED.id,
           count: 3,
         },
@@ -201,6 +207,7 @@ describe("find test entities counts by statuses", () => {
       body: [
         {
           entityType: "test",
+          statusGroupId: null,
           statusId: null,
           count: 1,
         },
@@ -223,11 +230,13 @@ describe("find test entities counts by statuses", () => {
       body: [
         {
           entityType: "test",
+          statusGroupId: null,
           statusId: null,
           count: 1,
         },
         {
           entityType: "test",
+          statusGroupId: DEFAULT_TEST_STATUSES.PASSED.groupId,
           statusId: passedStatusId,
           count: 1,
         },
@@ -279,6 +288,7 @@ describe("find test entities counts by statuses", () => {
       body: [
         {
           entityType: "test",
+          statusGroupId: DEFAULT_TEST_STATUSES.FAILED.groupId,
           statusId: failedStatusId,
           count: 1,
         },
@@ -301,11 +311,13 @@ describe("find test entities counts by statuses", () => {
       body: [
         {
           entityType: "test",
+          statusGroupId: DEFAULT_TEST_STATUSES.FAILED.groupId,
           statusId: failedStatusId,
           count: 1,
         },
         {
           entityType: "test",
+          statusGroupId: DEFAULT_TEST_STATUSES.PASSED.groupId,
           statusId: passedStatusId,
           count: 1,
         },
@@ -397,6 +409,7 @@ describe("find test entities counts by statuses", () => {
       body: [
         {
           entityType: "test",
+          statusGroupId: DEFAULT_TEST_STATUSES.PASSED.groupId,
           statusId: passedStatusId,
           count: 2,
         },
@@ -416,6 +429,7 @@ describe("find test entities counts by statuses", () => {
       body: [
         {
           entityType: "test",
+          statusGroupId: DEFAULT_TEST_STATUSES.PASSED.groupId,
           statusId: passedStatusId,
           count: 5, // 2 + 3
         },
@@ -460,16 +474,19 @@ describe("find test entities counts by statuses", () => {
       body: [
         {
           entityType: "afterTest",
+          statusGroupId: DEFAULT_TEST_STATUSES.PASSED.groupId,
           statusId: passedStatusId,
           count: 1,
         },
         {
           entityType: "beforeTest",
+          statusGroupId: DEFAULT_TEST_STATUSES.PASSED.groupId,
           statusId: passedStatusId,
           count: 1,
         },
         {
           entityType: "test",
+          statusGroupId: DEFAULT_TEST_STATUSES.PASSED.groupId,
           statusId: passedStatusId,
           count: 1,
         },

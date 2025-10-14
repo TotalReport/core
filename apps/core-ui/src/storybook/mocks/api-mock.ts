@@ -41,6 +41,11 @@ export type AfterTestResponse = ClientInferResponseBody<
   200
 >;
 
+export type TestEntitiesCountsByStatusesResponse = ClientInferResponseBody<
+  typeof contract.findTestEntitiesCountsByStatuses,
+  200
+>;
+
 export class ApiMock {
   constructor() {}
 
@@ -181,6 +186,55 @@ export class ApiMock {
 
   findAfterTestStepsInfinite(afterTestId: number) {
     const url = `${this.baseUrl}${contract.findAfterTestSteps.path}?afterTestId=${afterTestId}`;
+    return http.get(url, async () => {
+      await delay("infinite");
+      return HttpResponse.json({});
+    });
+  }
+
+  findTestEntitiesCountsByStatuses(
+    filters:
+      | { distinct?: boolean; reportId?: number; launchId?: number }
+      | undefined,
+    response: TestEntitiesCountsByStatusesResponse
+  ) {
+    const distinct = filters?.distinct ?? false;
+    const reportId = filters?.reportId;
+    const launchId = filters?.launchId;
+    const qs = `?distinct=${distinct}${reportId !== undefined ? `&reportId=${reportId}` : ""}${launchId !== undefined ? `&launchId=${launchId}` : ""}`;
+    const url = `${this.baseUrl}${contract.findTestEntitiesCountsByStatuses.path}${qs}`;
+    return http.get(url, () => {
+      return HttpResponse.json(response);
+    });
+  }
+
+  findTestEntitiesCountsByStatusesCustom(
+    filters:
+      | { distinct?: boolean; reportId?: number; launchId?: number }
+      | undefined,
+    responseCode: number,
+    responseBody: any
+  ) {
+    const distinct = filters?.distinct ?? false;
+    const reportId = filters?.reportId;
+    const launchId = filters?.launchId;
+    const qs = `?distinct=${distinct}${reportId !== undefined ? `&reportId=${reportId}` : ""}${launchId !== undefined ? `&launchId=${launchId}` : ""}`;
+    const url = `${this.baseUrl}${contract.findTestEntitiesCountsByStatuses.path}${qs}`;
+    return http.get(url, () => {
+      return HttpResponse.json(responseBody, { status: responseCode });
+    });
+  }
+
+  findTestEntitiesCountsByStatusesInfinite(
+    filters:
+      | { distinct?: boolean; reportId?: number; launchId?: number }
+      | undefined
+  ) {
+    const distinct = filters?.distinct ?? false;
+    const reportId = filters?.reportId;
+    const launchId = filters?.launchId;
+    const qs = `?distinct=${distinct}${reportId !== undefined ? `&reportId=${reportId}` : ""}${launchId !== undefined ? `&launchId=${launchId}` : ""}`;
+    const url = `${this.baseUrl}${contract.findTestEntitiesCountsByStatuses.path}${qs}`;
     return http.get(url, async () => {
       await delay("infinite");
       return HttpResponse.json({});

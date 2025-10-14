@@ -5,7 +5,7 @@
 import { format } from "date-fns";
 import { Button } from "@/components/ui/button.js";
 import { Link } from "@modern-js/runtime/router";
-import { TestsStatisticsContainer } from "@/components/test-statistics/test-statistics-container.jsx";
+import { TestsStatistics } from "@/containers/test-statistics/tests-statistics.jsx";
 import { Trash2, Pencil } from "lucide-react";
 import { useFindReport } from "@/hooks/api/reports/use-find-report.js";
 import { useFindLaunchesCount } from "@/hooks/api/launches/use-launches-counts.jsx";
@@ -90,7 +90,7 @@ export const ReportDetails: React.FC<ReportDetailsProps> = ({ reportId }) => {
             <h3 className="text-sm font-medium text-muted-foreground pb-2">
               Statistics
             </h3>
-            <TestsStatisticsContainer reportId={reportId} />
+            <TestsStatistics reportId={reportId} />
           </div>
         </div>
       </div>
