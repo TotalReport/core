@@ -1,85 +1,69 @@
-# Total Report Project Structure
+# Total Report — Test Reporting Platform (Proof of Concept)
 
-This project is organized as a monorepo using pnpm workspaces and Turborepo for managing multiple packages and applications.
+Status: Proof of concept — not production ready
 
-## Root Directory
+Total Report is a modular test reporting platform designed to generate, aggregate, and present test reports across projects, products, and organizations. 
 
-- `dev-db.docker-compose.yml`: Docker Compose configuration for development databases
-- `.env.dev`: Environment variables for development
-- `Dockerfile`: Multi-stage Docker configuration for containerizing services
-- `package.json`: Root package configuration with scripts for development and CI
-- `pnpm-lock.yaml` & `pnpm-workspace.yaml`: pnpm workspace configuration
-- `turbo.json`: Turborepo configuration
+## Repository layout
 
-## Applications (`apps/`)
+Top-level folders of note:
 
-### Core Schema Migrator (`apps/core-schema-migrator/`)
-A database migration utility that handles schema migrations using SQL files.
-- Contains migration files in `migrations/` directory
-- Uses Drizzle ORM for database operations
-- Includes seed data functionality
+- `apps/`
+  - `core-ui/` — Frontend application and UI components used to visualize and interact with reports.
+  - `core-service/` — Backend API server providing health checks, routes, and business logic for generating and serving reports.
+  - `core-schema-migrator/` — Database migrations and seeding utilities for the platform's schema management.
 
-### Core Service (`apps/core-service/`)
-Backend API service for the application.
-- Main entry point in `src/index.ts`
-- Database connection and models in `src/db/`
-- API routes defined in `src/routes/`
-- Error handling in `src/errors/`
-- Input validation in `src/validations/`
+- `packages/`
+  - `core-contract/` — Shared test reporting contracts, types, utilities and helpers used by services and tests.
+  - `core-entities-generator/` — Utilities to generate test entities and report payloads for tests and demos.
+  - `core-schema/` — Schema definitions and related utilities.
 
-### Core UI (`apps/core-ui/`)
-*This module is outdated and will be replaced by `apps/core-ui-astrojs/`*
-Frontend Next.js application.
-- Components, pages, and application logic
-- Tailwind CSS for styling
-- Modern React application structure
+- `tools/`, `utils/`, `test/`, `coverage/` — Supporting scripts, test harnesses, and coverage artifacts.
 
-### Core UI AstroJS (`apps/core-ui-astrojs/`)
-Frontend using Astro framework.
-- Pages and components for rendering UI
-- Static site generation capabilities
+Each app and package includes its own `package.json` and TypeScript configuration when applicable. The repository uses a monorepo structure to share code and simplify local development.
 
-## Packages (`packages/`)
+## Project concept and motivation
 
-### Core Contract (`packages/core-contract/`)
-Defines the REST API contract for the application domain.
-- Test entities, steps, and contexts
-- Report and launch definitions
-- Shared types across the application
+The central idea behind this project is to provide a flexible test reporting tool that can be adapted to many teams and products by combining a small core with an ecosystem of plugins and adapters. The platform's goals include:
 
-### Core Entities Generator (`packages/core-entities-generator/`)
-Code generation utilities for creating domain entities.
-- Generators for test steps, contexts, and reports
-- Utilities for consistent entity creation
+- Universal fit: Provide a core reporting model and plugin surface that accommodates many test frameworks, CI providers, and reporting policies.
+- Pluggable presentation: Allow teams to change how reports are displayed, enriched, or transformed without changing the core engine.
+- Reusable building blocks: Expose shared contracts, schema, and generators to make it easy to author integrations and consistent reports across projects.
 
-### Core Schema (`packages/core-schema/`)
-Database schema definitions.
-- Shared constants and schema types
-- Used by both the migrator and service applications
+Think of the platform as a composable reporting workspace where organizations can assemble the exact feature set they need from plugins and shared packages.
 
-### TypeScript Config (`packages/typescript-config/`)
-Shared TypeScript configurations.
-- Base configurations for consistent TypeScript settings across packages
+## Getting started (for developers)
 
-## Tests (`test/`)
+Prerequisites
 
-Comprehensive test suite for the application.
-- Test setup with hooks and environment configuration
-- Integration and unit tests for components
-- Docker Compose configuration for test environments
-- Client utilities and test helpers
+- Node.js (LTS) and a PNPM package manager.
+- Docker and Docker Compose when running services that depend on a local database (migration tooling is included).
 
-## Development
+Local development
 
-The project uses Docker for development and testing environments, with scripts provided in the root package.json:
+1. Install dependencies from the repository root:
+```shell
+pnpm install
+```
 
-- `dev:setup`: Start development databases
-- `dev:teardown`: Stop development databases
-- `dockerize:core-schema-migrator` & `dockerize:core-service`: Build Docker images
-- `test`: Run tests across the monorepo
+2. Run the app:
+```shell
+pnpm dev
+```
 
-## Requirements
+Note: `pnpm dev` will start a local PostgreSQL instance using Docker Compose.
 
-- Node.js 18+
-- pnpm 9.5.0+
-- Docker (for development and testing environments)
+Running tests
+
+To run tests use:
+```shell
+pnpm test
+```
+
+## Limitations and roadmap
+
+This is an early proof of concept. Known limitations include incomplete production hardening, partial test coverage, and early-stage plugin ergonomics. Future work may include:
+
+- Stabilizing the contracts and plugin API.
+- Improving documentation and adding examples for common adapters.
+- Adding CI integration templates and deployment guides.
