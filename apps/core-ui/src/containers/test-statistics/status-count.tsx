@@ -1,6 +1,7 @@
 import { useFindStatus } from "@/hooks/api/statuses/use-find-status.jsx";
 import { StatusDot } from "./status-dot.jsx";
 import { Skeleton } from "../../components/ui/skeleton.jsx";
+import ErrorRetry from "@/components/ui/error-retry.js";
 
 export type StatusCountProps = {
   /**
@@ -30,14 +31,7 @@ export const StatusCount = ({ statusId, count }: StatusCountProps) => {
 
     return (
       <div className="flex items-center justify-between w-full">
-        <button
-          onClick={handleRetry}
-          className="text-sm flex items-center gap-1 text-error-foreground hover:brightness-200 focus:outline-none focus:ring-2 focus:ring-error-foreground focus:ring-offset-1 rounded transition-colors"
-          title="Error loading status. Click to retry."
-        >
-          Error.
-          <span className="inline-block">↻</span>
-        </button>
+        <ErrorRetry onRetry={handleRetry} />
         <span className="text-sm font-medium ml-4">{count}</span>
       </div>
     );

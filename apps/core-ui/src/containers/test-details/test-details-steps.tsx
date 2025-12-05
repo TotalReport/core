@@ -6,6 +6,7 @@ import { Collapsible, CollapsibleTrigger, CollapsibleContent } from "@/component
 import { Button } from "@/components/ui/button.jsx";
 import { ChevronDown } from "lucide-react";
 import { cn } from "@/lib/utils.js";
+import ErrorRetry from "@/components/ui/error-retry.js";
 
 type TestsDetailsStepsProps = {
   testId: number | undefined;
@@ -73,14 +74,7 @@ export const TestDetailsSteps = ({ testId, testType, className }: TestsDetailsSt
 
           {isError ? (
             <div className="ml-3">
-              <button
-                onClick={() => (query as any)?.refetch()}
-                className="text-xs flex items-center gap-1 text-error-foreground hover:brightness-200 focus:outline-none focus:ring-2 focus:ring-error-foreground focus:ring-offset-1 rounded transition-colors"
-                title="Error loading steps. Click to retry."
-              >
-                Err.
-                <span className="inline-block">↻</span>
-              </button>
+              <ErrorRetry onRetry={() => query!.refetch()} className="text-xs" label={"Err."} />
             </div>
           ) : null}
         </div>

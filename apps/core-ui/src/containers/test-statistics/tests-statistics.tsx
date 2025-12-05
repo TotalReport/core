@@ -2,6 +2,7 @@ import { useFindTestEntitiesStatusesCounts } from "@/hooks/api/test-entities/use
 import { ENTITY_TYPES } from "@/lib/test-statistics-utils.js";
 import { Skeleton } from "../../components/ui/skeleton.jsx";
 import { EntityTypeSection } from "./entity-type-section.jsx";
+import ErrorRetry from "@/components/ui/error-retry.js";
 
 export type TestsStatisticsContainerProps = {
   reportId?: number;
@@ -33,16 +34,7 @@ export const TestsStatistics = ({
 
     return (
       <div className="mt-2 p-4 flex items-center justify-center min-h-[6rem]">
-        <button
-          onClick={handleRetry}
-          role="button"
-          aria-live="assertive"
-          className="text-sm flex items-center gap-1 text-error-foreground hover:brightness-200 focus:outline-none focus:ring-2 focus:ring-error-foreground focus:ring-offset-1 rounded transition-colors text-center"
-          title="Error loading statistics. Click to retry."
-        >
-          Error loading statistics
-          <span className="inline-block">↻</span>
-        </button>
+        <ErrorRetry onRetry={handleRetry} />
       </div>
     );
   }

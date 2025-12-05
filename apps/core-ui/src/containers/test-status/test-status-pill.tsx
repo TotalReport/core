@@ -2,6 +2,7 @@ import { useFindStatusGroup } from "@/hooks/api/status-groups/use-find-status-gr
 import { useFindStatus } from "@/hooks/api/statuses/use-find-status.jsx";
 import { cn } from "@/lib/utils.js";
 import { Skeleton } from "../../components/ui/skeleton.jsx";
+import ErrorRetry from "@/components/ui/error-retry.jsx";
 
 export type StatusPillProps = {
   statusId: string | undefined;
@@ -50,18 +51,11 @@ export const StatusPill = ({
     };
 
     return (
-      <button
-        onClick={handleRetry}
-        className={cn(
-          "flex items-center gap-1 text-error-foreground hover:brightness-200 focus:outline-none focus:ring-2 focus:ring-error-foreground focus:ring-offset-1 rounded transition-colors",
-          sizeClasses[size].undefinedText,
-          className
-        )}
-        title="Error loading status. Click to retry."
-      >
-        Err.
-        <span className="inline-block">↻</span>
-      </button>
+      <ErrorRetry
+        onRetry={handleRetry}
+        className={cn(sizeClasses[size].undefinedText, className)}
+        label="Err."
+      />
     );
   }
 

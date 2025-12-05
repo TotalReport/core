@@ -1,6 +1,7 @@
 import { useFindStatusGroup } from "@/hooks/api/status-groups/use-find-status-group.jsx";
 import { useFindStatus } from "@/hooks/api/statuses/use-find-status.jsx";
 import { Skeleton } from "../../components/ui/skeleton.jsx";
+import {ErrorRetry} from "@/components/ui/error-retry.jsx";
 import { StatusPill } from "../test-status/test-status-pill.jsx";
 
 type TestDetailsStatusProps = {
@@ -38,14 +39,7 @@ export const TestDetailsStatus = ({ statusId }: TestDetailsStatusProps) => {
 
     return (
       <div className="mt-2 flex items-baseline">
-        <button
-          onClick={handleRetry}
-          className="text-sm flex items-center gap-1 text-error-foreground hover:brightness-200 focus:outline-none focus:ring-2 focus:ring-error-foreground focus:ring-offset-1 rounded transition-colors"
-          title="Error loading status. Click to retry."
-        >
-          Error 
-          <span className="inline-block">↻</span>
-        </button>
+        <ErrorRetry onRetry={handleRetry} />
       </div>
     );
   }

@@ -4,6 +4,7 @@ import { Pencil, Trash2 } from "lucide-react";
 import { TestsStatistics } from "../test-statistics/tests-statistics.jsx";
 import { Button } from "../../components/ui/button.jsx";
 import { Skeleton } from "../../components/ui/skeleton.jsx";
+import ErrorRetry from "@/components/ui/error-retry.js";
 
 interface LaunchDetailsProps {
   launchId: number | null;
@@ -86,14 +87,7 @@ export default function LaunchDetails({ launchId }: LaunchDetailsProps) {
       <div className="p-6 h-full flex items-center justify-center">
         <div className="text-center">
           <div className="mt-3">
-            <button
-              onClick={handleRetry}
-              className="text-sm inline-flex items-center gap-2 text-error-foreground hover:brightness-200 focus:outline-none focus:ring-2 focus:ring-error-foreground focus:ring-offset-1 rounded transition-colors"
-              title="Retry"
-            >
-              <span>↻</span>
-              <span>Retry</span>
-            </button>
+            <ErrorRetry onRetry={handleRetry} />
           </div>
         </div>
       </div>

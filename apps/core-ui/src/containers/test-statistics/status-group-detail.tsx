@@ -4,6 +4,7 @@ import { useState } from "react";
 import { StatusCount } from "./status-count.jsx";
 import { StatusDot } from "./status-dot.jsx";
 import { Skeleton } from "../../components/ui/skeleton.jsx";
+import ErrorRetry from "@/components/ui/error-retry.js";
 
 export type StatusGroupDetailProps = {
   /**
@@ -55,14 +56,7 @@ export const StatusGroupDetail = ({
           {groupId != null && statusGroupQuery.isPending ? (
             <Skeleton className="h-4 w-28 mr-2" />
           ) : statusGroupQuery.isError ? (
-            <button
-              onClick={() => statusGroupQuery.refetch()}
-              className="flex items-center gap-1 text-error-foreground hover:brightness-200 focus:outline-none focus:ring-2 focus:ring-error-foreground focus:ring-offset-1 rounded transition-colors"
-              title="Error loading status group. Click to retry."
-            >
-              Err.
-              <span className="inline-block">↻</span>
-            </button>
+            <ErrorRetry onRetry={() => statusGroupQuery.refetch()} label={"Err."} />
           ) : (
             <span>{statusGroupResponse?.title ?? "Not set"}</span>
           )}

@@ -2,21 +2,25 @@
 
 Brief guidance to keep UI code consistent across `core-ui`.
 
-Visual roles
+Components
 
-- Component — presentational: receives props and renders UI only. Components should not fetch data or perform side effects.
-- Container — data-aware: fetches and composes data (via hooks) and renders the view. Containers may render presentational components or render markup directly when that is clearer.
+- **Location:** [src/components](src/components)
+
+- **Responsibilities:** receive props and render UI only — no data fetching or side effects.
 
 Containers
 
-- Containers should handle three primary states:
-  - Loading — show skeletons where data will appear; keep layout consistent with the final view.
-  - Error — display a concise error message and provide a reload/refetch action.
-  - Data — render the requested content.
+- **Location:** [src/containers](src/containers)
+- **Responsibilities:** fetch data (via hooks), compose child components or render directly, and handle UI states.
+
+- **State handling:**
+  - **Loading:** show skeletons where data will appear; keep layout consistent with the final view.
+  - **Error:** use the [ErrorRetry](src/components/ui/error-retry.tsx) component to show a compact retry control.
+  - **Data:** render the requested content.
 
 Data fetching
 
-- Use hooks and TanStack Query for all data access. Hooks should expose the standard query API (`data`, `isLoading`, `isError`, `refetch`) so containers handle states uniformly.
+- Use hooks and TanStack Query for all data access. Hooks should expose the standard query API (`data`, `isPending`/`isLoading`, `isError`, `refetch`) so containers handle states uniformly.
 
 Application state
 
