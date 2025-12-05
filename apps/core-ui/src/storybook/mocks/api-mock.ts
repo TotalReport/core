@@ -46,6 +46,11 @@ export type TestEntitiesCountsByStatusesResponse = ClientInferResponseBody<
   200
 >;
 
+export type LaunchResponse = ClientInferResponseBody<
+  typeof contract.readLaunch,
+  200
+>;
+
 export class ApiMock {
   constructor() {}
 
@@ -326,6 +331,34 @@ export class ApiMock {
   readAfterTestInfinite(afterTestId: number) {
     return http.get(
       `${this.baseUrl}${contract.readAfterTest.path.replace(":id", String(afterTestId))}`,
+      async () => {
+        await delay("infinite");
+        return HttpResponse.json({});
+      }
+    );
+  }
+
+  readLaunch(launchId: number, response: LaunchResponse) {
+    return http.get(
+      `${this.baseUrl}${contract.readLaunch.path.replace(":id", String(launchId))}`,
+      () => {
+        return HttpResponse.json(response);
+      }
+    );
+  }
+
+  readLaunchCustom(launchId: number, responseCode: number, responseBody: any) {
+    return http.get(
+      `${this.baseUrl}${contract.readLaunch.path.replace(":id", String(launchId))}`,
+      () => {
+        return HttpResponse.json(responseBody, { status: responseCode });
+      }
+    );
+  }
+
+  readLaunchInfinite(launchId: number) {
+    return http.get(
+      `${this.baseUrl}${contract.readLaunch.path.replace(":id", String(launchId))}`,
       async () => {
         await delay("infinite");
         return HttpResponse.json({});
