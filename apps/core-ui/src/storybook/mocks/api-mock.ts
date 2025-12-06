@@ -51,6 +51,16 @@ export type LaunchResponse = ClientInferResponseBody<
   200
 >;
 
+export type ReportResponse = ClientInferResponseBody<
+  typeof contract.readReport,
+  200
+>;
+
+export type LaunchesCountResponse = ClientInferResponseBody<
+  typeof contract.findLaunchesCount,
+  200
+>;
+
 export class ApiMock {
   constructor() {}
 
@@ -359,6 +369,75 @@ export class ApiMock {
   readLaunchInfinite(launchId: number) {
     return http.get(
       `${this.baseUrl}${contract.readLaunch.path.replace(":id", String(launchId))}`,
+      async () => {
+        await delay("infinite");
+        return HttpResponse.json({});
+      }
+    );
+  }
+
+  readReport(reportId: number, response: ReportResponse) {
+    return http.get(
+      `${this.baseUrl}${contract.readReport.path.replace(":id", String(reportId))}`,
+      () => {
+        return HttpResponse.json(response);
+      }
+    );
+  }
+
+  readReportCustom(reportId: number, responseCode: number, responseBody: any) {
+    return http.get(
+      `${this.baseUrl}${contract.readReport.path.replace(":id", String(reportId))}`,
+      () => {
+        return HttpResponse.json(responseBody, { status: responseCode });
+      }
+    );
+  }
+
+  readReportInfinite(reportId: number) {
+    return http.get(
+      `${this.baseUrl}${contract.readReport.path.replace(":id", String(reportId))}`,
+      async () => {
+        await delay("infinite");
+        return HttpResponse.json({});
+      }
+    );
+  }
+
+  findLaunchesCount(
+    filters: { reportId?: number },
+    response: LaunchesCountResponse
+  ) {
+    const reportId = filters?.reportId;
+    const qs = reportId !== undefined ? `?reportId=${reportId}` : "";
+    return http.get(
+      `${this.baseUrl}${contract.findLaunchesCount.path}${qs}`,
+      () => {
+        return HttpResponse.json(response);
+      }
+    );
+  }
+
+  findLaunchesCountCustom(
+    filters: { reportId?: number },
+    responseCode: number,
+    responseBody: any
+  ) {
+    const reportId = filters?.reportId;
+    const qs = reportId !== undefined ? `?reportId=${reportId}` : "";
+    return http.get(
+      `${this.baseUrl}${contract.findLaunchesCount.path}${qs}`,
+      () => {
+        return HttpResponse.json(responseBody, { status: responseCode });
+      }
+    );
+  }
+
+  findLaunchesCountInfinite(filters: { reportId?: number }) {
+    const reportId = filters?.reportId;
+    const qs = reportId !== undefined ? `?reportId=${reportId}` : "";
+    return http.get(
+      `${this.baseUrl}${contract.findLaunchesCount.path}${qs}`,
       async () => {
         await delay("infinite");
         return HttpResponse.json({});

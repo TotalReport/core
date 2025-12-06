@@ -11,7 +11,7 @@ Components
 Containers
 
 - **Location:** [src/containers](src/containers)
-- **Responsibilities:** fetch data (via hooks), compose child components or render directly, and handle UI states.
+- **Responsibilities:** fetch data (via hooks), compose child container, components or render directly, and handle UI states.
 
 - **State handling:**
   - **Loading:** show skeletons where data will appear; keep layout consistent with the final view.

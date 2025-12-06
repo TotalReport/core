@@ -4,7 +4,7 @@
 
 import { useReportsList } from "@/hooks/use-reports-list.hook.js";
 import { ReportsListSidebar } from "./reports-list-sidebar.jsx";
-import { ReportDetails } from "./report-details.jsx";
+import { ReportDetails } from "../../containers/reports/report-details.jsx";
 import {
   ResizableHandle,
   ResizablePanel,
