@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useUrlParams } from "@/hooks/url/use-url-params.jsx";
 import LaunchesList from "@/components/launches/launches-list.js";
-import LaunchDetails from "@/containers/launches/launch-details.jsx";
+import LaunchDetails from "@/containers/launch/launch-details.jsx";
 import {
   ResizableHandle,
   ResizablePanel,

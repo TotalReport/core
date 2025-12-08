@@ -1,6 +1,5 @@
 import React from "react";
 import type { Meta, StoryObj } from "@storybook/react";
-import LaunchDetails from "./launch-details.jsx";
 import { ApiMock, TestEntitiesCountsByStatusesResponse } from "@/storybook/mocks/api-mock.js";
 import {
   toStatusGroupResponse,
@@ -11,6 +10,7 @@ import {
   TEST_STATUS_GROUPS,
 } from "@total-report/core-schema/constants";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import LaunchDetails from "./launch-details.jsx";
 
 const apiMock = new ApiMock();
 
