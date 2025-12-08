@@ -1,5 +1,5 @@
 import React from "react";
-import LaunchesContainer from "@/containers/launches/launches-container.js";
+import LaunchesContainer from "@/containers/launches/launches.jsx";
 import { RestAPIProvider } from "@/components/providers/rest-api-provider.jsx";
 
 export const title = "Launches - Total Report";

@@ -101,7 +101,7 @@ export const LaunchFilterForm = ({
               </div>
             )}
 
-            {launchesQuery.data?.items.map((launch) => (
+            {launchesQuery.data?.body?.items.map((launch) => (
               <div
                 key={launch.id}
                 className={`p-3 border rounded-md cursor-pointer transition-colors ${
@@ -120,7 +120,7 @@ export const LaunchFilterForm = ({
               </div>
             ))}
 
-            {launchesQuery.data?.items.length === 0 && !launchesQuery.isPending && (
+            {launchesQuery.data?.body?.items.length === 0 && !launchesQuery.isPending && (
               <div className="text-center text-muted-foreground text-sm py-4">
                 No launches found
               </div>

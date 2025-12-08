@@ -6,8 +6,8 @@ export const useFindLaunches = ({
   pagination,
   filters,
   enabled,
-}: FindLaunchesParams): FindLaunchesResponse => {
-  const query = api.findLaunches.useQuery({
+}: FindLaunchesParams) => {
+  return api.findLaunches.useQuery({
     queryKey: [
       "launches",
       pagination.offset,
@@ -25,11 +25,6 @@ export const useFindLaunches = ({
     },
     enabled: enabled !== false,
   });
-  return {
-    isPending: query.isPending,
-    isError: query.isError,
-    data: query.data?.status === 200 ? query.data.body : null,
-  };
 };
 
 export type FindLaunchesParams = {
@@ -45,12 +40,6 @@ export type FindLaunchesParams = {
 };
 
 export type LaunchEntity = FindLaunchesResponseData["items"][0];
-
-export type FindLaunchesResponse = {
-  isPending: boolean;
-  isError: boolean;
-  data: FindLaunchesResponseData | null;
-};
 
 export type FindLaunchesResponseData = ClientInferResponseBody<
   typeof contract.findLaunches,

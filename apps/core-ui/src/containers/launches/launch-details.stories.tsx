@@ -122,7 +122,3 @@ export const Error: Story = {
     },
   },
 };
-
-export const NoSelection: Story = {
-  args: { launchId: null },
-};

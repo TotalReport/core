@@ -7,33 +7,17 @@ import { Skeleton } from "../../components/ui/skeleton.jsx";
 import ErrorRetry from "@/components/ui/error-retry.js";
 
 interface LaunchDetailsProps {
-  launchId: number | null;
+  launchId: number;
 }
 
 export default function LaunchDetails({ launchId }: LaunchDetailsProps) {
   const launchQuery = useFindLaunch({
-    filters: { id: launchId || 0 },
-    enabled: launchId !== null && launchId > 0,
+    filters: { id: launchId }
   });
 
   const launch = launchQuery.data;
   const launchLoading = launchQuery.isPending;
   const launchError = launchQuery.isError;
-
-  if (!launchId) {
-    return (
-      <div className="h-full flex items-center justify-center">
-        <div className="text-center">
-          <p className="text-lg font-bold text-secondary-foreground">
-            No launch selected
-          </p>
-          <p className="text-sm text-muted-foreground mt-1">
-            Select a launch from the list to view details
-          </p>
-        </div>
-      </div>
-    );
-  }
 
   if (launchLoading) {
     return (

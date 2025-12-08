@@ -1,22 +1,26 @@
-import { Badge } from '@/components/ui/badge.js';
-import { Button } from '@/components/ui/button.js';
-import { ScrollArea } from '@/components/ui/scroll-area.js';
-import { Separator } from '@/components/ui/separator.js';
-import { useFindLaunches } from '@/hooks/api/launches/use-find-launches.js';
-import { useUrlParams } from '@/hooks/url/use-url-params.jsx';
-import { Funnel } from 'lucide-react';
-import { useEffect, useState } from 'react';
-import { PaginationBlock } from '../ui/pagination-block.jsx';
-import { UnifiedFilter } from '@/components/common/filters/unified-filter.js';
-import { FilterType, FilterConfig, BaseFilterData } from '@/components/common/filters/types.js';
-import LaunchItem from './launch-item.js';
-import { usePageParam, usePageSizeParam } from '@/hooks/url/use-common-list-params.jsx';
+import {
+  BaseFilterData,
+  FilterConfig,
+  FilterType,
+} from "@/components/common/filters/types.js";
+import { UnifiedFilter } from "@/components/common/filters/unified-filter.js";
+import { Badge } from "@/components/ui/badge.js";
+import { Button } from "@/components/ui/button.js";
+import { Separator } from "@/components/ui/separator.js";
+import {
+  usePageParam,
+  usePageSizeParam,
+} from "@/hooks/url/use-common-list-params.jsx";
+import { useUrlParams } from "@/hooks/url/use-url-params.jsx";
+import { Funnel } from "lucide-react";
+import { useEffect, useState } from "react";
+import LaunchesListContainer from "../../containers/launches/launches-list.jsx";
 
 // Configuration for available filters in launches page
 const launchesFilterConfig: FilterConfig = {
   availableFilters: [FilterType.TITLE, FilterType.REPORT],
-  entityName: 'launches',
-  showHeader: false // Don't show header since parent component already has one
+  entityName: "launches",
+  showHeader: false, // Don't show header since parent component already has one
 };
 
 // Type for possible view states in the left panel
@@ -26,7 +30,7 @@ enum PanelView {
 }
 
 interface LaunchesListProps {
-  selectedLaunchId: number | null;
+  selectedLaunchId?: number;
   onLaunchSelect: (launchId: number) => void;
 }
 
@@ -41,35 +45,21 @@ export default function LaunchesList({
   const [pageSize, setPageSize] = usePageSizeParam(10);
 
   // Title filter state
-  const [titleFilter, setTitleFilter] = useState<string>(() => getParam('title~cnt') || '');
+  const [titleFilter, setTitleFilter] = useState<string>(
+    () => getParam("title~cnt") || ""
+  );
 
   // Report filter state
-  const [selectedReportId, setSelectedReportId] = useState<number | null>(
-    () => getNumericParam('reportId') || null
+  const [selectedReportId, setSelectedReportId] = useState<number | undefined>(
+    () => getNumericParam("reportId") || undefined
   );
-  const [selectedReportTitle, setSelectedReportTitle] = useState<string>('');
+  const [selectedReportTitle, setSelectedReportTitle] = useState<string>("");
 
   // Panel view state (launches list or filters)
   const [panelView, setPanelView] = useState<PanelView>(
     PanelView.LAUNCHES_LIST
   );
-  // Fetch launches data using the hook
-  const launchesQuery = useFindLaunches({
-    pagination: {
-      offset: (page - 1) * pageSize,
-      limit: pageSize,
-    },
-    filters: {
-      reportId: selectedReportId ?? undefined,
-      titleContains: titleFilter || undefined,
-    },
-    enabled: true,
-  });
-
-  // Derived states from the query
-  const launchesData = launchesQuery.data;
-  const launchesLoading = launchesQuery.isPending;
-  const launchesError = launchesQuery.isError;
+  // The list rendering and data fetching have been moved to a container.
 
   // Update URL when pagination or filters change
   useEffect(() => {
@@ -79,7 +69,7 @@ export default function LaunchesList({
     };
 
     if (titleFilter) {
-      params['title~cnt'] = titleFilter;
+      params["title~cnt"] = titleFilter;
     }
 
     if (selectedReportId) {
@@ -105,9 +95,9 @@ export default function LaunchesList({
 
   // Handle applying all filters
   const handleApplyFilters = (filters: BaseFilterData) => {
-    setTitleFilter(filters.title || '');
-    setSelectedReportId(filters.report?.id || null);
-    setSelectedReportTitle(filters.report?.title || '');
+    setTitleFilter(filters.title || "");
+    setSelectedReportId(filters.report?.id);
+    setSelectedReportTitle(filters.report?.title || "");
     setPanelView(PanelView.LAUNCHES_LIST);
     setPage(1); // Reset to first page when filters change
   };
@@ -147,64 +137,14 @@ export default function LaunchesList({
       case PanelView.LAUNCHES_LIST:
       default:
         return (
-          <>
-            <ScrollArea className="flex-1 overflow-hidden">
-              {launchesLoading && <p className="p-4">Loading launches...</p>}
-              {!launchesLoading && launchesError && (
-                <div className="flex items-center justify-center h-full">
-                  <div className="text-center">
-                    <p className="text-lg font-bold text-destructive">
-                      Error loading launches
-                    </p>
-                    <p className="text-sm text-muted-foreground mt-1">
-                      Unable to fetch launch data
-                    </p>
-                  </div>
-                </div>
-              )}
-              {!launchesLoading &&
-                !launchesError &&
-                launchesData?.items?.length === 0 && (
-                  <div className="flex items-center justify-center h-40">
-                    <div className="text-center">
-                      <p className="text-lg font-bold text-secondary-foreground">
-                        No launches found
-                      </p>
-                      <p className="text-sm text-muted-foreground mt-1">
-                        Try adjusting filters
-                      </p>
-                    </div>
-                  </div>
-                )}
-              {!launchesLoading &&
-                !launchesError &&
-                launchesData?.items != undefined &&
-                launchesData?.items?.length > 0 && (
-                  <div className="flex flex-col gap-2 p-2">
-                    {launchesData.items.map((launch) => (
-                      <LaunchItem
-                        key={launch.id}
-                        launch={launch}
-                        selected={launch.id === selectedLaunchId}
-                        onClick={() => handleLaunchClick(launch.id)}
-                      />
-                    ))}
-                  </div>
-                )}
-            </ScrollArea>
-
-            {launchesData && (
-              <div className="border-t">
-                <PaginationBlock
-                  page={page}
-                  pageSize={pageSize}
-                  totalItems={launchesData.pagination.total}
-                  setPage={setPage}
-                  setPageSize={setPageSize}
-                />
-              </div>
-            )}
-          </>
+          <LaunchesListContainer
+            pagination={{ page, pageSize, setPage, setPageSize }}
+            selection={{
+              selectedId: selectedLaunchId,
+              onSelect: handleLaunchClick,
+            }}
+            filters={{ reportId: selectedReportId, titleContains: titleFilter }}
+          />
         );
     }
   };

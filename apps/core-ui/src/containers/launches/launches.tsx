@@ -1,19 +1,19 @@
-import { useState } from 'react';
-import { useUrlParams } from '@/hooks/url/use-url-params.jsx';
-import LaunchesList from '@/components/launches/launches-list.js';
-import LaunchDetails from '@/containers/launches/launch-details.jsx';
+import { useState } from "react";
+import { useUrlParams } from "@/hooks/url/use-url-params.jsx";
+import LaunchesList from "@/components/launches/launches-list.js";
+import LaunchDetails from "@/containers/launches/launch-details.jsx";
 import {
   ResizableHandle,
   ResizablePanel,
   ResizablePanelGroup,
-} from '@/components/ui/resizable.js';
+} from "@/components/ui/resizable.js";
 
 function LaunchesContainer() {
   // Track selected launch ID from URL params
   const { getNumericParam, updateParams } = useUrlParams();
-  const [selectedLaunchId, setSelectedLaunchId] = useState<number | null>(
+  const [selectedLaunchId, setSelectedLaunchId] = useState<number | undefined>(
     () => {
-      return getNumericParam('launchId') || null;
+      return getNumericParam("launchId") || undefined;
     }
   );
 
@@ -43,7 +43,21 @@ function LaunchesContainer() {
           </ResizablePanel>
           <ResizableHandle withHandle />
           <ResizablePanel defaultSize={70}>
-            <LaunchDetails launchId={selectedLaunchId} />
+            {selectedLaunchId === undefined && (
+              <div className="h-full flex items-center justify-center">
+                <div className="text-center">
+                  <p className="text-lg font-bold text-secondary-foreground">
+                    No launch selected
+                  </p>
+                  <p className="text-sm text-muted-foreground mt-1">
+                    Select a launch from the list to view details
+                  </p>
+                </div>
+              </div>
+            )}
+            {selectedLaunchId !== undefined && (
+              <LaunchDetails launchId={selectedLaunchId} />
+            )}
           </ResizablePanel>
         </ResizablePanelGroup>
       </div>

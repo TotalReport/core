@@ -5,9 +5,8 @@
 import { Button } from '@/components/ui/button.js';
 import { Input } from '@/components/ui/input.js';
 import { PaginationBlock } from '@/components/ui/pagination-block.jsx';
-import { FindReportsResponse } from '@/hooks/api/reports/use-find-reports.js';
+import { FindReportsResponse, ReportEntity } from '@/hooks/api/reports/use-find-reports.js';
 import { ReportListItem } from './report-list-item.jsx';
-import { ReportEntity } from '@/hooks/api/reports/use-find-report.js';
 
 interface ReportsListSidebarProps {
   page: number;

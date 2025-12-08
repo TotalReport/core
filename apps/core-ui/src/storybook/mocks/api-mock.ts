@@ -418,6 +418,54 @@ export class ApiMock {
     );
   }
 
+  findLaunches(
+    filters:
+      | { limit?: number; offset?: number; reportId?: number; "title~cnt"?: string }
+      | undefined,
+    response: { pagination: { total: number; limit: number; offset: number }; items: LaunchResponse[] }
+  ) {
+    const limit = filters?.limit ?? 25;
+    const offset = filters?.offset ?? 0;
+    const reportId = filters?.reportId;
+    const title = filters?.["title~cnt"];
+    const qs = `?limit=${limit}&offset=${offset}${reportId !== undefined ? `&reportId=${reportId}` : ``}${title !== undefined ? `&title~cnt=${encodeURIComponent(title)}` : ``}`;
+    const url = `${this.baseUrl}${contract.findLaunches.path}${qs}`;
+    return http.get(url, () => {
+      return HttpResponse.json(response);
+    });
+  }
+
+  findLaunchesInfinite(filters: { limit?: number; offset?: number; reportId?: number; "title~cnt"?: string }) {
+    const limit = filters?.limit ?? 25;
+    const offset = filters?.offset ?? 0;
+    const reportId = filters?.reportId;
+    const title = filters?.["title~cnt"];
+    const qs = `?limit=${limit}&offset=${offset}${reportId !== undefined ? `&reportId=${reportId}` : ``}${title !== undefined ? `&title~cnt=${encodeURIComponent(title)}` : ``}`;
+    const url = `${this.baseUrl}${contract.findLaunches.path}${qs}`;
+    return http.get(url, async () => {
+      await delay("infinite");
+      return HttpResponse.json({});
+    });
+  }
+
+  findLaunchesCustom(
+    filters:
+      | { limit?: number; offset?: number; reportId?: number; "title~cnt"?: string }
+      | undefined,
+    responseCode: number,
+    responseBody: any
+  ) {
+    const limit = filters?.limit ?? 25;
+    const offset = filters?.offset ?? 0;
+    const reportId = filters?.reportId;
+    const title = filters?.["title~cnt"];
+    const qs = `?limit=${limit}&offset=${offset}${reportId !== undefined ? `&reportId=${reportId}` : ``}${title !== undefined ? `&title~cnt=${encodeURIComponent(title)}` : ``}`;
+    const url = `${this.baseUrl}${contract.findLaunches.path}${qs}`;
+    return http.get(url, () => {
+      return HttpResponse.json(responseBody, { status: responseCode });
+    });
+  }
+
   findLaunchesCountCustom(
     filters: { reportId?: number },
     responseCode: number,

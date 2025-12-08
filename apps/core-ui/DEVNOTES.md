@@ -25,3 +25,7 @@ Data fetching
 Application state
 
 - The UI does not maintain a centralized application state; each container requests the data it needs. TanStack Query caching reduces backend load and keeps containers modular.
+
+### Storybook Requirement
+
+Every container and component in the project should have a corresponding Storybook entry. This ensures that all UI elements are documented, testable, and visually verifiable in isolation.
