@@ -123,7 +123,7 @@ const ReportsListBlock = (params: ReportsListBlockProps) => {
   return (
     <ScrollArea >
       <div className="space-y-1 p-2">
-        {queryResponse.data.items.map((report) => {
+        {queryResponse.data.body.items.map((report) => {
           const isSelected = params.selectedId === report.id;
           return (
             <button

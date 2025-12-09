@@ -101,7 +101,7 @@ export const ReportFilterForm = ({
               </div>
             )}
 
-            {reportsQuery.data?.items.map((report) => (
+            {reportsQuery.data?.body.items.map((report) => (
               <div
                 key={report.id}
                 className={`p-3 border rounded-md cursor-pointer transition-colors ${
@@ -120,7 +120,7 @@ export const ReportFilterForm = ({
               </div>
             ))}
 
-            {reportsQuery.data?.items.length === 0 && !reportsQuery.isPending && (
+            {reportsQuery.data?.body.items.length === 0 && !reportsQuery.isPending && (
               <div className="text-center text-muted-foreground text-sm py-4">
                 No reports found
               </div>

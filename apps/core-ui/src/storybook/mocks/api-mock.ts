@@ -466,6 +466,51 @@ export class ApiMock {
     });
   }
 
+  findReports(
+    filters:
+      | { limit?: number; offset?: number; "title~cnt"?: string }
+      | undefined,
+    response: { pagination: { total: number; limit: number; offset: number }; items: ReportResponse[] }
+  ) {
+    const limit = filters?.limit ?? 25;
+    const offset = filters?.offset ?? 0;
+    const title = filters?.["title~cnt"];
+    const qs = `?limit=${limit}&offset=${offset}${title !== undefined ? `&title~cnt=${encodeURIComponent(title)}` : ``}`;
+    const url = `${this.baseUrl}${contract.findReports.path}${qs}`;
+    return http.get(url, () => {
+      return HttpResponse.json(response);
+    });
+  }
+
+  findReportsInfinite(filters: { limit?: number; offset?: number; "title~cnt"?: string }) {
+    const limit = filters?.limit ?? 25;
+    const offset = filters?.offset ?? 0;
+    const title = filters?.["title~cnt"];
+    const qs = `?limit=${limit}&offset=${offset}${title !== undefined ? `&title~cnt=${encodeURIComponent(title)}` : ``}`;
+    const url = `${this.baseUrl}${contract.findReports.path}${qs}`;
+    return http.get(url, async () => {
+      await delay("infinite");
+      return HttpResponse.json({});
+    });
+  }
+
+  findReportsCustom(
+    filters:
+      | { limit?: number; offset?: number; "title~cnt"?: string }
+      | undefined,
+    responseCode: number,
+    responseBody: any
+  ) {
+    const limit = filters?.limit ?? 25;
+    const offset = filters?.offset ?? 0;
+    const title = filters?.["title~cnt"];
+    const qs = `?limit=${limit}&offset=${offset}${title !== undefined ? `&title~cnt=${encodeURIComponent(title)}` : ``}`;
+    const url = `${this.baseUrl}${contract.findReports.path}${qs}`;
+    return http.get(url, () => {
+      return HttpResponse.json(responseBody, { status: responseCode });
+    });
+  }
+
   findLaunchesCountCustom(
     filters: { reportId?: number },
     responseCode: number,

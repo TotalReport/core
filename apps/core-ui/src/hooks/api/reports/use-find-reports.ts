@@ -6,8 +6,8 @@ export const useFindReports = ({
   pagination,
   filters,
   enabled,
-}: FindReportsParams): FindReportsResponse => {
-  const query = api.findReports.useQuery({
+}: FindReportsParams) => {
+  return api.findReports.useQuery({
     queryKey: [
       "reports",
       pagination.offset,
@@ -23,27 +23,6 @@ export const useFindReports = ({
     },
     enabled: enabled !== false,
   });
-  if (query.isPending) {
-    return {
-      isPending: true,
-      isError: false,
-      data: null,
-    };
-  }
-
-  if (query.isError || query.data?.status !== 200) {
-    return {
-      isPending: false,
-      isError: true,
-      data: null,
-    };
-  }
-
-  return {
-    isPending: query.isPending,
-    isError: query.isError,
-    data: query.data.body,
-  };
 };
 
 export type FindReportsParams = {
@@ -58,23 +37,6 @@ export type FindReportsParams = {
 };
 
 export type ReportEntity = FindReportsResponseData["items"][0];
-
-export type FindReportsResponse =
-  | {
-      isPending: true;
-      isError: false;
-      data: null;
-    }
-  | {
-      isPending: false;
-      isError: true;
-      data: null;
-    }
-  | {
-      isPending: false;
-      isError: false;
-      data: FindReportsResponseData;
-    };
 
 export type FindReportsResponseData = ClientInferResponseBody<
   typeof contract.findReports,
