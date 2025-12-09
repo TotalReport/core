@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { RestAPIProvider } from "@/components/providers/rest-api-provider.jsx";
-import LaunchDetails from "@/containers/launch/launch-details.jsx";
+import LaunchDetails from "@/containers/launch-details/launch-details.jsx";
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from "@/components/ui/resizable.jsx";
 import LaunchesList from "@/components/launches/launches-list.jsx";
 import { useUrlParams } from "@/hooks/url/use-url-params.jsx";

@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button.js";
 import { Input } from "@/components/ui/input.js";
-import { ReportsList } from "@/containers/reports/reports-list.jsx";
+import { ReportsList } from "@/containers/reports-list/reports-list.jsx";
 
 interface ReportsListSidebarProps {
   page: number;

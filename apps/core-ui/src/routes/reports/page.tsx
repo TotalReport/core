@@ -6,7 +6,7 @@ import {
   ResizablePanelGroup,
 } from "@/components/ui/resizable.js";
 import { useReportsList } from "@/hooks/use-reports-list.hook.js";
-import { ReportDetails } from "../../containers/reports/report-details.jsx";
+import { ReportDetails } from "../../containers/report-details/report-details.jsx";
 
 export const ReportsPageContent = () => {
   const {

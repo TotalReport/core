@@ -14,7 +14,7 @@ import {
 import { useUrlParams } from "@/hooks/url/use-url-params.jsx";
 import { Funnel } from "lucide-react";
 import { useEffect, useState } from "react";
-import LaunchesListContainer from "../../containers/launches/launches-list.jsx";
+import LaunchesListContainer from "../../containers/launches-list/launches-list.jsx";
 
 // Configuration for available filters in launches page
 const launchesFilterConfig: FilterConfig = {
