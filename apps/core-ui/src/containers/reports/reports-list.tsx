@@ -1,11 +1,12 @@
-import { ReportListItem } from "@/components/reports/report-list-item.jsx";
+import ErrorRetry from "@/components/ui/error-retry.js";
 import { PaginationBlock } from "@/components/ui/pagination-block.jsx";
 import { Skeleton } from "@/components/ui/skeleton.jsx";
-import ErrorRetry from "@/components/ui/error-retry.js";
 import {
   ReportEntity,
   useFindReports
 } from "@/hooks/api/reports/use-find-reports.js";
+import { cn } from '@/lib/utils.js';
+import { format } from 'date-fns';
 
 interface ReportsListSidebarProps {
   pagination: {
@@ -81,7 +82,7 @@ export const ReportsList: React.FC<ReportsListSidebarProps> = ({
         {!isPending && !isError && reports.length > 0 && (
           <div className="divide-y">
             {reports.map((report: ReportEntity) => (
-              <ReportListItem
+              <ReportsListItem
                 key={report.id}
                 report={report}
                 isSelected={report.id === selectedId}
@@ -103,6 +104,42 @@ export const ReportsList: React.FC<ReportsListSidebarProps> = ({
           />
         </div>
       )}
+    </div>
+  );
+};
+
+interface ReportListItemProps {
+  report: ReportEntity;
+  isSelected: boolean;
+  onClick: () => void;
+}
+
+export const ReportsListItem: React.FC<ReportListItemProps> = ({
+  report,
+  isSelected,
+  onClick,
+}) => {
+  return (
+    <div
+      className={cn(
+        'px-4 py-3 cursor-pointer hover:bg-accent/50 transition-colors',
+        isSelected ? 'bg-muted' : ''
+      )}
+      onClick={onClick}
+    >
+      <div className="flex justify-between items-start">
+        <h3 className="font-medium truncate">{report.title}</h3>
+      </div>
+      
+      <div className="mt-1 text-sm text-muted-foreground">
+        <div className="flex justify-between">
+          <span>
+            {report.createdTimestamp
+              ? format(new Date(report.createdTimestamp), 'MMM dd, yyyy')
+              : 'Unknown date'}
+          </span>
+        </div>
+      </div>
     </div>
   );
 };
