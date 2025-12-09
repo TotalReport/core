@@ -90,7 +90,7 @@ export function useTestsList() {
   // Format test entities with status information
   const formattedTestEntities: FormattedTestEntity[] = 
     testEntitiesQuery.data && statusesQuery.data && statusGroupsQuery.data
-      ? testEntitiesQuery.data.items.map(test => 
+      ? testEntitiesQuery.data.body.items.map(test => 
           formatTestEntity(test, statusesQuery.data.items, statusGroupsQuery.data.items)
         )
       : [];
@@ -129,7 +129,7 @@ export function useTestsList() {
   // Auto-adjust page when needed
   useEffect(() => {
     if (!testEntitiesQuery.isPending && testEntitiesQuery.data) {
-      const totalPages = totalPagesCount(testEntitiesQuery.data.pagination.total, pageSize);
+      const totalPages = totalPagesCount(testEntitiesQuery.data.body.pagination.total, pageSize);
       if (page > totalPages && totalPages > 0) {
         setPage(totalPages);
       }
@@ -137,9 +137,8 @@ export function useTestsList() {
   }, [testEntitiesQuery.isPending, testEntitiesQuery.data, page, pageSize]);
 
   // Event handlers
-  const handleTestClick = (test: FormattedTestEntity) => {
-    const testType = getTestTypeFromEntityType(test.entityType);
-    setSelectedTest({ id: test.id, type: testType });
+  const handleTestClick = (test: SelectedTest) => {
+    setSelectedTest({ id: test.id, type: test.type });
   };
 
   const handlePageChange = (newPage: number) => {
@@ -225,7 +224,7 @@ export function useTestsList() {
     // Computed
     isLoading: testEntitiesQuery.isPending || statusesQuery.isPending || statusGroupsQuery.isPending,
     hasError: testEntitiesQuery.isError || statusesQuery.isError || statusGroupsQuery.isError,
-    totalItems: testEntitiesQuery.data?.pagination.total || 0,
+    totalItems: testEntitiesQuery.data?.body.pagination.total || 0,
 
     // Handlers
     handleTestClick,

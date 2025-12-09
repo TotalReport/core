@@ -6,34 +6,29 @@ export const useFindTestEntities = ({
   pagination,
   filters,
   enabled,
-}: FindTestEntitiesParams): FindTestEntitiesResponse => {
-  const query = api.findTestEntities.useQuery({
+}: FindTestEntitiesParams) => {
+  return api.findTestEntities.useQuery({
     queryKey: [
       "test-entities",
       pagination.offset,
       pagination.limit,
       filters.reportId,
-      filters.titleContains,
       filters.launchId,
-      filters.entityTypes, // Important: Include all filter params in queryKey to trigger refetch when filters change
+      filters.entityTypes,
+      filters.titleContains,
     ],
     queryData: {
       query: {
         offset: pagination.offset,
         limit: pagination.limit,
-        "title~cnt": filters.titleContains,
         reportId: filters.reportId,
         launchId: filters.launchId,
         entityTypes: filters.entityTypes,
+        "title~cnt": filters.titleContains,
       },
     },
     enabled: enabled !== false,
   });
-  return {
-    isPending: query.isPending,
-    isError: query.isError,
-    data: query.data?.status === 200 ? query.data.body : null,
-  };
 };
 
 export type FindTestEntitiesParams = {
@@ -51,12 +46,6 @@ export type FindTestEntitiesParams = {
 };
 
 export type TestEntity = FindTestEntitiesResponseData["items"][0];
-
-export type FindTestEntitiesResponse = {
-  isPending: boolean;
-  isError: boolean;
-  data: FindTestEntitiesResponseData | null;
-};
 
 export type FindTestEntitiesResponseData = ClientInferResponseBody<
   typeof contract.findTestEntities,

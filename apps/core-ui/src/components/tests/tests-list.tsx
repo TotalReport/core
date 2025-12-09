@@ -10,10 +10,15 @@ import {
 } from "@/components/ui/resizable.js";
 import { ScrollArea } from "@/components/ui/scroll-area.js";
 import { Separator } from "@/components/ui/separator.js";
-import { PanelView, SelectedTest, useTestsList } from "@/hooks/use-tests-list.js";
+import {
+  PanelView,
+  SelectedTest,
+  useTestsList,
+} from "@/hooks/use-tests-list.js";
 import { Filter } from "lucide-react";
 import { TestDetails } from "../../containers/test-details/test-details.jsx";
 import { TestListItem } from "./test-list-item.jsx";
+import { TestsList } from "@/containers/tests-list/tests-list.jsx";
 
 // Configuration for available filters in tests page
 const testsFilterConfig: FilterConfig = {
@@ -27,7 +32,7 @@ const testsFilterConfig: FilterConfig = {
   showHeader: false, // Don't show header since parent component already has one
 };
 
-export const TestsList = () => {
+export const TestsListBlock = () => {
   const {
     page,
     pageSize,
@@ -60,58 +65,25 @@ export const TestsList = () => {
 
       case PanelView.TESTS_LIST:
       default:
+        const filters = getCurrentFilters();
         return (
-          <>
-            <ScrollArea className="flex-1 overflow-hidden">
-              {/* Test list content without header - header is now at the top level */}
-              {testEntitiesQuery.isPending && (
-                <p className="p-4">Loading tests...</p>
-              )}
-
-              {!testEntitiesQuery.isPending &&
-                formattedTestEntities.length === 0 && (
-                  <div className="flex items-center justify-center h-40">
-                    <div className="text-center">
-                      <p className="text-lg font-bold text-secondary-foreground">
-                        No tests found
-                      </p>
-                      <p className="text-sm text-muted-foreground mt-1">
-                        Try adjusting filters
-                      </p>
-                    </div>
-                  </div>
-                )}
-
-              {!testEntitiesQuery.isPending &&
-                formattedTestEntities.length > 0 && (
-                  <div className="flex flex-col gap-2 p-2">
-                    {formattedTestEntities.map((test) => (
-                      <TestListItem
-                        key={`${test.id}-${test.entityType}`}
-                        test={test}
-                        selected={
-                          test.id === (selectedTest?.id || null) &&
-                          test.entityType === selectedTest?.type
-                        }
-                        onClick={() => handleTestClick(test)}
-                      />
-                    ))}
-                  </div>
-                )}
-            </ScrollArea>
-
-            {testEntitiesQuery.data && (
-              <div className="border-t">
-                <PaginationBlock
-                  page={page}
-                  pageSize={pageSize}
-                  totalItems={testEntitiesQuery.data.pagination.total}
-                  setPage={setPage}
-                  setPageSize={setPageSize}
-                />
-              </div>
-            )}
-          </>
+          <TestsList
+            pagination={{ page, pageSize, setPage, setPageSize }}
+            selection={{
+              selectedId: selectedTest?.id,
+              onSelect: handleTestClick,
+            }}
+            filters={{
+              reportId: filters?.report?.id,
+              titleContains: filters.title,
+              launchId: filters.launch?.id,
+              entityTypes: filters.entityTypes as (
+                | "beforeTest"
+                | "test"
+                | "afterTest"
+              )[],
+            }}
+          />
         );
     }
   };
@@ -147,9 +119,7 @@ export const TestsList = () => {
         </div>
       </ResizablePanel>
       <ResizableHandle withHandle />
-      <ResizablePanel>
-        {renderTestDetails(selectedTest)}
-      </ResizablePanel>
+      <ResizablePanel>{renderTestDetails(selectedTest)}</ResizablePanel>
     </ResizablePanelGroup>
   );
 };
@@ -170,5 +140,7 @@ const renderTestDetails = (selectedTest: SelectedTest | null) => {
     );
   }
 
-  return <TestDetails entityId={selectedTest?.id} entityType={selectedTest?.type} />;
+  return (
+    <TestDetails entityId={selectedTest?.id} entityType={selectedTest?.type} />
+  );
 };

@@ -1,0 +1,129 @@
+import { TestListItem } from "@/components/tests/test-list-item.jsx";
+import ErrorRetry from "@/components/ui/error-retry.js";
+import { PaginationBlock } from "@/components/ui/pagination-block.jsx";
+import { ScrollArea } from "@/components/ui/scroll-area.js";
+import { Skeleton } from "@/components/ui/skeleton.jsx";
+import { useFindTestEntities } from "@/hooks/api/test-entities/use-find-test-entities.js";
+import { SelectedTest } from "@/hooks/use-tests-list.js";
+import { getTestTypeFromEntityType } from "@/lib/test-utils.js";
+
+interface TestsListProps {
+  pagination: {
+    page: number;
+    pageSize: number;
+    setPage: (p: number) => void;
+    setPageSize: (s: number) => void;
+  };
+  selection: {
+    selectedId?: number;
+    onSelect: (launchId: SelectedTest) => void;
+  };
+  filters: {
+    reportId?: number;
+    titleContains?: string;
+    launchId?: number;
+    entityTypes?: ("beforeTest" | "test" | "afterTest")[];
+  };
+}
+
+export const TestsList = ({
+  pagination: { page, pageSize, setPage, setPageSize },
+  selection: { selectedId, onSelect },
+  filters: { reportId, titleContains },
+}: TestsListProps) => {
+  const testEntitiesQuery = useFindTestEntities({
+    pagination: {
+      offset: (page - 1) * pageSize,
+      limit: pageSize,
+    },
+    filters: {
+      reportId: reportId,
+      titleContains: titleContains,
+    },
+  });
+
+  const isError = testEntitiesQuery.isError;
+  const isPending = testEntitiesQuery.isPending;
+  const testEntitiesData = testEntitiesQuery.data;
+
+  return (
+    <>
+      <ScrollArea className="flex-1 overflow-hidden">
+        {isPending && (
+          <div className="flex flex-col gap-2 p-2">
+            {[1, 2, 3].map((i) => (
+              <div
+                key={i}
+                className="flex flex-col gap-1 rounded-lg border p-3"
+              >
+                <div className="flex items-center">
+                  <Skeleton className="h-4 w-32" />
+                  <div className="ml-auto">
+                    <Skeleton className="h-3 w-20" />
+                  </div>
+                </div>
+                <div className="mt-2">
+                  <Skeleton className="h-3 w-40" />
+                </div>
+                <div className="mt-2">
+                  <Skeleton className="h-3 w-24" />
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+
+        {isError && (
+          <div className="p-4 h-full flex items-center justify-center">
+            <div className="text-center">
+              <ErrorRetry onRetry={() => testEntitiesQuery.refetch()} />
+            </div>
+          </div>
+        )}
+
+        {!isPending &&
+          !isError &&
+          testEntitiesData?.body.items.length === 0 && (
+            <div className="flex items-center justify-center h-40">
+              <div className="text-center">
+                <p className="text-lg font-bold text-secondary-foreground">
+                  No tests found
+                </p>
+                <p className="text-sm text-muted-foreground mt-1">
+                  Try adjusting filters
+                </p>
+              </div>
+            </div>
+          )}
+
+        {!isPending &&
+          !isError &&
+          testEntitiesData?.body?.items?.length !== undefined &&
+          testEntitiesData?.body?.items?.length > 0 && (
+            <div className="flex flex-col gap-2 p-2">
+              {testEntitiesData.body.items.map((test) => (
+                <TestListItem
+                  key={`${test.id}-${test.entityType}`}
+                  test={test}
+                  selected={test.id === selectedId}
+                  onClick={() => onSelect({ id: test.id, type: getTestTypeFromEntityType(test.entityType) })}
+                />
+              ))}
+            </div>
+          )}
+      </ScrollArea>
+
+      {testEntitiesQuery.data && testEntitiesData?.body?.pagination && (
+        <div className="border-t">
+          <PaginationBlock
+            page={page}
+            pageSize={pageSize}
+            totalItems={testEntitiesData?.body?.pagination.total}
+            setPage={setPage}
+            setPageSize={setPageSize}
+          />
+        </div>
+      )}
+    </>
+  );
+};
