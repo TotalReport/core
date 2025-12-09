@@ -2,23 +2,20 @@ import { FilterConfig, FilterType } from "@/components/common/filters/types.js";
 import { UnifiedFilter } from "@/components/common/filters/unified-filter.js";
 import { Badge } from "@/components/ui/badge.js";
 import { Button } from "@/components/ui/button.js";
-import { PaginationBlock } from "@/components/ui/pagination-block.jsx";
 import {
   ResizableHandle,
   ResizablePanel,
   ResizablePanelGroup,
 } from "@/components/ui/resizable.js";
-import { ScrollArea } from "@/components/ui/scroll-area.js";
 import { Separator } from "@/components/ui/separator.js";
+import { TestsList } from "@/containers/tests-list/tests-list.jsx";
 import {
   PanelView,
   SelectedTest,
   useTestsList,
 } from "@/hooks/use-tests-list.js";
 import { Filter } from "lucide-react";
-import { TestDetails } from "../../containers/test-details/test-details.jsx";
-import { TestListItem } from "./test-list-item.jsx";
-import { TestsList } from "@/containers/tests-list/tests-list.jsx";
+import { TestDetails } from "@/containers/test-details/test-details.jsx";
 
 // Configuration for available filters in tests page
 const testsFilterConfig: FilterConfig = {

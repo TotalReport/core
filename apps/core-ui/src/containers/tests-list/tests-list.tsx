@@ -1,11 +1,13 @@
-import { TestListItem } from "@/components/tests/test-list-item.jsx";
 import ErrorRetry from "@/components/ui/error-retry.js";
 import { PaginationBlock } from "@/components/ui/pagination-block.jsx";
 import { ScrollArea } from "@/components/ui/scroll-area.js";
 import { Skeleton } from "@/components/ui/skeleton.jsx";
+import { StatusPill } from '@/containers/test-status/test-status-pill.jsx';
 import { useFindTestEntities } from "@/hooks/api/test-entities/use-find-test-entities.js";
 import { SelectedTest } from "@/hooks/use-tests-list.js";
-import { getTestTypeFromEntityType } from "@/lib/test-utils.js";
+import { FormattedTestEntity, getTestTypeFromEntityType } from "@/lib/test-utils.js";
+import { cn } from '@/lib/utils.js';
+import { formatDistanceToNow } from 'date-fns';
 
 interface TestsListProps {
   pagination: {
@@ -102,7 +104,7 @@ export const TestsList = ({
           testEntitiesData?.body?.items?.length > 0 && (
             <div className="flex flex-col gap-2 p-2">
               {testEntitiesData.body.items.map((test) => (
-                <TestListItem
+                <TestsListItem
                   key={`${test.id}-${test.entityType}`}
                   test={test}
                   selected={test.id === selectedId}
@@ -125,5 +127,75 @@ export const TestsList = ({
         </div>
       )}
     </>
+  );
+};
+
+type TestListItemProps = {
+  test: FormattedTestEntity;
+  selected: boolean;
+  onClick: () => void;
+};
+
+export const TestsListItem = ({ test, selected, onClick }: TestListItemProps) => {
+  return (
+    <div>
+      <button
+        className={cn(
+          'flex w-full flex-col items-start gap-2 rounded-lg border p-3 text-left text-sm transition-all hover:bg-accent',
+          selected && 'bg-muted'
+        )}
+        onClick={onClick}
+      >
+        <div className="flex w-full flex-col gap-1">
+          <div className="flex items-center">
+            <div className="flex items-center gap-2">
+              {test.status ? (
+                <div className="relative flex items-center">
+                  <StatusPill
+                    statusId={test.status.id}
+                    size="sm"
+                  />
+                  <span className="ml-2 font-semibold">{test.status.name}</span>
+                </div>
+              ) : (
+                <div className="font-semibold">No Status</div>
+              )}
+            </div>
+            <div
+              className={cn(
+                'ml-auto text-xs',
+                selected ? 'text-foreground' : 'text-muted-foreground'
+              )}
+            >
+              {test.startedTimestamp ? (
+                formatDistanceToNow(new Date(test.startedTimestamp), {
+                  addSuffix: true,
+                })
+              ) : (
+                formatDistanceToNow(new Date(test.createdTimestamp), {
+                  addSuffix: true,
+                })
+              )}
+            </div>
+          </div>
+          <div className="text-xs font-medium">{test.title}</div>
+        </div>
+        <div className="line-clamp-2 text-xs text-muted-foreground">
+          <span className="inline-flex items-center gap-1">
+            <span className="font-medium">Type:</span>
+            <span>{test.entityType}</span>
+          </span>
+          {test.correlationId && (
+            <>
+              <span className="mx-2">•</span>
+              <span className="inline-flex items-center gap-1">
+                <span className="font-medium">ID:</span>
+                <span className="truncate">{test.correlationId}</span>
+              </span>
+            </>
+          )}
+        </div>
+      </button>
+    </div>
   );
 };
