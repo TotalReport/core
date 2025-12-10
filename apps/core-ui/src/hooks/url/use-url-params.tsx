@@ -114,5 +114,53 @@ export function useUrlParams() {
     [getRequiredNumericParam, updateParams]
   );
 
-  return { updateParams, getParam, getNumericParam, useParam, useRequiredNumberParam };
+  /**
+   * Manages multiple URL parameters with constraints and returns their values and an atomic setter.
+   * @param params Object mapping param keys to their config (defaultValue, constraintFn)
+   * @returns Object with current values and setValues function that updates all params atomically
+   */
+  const useParams = useCallback(
+    <T extends Record<string, any>>(
+      params: {
+        [K in keyof T]: {
+          defaultValue: T[K];
+          constraintFn?: (value: T[K]) => T[K];
+        };
+      }
+    ): {
+      urlParams: { [K in keyof T]: T[K] };
+      setUrlParams: (newValues: Partial<{ [K in keyof T]: T[K] }>) => void;
+    } => {
+      // Get current values for all params
+      const values = {} as any;
+      Object.keys(params).forEach((key) => {
+        const config = params[key];
+        const currentValue = 
+          typeof config.defaultValue === 'number'
+            ? getNumericParam(key)
+            : getParam(key);
+        values[key] = currentValue ?? config.defaultValue;
+      });
+
+      // Function to update multiple params atomically
+      const setValues = (newValues: Partial<{ [K in keyof T]: T[K] }>) => {
+        const updates: Record<string, ParamValue> = {};
+        
+        Object.entries(newValues).forEach(([key, value]) => {
+          const config = params[key];
+          const constrainedValue = config?.constraintFn 
+            ? config.constraintFn(value as T[typeof key])
+            : value;
+          updates[key] = constrainedValue as ParamValue;
+        });
+        
+        updateParams(updates);
+      };
+
+      return { urlParams: values as { [K in keyof T]: T[K] }, setUrlParams: setValues };
+    },
+    [getParam, getNumericParam, updateParams]
+  );
+
+  return { updateParams, getParam, getNumericParam, useParam, useParams, useRequiredNumberParam };
 }

@@ -5,7 +5,7 @@ import { ReportsList } from "@/containers/reports-list/reports-list.jsx";
 interface ReportsListSidebarProps {
   page: number;
   pageSize: number;
-  titleFilter: string;
+  titleFilter?: string;
   selectedReportId: number | null;
   onReportClick: (reportId: number) => void;
   onFilterChange: (filter: string) => void;
