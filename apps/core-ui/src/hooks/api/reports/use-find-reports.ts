@@ -1,4 +1,5 @@
 import { api } from "@/lib/api-client.js";
+import { ReportsUrlFilters } from "@/types/reports-url-params.js";
 import { contract } from "@total-report/core-contract/contract";
 import { ClientInferResponseBody } from "@ts-rest/core";
 
@@ -12,13 +13,13 @@ export const useFindReports = ({
       "reports",
       pagination.offset,
       pagination.limit,
-      filters.titleContains,
+      filters["title~cnt"],
     ],
     queryData: {
       query: {
         offset: pagination.offset,
         limit: pagination.limit,
-        "title~cnt": filters.titleContains,
+        "title~cnt": filters["title~cnt"],
       },
     },
     enabled: enabled !== false,
@@ -26,9 +27,7 @@ export const useFindReports = ({
 };
 
 export type FindReportsParams = {
-  filters: {
-    titleContains?: string;
-  };
+  filters: ReportsUrlFilters;
   pagination: {
     offset: number;
     limit: number;

@@ -5,19 +5,14 @@ import {
   ResizablePanel,
   ResizablePanelGroup,
 } from "@/components/ui/resizable.js";
-import { useUrlParams } from "@/hooks/url/use-url-params.jsx";
-import { useCallback } from "react";
 import { ReportDetails } from "@/containers/report-details/report-details.jsx";
+import { useUrlParams } from "@/hooks/url/use-url-params.jsx";
+import { ReportsUrlParams } from "@/types/reports-url-params.js";
 
 export const ReportsPageContent = () => {
   const { useParams } = useUrlParams();
 
-  const { urlParams, setUrlParams } = useParams<{
-    page: number;
-    pageSize: number;
-    "title~cnt": string | undefined;
-    selectedReportId: number | undefined;
-  }>({
+  const { urlParams, setUrlParams } = useParams<ReportsUrlParams>({
     page: {
       defaultValue: 1,
       constraintFn: (value) => Math.max(1, value),
@@ -30,12 +25,7 @@ export const ReportsPageContent = () => {
     selectedReportId: { defaultValue: undefined },
   });
 
-  const handleFilterChange = useCallback(
-    (filterValue: string | null) => {
-      setUrlParams({ "title~cnt": filterValue ?? undefined, page: 1 });
-    },
-    [urlParams]
-  );
+  const { page, pageSize, ...filters } = urlParams;
 
   return (
     <div className="flex h-screen">
@@ -45,16 +35,19 @@ export const ReportsPageContent = () => {
       >
         <ResizablePanel defaultSize={20} collapsible={false} minSize={25}>
           <ReportsListSidebar
-            page={urlParams.page}
-            pageSize={urlParams.pageSize}
-            titleFilter={urlParams["title~cnt"] ?? undefined}
-            selectedReportId={urlParams.selectedReportId ?? null}
-            onReportClick={(reportId) =>
-              setUrlParams({ selectedReportId: reportId })
-            }
-            onFilterChange={handleFilterChange}
-            setPage={(page) => setUrlParams({ page })}
-            setPageSize={(pageSize) => setUrlParams({ pageSize })}
+            pagination={{
+              page: urlParams.page,
+              pageSize: urlParams.pageSize,
+              setPage: (page) => setUrlParams({ page }),
+              setPageSize: (pageSize) => setUrlParams({ pageSize }),
+            }}
+            onFiltersChange={(p) => setUrlParams(p)}
+            filters={filters}
+            selection={{
+              selectedId: urlParams.selectedReportId ?? null,
+              onSelect: (reportId) =>
+                setUrlParams({ selectedReportId: reportId }),
+            }}
           />
         </ResizablePanel>
         <ResizableHandle withHandle />

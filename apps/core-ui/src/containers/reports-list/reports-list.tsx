@@ -6,6 +6,7 @@ import {
   useFindReports
 } from "@/hooks/api/reports/use-find-reports.js";
 import { cn } from '@/lib/utils.js';
+import { ReportsUrlFilters } from "@/types/reports-url-params.js";
 import { format } from 'date-fns';
 
 interface ReportsListSidebarProps {
@@ -15,9 +16,7 @@ interface ReportsListSidebarProps {
     setPage: (page: number) => void;
     setPageSize: (pageSize: number) => void;
   };
-  filters: {
-    titleContains?: string;
-  };
+  filters: ReportsUrlFilters;
   selection: {
     selectedId: number | null;
     onSelect: (reportId: number) => void;
@@ -26,12 +25,12 @@ interface ReportsListSidebarProps {
 
 export const ReportsList: React.FC<ReportsListSidebarProps> = ({
   pagination: { page, pageSize, setPage, setPageSize },
-  filters: { titleContains },
+  filters,
   selection: { selectedId, onSelect },
 }) => {
   const { data, isPending, isError, refetch } = useFindReports({
     pagination: { offset: (page - 1) * pageSize, limit: pageSize },
-    filters: { titleContains },
+    filters,
     enabled: true,
   });
 
