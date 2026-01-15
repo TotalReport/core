@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button.js";
 import { ScrollArea } from "@/components/ui/scroll-area.js";
 import { Check, Search } from "lucide-react";
 import { cn } from "@/lib/utils.js";
+import { ReportsUrlFilters } from "@/types/reports-url-params.js";
 
 interface ReportFilterProps {
   selected: { id: number; title: string } | null;
@@ -74,7 +75,7 @@ export default function ReportFilter({
       {/* Reports list */}
       <ReportsListBlock
         filters={{
-          titleContains: searchQuery,
+          "title~cnt": searchQuery,
         }}
         selectedId={selected?.id ?? null}
         onSelect={handleReportClick}
@@ -84,9 +85,7 @@ export default function ReportFilter({
 }
 
 type ReportsListBlockProps = {
-  filters: {
-    titleContains?: string;
-  };
+  filters: ReportsUrlFilters;
   selectedId: number | null;
   onSelect: (report: ReportEntity) => void;
 };

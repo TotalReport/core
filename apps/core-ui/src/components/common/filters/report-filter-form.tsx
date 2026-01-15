@@ -19,7 +19,7 @@ export const ReportFilterForm = ({
   // Fetch reports with search functionality
   const reportsQuery = useFindReports({
     pagination: { offset: 0, limit: 50 },
-    filters: { titleContains: searchTerm || undefined }
+    filters: { "title~cnt": searchTerm || undefined }
   });
 
   const handleSelectReport = (report: FilterOption) => {

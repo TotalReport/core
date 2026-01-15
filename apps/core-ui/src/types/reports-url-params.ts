@@ -7,5 +7,5 @@ export type ReportsUrlParams = {
 
 export default ReportsUrlParams;
 
-export type ReportsUrlFilters = Omit<ReportsUrlParams, "page" | "pageSize">;
+export type ReportsUrlFilters = Omit<ReportsUrlParams, "page" | "pageSize" | "selectedReportId">;
 
