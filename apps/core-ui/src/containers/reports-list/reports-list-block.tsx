@@ -5,27 +5,25 @@ import { ReportsUrlFilters } from "@/types/reports-url-params.js";
 import { Filter } from "lucide-react";
 import { useState } from "react";
 
-interface ReportsListSidebarProps {
-  pagination: {
-    page: number;
-    pageSize: number;
-    setPage: (page: number) => void;
-    setPageSize: (pageSize: number) => void;
-  };
-  filters: ReportsUrlFilters;
-  onFiltersChange: (params: Partial<ReportsUrlFilters>) => void;
-  selection: {
-    selectedId: number | null;
-    onSelect: (reportId: number) => void;
-  };
-}
+const REPORT_FILTERS: FilterItem[] = [
+  {
+    id: "title",
+    isFilterActive: (urlParams) => {
+      return (
+        urlParams?.["title~cnt"] !== undefined &&
+        urlParams?.["title~cnt"] !== ""
+      );
+    },
+    view: (value, open) => (
+      <TitleContainsFilterView open={open} value={value} />
+    ),
+    editor: (value, apply, close) => (
+      <TitleContainsFilterEditor value={value} apply={apply} close={close} />
+    ),
+  },
+];
 
-enum PanelView {
-  REPORTS_LIST,
-  FILTERS_VIEW,
-}
-
-export const ReportsListSidebar: React.FC<ReportsListSidebarProps> = ({
+export const ReportsListBlock: React.FC<ReportsListBlockProps> = ({
   pagination: { page, pageSize, setPage, setPageSize },
   selection: { selectedId: selectedReportId, onSelect: onReportClick },
   filters,
@@ -33,7 +31,7 @@ export const ReportsListSidebar: React.FC<ReportsListSidebarProps> = ({
 }) => {
   const [panelView, setPanelView] = useState<PanelView>(PanelView.REPORTS_LIST);
   const [openFilter, setOpenFilter] = useState<string | null>(null);
-  
+
   const handleFilterButtonClick = () => {
     if (panelView === PanelView.REPORTS_LIST) {
       setPanelView(PanelView.FILTERS_VIEW);
@@ -42,36 +40,7 @@ export const ReportsListSidebar: React.FC<ReportsListSidebarProps> = ({
     }
   };
 
-  type FilterItem<TParams extends ReportsUrlFilters = ReportsUrlFilters> = {
-    id: string;
-    isFilterActive: (urlParams?: TParams) => boolean;
-    view: (filters: TParams, openEditor: () => void) => React.ReactNode;
-    editor: (
-      filters: TParams,
-      apply: (v: TParams) => void,
-      close: () => void
-    ) => React.ReactNode;
-  };
-
-  const filterItems: FilterItem[] = [
-    {
-      id: "title",
-      isFilterActive: (urlParams) => {
-        return (
-          urlParams?.["title~cnt"] !== undefined &&
-          urlParams?.["title~cnt"] !== ""
-        );
-      },
-      view: (value, open) => (
-        <TitleContainsFilterView open={open} value={value} />
-      ),
-      editor: (value, apply, close) => (
-        <TitleContainsFilterEditor value={value} apply={apply} close={close} />
-      ),
-    },
-  ];
-
-  const activeFiltersCount = filterItems.reduce((count, f) => {
+  const activeFiltersCount = REPORT_FILTERS.reduce((count, f) => {
     const v = f.isFilterActive(filters);
     return count + (v ? 1 : 0);
   }, 0);
@@ -104,28 +73,26 @@ export const ReportsListSidebar: React.FC<ReportsListSidebarProps> = ({
       {panelView === PanelView.FILTERS_VIEW && (
         <div className="p-4">
           <div className="space-y-3">
-            {filterItems.map((f) => {
-              const isOpen = openFilter === f.id;
+            {REPORT_FILTERS.map((filter) => {
+              const isOpen = openFilter === filter.id;
 
               if (!isOpen) {
                 return (
-                  <div key={f.id}>
-                    {f.view(filters, () => setOpenFilter(f.id))}
+                  <div key={filter.id}>
+                    {filter.view(filters, () => setOpenFilter(filter.id))}
                   </div>
                 );
               }
 
               return (
-                <div key={f.id}>
-                  {f.editor(
+                <div key={filter.id}>
+                  {filter.editor(
                     filters,
                     (v) => {
-                      onFiltersChange?.({
-                        ...v,
-                      });
+                      onFiltersChange?.(v);
                       setOpenFilter(null);
                     },
-                    () => setOpenFilter(null)
+                    () => setOpenFilter(null),
                   )}
                 </div>
               );
@@ -151,9 +118,7 @@ function TitleContainsFilterView({
     >
       <h3 className="text-sm font-medium">Title</h3>
       <p className="text-xs text-muted-foreground mt-1">
-        {value?.["title~cnt"]
-          ? value["title~cnt"]
-          : "Filter reports by title"}
+        {value?.["title~cnt"] ? value["title~cnt"] : "Filter reports by title"}
       </p>
     </div>
   );
@@ -169,9 +134,9 @@ function TitleContainsFilterEditor({
   close: () => void;
 }) {
   const [filterValue, setFilterValue] = useState<string>(
-    value?.["title~cnt"] ? value["title~cnt"] : ""
+    value?.["title~cnt"] ? value["title~cnt"] : "",
   );
-  const onApply = () => {    
+  const onApply = () => {
     apply({ ...value, "title~cnt": filterValue || undefined });
   };
 
@@ -185,18 +150,49 @@ function TitleContainsFilterEditor({
           onChange={(e) => setFilterValue(e.target.value)}
           className="flex-grow"
         />
+      </div>
+      <div className="flex justify-end mt-2 gap-2">
+        <Button variant="outline" onClick={close}>
+          Close
+        </Button>
         <Button variant="outline" onClick={() => setFilterValue("")}>
           Clear
         </Button>
-        <Button variant="default" onClick={ onApply}>
+        <Button variant="default" onClick={onApply}>
           Apply
-        </Button>
-      </div>
-      <div className="flex justify-end mt-2">
-        <Button variant="outline" size="sm" onClick={close}>
-          Done
         </Button>
       </div>
     </div>
   );
 }
+
+interface ReportsListBlockProps {
+  pagination: {
+    page: number;
+    pageSize: number;
+    setPage: (page: number) => void;
+    setPageSize: (pageSize: number) => void;
+  };
+  filters: ReportsUrlFilters;
+  onFiltersChange: (params: Partial<ReportsUrlFilters>) => void;
+  selection: {
+    selectedId: number | null;
+    onSelect: (reportId: number) => void;
+  };
+}
+
+enum PanelView {
+  REPORTS_LIST,
+  FILTERS_VIEW,
+}
+
+type FilterItem<TParams extends ReportsUrlFilters = ReportsUrlFilters> = {
+  id: string;
+  isFilterActive: (urlParams?: TParams) => boolean;
+  view: (filters: TParams, openEditor: () => void) => React.ReactNode;
+  editor: (
+    filters: TParams,
+    apply: (v: TParams) => void,
+    close: () => void,
+  ) => React.ReactNode;
+};

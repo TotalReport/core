@@ -1,5 +1,5 @@
 import { RestAPIProvider } from "@/components/providers/rest-api-provider.jsx";
-import { ReportsListSidebar } from "@/components/reports/reports-list-sidebar.jsx";
+import { ReportsListBlock } from "@/containers/reports-list/reports-list-block.jsx";
 import {
   ResizableHandle,
   ResizablePanel,
@@ -34,7 +34,7 @@ export const ReportsPageContent = () => {
         className="h-full border items-stretch"
       >
         <ResizablePanel defaultSize={20} collapsible={false} minSize={25}>
-          <ReportsListSidebar
+          <ReportsListBlock
             pagination={{
               page: urlParams.page,
               pageSize: urlParams.pageSize,
