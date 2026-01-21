@@ -43,7 +43,7 @@ export const Success: Story = {
   args: {
     pagination: { page: 1, pageSize: 10, setPage: () => {}, setPageSize: () => {} },
     selection: { selectedId: undefined, onSelect: () => {} },
-    filters: { reportId: 1 },
+    filters: { reportId: 1, "title~cnt": undefined },
   },
   parameters: {
     msw: {
@@ -56,7 +56,7 @@ export const Empty: Story = {
   args: {
     pagination: { page: 1, pageSize: 10, setPage: () => {}, setPageSize: () => {} },
     selection: { selectedId: undefined, onSelect: () => {} },
-    filters: { reportId: 2 },
+    filters: { reportId: 2, "title~cnt": undefined },
   },
   parameters: {
     msw: {
@@ -74,7 +74,7 @@ export const Loading: Story = {
   args: {
     pagination: { page: 1, pageSize: 10, setPage: () => {}, setPageSize: () => {} },
     selection: { selectedId: undefined, onSelect: () => {} },
-    filters: { reportId: 1 },
+    filters: { reportId: 1, "title~cnt": undefined },
   },
   parameters: {
     msw: {
@@ -87,7 +87,7 @@ export const Error: Story = {
   args: {
     pagination: { page: 1, pageSize: 10, setPage: () => {}, setPageSize: () => {} },
     selection: { selectedId: undefined, onSelect: () => {} },
-    filters: { reportId: 1 },
+    filters: { reportId: 1, "title~cnt": undefined },
   },
   parameters: {
     msw: {

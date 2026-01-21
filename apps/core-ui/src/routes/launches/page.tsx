@@ -1,24 +1,34 @@
-import React, { useState } from "react";
 import { RestAPIProvider } from "@/components/providers/rest-api-provider.jsx";
+import {
+  ResizableHandle,
+  ResizablePanel,
+  ResizablePanelGroup,
+} from "@/components/ui/resizable.jsx";
 import LaunchDetails from "@/containers/launch-details/launch-details.jsx";
-import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from "@/components/ui/resizable.jsx";
-import LaunchesList from "@/components/launches/launches-list.jsx";
+import { LaunchesListBlock } from "@/containers/launches-list/launches-list-block.jsx";
 import { useUrlParams } from "@/hooks/url/use-url-params.jsx";
+import LaunchesUrlParams from "@/types/launches-url-params.js";
 
 export const title = "Launches - Total Report";
 
 function LaunchesPageContent() {
-  const { getNumericParam, updateParams } = useUrlParams();
-  const [selectedLaunchId, setSelectedLaunchId] = useState<number | undefined>(
-    () => {
-      return getNumericParam("launchId") || undefined;
-    }
-  );
+  const { useParams } = useUrlParams();
 
-  const handleLaunchSelect = (launchId: number) => {
-    setSelectedLaunchId(launchId);
-    updateParams({ launchId: launchId.toString() });
-  };
+  const { urlParams, setUrlParams } = useParams<LaunchesUrlParams>({
+    page: {
+      defaultValue: 1,
+      constraintFn: (value) => Math.max(1, value),
+    },
+    pageSize: {
+      defaultValue: 10,
+      constraintFn: (value) => Math.max(1, value),
+    },
+    "title~cnt": { defaultValue: undefined },
+    reportId: { defaultValue: undefined },
+    selectedLaunchId: { defaultValue: undefined },
+  });
+
+  const { page, pageSize, ...filters } = urlParams;
 
   return (
     <div className="flex h-screen">
@@ -33,14 +43,25 @@ function LaunchesPageContent() {
             maxSize={50}
             collapsible={false}
           >
-            <LaunchesList
-              selectedLaunchId={selectedLaunchId}
-              onLaunchSelect={handleLaunchSelect}
+            <LaunchesListBlock
+              pagination={{
+                page,
+                pageSize,
+                setPage: (page) => setUrlParams({ page }),
+                setPageSize: (pageSize) => setUrlParams({ pageSize }),
+              }}
+              filters={filters}
+              onFiltersChange={(v) => setUrlParams(v)}
+              selection={{
+                selectedId: filters.selectedLaunchId ?? null,
+                onSelect: (launchId) =>
+                  setUrlParams({ selectedLaunchId: launchId }),
+              }}
             />
           </ResizablePanel>
           <ResizableHandle withHandle />
           <ResizablePanel defaultSize={70}>
-            {selectedLaunchId === undefined && (
+            {filters.selectedLaunchId === undefined && (
               <div className="h-full flex items-center justify-center">
                 <div className="text-center">
                   <p className="text-lg font-bold text-secondary-foreground">
@@ -52,8 +73,8 @@ function LaunchesPageContent() {
                 </div>
               </div>
             )}
-            {selectedLaunchId !== undefined && (
-              <LaunchDetails launchId={selectedLaunchId} />
+            {filters.selectedLaunchId !== undefined && (
+              <LaunchDetails launchId={filters.selectedLaunchId} />
             )}
           </ResizablePanel>
         </ResizablePanelGroup>

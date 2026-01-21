@@ -5,6 +5,7 @@ import { Skeleton } from "../../components/ui/skeleton.jsx";
 import ErrorRetry from "@/components/ui/error-retry.js";
 import { formatDistanceToNow } from "date-fns";
 import { cn } from "@/lib/utils.js";
+import { LaunchesUrlFilters } from "@/types/launches-url-params.js";
 
 interface LaunchesListContainerProps {
   pagination: {
@@ -17,16 +18,13 @@ interface LaunchesListContainerProps {
     selectedId?: number;
     onSelect: (launchId: number) => void;
   };
-  filters: {
-    reportId?: number;
-    titleContains?: string;
-  };
+  filters: LaunchesUrlFilters;
 }
 
 export default function LaunchesListContainer({
   pagination: { page, pageSize, setPage, setPageSize },
   selection: { selectedId, onSelect },
-  filters: { reportId, titleContains },
+  filters: { reportId, "title~cnt": titleContains },
 }: LaunchesListContainerProps) {
   const launchesQuery = useFindLaunches({
     pagination: {
