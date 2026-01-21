@@ -4,11 +4,11 @@ import { ScrollArea } from "@/components/ui/scroll-area.js";
 import { Skeleton } from "@/components/ui/skeleton.jsx";
 import { StatusPill } from '@/containers/test-status/test-status-pill.jsx';
 import { useFindTestEntities } from "@/hooks/api/test-entities/use-find-test-entities.js";
-import { SelectedTest } from "@/hooks/use-tests-list.js";
 import { FormattedTestEntity, getTestTypeFromEntityType } from "@/lib/test-utils.js";
 import { cn } from '@/lib/utils.js';
 import { TestsUrlFilters } from "@/types/tests-url-params.js";
 import { formatDistanceToNow } from 'date-fns';
+import { SelectedTest } from "./tests-list-block.jsx";
 
 interface TestsListProps {
   pagination: {

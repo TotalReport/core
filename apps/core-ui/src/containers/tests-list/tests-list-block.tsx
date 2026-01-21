@@ -5,7 +5,6 @@ import { useState } from "react";
 import { useFindReports } from "@/hooks/api/reports/use-find-reports.js";
 import { useFindLaunches } from "@/hooks/api/launches/use-find-launches.js";
 import { TestsList } from "./tests-list.jsx";
-import { SelectedTest } from "@/hooks/use-tests-list.js";
 import { TestsUrlFilters } from "@/types/tests-url-params.js";
 
 const TEST_FILTERS: FilterItem[] = [
@@ -498,6 +497,11 @@ function ReportFilterEditor({
   );
 }
 
+export type SelectedTest = {
+  id: number;
+  type: 'test' | 'beforeTest' | 'afterTest';
+};
+
 interface TestsListBlockProps {
   pagination: {
     page: number;
@@ -528,6 +532,5 @@ type FilterItem<TParams extends TestsUrlFilters = TestsUrlFilters> = {
     close: () => void,
   ) => React.ReactNode;
 };
-
 
 export default TestsListBlock;
