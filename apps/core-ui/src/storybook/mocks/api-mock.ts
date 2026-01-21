@@ -511,6 +511,57 @@ export class ApiMock {
     });
   }
 
+  findTestEntities(
+    filters:
+      | { limit?: number; offset?: number; reportId?: number; launchId?: number; "title~cnt"?: string }
+      | undefined,
+    response: { pagination: { total: number; limit: number; offset: number }; items: any[] }
+  ) {
+    const limit = filters?.limit ?? 25;
+    const offset = filters?.offset ?? 0;
+    const reportId = filters?.reportId;
+    const launchId = filters?.launchId;
+    const title = filters?.["title~cnt"];
+    const qs = `?limit=${limit}&offset=${offset}${reportId !== undefined ? `&reportId=${reportId}` : ``}${launchId !== undefined ? `&launchId=${launchId}` : ``}${title !== undefined ? `&title~cnt=${encodeURIComponent(title)}` : ``}`;
+    const url = `${this.baseUrl}${contract.findTestEntities.path}${qs}`;
+    return http.get(url, () => {
+      return HttpResponse.json(response);
+    });
+  }
+
+  findTestEntitiesInfinite(filters: { limit?: number; offset?: number; reportId?: number; launchId?: number; "title~cnt"?: string }) {
+    const limit = filters?.limit ?? 25;
+    const offset = filters?.offset ?? 0;
+    const reportId = filters?.reportId;
+    const launchId = filters?.launchId;
+    const title = filters?.["title~cnt"];
+    const qs = `?limit=${limit}&offset=${offset}${reportId !== undefined ? `&reportId=${reportId}` : ``}${launchId !== undefined ? `&launchId=${launchId}` : ``}${title !== undefined ? `&title~cnt=${encodeURIComponent(title)}` : ``}`;
+    const url = `${this.baseUrl}${contract.findTestEntities.path}${qs}`;
+    return http.get(url, async () => {
+      await delay("infinite");
+      return HttpResponse.json({});
+    });
+  }
+
+  findTestEntitiesCustom(
+    filters:
+      | { limit?: number; offset?: number; reportId?: number; launchId?: number; "title~cnt"?: string }
+      | undefined,
+    responseCode: number,
+    responseBody: any
+  ) {
+    const limit = filters?.limit ?? 25;
+    const offset = filters?.offset ?? 0;
+    const reportId = filters?.reportId;
+    const launchId = filters?.launchId;
+    const title = filters?.["title~cnt"];
+    const qs = `?limit=${limit}&offset=${offset}${reportId !== undefined ? `&reportId=${reportId}` : ``}${launchId !== undefined ? `&launchId=${launchId}` : ``}${title !== undefined ? `&title~cnt=${encodeURIComponent(title)}` : ``}`;
+    const url = `${this.baseUrl}${contract.findTestEntities.path}${qs}`;
+    return http.get(url, () => {
+      return HttpResponse.json(responseBody, { status: responseCode });
+    });
+  }
+
   findLaunchesCountCustom(
     filters: { reportId?: number },
     responseCode: number,

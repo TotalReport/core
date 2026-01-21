@@ -12,6 +12,6 @@ export type TestsUrlParams = {
 
 export default TestsUrlParams;
 
-export type TestsUrlFilters = Omit<TestsUrlParams, "page" | "pageSize" | "testId" | "beforeTestId" | "afterTestId"> & {
+export type TestsUrlFilters = Omit<TestsUrlParams, "page" | "pageSize" | "testId" | "beforeTestId" | "afterTestId" | "entityTypes"> & {
   entityTypes?: ("beforeTest" | "test" | "afterTest")[] | undefined;
 };

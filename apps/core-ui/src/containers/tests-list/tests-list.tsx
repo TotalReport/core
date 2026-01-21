@@ -7,6 +7,7 @@ import { useFindTestEntities } from "@/hooks/api/test-entities/use-find-test-ent
 import { SelectedTest } from "@/hooks/use-tests-list.js";
 import { FormattedTestEntity, getTestTypeFromEntityType } from "@/lib/test-utils.js";
 import { cn } from '@/lib/utils.js';
+import { TestsUrlFilters } from "@/types/tests-url-params.js";
 import { formatDistanceToNow } from 'date-fns';
 
 interface TestsListProps {
@@ -20,28 +21,19 @@ interface TestsListProps {
     selectedId?: number;
     onSelect: (launchId: SelectedTest) => void;
   };
-  filters: {
-    reportId?: number;
-    titleContains?: string;
-    launchId?: number;
-    entityTypes?: ("beforeTest" | "test" | "afterTest")[];
-  };
+  filters: TestsUrlFilters;
 }
 
 export const TestsList = ({
   pagination: { page, pageSize, setPage, setPageSize },
   selection: { selectedId, onSelect },
-  filters: { reportId, titleContains },
-}: TestsListProps) => {
+  filters}: TestsListProps) => {
   const testEntitiesQuery = useFindTestEntities({
     pagination: {
       offset: (page - 1) * pageSize,
       limit: pageSize,
     },
-    filters: {
-      reportId: reportId,
-      titleContains: titleContains,
-    },
+    filters: filters,
   });
 
   const isError = testEntitiesQuery.isError;

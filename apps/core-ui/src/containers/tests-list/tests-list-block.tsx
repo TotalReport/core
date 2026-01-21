@@ -6,6 +6,7 @@ import { useFindReports } from "@/hooks/api/reports/use-find-reports.js";
 import { useFindLaunches } from "@/hooks/api/launches/use-find-launches.js";
 import { TestsList } from "./tests-list.jsx";
 import { SelectedTest } from "@/hooks/use-tests-list.js";
+import { TestsUrlFilters } from "@/types/tests-url-params.js";
 
 const TEST_FILTERS: FilterItem[] = [
   {
@@ -528,12 +529,5 @@ type FilterItem<TParams extends TestsUrlFilters = TestsUrlFilters> = {
   ) => React.ReactNode;
 };
 
-type TestsUrlFilters = {
-  "title~cnt"?: string;
-  reportId?: number | undefined;
-  launchId?: number | undefined;
-  entityTypes?: ("beforeTest" | "test" | "afterTest")[] | undefined;
-  // other test-specific filters may be added later
-};
 
 export default TestsListBlock;

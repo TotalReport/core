@@ -77,7 +77,7 @@ export function useTestsList() {
       limit: pageSize,
     },
     filters: {
-      titleContains: titleFilter || undefined,
+      "title~cnt": titleFilter || undefined,
       reportId: reportFilter?.id,
       launchId: launchFilter?.id,
       entityTypes: entityTypesFilter.length > 0 ? entityTypesFilter : undefined,

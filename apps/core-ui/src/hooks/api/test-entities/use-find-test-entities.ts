@@ -15,7 +15,7 @@ export const useFindTestEntities = ({
       filters.reportId,
       filters.launchId,
       filters.entityTypes,
-      filters.titleContains,
+      filters["title~cnt"],
     ],
     queryData: {
       query: {
@@ -24,7 +24,7 @@ export const useFindTestEntities = ({
         reportId: filters.reportId,
         launchId: filters.launchId,
         entityTypes: filters.entityTypes,
-        "title~cnt": filters.titleContains,
+        "title~cnt": filters["title~cnt"],
       },
     },
     enabled: enabled !== false,
@@ -33,7 +33,7 @@ export const useFindTestEntities = ({
 
 export type FindTestEntitiesParams = {
   filters: {
-    titleContains?: string;
+    "title~cnt"?: string;
     reportId?: number;
     launchId?: number;
     entityTypes?: ("beforeTest" | "test" | "afterTest")[]; // Add entity types filter with proper typing
