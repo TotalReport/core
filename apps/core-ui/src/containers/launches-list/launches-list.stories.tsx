@@ -33,9 +33,9 @@ type Story = StoryObj<typeof LaunchesList>;
 const sampleLaunches = {
   pagination: { total: 3, limit: 10, offset: 0 },
   items: [
-    { id: 1, reportId: 1, title: "Launch A", createdTimestamp: new Date().toISOString() },
-    { id: 2, reportId: 1, title: "Launch B", createdTimestamp: new Date().toISOString() },
-    { id: 3, reportId: 1, title: "Launch C", createdTimestamp: new Date().toISOString() },
+    { id: 1, title: "Launch A", createdTimestamp: new Date().toISOString() },
+    { id: 2, title: "Launch B", createdTimestamp: new Date().toISOString() },
+    { id: 3, title: "Launch C", createdTimestamp: new Date().toISOString() },
   ],
 };
 
@@ -43,11 +43,11 @@ export const Success: Story = {
   args: {
     pagination: { page: 1, pageSize: 10, setPage: () => {}, setPageSize: () => {} },
     selection: { selectedId: undefined, onSelect: () => {} },
-    filters: { reportId: 1, "title~cnt": undefined },
+    filters: {"title~cnt": undefined },
   },
   parameters: {
     msw: {
-      handlers: [apiMock.findLaunches({ reportId: 1, limit: 10, offset: 0 }, sampleLaunches as any)],
+      handlers: [apiMock.findLaunches({ limit: 10, offset: 0 }, sampleLaunches as any)],
     },
   },
 };
@@ -56,13 +56,13 @@ export const Empty: Story = {
   args: {
     pagination: { page: 1, pageSize: 10, setPage: () => {}, setPageSize: () => {} },
     selection: { selectedId: undefined, onSelect: () => {} },
-    filters: { reportId: 2, "title~cnt": undefined },
+    filters: { "title~cnt": undefined },
   },
   parameters: {
     msw: {
       handlers: [
         apiMock.findLaunches(
-          { reportId: 2, limit: 10, offset: 0 },
+          { limit: 10, offset: 0 },
           { pagination: { total: 0, limit: 10, offset: 0 }, items: [] }
         ),
       ],
@@ -74,11 +74,11 @@ export const Loading: Story = {
   args: {
     pagination: { page: 1, pageSize: 10, setPage: () => {}, setPageSize: () => {} },
     selection: { selectedId: undefined, onSelect: () => {} },
-    filters: { reportId: 1, "title~cnt": undefined },
+    filters: { "title~cnt": undefined },
   },
   parameters: {
     msw: {
-      handlers: [apiMock.findLaunchesInfinite({ reportId: 1, limit: 10, offset: 0 })],
+      handlers: [apiMock.findLaunchesInfinite({ limit: 10, offset: 0 })],
     },
   },
 };
@@ -87,11 +87,11 @@ export const Error: Story = {
   args: {
     pagination: { page: 1, pageSize: 10, setPage: () => {}, setPageSize: () => {} },
     selection: { selectedId: undefined, onSelect: () => {} },
-    filters: { reportId: 1, "title~cnt": undefined },
+    filters: { "title~cnt": undefined },
   },
   parameters: {
     msw: {
-      handlers: [apiMock.findLaunchesCustom({ reportId: 1, limit: 10, offset: 0 }, 500, { error: "Internal server error" })],
+      handlers: [apiMock.findLaunchesCustom({ limit: 10, offset: 0 }, 500, { error: "Internal server error" })],
     },
   },
 };

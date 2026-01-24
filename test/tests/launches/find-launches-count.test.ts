@@ -7,19 +7,16 @@ import "../../tools/earl-extensions.js";
 const generator = new CoreEntititesGenerator(client);
 
 describe("find launches count", () => {
+  beforeEach(async () => {
+    await generator.launches.deleteAll();
+  });
+
   test("count of all", async () => {
-    const report = await generator.reports.create();
-    await generator.launches.createMany(2, {
-      reportId: report.id,
-    });
-    await generator.launches.create({
-      reportId: report.id,
-    });
+    await generator.launches.createMany(2, {});
+    await generator.launches.create({});
 
     const findLaunchesResponse = await client.findLaunchesCount({
-      query: {
-        reportId: report.id,
-      },
+      query: {},
     });
 
     expect(findLaunchesResponse).toEqual({

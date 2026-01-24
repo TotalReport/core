@@ -17,14 +17,7 @@ export const testStatuses = pgTable("test_statuses", {
   color: varchar("color", { length: 7 }).notNull(),
 });
 
-export const reports = pgTable("reports", {
-  id: bigserial("id", { mode: "number" }).primaryKey(),
-  title: varchar("title", { length: 256 }).notNull(),
-  createdTimestamp: timestamp("created_timestamp", { withTimezone: false, mode: "date" }).notNull(),
-});
-
 export const launches = pgTable("launches", {
-  reportId: bigint("report_id", { mode: "number" }).references(() => reports.id).notNull(),
   id: bigserial("id", { mode: "number" }).primaryKey(),
   title: varchar("title", { length: 256 }).notNull(),
   arguments: text("arguments"),
@@ -36,7 +29,7 @@ export const launches = pgTable("launches", {
 export const testEnititesIdSeq = pgSequence("test_entities_id_seq", { cache: 5 });
 
 export const testContexts = pgTable("test_contexts", {
-  launchId: bigint("launch_id", { mode: "number" }).references(() => launches.id).notNull(),
+  launchId: bigint("launch_id", { mode: "number" }).references(() => launches.id, { onDelete: "cascade" }).notNull(),
   parentTestContextId: bigint("parent_test_context_id", { mode: 'number' }).references((): AnyPgColumn => testContexts.id),
   //FIXME drizzle-kit@0.26.2 doesn't support variables in the default, change to testEnititesIdSeq.name when it's supported
   id: bigint("id", { mode: "number" }).primaryKey().default(sql`nextval('test_entities_id_seq')`),
@@ -47,8 +40,9 @@ export const testContexts = pgTable("test_contexts", {
 });
 
 export const beforeTests = pgTable("before_tests", {
-  launchId: bigint("launch_id", { mode: "number" }).references(() => launches.id).notNull(),
-  testContextId: bigint("test_context_id", { mode: 'number' }).references(() => testContexts.id),
+  //TODO here and everywhere investigatge if cascade delete gives performance issues on large datasets
+  launchId: bigint("launch_id", { mode: "number" }).references(() => launches.id, { onDelete: "cascade" }).notNull(),
+  testContextId: bigint("test_context_id", { mode: 'number' }).references(() => testContexts.id, { onDelete: "cascade" }),
   //FIXME drizzle-kit@0.26.2 doesn't support variables in the default, change to testEnititesIdSeq.name when it's supported
   id: bigint("id", { mode: "number" }).primaryKey().default(sql`nextval('test_entities_id_seq')`),
   title: varchar("title", { length: 256 }).notNull(),
@@ -62,7 +56,7 @@ export const beforeTests = pgTable("before_tests", {
 });
 
 export const beforeTestArguments = pgTable("before_test_arguments", {
-  testId: bigint("test_id", { mode: "number" }).references(() => beforeTests.id).notNull(),
+  testId: bigint("test_id", { mode: "number" }).references(() => beforeTests.id, { onDelete: "cascade" }).notNull(),
   id: bigserial("id", { mode: "number" }).primaryKey(),
   index: integer("index").notNull(),
   name: varchar("name", { length: 256 }).notNull(),
@@ -71,7 +65,7 @@ export const beforeTestArguments = pgTable("before_test_arguments", {
 });
 
 export const beforeTestExternalArguments = pgTable("before_test_external_arguments", {
-  testId: bigint("test_id", { mode: "number" }).references(() => beforeTests.id).notNull(),
+  testId: bigint("test_id", { mode: "number" }).references(() => beforeTests.id, { onDelete: "cascade" }).notNull(),
   id: bigserial("id", { mode: "number" }).primaryKey(),
   index: integer("index").notNull(),
   name: varchar("name", { length: 256 }).notNull(),
@@ -80,7 +74,7 @@ export const beforeTestExternalArguments = pgTable("before_test_external_argumen
 });
 
 export const beforeTestSteps = pgTable("before_test_steps", {
-  testId: bigint("test_id", { mode: "number" }).references(() => beforeTests.id).notNull(),
+  testId: bigint("test_id", { mode: "number" }).references(() => beforeTests.id, { onDelete: "cascade" }).notNull(),
   id: bigserial("id", { mode: "number" }).primaryKey(),
   title: varchar("title", { length: 256 }).notNull(),
   createdTimestamp: timestamp("created_timestamp", { withTimezone: false, mode: "date" }).notNull(),
@@ -93,8 +87,8 @@ export const beforeTestSteps = pgTable("before_test_steps", {
 });
 
 export const tests = pgTable("tests", {
-  launchId: bigint("launch_id", { mode: "number" }).references(() => launches.id).notNull(),
-  testContextId: bigint("test_context_id", { mode: 'number' }).references(() => testContexts.id),
+  launchId: bigint("launch_id", { mode: "number" }).references(() => launches.id, { onDelete: "cascade" }).notNull(),
+  testContextId: bigint("test_context_id", { mode: 'number' }).references(() => testContexts.id, { onDelete: "cascade" }),
   //FIXME drizzle-kit@0.26.2 doesn't support variables in the default, change to testEnititesIdSeq.name when it's supported
   id: bigint("id", { mode: "number" }).primaryKey().default(sql`nextval('test_entities_id_seq')`),
   title: varchar("title", { length: 256 }).notNull(),
@@ -108,7 +102,7 @@ export const tests = pgTable("tests", {
 });
 
 export const testArguments = pgTable("test_arguments", {
-  testId: bigint("test_id", { mode: "number" }).references(() => tests.id).notNull(),
+  testId: bigint("test_id", { mode: "number" }).references(() => tests.id, { onDelete: "cascade" }).notNull(),
   id: bigserial("id", { mode: "number" }).primaryKey(),
   index: integer("index").notNull(),
   name: varchar("name", { length: 256 }).notNull(),
@@ -117,7 +111,7 @@ export const testArguments = pgTable("test_arguments", {
 });
 
 export const testExternalArguments = pgTable("test_external_arguments", {
-  testId: bigint("test_id", { mode: "number" }).references(() => tests.id).notNull(),
+  testId: bigint("test_id", { mode: "number" }).references(() => tests.id, { onDelete: "cascade" }).notNull(),
   id: bigserial("id", { mode: "number" }).primaryKey(),
   index: integer("index").notNull(),
   name: varchar("name", { length: 256 }).notNull(),
@@ -126,7 +120,7 @@ export const testExternalArguments = pgTable("test_external_arguments", {
 });
 
 export const testSteps = pgTable("test_steps", {
-  testId: bigint("test_id", { mode: "number" }).references(() => tests.id).notNull(),
+  testId: bigint("test_id", { mode: "number" }).references(() => tests.id, { onDelete: "cascade" }).notNull(),
   id: bigserial("id", { mode: "number" }).primaryKey(),
   title: varchar("title", { length: 256 }).notNull(),
   createdTimestamp: timestamp("created_timestamp", { withTimezone: false, mode: "date" }).notNull(),
@@ -139,8 +133,8 @@ export const testSteps = pgTable("test_steps", {
 });
 
 export const afterTests = pgTable("after_tests", {
-  launchId: bigint("launch_id", { mode: "number" }).references(() => launches.id).notNull(),
-  testContextId: bigint("test_context_id", { mode: 'number' }).references(() => testContexts.id),
+  launchId: bigint("launch_id", { mode: "number" }).references(() => launches.id, { onDelete: "cascade" }).notNull(),
+  testContextId: bigint("test_context_id", { mode: 'number' }).references(() => testContexts.id, { onDelete: "cascade" }),
   //FIXME drizzle-kit@0.26.2 doesn't support variables in the default, change to testEnititesIdSeq.name when it's supported
   id: bigint("id", { mode: "number" }).primaryKey().default(sql`nextval('test_entities_id_seq')`),
   title: varchar("title", { length: 256 }).notNull(),
@@ -154,7 +148,7 @@ export const afterTests = pgTable("after_tests", {
 });
 
 export const afterTestArguments = pgTable("after_test_arguments", {
-  testId: bigint("test_id", { mode: "number" }).references(() => afterTests.id).notNull(),
+  testId: bigint("test_id", { mode: "number" }).references(() => afterTests.id, { onDelete: "cascade" }).notNull(),
   id: bigserial("id", { mode: "number" }).primaryKey(),
   index: integer("index").notNull(),
   name: varchar("name", { length: 256 }).notNull(),
@@ -163,7 +157,7 @@ export const afterTestArguments = pgTable("after_test_arguments", {
 });
 
 export const afterTestExternalArguments = pgTable("after_test_external_arguments", {
-  testId: bigint("test_id", { mode: "number" }).references(() => afterTests.id).notNull(),
+  testId: bigint("test_id", { mode: "number" }).references(() => afterTests.id, { onDelete: "cascade" }).notNull(),
   id: bigserial("id", { mode: "number" }).primaryKey(),
   index: integer("index").notNull(),
   name: varchar("name", { length: 256 }).notNull(),
@@ -172,7 +166,7 @@ export const afterTestExternalArguments = pgTable("after_test_external_arguments
 });
 
 export const afterTestSteps = pgTable("after_test_steps", {
-  testId: bigint("test_id", { mode: "number" }).references(() => afterTests.id).notNull(),
+  testId: bigint("test_id", { mode: "number" }).references(() => afterTests.id, { onDelete: "cascade" }).notNull(),
   id: bigserial("id", { mode: "number" }).primaryKey(),
   title: varchar("title", { length: 256 }).notNull(),
   createdTimestamp: timestamp("created_timestamp", { withTimezone: false, mode: "date" }).notNull(),
@@ -185,7 +179,7 @@ export const afterTestSteps = pgTable("after_test_steps", {
 });
 
 export const paths = pgTable("paths", {
-  testId: bigint("test_id", { mode: "number" }).references(() => tests.id),
+  testId: bigint("test_id", { mode: "number" }).references(() => tests.id, { onDelete: "cascade" }),
   id: bigserial("id", { mode: "number" }).primaryKey(),
   title: varchar("title", { length: 256 }).notNull(),
   createdTimestamp: timestamp("created_timestamp", { withTimezone: false, mode: "string" }).notNull(),

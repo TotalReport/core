@@ -124,11 +124,6 @@ export const findBeforeTests = contract.query({
   method: "GET",
   path: "/v1/before-tests",
   query: z.object({
-    reportId: z.coerce
-      .number()
-      .int()
-      .optional()
-      .describe("The report ID the before tests belong to."),
     launchId: z.coerce
       .number()
       .int()
@@ -162,7 +157,7 @@ export const findBeforeTests = contract.query({
       .number()
       .int()
       .optional()
-      .default(PAGINATION_DEFAULTS.limit)
+      .default(PAGINATION_DEFAULTS.offset)
       .describe("The number of items to skip."),
   }),
   responses: {

@@ -1,10 +1,9 @@
 import { faker } from "@faker-js/faker";
-import { ClientType } from "./types.js";
-import { assertEquals } from "./utils.js";
-import { ReportsGenerator } from "./report-generator.js";
-import { ClientInferRequest, ClientInferResponseBody } from "@ts-rest/core";
 import { contract } from "@total-report/core-contract/contract";
+import { ClientInferRequest, ClientInferResponseBody } from "@ts-rest/core";
+import { ClientType } from "./types.js";
 import { capitalizeFirstLetter } from "./utils-string.js";
+import { assertEquals } from "./utils.js";
 
 /**
  * This class is responsible for generating launches.
@@ -25,19 +24,20 @@ export class LaunchesGenerator {
   async create(
     args: GenerateLaunch | undefined = undefined
   ): Promise<CreateLaunchResponse> {
-    const reportId =
-      args?.reportId ?? (await new ReportsGenerator(this.client).create()).id;
-
     const title =
       args?.title ??
-      capitalizeFirstLetter(faker.word.adjective() + " " + 
-      faker.word.noun() + " " + 
-      faker.word.verb() + " " + 
-      faker.word.adverb());
+      capitalizeFirstLetter(
+        faker.word.adjective() +
+          " " +
+          faker.word.noun() +
+          " " +
+          faker.word.verb() +
+          " " +
+          faker.word.adverb(),
+      );
 
     const response = await this.client.createLaunch({
       body: {
-        reportId: reportId,
         title: title,
         createdTimestamp: args?.createdTimestamp,
         startedTimestamp: args?.startedTimestamp,
@@ -49,7 +49,7 @@ export class LaunchesGenerator {
     assertEquals(
       response.status,
       201,
-      `Failed to create launch. Server response status ${response.status}, body ${JSON.stringify(response.body)}`
+      `Failed to create launch. Server response status ${response.status}, body ${JSON.stringify(response.body)}`,
     );
 
     return response.body;
@@ -57,13 +57,34 @@ export class LaunchesGenerator {
 
   /**
    * Creates multiple launches.
-   * 
+   *
    * @param count The number of launches to create.
    * @param args The arguments to create the launches with.
    * @returns The created launches.
    */
-  createMany(count: number, args?: GenerateLaunch): Promise<CreateLaunchResponse[]> {
-    return Promise.all(Array.from({ length: count }).map(() => this.create(args)));
+  createMany(
+    count: number,
+    args?: GenerateLaunch,
+  ): Promise<CreateLaunchResponse[]> {
+    return Promise.all(
+      Array.from({ length: count }).map(() => this.create(args)),
+    );
+  }
+
+  /**
+   * Deletes all launches.
+   */
+  async deleteAll(): Promise<void> {
+    const response = await this.client.findLaunches({query: { limit: 1000000, offset: 0 }});
+    if (response.status !== 200) {
+      throw new Error(
+        `Failed to find launches for deletion. Server response status ${response.status}, body ${JSON.stringify(response.body)}`,
+      );
+    }
+
+    for (const launch of response.body.items) {
+      await this.client.deleteLaunch({ params: { id: launch.id } });
+    }
   }
 }
 

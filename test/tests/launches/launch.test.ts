@@ -8,9 +8,7 @@ const generator = new CoreEntititesGenerator(client);
 
 describe("launches", () => {
   test("read launch by id", async () => {
-    const report = await generator.reports.create();
     const request = {
-      reportId: report.id,
       title: "Launch 2",
       createdTimestamp: new Date("2024-07-21T06:52:32Z"),
       startedTimestamp: new Date("2024-07-21T06:52:35Z"),
@@ -28,7 +26,6 @@ describe("launches", () => {
       headers: expect.anything(),
       status: 200,
       body: {
-        reportId: report.id,
         id: launchId,
         title: request.title,
         createdTimestamp: request.createdTimestamp.toISOString(),
@@ -61,7 +58,6 @@ describe("launches", () => {
       headers: expect.anything(),
       status: 200,
       body: {
-        reportId: launch.reportId,
         id: launch.id,
         title: patchRequest.title,
         createdTimestamp: patchRequest.createdTimestamp.toISOString(),

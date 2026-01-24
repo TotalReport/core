@@ -36,7 +36,6 @@ export const findTestEntities = contract.query({
     entityTypes: z
       .array(z.enum(["beforeTest", "test", "afterTest"]))
       .optional(),
-    reportId: z.coerce.number().int().optional(),
     launchId: z.coerce.number().int().optional(),
     contextId: z.coerce.number().int().optional(),
     correlationId: z.coerce.string().optional(),
@@ -82,7 +81,6 @@ export const findTestEntitiesCountsByStatuses = contract.query({
   method: "GET",
   path: "/v1/test-entities/counts/statuses",
   query: z.object({
-    reportId: z.coerce.number().int().optional(),
     launchId: z.coerce.number().int().optional(),
     distinct: zBoolean(z),
   }),

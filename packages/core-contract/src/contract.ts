@@ -37,7 +37,6 @@ import {
   patchLaunch,
   readLaunch,
 } from "./launches.js";
-import { createReport, deleteReport, findReports, readReport } from "./reports.js";
 import {
   findTestStatusGroups,
   findTestStatuses,
@@ -80,11 +79,6 @@ export const contract = c.router({
     },
     summary: "Get a health check status.",
   },
-
-  createReport: createReport,
-  readReport: readReport,
-  findReports: findReports,
-  deleteReport: deleteReport,
 
   createLaunch: createLaunch,
   findLaunchesCount: findLaunchesCount,

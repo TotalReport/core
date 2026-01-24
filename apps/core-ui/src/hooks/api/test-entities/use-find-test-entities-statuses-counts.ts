@@ -6,12 +6,11 @@ export const useFindTestEntitiesStatusesCounts = ({
   filters,
   enabled = true,
 }: FindTestEntitiesStatusesCountsParams) => {
-  const { reportId, launchId, distinct } = filters;
+  const { launchId, distinct } = filters;
   return api.findTestEntitiesCountsByStatuses.useQuery({
-    queryKey: ["test-entities/counts/statuses", distinct, reportId, launchId],
+    queryKey: ["test-entities/counts/statuses", distinct, launchId],
     queryData: {
       query: {
-        reportId: reportId,
         launchId: launchId,
         distinct,
       },
@@ -22,7 +21,6 @@ export const useFindTestEntitiesStatusesCounts = ({
 
 export type FindTestEntitiesStatusesCountsParams = {
   filters: {
-    reportId?: number;
     launchId?: number;
     distinct: boolean;
   };

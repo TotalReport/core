@@ -2,7 +2,6 @@ export type TestsUrlParams = {
   page: number;
   pageSize: number;
   "title~cnt": string | undefined;
-  reportId: number | undefined;
   launchId: number | undefined;
   entityTypes: string | undefined; // comma-separated list in URL
   testId: number | undefined;

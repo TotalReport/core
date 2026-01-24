@@ -34,11 +34,10 @@ export const readBeforeTestRoute: ReadBeforeTestRoute = async ({ params }) => {
 };
 
 export const findBeforeTestsRoute: FindBeforeTestsRoute = async ({ query }) => {
-  const { limit, offset, reportId, launchId, testContextId, correlationId, argumentsHash } = query;
+  const { limit, offset, launchId, testContextId, correlationId, argumentsHash } = query;
   const { items, totalItems } = await new BeforeTestsDAO().find({
     limit,
     offset,
-    reportId,
     launchId,
     testContextId,
     correlationId,

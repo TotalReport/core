@@ -13,7 +13,6 @@ export const findTestEntitiesRoute: FindTestEntitiesRoute = async ({
 
   const search = {
     entityTypes: query.entityTypes,
-    reportId: query.reportId,
     launchId: query.launchId,
     contextId: query.contextId,
     correlationId: query.correlationId,
@@ -54,7 +53,6 @@ export const findTestEntitiesCountsByStatusesRoute: FindTestEntitiesStatusesCoun
   query,
 }) => {
   const search = {
-    reportId: query.reportId,
     launchId: query.launchId,
     distinct: query.distinct,
   };

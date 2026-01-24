@@ -43,12 +43,6 @@ import {
 } from "./routes/launches.js";
 import { openapiSchema } from "./routes/openapi_schema.js";
 import {
-  createReportRoute,
-  deleteReportRoute,
-  findReportsRoute,
-  readReportRoute,
-} from "./routes/reports.js";
-import {
   findTestStatusGroupsRoute,
   findTestStatusesRoute,
   readTestStatusGroupRoute,
@@ -94,11 +88,6 @@ const s = initServer();
 
 const router = s.router(contract, {
   healthCheck: healthCheckRoute,
-
-  createReport: createReportRoute,
-  readReport: readReportRoute,
-  findReports: findReportsRoute,
-  deleteReport: deleteReportRoute,
 
   createLaunch: createLaunchRoute,
   findLaunchesCount: findLaunchesCountRoute,

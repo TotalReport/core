@@ -103,12 +103,6 @@ export default function LaunchDetails({ launchId }: LaunchDetailsProps) {
           </div>
           <div>
             <h3 className="text-sm font-medium text-muted-foreground">
-              Report ID
-            </h3>
-            <p>{launch.body.reportId}</p>
-          </div>
-          <div>
-            <h3 className="text-sm font-medium text-muted-foreground">
               Created
             </h3>
             <p>{format(new Date(launch.body.createdTimestamp), "PPpp")}</p>

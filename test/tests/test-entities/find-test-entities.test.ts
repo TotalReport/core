@@ -10,6 +10,10 @@ import "../../tools/earl-extensions.js";
 const generator = new CoreEntititesGenerator(client);
 
 describe("test entities", () => {
+  beforeEach(async () => {
+    await generator.launches.deleteAll();
+  });
+
   test("include all types of entities", async () => {
     const launch1 = await generator.launches.create();
     const launch2 = await generator.launches.create();
@@ -187,42 +191,12 @@ describe("test entities", () => {
     });
   });
 
-  test("by reportId", async () => {
-    const report = await generator.reports.create();
-    const launch = await generator.launches.create({ reportId: report.id });
-    const created = await generator.tests.create({ launchId: launch.id });
-
-    // Record that should be filtered out
-    await generator.tests.create();
-
-    const limit = 10;
-    const offset = 0;
-
-    const response = await client.findTestEntities({
-      query: { reportId: report.id, limit, offset },
-    });
-
-    expect(response).toEqual({
-      headers: expect.anything(),
-      status: 200,
-      body: {
-        pagination: {
-          total: 1,
-          limit,
-          offset,
-        },
-        items: [testToEntity(created)],
-      },
-    });
-  });
-
   test("by launchId", async () => {
-    const report = await generator.reports.create();
-    const launch = await generator.launches.create({ reportId: report.id });
+    const launch = await generator.launches.create({ });
     const created = await generator.tests.create({ launchId: launch.id });
 
     // Record that should be filtered out
-    const launch2 = await generator.launches.create({ reportId: report.id });
+    const launch2 = await generator.launches.create({ });
     await generator.tests.create({ launchId: launch2.id });
 
     const limit = 10;

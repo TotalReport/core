@@ -1,8 +1,7 @@
 import {
   afterTests,
   beforeTests,
-  launches,
-  tests,
+  tests
 } from "@total-report/core-schema/schema";
 import { and, count, eq } from "drizzle-orm";
 import { NodePgQueryResultHKT } from "drizzle-orm/node-postgres/session";
@@ -155,7 +154,6 @@ export class TestsCommonDAO {
   async find(args: {
     limit: number;
     offset: number;
-    reportId?: number;
     launchId?: number;
     testContextId?: number;
     correlationId?: string;
@@ -174,65 +172,22 @@ export class TestsCommonDAO {
         : undefined,
     ].filter(Boolean);
 
-    const items =
-      args.reportId != undefined
-        ? await this.db
-            .select({
-              id: this.testTable.id,
-              launchId: this.testTable.launchId,
-              testContextId: this.testTable.testContextId,
-              title: this.testTable.title,
-              createdTimestamp: this.testTable.createdTimestamp,
-              startedTimestamp: this.testTable.startedTimestamp,
-              finishedTimestamp: this.testTable.finishedTimestamp,
-              statusId: this.testTable.statusId,
-              correlationId: this.testTable.correlationId,
-              argumentsHash: this.testTable.argumentsHash,
-              externalArgumentsHash: this.testTable.externalArgumentsHash,
-            })
-            .from(this.testTable)
-            .innerJoin(
-              launches,
-              and(
-                eq(this.testTable.launchId, launches.id),
-                eq(launches.reportId, args.reportId)
-              )
-            )
-            .where(and(...whereConditions))
-            .limit(args.limit)
-            .offset(args.offset)
-            .execute()
-        : await this.db
-            .select()
-            .from(this.testTable)
-            .where(and(...whereConditions))
-            .limit(args.limit)
-            .offset(args.offset)
-            .execute();
+    const items = await this.db
+      .select()
+      .from(this.testTable)
+      .where(and(...whereConditions))
+      .limit(args.limit)
+      .offset(args.offset)
+      .execute();
 
     const totalItems =
-      args.reportId != undefined
-        ? (
-            await this.db
-              .select({ count: count(this.testTable.id) })
-              .from(this.testTable)
-              .rightJoin(
-                launches,
-                and(
-                  eq(this.testTable.launchId, launches.id),
-                  eq(launches.reportId, args.reportId)
-                )
-              )
-              .where(and(...whereConditions))
-              .execute()
-          ).at(0)?.count ?? 0
-        : (
-            await this.db
-              .select({ count: count(this.testTable.id) })
-              .from(this.testTable)
-              .where(and(...whereConditions))
-              .execute()
-          ).at(0)?.count ?? 0;
+      (
+        await this.db
+          .select({ count: count(this.testTable.id) })
+          .from(this.testTable)
+          .where(and(...whereConditions))
+          .execute()
+      ).at(0)?.count ?? 0;
 
     // FIXME: HARDLY INNNEFICIENT! Optimize by moving arguments into JSON column of test
     const responseItems = await Promise.all(
@@ -240,11 +195,15 @@ export class TestsCommonDAO {
         const testArgs = await this.newTestArgumentsDAO(this.db).findByTestId(
           item.id
         );
-        const testExternalArgs = await this.newTestExternalArgumentsDAO(this.db).findByTestId(
-          item.id
-        );
-        return convertToEntity({ testRow: item, argumentsRows: testArgs, externalArgumentsRows: testExternalArgs });
-      })
+        const testExternalArgs = await this.newTestExternalArgumentsDAO(
+          this.db,
+        ).findByTestId(item.id);
+        return convertToEntity({
+          testRow: item,
+          argumentsRows: testArgs,
+          externalArgumentsRows: testExternalArgs,
+        });
+      }),
     );
 
     return {
@@ -434,23 +393,6 @@ const convertToEntity = (args: {
   };
 };
 
-const takeUpdateableFields = (args: PatchTest): UpdateableFields => {
-  return {
-    title: args.title,
-    createdTimestamp: args.createdTimestamp,
-    startedTimestamp: args.startedTimestamp,
-    finishedTimestamp: args.finishedTimestamp,
-    statusId: args.statusId,
-  };
-};
-
-type UpdateableFields = {
-  title: string | undefined;
-  createdTimestamp: Date | undefined;
-  startedTimestamp: Date | null | undefined;
-  finishedTimestamp: Date | null | undefined;
-  statusId: string | null | undefined;
-};
 
 type TestsRow = TestsTable["$inferSelect"];
 

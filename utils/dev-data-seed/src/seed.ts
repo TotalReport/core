@@ -13,10 +13,8 @@ export const client = initClient(contract, {
 
 const entities = new CoreEntititesGenerator(client);
 
-const report = await entities.reports.create()
 
 const launch = await entities.launches.create({
-  reportId: report.id
 });
 
 const testContext = await entities.contexts.create({

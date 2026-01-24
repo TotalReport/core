@@ -24,7 +24,7 @@ interface LaunchesListContainerProps {
 export default function LaunchesListContainer({
   pagination: { page, pageSize, setPage, setPageSize },
   selection: { selectedId, onSelect },
-  filters: { reportId, "title~cnt": titleContains },
+  filters: { "title~cnt": titleContains },
 }: LaunchesListContainerProps) {
   const launchesQuery = useFindLaunches({
     pagination: {
@@ -32,7 +32,6 @@ export default function LaunchesListContainer({
       limit: pageSize,
     },
     filters: {
-      reportId: reportId,
       titleContains: titleContains,
     },
     enabled: true,
@@ -153,9 +152,6 @@ function LaunchesListItem({ launch, selected, onClick }: LaunchItemProps) {
           </div>
         </div>
         <div className="text-xs font-medium">{launch.title}</div>
-      </div>
-      <div className="line-clamp-2 text-xs text-muted-foreground">
-        Report ID: {launch.reportId}
       </div>
     </button>
   );

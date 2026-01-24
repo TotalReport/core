@@ -51,11 +51,6 @@ export type LaunchResponse = ClientInferResponseBody<
   200
 >;
 
-export type ReportResponse = ClientInferResponseBody<
-  typeof contract.readReport,
-  200
->;
-
 export type LaunchesCountResponse = ClientInferResponseBody<
   typeof contract.findLaunchesCount,
   200
@@ -209,14 +204,13 @@ export class ApiMock {
 
   findTestEntitiesCountsByStatuses(
     filters:
-      | { distinct?: boolean; reportId?: number; launchId?: number }
+      | { distinct?: boolean; launchId?: number }
       | undefined,
     response: TestEntitiesCountsByStatusesResponse
   ) {
     const distinct = filters?.distinct ?? false;
-    const reportId = filters?.reportId;
     const launchId = filters?.launchId;
-    const qs = `?distinct=${distinct}${reportId !== undefined ? `&reportId=${reportId}` : ""}${launchId !== undefined ? `&launchId=${launchId}` : ""}`;
+    const qs = `?distinct=${distinct}${launchId !== undefined ? `&launchId=${launchId}` : ""}`;
     const url = `${this.baseUrl}${contract.findTestEntitiesCountsByStatuses.path}${qs}`;
     return http.get(url, () => {
       return HttpResponse.json(response);
@@ -225,15 +219,14 @@ export class ApiMock {
 
   findTestEntitiesCountsByStatusesCustom(
     filters:
-      | { distinct?: boolean; reportId?: number; launchId?: number }
+      | { distinct?: boolean; launchId?: number }
       | undefined,
     responseCode: number,
     responseBody: any
   ) {
     const distinct = filters?.distinct ?? false;
-    const reportId = filters?.reportId;
     const launchId = filters?.launchId;
-    const qs = `?distinct=${distinct}${reportId !== undefined ? `&reportId=${reportId}` : ""}${launchId !== undefined ? `&launchId=${launchId}` : ""}`;
+    const qs = `?distinct=${distinct}${launchId !== undefined ? `&launchId=${launchId}` : ""}`;
     const url = `${this.baseUrl}${contract.findTestEntitiesCountsByStatuses.path}${qs}`;
     return http.get(url, () => {
       return HttpResponse.json(responseBody, { status: responseCode });
@@ -242,13 +235,12 @@ export class ApiMock {
 
   findTestEntitiesCountsByStatusesInfinite(
     filters:
-      | { distinct?: boolean; reportId?: number; launchId?: number }
+      | { distinct?: boolean; launchId?: number }
       | undefined
   ) {
     const distinct = filters?.distinct ?? false;
-    const reportId = filters?.reportId;
     const launchId = filters?.launchId;
-    const qs = `?distinct=${distinct}${reportId !== undefined ? `&reportId=${reportId}` : ""}${launchId !== undefined ? `&launchId=${launchId}` : ""}`;
+    const qs = `?distinct=${distinct}${launchId !== undefined ? `&launchId=${launchId}` : ""}`;
     const url = `${this.baseUrl}${contract.findTestEntitiesCountsByStatuses.path}${qs}`;
     return http.get(url, async () => {
       await delay("infinite");
@@ -376,42 +368,12 @@ export class ApiMock {
     );
   }
 
-  readReport(reportId: number, response: ReportResponse) {
-    return http.get(
-      `${this.baseUrl}${contract.readReport.path.replace(":id", String(reportId))}`,
-      () => {
-        return HttpResponse.json(response);
-      }
-    );
-  }
-
-  readReportCustom(reportId: number, responseCode: number, responseBody: any) {
-    return http.get(
-      `${this.baseUrl}${contract.readReport.path.replace(":id", String(reportId))}`,
-      () => {
-        return HttpResponse.json(responseBody, { status: responseCode });
-      }
-    );
-  }
-
-  readReportInfinite(reportId: number) {
-    return http.get(
-      `${this.baseUrl}${contract.readReport.path.replace(":id", String(reportId))}`,
-      async () => {
-        await delay("infinite");
-        return HttpResponse.json({});
-      }
-    );
-  }
-
   findLaunchesCount(
-    filters: { reportId?: number },
+    filters: { },
     response: LaunchesCountResponse
   ) {
-    const reportId = filters?.reportId;
-    const qs = reportId !== undefined ? `?reportId=${reportId}` : "";
     return http.get(
-      `${this.baseUrl}${contract.findLaunchesCount.path}${qs}`,
+      `${this.baseUrl}${contract.findLaunchesCount.path}`,
       () => {
         return HttpResponse.json(response);
       }
@@ -420,27 +382,25 @@ export class ApiMock {
 
   findLaunches(
     filters:
-      | { limit?: number; offset?: number; reportId?: number; "title~cnt"?: string }
+      | { limit?: number; offset?: number; "title~cnt"?: string }
       | undefined,
     response: { pagination: { total: number; limit: number; offset: number }; items: LaunchResponse[] }
   ) {
     const limit = filters?.limit ?? 25;
     const offset = filters?.offset ?? 0;
-    const reportId = filters?.reportId;
     const title = filters?.["title~cnt"];
-    const qs = `?limit=${limit}&offset=${offset}${reportId !== undefined ? `&reportId=${reportId}` : ``}${title !== undefined ? `&title~cnt=${encodeURIComponent(title)}` : ``}`;
+    const qs = `?limit=${limit}&offset=${offset}${title !== undefined ? `&title~cnt=${encodeURIComponent(title)}` : ``}`;
     const url = `${this.baseUrl}${contract.findLaunches.path}${qs}`;
     return http.get(url, () => {
       return HttpResponse.json(response);
     });
   }
 
-  findLaunchesInfinite(filters: { limit?: number; offset?: number; reportId?: number; "title~cnt"?: string }) {
+  findLaunchesInfinite(filters: { limit?: number; offset?: number; "title~cnt"?: string }) {
     const limit = filters?.limit ?? 25;
     const offset = filters?.offset ?? 0;
-    const reportId = filters?.reportId;
     const title = filters?.["title~cnt"];
-    const qs = `?limit=${limit}&offset=${offset}${reportId !== undefined ? `&reportId=${reportId}` : ``}${title !== undefined ? `&title~cnt=${encodeURIComponent(title)}` : ``}`;
+    const qs = `?limit=${limit}&offset=${offset}${title !== undefined ? `&title~cnt=${encodeURIComponent(title)}` : ``}`;
     const url = `${this.baseUrl}${contract.findLaunches.path}${qs}`;
     return http.get(url, async () => {
       await delay("infinite");
@@ -450,62 +410,16 @@ export class ApiMock {
 
   findLaunchesCustom(
     filters:
-      | { limit?: number; offset?: number; reportId?: number; "title~cnt"?: string }
+      | { limit?: number; offset?: number; "title~cnt"?: string }
       | undefined,
     responseCode: number,
     responseBody: any
   ) {
     const limit = filters?.limit ?? 25;
     const offset = filters?.offset ?? 0;
-    const reportId = filters?.reportId;
     const title = filters?.["title~cnt"];
-    const qs = `?limit=${limit}&offset=${offset}${reportId !== undefined ? `&reportId=${reportId}` : ``}${title !== undefined ? `&title~cnt=${encodeURIComponent(title)}` : ``}`;
+    const qs = `?limit=${limit}&offset=${offset}${title !== undefined ? `&title~cnt=${encodeURIComponent(title)}` : ``}`;
     const url = `${this.baseUrl}${contract.findLaunches.path}${qs}`;
-    return http.get(url, () => {
-      return HttpResponse.json(responseBody, { status: responseCode });
-    });
-  }
-
-  findReports(
-    filters:
-      | { limit?: number; offset?: number; "title~cnt"?: string }
-      | undefined,
-    response: { pagination: { total: number; limit: number; offset: number }; items: ReportResponse[] }
-  ) {
-    const limit = filters?.limit ?? 25;
-    const offset = filters?.offset ?? 0;
-    const title = filters?.["title~cnt"];
-    const qs = `?limit=${limit}&offset=${offset}${title !== undefined ? `&title~cnt=${encodeURIComponent(title)}` : ``}`;
-    const url = `${this.baseUrl}${contract.findReports.path}${qs}`;
-    return http.get(url, () => {
-      return HttpResponse.json(response);
-    });
-  }
-
-  findReportsInfinite(filters: { limit?: number; offset?: number; "title~cnt"?: string }) {
-    const limit = filters?.limit ?? 25;
-    const offset = filters?.offset ?? 0;
-    const title = filters?.["title~cnt"];
-    const qs = `?limit=${limit}&offset=${offset}${title !== undefined ? `&title~cnt=${encodeURIComponent(title)}` : ``}`;
-    const url = `${this.baseUrl}${contract.findReports.path}${qs}`;
-    return http.get(url, async () => {
-      await delay("infinite");
-      return HttpResponse.json({});
-    });
-  }
-
-  findReportsCustom(
-    filters:
-      | { limit?: number; offset?: number; "title~cnt"?: string }
-      | undefined,
-    responseCode: number,
-    responseBody: any
-  ) {
-    const limit = filters?.limit ?? 25;
-    const offset = filters?.offset ?? 0;
-    const title = filters?.["title~cnt"];
-    const qs = `?limit=${limit}&offset=${offset}${title !== undefined ? `&title~cnt=${encodeURIComponent(title)}` : ``}`;
-    const url = `${this.baseUrl}${contract.findReports.path}${qs}`;
     return http.get(url, () => {
       return HttpResponse.json(responseBody, { status: responseCode });
     });
@@ -513,29 +427,27 @@ export class ApiMock {
 
   findTestEntities(
     filters:
-      | { limit?: number; offset?: number; reportId?: number; launchId?: number; "title~cnt"?: string }
+      | { limit?: number; offset?: number; launchId?: number; "title~cnt"?: string }
       | undefined,
     response: { pagination: { total: number; limit: number; offset: number }; items: any[] }
   ) {
     const limit = filters?.limit ?? 25;
     const offset = filters?.offset ?? 0;
-    const reportId = filters?.reportId;
     const launchId = filters?.launchId;
     const title = filters?.["title~cnt"];
-    const qs = `?limit=${limit}&offset=${offset}${reportId !== undefined ? `&reportId=${reportId}` : ``}${launchId !== undefined ? `&launchId=${launchId}` : ``}${title !== undefined ? `&title~cnt=${encodeURIComponent(title)}` : ``}`;
+    const qs = `?limit=${limit}&offset=${offset}${launchId !== undefined ? `&launchId=${launchId}` : ``}${title !== undefined ? `&title~cnt=${encodeURIComponent(title)}` : ``}`;
     const url = `${this.baseUrl}${contract.findTestEntities.path}${qs}`;
     return http.get(url, () => {
       return HttpResponse.json(response);
     });
   }
 
-  findTestEntitiesInfinite(filters: { limit?: number; offset?: number; reportId?: number; launchId?: number; "title~cnt"?: string }) {
+  findTestEntitiesInfinite(filters: { limit?: number; offset?: number; launchId?: number; "title~cnt"?: string }) {
     const limit = filters?.limit ?? 25;
     const offset = filters?.offset ?? 0;
-    const reportId = filters?.reportId;
     const launchId = filters?.launchId;
     const title = filters?.["title~cnt"];
-    const qs = `?limit=${limit}&offset=${offset}${reportId !== undefined ? `&reportId=${reportId}` : ``}${launchId !== undefined ? `&launchId=${launchId}` : ``}${title !== undefined ? `&title~cnt=${encodeURIComponent(title)}` : ``}`;
+    const qs = `?limit=${limit}&offset=${offset}${launchId !== undefined ? `&launchId=${launchId}` : ``}${title !== undefined ? `&title~cnt=${encodeURIComponent(title)}` : ``}`;
     const url = `${this.baseUrl}${contract.findTestEntities.path}${qs}`;
     return http.get(url, async () => {
       await delay("infinite");
@@ -545,17 +457,16 @@ export class ApiMock {
 
   findTestEntitiesCustom(
     filters:
-      | { limit?: number; offset?: number; reportId?: number; launchId?: number; "title~cnt"?: string }
+      | { limit?: number; offset?: number; launchId?: number; "title~cnt"?: string }
       | undefined,
     responseCode: number,
     responseBody: any
   ) {
     const limit = filters?.limit ?? 25;
     const offset = filters?.offset ?? 0;
-    const reportId = filters?.reportId;
     const launchId = filters?.launchId;
     const title = filters?.["title~cnt"];
-    const qs = `?limit=${limit}&offset=${offset}${reportId !== undefined ? `&reportId=${reportId}` : ``}${launchId !== undefined ? `&launchId=${launchId}` : ``}${title !== undefined ? `&title~cnt=${encodeURIComponent(title)}` : ``}`;
+    const qs = `?limit=${limit}&offset=${offset}${launchId !== undefined ? `&launchId=${launchId}` : ``}${title !== undefined ? `&title~cnt=${encodeURIComponent(title)}` : ``}`;
     const url = `${this.baseUrl}${contract.findTestEntities.path}${qs}`;
     return http.get(url, () => {
       return HttpResponse.json(responseBody, { status: responseCode });
@@ -563,25 +474,21 @@ export class ApiMock {
   }
 
   findLaunchesCountCustom(
-    filters: { reportId?: number },
+    filters: { },
     responseCode: number,
     responseBody: any
   ) {
-    const reportId = filters?.reportId;
-    const qs = reportId !== undefined ? `?reportId=${reportId}` : "";
     return http.get(
-      `${this.baseUrl}${contract.findLaunchesCount.path}${qs}`,
+      `${this.baseUrl}${contract.findLaunchesCount.path}`,
       () => {
         return HttpResponse.json(responseBody, { status: responseCode });
       }
     );
   }
 
-  findLaunchesCountInfinite(filters: { reportId?: number }) {
-    const reportId = filters?.reportId;
-    const qs = reportId !== undefined ? `?reportId=${reportId}` : "";
+  findLaunchesCountInfinite(filters: { }) {
     return http.get(
-      `${this.baseUrl}${contract.findLaunchesCount.path}${qs}`,
+      `${this.baseUrl}${contract.findLaunchesCount.path}`,
       async () => {
         await delay("infinite");
         return HttpResponse.json({});

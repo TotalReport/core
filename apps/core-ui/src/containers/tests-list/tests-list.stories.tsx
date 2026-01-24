@@ -65,7 +65,6 @@ export const Success: Story = {
     selection: { selectedId: undefined, onSelect: () => {} },
     filters: {
       "title~cnt": undefined,
-      reportId: undefined,
       launchId: undefined,
       entityTypes: undefined,
     },
@@ -91,7 +90,7 @@ export const Empty: Story = {
       setPageSize: () => {},
     },
     selection: { selectedId: undefined, onSelect: () => {} },
-            filters: { "title~cnt": "no-match", reportId: undefined, launchId: undefined, entityTypes: undefined },
+            filters: { "title~cnt": "no-match", launchId: undefined, entityTypes: undefined },
         },
   parameters: {
     msw: {
@@ -114,7 +113,7 @@ export const Loading: Story = {
       setPageSize: () => {},
     },
     selection: { selectedId: undefined, onSelect: () => {} },
-    filters: { "title~cnt": undefined, reportId: undefined, launchId: undefined, entityTypes: undefined },
+    filters: { "title~cnt": undefined, launchId: undefined, entityTypes: undefined },
   },
   parameters: {
     msw: {
@@ -138,7 +137,7 @@ export const Error: Story = {
       setPageSize: () => {},
     },
     selection: { selectedId: undefined, onSelect: () => {} },
-    filters: { "title~cnt": undefined, reportId: undefined, launchId: undefined, entityTypes: undefined },
+    filters: { "title~cnt": undefined, launchId: undefined, entityTypes: undefined },
   },
   parameters: {
     msw: {

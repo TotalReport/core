@@ -34,11 +34,10 @@ export const readAfterTestRoute: ReadAfterTestRoute = async ({ params }) => {
 };
 
 export const findAfterTestsRoute: FindAfterTestsRoute = async ({ query }) => {
-  const { limit, offset, reportId, launchId, testContextId, correlationId, argumentsHash } = query;
+  const { limit, offset, launchId, testContextId, correlationId, argumentsHash } = query;
   const { items, totalItems } = await new AfterTestsDAO().find({
     limit,
     offset,
-    reportId,
     launchId,
     testContextId,
     correlationId,

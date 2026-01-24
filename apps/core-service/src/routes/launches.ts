@@ -43,7 +43,6 @@ export const findLaunchesRoute: FindLaunchRoute = async ({ query }) => {
   const data = await new LaunchesDAO().find({
     limit: query.limit,
     offset: query.offset,
-    reportId: query.reportId,
     titleContains: query["title~cnt"],
   });
 
@@ -68,9 +67,7 @@ export const findLaunchesRoute: FindLaunchRoute = async ({ query }) => {
 export const findLaunchesCountRoute: FindLaunchesCountRoute = async ({
   query,
 }) => {
-  const data = await new LaunchesDAO().findCount({
-    reportId: query.reportId,
-  });
+  const data = await new LaunchesDAO().findCount({ });
 
   return {
     status: 200,

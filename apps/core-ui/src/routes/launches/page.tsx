@@ -24,7 +24,6 @@ function LaunchesPageContent() {
       constraintFn: (value) => Math.max(1, value),
     },
     "title~cnt": { defaultValue: undefined },
-    reportId: { defaultValue: undefined },
     selectedLaunchId: { defaultValue: undefined },
   });
 

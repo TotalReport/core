@@ -102,7 +102,7 @@ export const findTestContextsByLaunchId = contract.query({
       .number()
       .int()
       .optional()
-      .default(PAGINATION_DEFAULTS.limit),
+      .default(PAGINATION_DEFAULTS.offset),
   }),
   responses: {
     200: z.object({

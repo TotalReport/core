@@ -1,8 +1,7 @@
 import {
   launches,
   testEntities,
-  testStatuses,
-  testStatusGroups
+  testStatuses
 } from "@total-report/core-schema/schema";
 import {
   aliasedTable,
@@ -13,7 +12,7 @@ import {
   ilike,
   inArray,
   sql,
-  SQLWrapper
+  SQLWrapper,
 } from "drizzle-orm";
 import { NodePgQueryResultHKT } from "drizzle-orm/node-postgres";
 import { PgDatabase } from "drizzle-orm/pg-core";
@@ -82,41 +81,18 @@ export class TestEntitiesDAO {
         filters.push(ilike(testEntities.title, `%${escapedTitle}%`));
       }
 
-      const entitiesCount =
-        search.reportId != undefined
-          ? (
-              await tx
-                .select({
-                  value: search.distinct
-                    ? countDistinct(
-                        sql` (${testEntities.correlationId}, ${testEntities.argumentsHash}, ${testEntities.externalArgumentsHash})`
-                      )
-                    : count(),
-                })
-                .from(testEntities)
-                .innerJoin(
-                  launches,
-                  and(
-                    eq(testEntities.launchId, launches.id),
-                    eq(launches.reportId, search.reportId)
-                  )
+      const entitiesCount = (
+        await tx
+          .select({
+            value: search.distinct
+              ? countDistinct(
+                  sql` (${testEntities.correlationId}, ${testEntities.argumentsHash}, ${testEntities.externalArgumentsHash})`,
                 )
-                .where(and(...filters))
-            )[0]!.value
-          : (
-              await tx
-                .select({
-                  value: search.distinct
-                    ? countDistinct(
-                        sql` (${testEntities.correlationId}, ${testEntities.argumentsHash}, ${testEntities.externalArgumentsHash})`
-                      )
-                    : count(),
-                })
-                .from(testEntities)
-                .where(and(...filters))
-            )[0]!.value;
-
-      const launchesAlias = aliasedTable(launches, "l");
+              : count(),
+          })
+          .from(testEntities)
+          .where(and(...filters))
+      )[0]!.value;
 
       const selectItems = tx
         .select({
@@ -138,56 +114,27 @@ export class TestEntitiesDAO {
 
       const queryItems = () => {
         if (search.distinct == true) {
-          const subquery = (
-            search.reportId != undefined
-              ? tx
-                  .select({
-                    launchId: testEntities.launchId,
-                    contextId: testEntities.parentContextId,
-                    id: testEntities.id,
-                    title: testEntities.title,
-                    createdTimestamp: testEntities.createdTimestamp,
-                    startedTimestamp: testEntities.startedTimestamp,
-                    finishedTimestamp: testEntities.finishedTimestamp,
-                    entityType: testEntities.entityType,
-                    statusId: testEntities.statusId,
-                    correlationId: testEntities.correlationId,
-                    argumentsHash: testEntities.argumentsHash,
-                    externalArgumentsHash: testEntities.externalArgumentsHash,
-                    rank: sql`rank() over (partition by ${testEntities.correlationId},${testEntities.argumentsHash},${testEntities.externalArgumentsHash} order by ${testEntities.finishedTimestamp} desc, ${testEntities.id} desc)`.as(
-                      "rank"
-                    ),
-                  })
-                  .from(testEntities)
-                  .innerJoin(
-                    launchesAlias,
-                    and(
-                      eq(testEntities.launchId, launchesAlias.id),
-                      eq(launchesAlias.reportId, search.reportId!)
-                    )
-                  )
-                  .where(and(...filters))
-              : tx
-                  .select({
-                    launchId: testEntities.launchId,
-                    contextId: testEntities.parentContextId,
-                    id: testEntities.id,
-                    title: testEntities.title,
-                    createdTimestamp: testEntities.createdTimestamp,
-                    startedTimestamp: testEntities.startedTimestamp,
-                    finishedTimestamp: testEntities.finishedTimestamp,
-                    entityType: testEntities.entityType,
-                    statusId: testEntities.statusId,
-                    correlationId: testEntities.correlationId,
-                    argumentsHash: testEntities.argumentsHash,
-                    externalArgumentsHash: testEntities.externalArgumentsHash,
-                    rank: sql`rank() over (partition by ${testEntities.correlationId},${testEntities.argumentsHash},${testEntities.externalArgumentsHash} order by ${testEntities.finishedTimestamp} desc, ${testEntities.id} desc)`.as(
-                      "rank"
-                    ),
-                  })
-                  .from(testEntities)
-                  .where(and(...filters))
-          ).as("t");
+          const subquery = tx
+            .select({
+              launchId: testEntities.launchId,
+              contextId: testEntities.parentContextId,
+              id: testEntities.id,
+              title: testEntities.title,
+              createdTimestamp: testEntities.createdTimestamp,
+              startedTimestamp: testEntities.startedTimestamp,
+              finishedTimestamp: testEntities.finishedTimestamp,
+              entityType: testEntities.entityType,
+              statusId: testEntities.statusId,
+              correlationId: testEntities.correlationId,
+              argumentsHash: testEntities.argumentsHash,
+              externalArgumentsHash: testEntities.externalArgumentsHash,
+              rank: sql`rank() over (partition by ${testEntities.correlationId},${testEntities.argumentsHash},${testEntities.externalArgumentsHash} order by ${testEntities.finishedTimestamp} desc, ${testEntities.id} desc)`.as(
+                "rank",
+              ),
+            })
+            .from(testEntities)
+            .where(and(...filters))
+            .as("t");
 
           return tx
             .select({
@@ -209,22 +156,7 @@ export class TestEntitiesDAO {
             .limit(pagination.limit)
             .offset(pagination.offset);
         } else {
-          if (search.reportId != undefined)
-            return selectItems
-              .innerJoin(
-                launchesAlias,
-                and(
-                  eq(testEntities.launchId, launchesAlias.id),
-                  eq(launchesAlias.reportId, search.reportId!)
-                )
-              )
-              .limit(pagination.limit)
-              .offset(pagination.offset);
-          else {
-            return selectItems
-              .limit(pagination.limit)
-              .offset(pagination.offset);
-          }
+          return selectItems.limit(pagination.limit).offset(pagination.offset);
         }
       };
 
@@ -246,10 +178,10 @@ export class TestEntitiesDAO {
       params.distinct === true
         ? this.db
             .$with("test_entities_filtered")
-            .as(distinctFilterTestEntities(this.db, params.reportId, params.launchId))
+            .as(distinctFilterTestEntities(this.db, params.launchId))
         : this.db
             .$with("test_entities_filtered")
-            .as(filterTestEntities(this.db, params.reportId, params.launchId));
+            .as(filterTestEntities(this.db, params.launchId));
 
     const result = await this.db
       .with(testEntitiesFiltered)
@@ -262,9 +194,13 @@ export class TestEntitiesDAO {
       .from(testEntitiesFiltered)
       .leftJoin(
         testStatuses,
-        eq(testEntitiesFiltered.statusId, testStatuses.id)
+        eq(testEntitiesFiltered.statusId, testStatuses.id),
       )
-      .groupBy(testEntitiesFiltered.entityType, testStatuses.groupId, testEntitiesFiltered.statusId)
+      .groupBy(
+        testEntitiesFiltered.entityType,
+        testStatuses.groupId,
+        testEntitiesFiltered.statusId,
+      )
       .execute();
 
     return result;
@@ -273,7 +209,6 @@ export class TestEntitiesDAO {
 
 const distinctFilterTestEntities = (
   db: PgDatabase<NodePgQueryResultHKT, Record<string, unknown>>,
-  reportId: number | undefined,
   launchId: number | undefined
 ) => {
   const testEntitiesWithDuplicationCounter = db
@@ -281,7 +216,6 @@ const distinctFilterTestEntities = (
     .as(
       db
         .select({
-          reportId: launches.reportId,
           launchId: testEntities.launchId,
           contextId: testEntities.parentContextId,
           id: testEntities.id,
@@ -296,22 +230,16 @@ const distinctFilterTestEntities = (
           externalArgumentsHash: testEntities.externalArgumentsHash,
           repeatCounter:
             sql`ROW_NUMBER() over (partition by ${testEntities.entityType}, ${testEntities.externalArgumentsHash}, ${testEntities.correlationId}, ${testEntities.argumentsHash} order by ${testEntities.finishedTimestamp} desc, ${testEntities.id} desc)`.as(
-              "repeat_counter"
+              "repeat_counter",
             ),
         })
         .from(testEntities)
-        .innerJoin(
-          launches,
-          and(
-            eq(testEntities.launchId, launches.id),
-            reportId != undefined ? eq(launches.reportId, reportId) : undefined
-          )
-        )
+        .innerJoin(launches, eq(testEntities.launchId, launches.id))
         .where(
           launchId == undefined
             ? undefined
-            : eq(testEntities.launchId, launchId)
-        )
+            : eq(testEntities.launchId, launchId),
+        ),
     );
 
   return db
@@ -323,13 +251,11 @@ const distinctFilterTestEntities = (
 
 const filterTestEntities = (
   db: PgDatabase<NodePgQueryResultHKT, Record<string, unknown>>,
-  reportId: number | undefined,
-  launchId: number | undefined
+  launchId: number | undefined,
 ) => {
   return (
     db
       .select({
-        reportId: launches.reportId,
         launchId: testEntities.launchId,
         contextId: testEntities.parentContextId,
         id: testEntities.id,
@@ -345,15 +271,9 @@ const filterTestEntities = (
       })
       .from(testEntities)
       //TODO: don't need join if reportId is not defined
-      .innerJoin(
-        launches,
-        and(
-          eq(testEntities.launchId, launches.id),
-          reportId != undefined ? eq(launches.reportId, reportId) : undefined
-        )
-      )
+      .innerJoin(launches, eq(testEntities.launchId, launches.id))
       .where(
-        launchId == undefined ? undefined : eq(testEntities.launchId, launchId)
+        launchId == undefined ? undefined : eq(testEntities.launchId, launchId),
       )
   );
 };
@@ -363,7 +283,6 @@ const filterTestEntities = (
  */
 export type TestEntitySearch = {
   entityTypes?: string[];
-  reportId?: number;
   launchId?: number;
   contextId?: number;
   correlationId?: string;
@@ -408,7 +327,6 @@ type TestEntityRow = {
 };
 
 type CountsByStatusesFilter = {
-  reportId?: number;
   launchId?: number;
   distinct: boolean;
 };

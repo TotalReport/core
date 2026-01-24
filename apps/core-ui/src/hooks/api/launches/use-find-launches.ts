@@ -12,7 +12,6 @@ export const useFindLaunches = ({
       "launches",
       pagination.offset,
       pagination.limit,
-      filters.reportId,
       filters.titleContains,
     ],
     queryData: {
@@ -20,7 +19,6 @@ export const useFindLaunches = ({
         offset: pagination.offset,
         limit: pagination.limit,
         "title~cnt": filters.titleContains,
-        reportId: filters.reportId,
       },
     },
     enabled: enabled !== false,
@@ -30,7 +28,6 @@ export const useFindLaunches = ({
 export type FindLaunchesParams = {
   filters: {
     titleContains?: string;
-    reportId?: number;
   };
   pagination: {
     offset: number;

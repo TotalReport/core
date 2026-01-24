@@ -5,17 +5,14 @@ import { EntityTypeSection } from "./entity-type-section.jsx";
 import ErrorRetry from "@/components/ui/error-retry.js";
 
 export type TestsStatisticsContainerProps = {
-  reportId?: number;
   launchId?: number;
 };
 
 export const TestsStatistics = ({
-  reportId,
   launchId,
 }: TestsStatisticsContainerProps) => {
   const testEntitiesStatusesCountsResponse = useFindTestEntitiesStatusesCounts({
     filters: {
-      reportId,
       launchId,
       distinct: true,
     },

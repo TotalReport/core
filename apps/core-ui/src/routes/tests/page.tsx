@@ -19,7 +19,6 @@ function TestsPageContent() {
     page: { defaultValue: 1, constraintFn: (v) => Math.max(1, v) },
     pageSize: { defaultValue: 10, constraintFn: (v) => Math.max(1, v) },
     "title~cnt": { defaultValue: undefined },
-    reportId: { defaultValue: undefined },
     launchId: { defaultValue: undefined },
     entityTypes: { defaultValue: undefined },
     testId: { defaultValue: undefined },
@@ -32,7 +31,6 @@ function TestsPageContent() {
   // Build filters object expected by TestsListBlock
   const filters = {
     "title~cnt": urlParams["title~cnt"],
-    reportId: urlParams.reportId,
     launchId: urlParams.launchId,
     entityTypes: urlParams.entityTypes ? (urlParams.entityTypes.split(',') as ("beforeTest" | "test" | "afterTest")[]) : undefined,
   };

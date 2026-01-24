@@ -1,24 +1,27 @@
-import { CoreEntititesGenerator } from "@total-report/core-entities-generator/core-entities";
-import { describe, test } from "mocha";
-import { client } from "../../tools/client.js";
-import { ClientInferResponseBody } from "@ts-rest/core";
-import { expect } from "earl";
 import { contract } from "@total-report/core-contract/contract";
-import "../../tools/earl-extensions.js";
-import { DEFAULT_TEST_STATUSES, TEST_STATUS_GROUPS } from "@total-report/core-schema/constants";
-import { expect_toBe } from "../../tools/utils.js";
+import { CoreEntititesGenerator } from "@total-report/core-entities-generator/core-entities";
+import {
+  DEFAULT_TEST_STATUSES
+} from "@total-report/core-schema/constants";
+import { ClientInferResponseBody } from "@ts-rest/core";
 import { add } from "date-fns/add";
 import { sub } from "date-fns/sub";
+import { expect } from "earl";
+import { describe, test } from "mocha";
+import { client } from "../../tools/client.js";
+import "../../tools/earl-extensions.js";
+import { expect_toBe } from "../../tools/utils.js";
 
 const generator = new CoreEntititesGenerator(client);
 
 describe("find test entities counts by statuses", () => {
+  beforeEach(async () => {
+    await generator.launches.deleteAll();
+  });
+
   test("distincts by test correlation ID", async () => {
-    // Create a report and launch
-    const report = await generator.reports.create();
-    const launch = await generator.launches.create({
-      reportId: report.id,
-    });
+    // Create a launch
+    const launch = await generator.launches.create({});
 
     // create tests with different correlation IDs
     const passedStatusId = DEFAULT_TEST_STATUSES.PASSED.id;
@@ -44,7 +47,7 @@ describe("find test entities counts by statuses", () => {
 
     // With distinct=true, expect 2 distinct test entities
     const responseWithDistinct = await client.findTestEntitiesCountsByStatuses({
-      query: { reportId: report.id, distinct: true },
+      query: { distinct: true },
     });
     expect(responseWithDistinct).toEqual({
       headers: expect.anything(),
@@ -62,7 +65,7 @@ describe("find test entities counts by statuses", () => {
     // With distinct=false, expect all 5 test entities to be counted
     const responseWithoutDistinct =
       await client.findTestEntitiesCountsByStatuses({
-        query: { reportId: report.id, distinct: false },
+        query: { distinct: false },
       });
 
     expect(responseWithoutDistinct).toEqual({
@@ -80,9 +83,8 @@ describe("find test entities counts by statuses", () => {
   });
 
   test("handles null status IDs", async () => {
-    // Create a report and launch
-    const report = await generator.reports.create();
-    const launch = await generator.launches.create({ reportId: report.id });
+    // Create a launch
+    const launch = await generator.launches.create({});
 
     const testCorrelationId = "ebd297c7-878d-4104-b232-d69129005e81";
     const testArgumentsHash = "f21e0195-1a62-45b7-a8c3-dc1475cec94e";
@@ -109,7 +111,7 @@ describe("find test entities counts by statuses", () => {
 
     // With distinct=true, expect 2 distinct test entities
     const response = await client.findTestEntitiesCountsByStatuses({
-      query: { reportId: report.id, distinct: true },
+      query: { distinct: true },
     });
 
     expect_toBe(response.status, 200);
@@ -138,8 +140,8 @@ describe("find test entities counts by statuses", () => {
     // With distinct=false, expect all 5 test entities to be counted
     const responseDistinctFalse = await client.findTestEntitiesCountsByStatuses(
       {
-        query: { reportId: report.id, distinct: false },
-      }
+        query: { distinct: false },
+      },
     );
 
     expect_toBe(responseDistinctFalse.status, 200);
@@ -167,9 +169,8 @@ describe("find test entities counts by statuses", () => {
   });
 
   test("takes status of the latest created test", async () => {
-    // Create a report and launch
-    const report = await generator.reports.create();
-    const launch = await generator.launches.create({ reportId: report.id });
+    // Create a launch
+    const launch = await generator.launches.create({});
 
     // Create tests with different statuses and started timestamps
     const testCorrelationId = "9b064b46-49ee-46c1-b814-70276a16d7cc";
@@ -198,7 +199,7 @@ describe("find test entities counts by statuses", () => {
 
     // With distinct=true, expect 1 distinct test entity
     const responseWithDistinct = await client.findTestEntitiesCountsByStatuses({
-      query: { reportId: report.id, distinct: true },
+      query: { distinct: true },
     });
 
     expect(responseWithDistinct).toEqual({
@@ -217,7 +218,7 @@ describe("find test entities counts by statuses", () => {
     // With distinct=false, expect all 2 test entities to be counted
     const responseWithoutDistinct =
       await client.findTestEntitiesCountsByStatuses({
-        query: { reportId: report.id, distinct: false },
+        query: { distinct: false },
       });
 
     expect_toBe(responseWithoutDistinct.status, 200);
@@ -245,9 +246,8 @@ describe("find test entities counts by statuses", () => {
   });
 
   test("takes status of the latest finished test if other dates are equal", async () => {
-    // Create a report and launch
-    const report = await generator.reports.create();
-    const launch = await generator.launches.create({ reportId: report.id });
+    // Create a launch
+    const launch = await generator.launches.create({});
 
     // Create tests with different statuses and finished timestamps
     const testCorrelationId = "4c1fab0f-b7a3-4fb4-a2e3-dd71fd2c1018";
@@ -279,7 +279,7 @@ describe("find test entities counts by statuses", () => {
 
     // With distinct=true, expect 1 distinct test entity
     const responseWithDistinct = await client.findTestEntitiesCountsByStatuses({
-      query: { reportId: report.id, distinct: true },
+      query: { distinct: true },
     });
 
     expect(responseWithDistinct).toEqual({
@@ -298,7 +298,7 @@ describe("find test entities counts by statuses", () => {
     // With distinct=false, expect all 2 test entities to be counted
     const responseWithoutDistinct =
       await client.findTestEntitiesCountsByStatuses({
-        query: { reportId: report.id, distinct: false },
+        query: { distinct: false },
       });
 
     expect_toBe(responseWithoutDistinct.status, 200);
@@ -325,57 +325,15 @@ describe("find test entities counts by statuses", () => {
     });
   });
 
-  test("handles reportId absence", async () => {
-    // Create multiple reports with launches and tests
-    const launchcorrelationId = "59e75c4b-9ade-44e7-85fe-2294003ddf04";
-    const launchArgumentsHash = "a584f719-cd2b-421f-99e3-db4904358f0f";
-
-    const report1 = await generator.reports.create();
-    const launch1 = await generator.launches.create({
-      reportId: report1.id,
-    });
-
-    const report2 = await generator.reports.create();
-    const launch2 = await generator.launches.create({
-      reportId: report2.id,
-    });
-
-    // Create tests in both reports
-    const testCorrelationId = "5801ea0d-f00d-4cc8-b4d3-6a705ae5d9cf";
-    const testArgumentsHash = "96ba411b-ee11-49db-b691-7bf9ada097e4";
-    const passedStatusId = DEFAULT_TEST_STATUSES.PASSED.id;
-    
-    await generator.tests.create({
-      launchId: launch1.id,
-      statusId: passedStatusId,
-      correlationId: testCorrelationId,
-      argumentsHash: testArgumentsHash,
-    });
-
-    await generator.tests.create({
-      launchId: launch2.id,
-      statusId: passedStatusId,
-      correlationId: testCorrelationId,
-      argumentsHash: testArgumentsHash,
-    });
-  });
-
   test("filters by launchId", async () => {
-    // Create a report with multiple launches
-    const report = await generator.reports.create();
-    
-    // Create two launches in the same report
-    const launch1 = await generator.launches.create({
-      reportId: report.id,
-    });
-    
-    const launch2 = await generator.launches.create({
-      reportId: report.id,
-    });
-    
+    // Create two launches
+    const launch1 = await generator.launches.create({});
+
+    const launch2 = await generator.launches.create({});
+
     // Create tests with same status across launches
     const passedStatusId = DEFAULT_TEST_STATUSES.PASSED.id;
-    
+
     // Two tests for launch1
     await generator.tests.createMultiple(2, () => {
       return {
@@ -385,7 +343,7 @@ describe("find test entities counts by statuses", () => {
         argumentsHash: "e91a38b5-4728-4f67-bcd2-3c7250d8e7f6",
       };
     });
-    
+
     // Three tests for launch2
     await generator.tests.createMultiple(3, () => {
       return {
@@ -395,14 +353,14 @@ describe("find test entities counts by statuses", () => {
         argumentsHash: "2a9e31f8-7db6-4c05-b817-5e394fd87a2c",
       };
     });
-    
+
     // Filter by launch1 ID
     const responseLaunch1 = await client.findTestEntitiesCountsByStatuses({
       query: { launchId: launch1.id, distinct: false },
     });
-    
+
     expect_toBe(responseLaunch1.status, 200);
-    
+
     expect(responseLaunch1).toEqual({
       headers: expect.anything(),
       status: 200,
@@ -415,14 +373,14 @@ describe("find test entities counts by statuses", () => {
         },
       ],
     });
-    
+
     // Without filter - should return all 5 tests
     const responseAll = await client.findTestEntitiesCountsByStatuses({
-      query: { reportId: report.id, distinct: false },
+      query: { distinct: false },
     });
-    
+
     expect_toBe(responseAll.status, 200);
-    
+
     expect(responseAll).toEqual({
       headers: expect.anything(),
       status: 200,
@@ -438,8 +396,7 @@ describe("find test entities counts by statuses", () => {
   });
 
   test("handles multiple entity types within the same launch", async () => {
-    const report = await generator.reports.create();
-    const launch = await generator.launches.create({ reportId: report.id });
+    const launch = await generator.launches.create({});
 
     const passedStatusId = DEFAULT_TEST_STATUSES.PASSED.id;
 
@@ -460,7 +417,7 @@ describe("find test entities counts by statuses", () => {
     });
 
     const response = await client.findTestEntitiesCountsByStatuses({
-      query: { reportId: report.id, distinct: true },
+      query: { distinct: true },
     });
 
     expect_toBe(response.status, 200);

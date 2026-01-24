@@ -1,11 +1,11 @@
 import { launches } from "@total-report/core-schema/schema";
-import { and, count, eq, ilike } from "drizzle-orm";
+import { count, eq, ilike } from "drizzle-orm";
 import { NodePgQueryResultHKT } from "drizzle-orm/node-postgres/session";
 import { PgDatabase } from "drizzle-orm/pg-core/db";
 import { Paginated } from "../db-common/types.js";
-import { ReportNotFoundError } from "../errors/errors.js";
 import { validateTimestamps } from "../validations/validations.js";
 import { db as defaultDB } from "./setup.js";
+import { TestEntitiesDAO } from "./test-entities.js";
 
 export class LaunchesDAO {
   db: PgDatabase<NodePgQueryResultHKT, Record<string, unknown>>;
@@ -17,27 +17,20 @@ export class LaunchesDAO {
   }
 
   async create(args: CreateLaunch): Promise<LaunchEntity> {
-    try {
-      validateLaunch(args);
+    validateLaunch(args);
 
-      const found = await this.db
-        .insert(launches)
-        .values({
-          title: args.title,
-          reportId: args.reportId,
-          arguments: args.arguments,
-          createdTimestamp: args.createdTimestamp,
-          startedTimestamp: args.startedTimestamp,
-          finishedTimestamp: args.finishedTimestamp,
-        })
-        .returning();
+    const found = await this.db
+      .insert(launches)
+      .values({
+        title: args.title,
+        arguments: args.arguments,
+        createdTimestamp: args.createdTimestamp,
+        startedTimestamp: args.startedTimestamp,
+        finishedTimestamp: args.finishedTimestamp,
+      })
+      .returning();
 
-      return rowToEntity(found[0]!);
-    } catch (error) {
-      console.log("ERROR TYPE", typeof error);
-      console.log("ERROR", error);
-      throw new ReportNotFoundError(args.reportId);
-    }
+    return rowToEntity(found[0]!);
   }
 
   async findById(id: number): Promise<LaunchEntity | undefined> {
@@ -53,29 +46,25 @@ export class LaunchesDAO {
 
   async find(params: FindLaunches): Promise<Paginated<LaunchEntity>> {
     const data = await this.db.transaction(async (tx) => {
-      const reportIdFilter = params.reportId
-        ? eq(launches.reportId, params.reportId)
-        : undefined;
+      const titleFilter =
+        params.titleContains && params.titleContains.length > 0
+          ? ilike(
+              launches.title,
+              `%${params.titleContains.replace(/[%_]/g, "\\$&")}%`,
+            )
+          : undefined;
 
-      const titleFilter = params.titleContains
-        ? ilike(
-            launches.title,
-            `%${params.titleContains.replace(/[%_]/g, "\\$&")}%`
-          )
-        : undefined;
-
-      let filter = and(reportIdFilter, titleFilter);
 
       const items = await tx
         .select()
         .from(launches)
-        .where(filter)
+        .where(titleFilter)
         .limit(params.limit)
         .offset(params.offset)
         .orderBy(launches.createdTimestamp);
 
       const total =
-        (await tx.select({ value: count() }).from(launches).where(filter)).at(0)
+        (await tx.select({ value: count() }).from(launches).where(titleFilter)).at(0)
           ?.value ?? 0;
 
       return {
@@ -101,12 +90,6 @@ export class LaunchesDAO {
    * @returns The count of launches.
    */
   async findCount(params: FindCountParams): Promise<number> {
-    const reportIdFilter = params.reportId
-      ? eq(launches.reportId, params.reportId)
-      : undefined;
-
-    let filter = reportIdFilter;
-
     const result =
       (
         await this.db
@@ -114,7 +97,6 @@ export class LaunchesDAO {
             value: count(),
           })
           .from(launches)
-          .where(filter)
       ).at(0)?.value ?? 0;
 
     return result;
@@ -146,7 +128,10 @@ export class LaunchesDAO {
   }
 
   async deleteById(id: number): Promise<void> {
-    await this.db.delete(launches).where(eq(launches.id, id));
+    await this.db.transaction(async (tx) => {
+      // cascade delete should handle related tables
+      await tx.delete(launches).where(eq(launches.id, id));
+    });
   }
 }
 
@@ -164,7 +149,6 @@ const validateLaunch = (args: {
 };
 
 type CreateLaunch = {
-  reportId: number;
   title: string;
   arguments?: string;
   createdTimestamp: Date;
@@ -175,7 +159,6 @@ type CreateLaunch = {
 type FindLaunches = {
   limit: number;
   offset: number;
-  reportId?: number;
   correlationId?: string;
   argumentsHash?: string;
   titleContains?: string;
@@ -184,12 +167,7 @@ type FindLaunches = {
 /**
  * The parameters to find the count of launches.
  */
-type FindCountParams = {
-  /**
-   * The report ID the launches are belongs to.
-   */
-  reportId?: number;
-};
+type FindCountParams = {};
 
 type PatchLaunch = {
   id: number;
@@ -209,7 +187,6 @@ type SetColumnsValues = {
 type LaunchRow = typeof launches.$inferSelect;
 
 type LaunchEntity = {
-  reportId: number;
   id: number;
   title: string;
   arguments?: string;
@@ -220,7 +197,6 @@ type LaunchEntity = {
 
 const rowToEntity = (row: LaunchRow): LaunchEntity => {
   return {
-    reportId: row.reportId,
     id: row.id,
     title: row.title,
     arguments: row.arguments ?? undefined,

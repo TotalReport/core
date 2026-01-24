@@ -39,7 +39,6 @@ export default meta;
 type Story = StoryObj<typeof LaunchDetails>;
 
 const exampleLaunch = {
-  reportId: 1,
   id: 123,
   title: "Example Launch",
   createdTimestamp: new Date().toISOString(),

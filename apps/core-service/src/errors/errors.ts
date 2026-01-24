@@ -10,12 +10,6 @@ export class TitleIsEmptyError extends ValidationError {
   }
 }
 
-export class ReportNotFoundError extends ValidationError {
-  constructor(reportId: number) {
-    super("Report with id " + reportId + " is not found.");
-  }
-}
-
 export class LaunchNotFoundError extends ValidationError {
   constructor(launchId: number) {
     super("Launch with id " + launchId + " is not found.");

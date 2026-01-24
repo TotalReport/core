@@ -1,11 +1,10 @@
 import { Button } from "@/components/ui/button.js";
 import { Input } from "@/components/ui/input.js";
-import { Filter, Search, Check } from "lucide-react";
-import { useState } from "react";
-import { useFindReports } from "@/hooks/api/reports/use-find-reports.js";
 import { useFindLaunches } from "@/hooks/api/launches/use-find-launches.js";
-import { TestsList } from "./tests-list.jsx";
 import { TestsUrlFilters } from "@/types/tests-url-params.js";
+import { Check, Filter, Search } from "lucide-react";
+import { useState } from "react";
+import { TestsList } from "./tests-list.jsx";
 
 const TEST_FILTERS: FilterItem[] = [
   {
@@ -16,16 +15,6 @@ const TEST_FILTERS: FilterItem[] = [
     view: (value, open) => <TitleContainsFilterView open={open} value={value} />,
     editor: (value, apply, close) => (
       <TitleContainsFilterEditor value={value} apply={apply} close={close} />
-    ),
-  },
-  {
-    id: "report",
-    isFilterActive: (urlParams) => {
-      return urlParams?.reportId !== undefined && urlParams?.reportId !== null;
-    },
-    view: (value, open) => <ReportFilterView open={open} value={value} />,
-    editor: (value, apply, close) => (
-      <ReportFilterEditor value={value} apply={apply} close={close} />
     ),
   },
   {
@@ -373,125 +362,6 @@ function TitleContainsFilterEditor({
         <Button variant="default" onClick={onApply}>
           Apply
         </Button>
-      </div>
-    </div>
-  );
-}
-
-function ReportFilterView({
-  open,
-  value,
-}: {
-  open: () => void;
-  value: TestsUrlFilters;
-}) {
-  return (
-    <div
-      className="border rounded-md p-4 cursor-pointer hover:bg-accent transition-colors"
-      onClick={open}
-    >
-      <h3 className="text-sm font-medium">Report</h3>
-      <p className="text-xs text-muted-foreground mt-1">
-        {value?.reportId ? `Report ID: ${value.reportId}` : "Filter tests by report"}
-      </p>
-    </div>
-  );
-}
-
-function ReportFilterEditor({
-  value,
-  apply,
-  close,
-}: {
-  value: TestsUrlFilters;
-  apply: (v: TestsUrlFilters) => void;
-  close: () => void;
-}) {
-  const [selectedReport, setSelectedReport] = useState<{ id: number; title: string } | undefined>(
-    value?.reportId ? { id: value.reportId, title: "" } : undefined,
-  );
-  const [searchTerm, setSearchTerm] = useState("");
-
-  const reportsQuery = useFindReports({
-    pagination: { offset: 0, limit: 50 },
-    filters: { "title~cnt": searchTerm || undefined },
-  });
-
-  const handleSelectReport = (report: { id: number; title: string }) => {
-    setSelectedReport(report);
-  };
-
-  const handleClearSelection = () => {
-    setSelectedReport(undefined);
-  };
-
-  const handleApply = () => {
-    const next = selectedReport ? { ...value, reportId: selectedReport.id } : { ...value, reportId: undefined };
-    apply(next as TestsUrlFilters);
-  };
-
-  return (
-    <div className="flex flex-col h-full">
-      <div className="p-0">
-        <div className="relative">
-          <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
-          <Input
-            placeholder="Search reports..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="pl-8"
-          />
-        </div>
-
-        {selectedReport && (
-          <div className="p-3 border rounded-md bg-accent/30 border-primary mt-3">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium">Selected Report</p>
-                <p className="text-xs text-muted-foreground">{selectedReport.title}</p>
-              </div>
-              <Button type="button" variant="ghost" size="sm" onClick={handleClearSelection}>
-                Clear
-              </Button>
-            </div>
-          </div>
-        )}
-
-        <div className="max-h-60 overflow-y-auto space-y-2 mt-3">
-          {reportsQuery.isPending && (
-            <div className="text-center text-muted-foreground text-sm py-4">Loading reports...</div>
-          )}
-
-          {reportsQuery.isError && (
-            <div className="text-center text-destructive text-sm py-4">Error loading reports</div>
-          )}
-
-          {reportsQuery.data?.body.items.map((report) => (
-            <div
-              key={report.id}
-              className={`p-3 border rounded-md cursor-pointer transition-colors ${
-                selectedReport?.id === report.id ? "border-primary bg-accent/30" : "hover:bg-accent"
-              }`}
-              onClick={() => handleSelectReport({ id: report.id, title: report.title })}
-            >
-              <div className="flex items-center justify-between">
-                <p className="text-sm font-medium truncate">{report.title}</p>
-                {selectedReport?.id === report.id && <Check className="h-4 w-4 text-primary" />}
-              </div>
-            </div>
-          ))}
-
-          {reportsQuery.data?.body.items.length === 0 && !reportsQuery.isPending && (
-            <div className="text-center text-muted-foreground text-sm py-4">No reports found</div>
-          )}
-        </div>
-      </div>
-
-      <div className="mt-auto p-4 border-t flex justify-end gap-2">
-        <Button variant="outline" onClick={close}>
-          Cancel
-        </Button>
-        <Button onClick={handleApply}>Apply</Button>
       </div>
     </div>
   );

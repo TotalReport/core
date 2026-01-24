@@ -40,42 +40,12 @@ describe("find after tests", () => {
     });
   });
 
-  test("by reportId", async () => {
-    const report = await generator.reports.create();
-    const launch = await generator.launches.create({ reportId: report.id });
-    const created = await generator.afterTests.create({ launchId: launch.id });
-
-    // Record that should be filtered out
-    await generator.afterTests.create();
-
-    const limit = 10;
-    const offset = 0;
-
-    const response = await client.findAfterTests({
-      query: { reportId: report.id, limit, offset },
-    });
-
-    expect(response).toEqual({
-      headers: expect.anything(),
-      status: 200,
-      body: {
-        pagination: {
-          total: 1,
-          limit,
-          offset,
-        },
-        items: [{ ...created, arguments: [] }],
-      },
-    });
-  });
-
   test("by launchId", async () => {
-    const report = await generator.reports.create();
-    const launch = await generator.launches.create({ reportId: report.id });
+    const launch = await generator.launches.create({ });
     const created = await generator.afterTests.create({ launchId: launch.id });
 
     // Record that should be filtered out
-    const launch2 = await generator.launches.create({ reportId: report.id });
+    const launch2 = await generator.launches.create({ });
     await generator.afterTests.create({ launchId: launch2.id });
 
     const limit = 10;

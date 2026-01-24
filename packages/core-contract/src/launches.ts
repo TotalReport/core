@@ -6,7 +6,6 @@ import { PAGINATION_DEFAULTS } from "./defaults.js";
 extendZodWithOpenApi(z);
 
 export const CreateLaunchSchema = z.object({
-  reportId: z.number().int(),
   title: z.string().min(1).max(256),
   arguments: z
     .string()
@@ -25,7 +24,6 @@ export const PatchLaunchSchema = z.object({
 });
 
 export const LaunchSchema = z.object({
-  reportId: z.number().int(),
   id: z.number().int(),
   title: z.string().min(1).max(256),
   createdTimestamp: z.string().datetime({ offset: true }),
@@ -73,8 +71,7 @@ export const findLaunches = contract.query({
       .number()
       .int()
       .optional()
-      .default(PAGINATION_DEFAULTS.limit),
-    reportId: z.coerce.number().int().optional(),
+      .default(PAGINATION_DEFAULTS.offset),
     "title~cnt": z.string().optional().describe("Search by substring in the title."),
   }),
   responses: {
@@ -94,7 +91,6 @@ export const findLaunchesCount = contract.query({
   method: "GET",
   path: "/v1/launches/count",
   query: z.object({
-    reportId: z.coerce.number().int().optional().describe("The report ID the launches should belong to."),
   }),
   responses: {
     200: z.object({count: z.number().int()}),

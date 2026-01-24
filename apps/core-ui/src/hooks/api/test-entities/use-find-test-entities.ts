@@ -12,7 +12,6 @@ export const useFindTestEntities = ({
       "test-entities",
       pagination.offset,
       pagination.limit,
-      filters.reportId,
       filters.launchId,
       filters.entityTypes,
       filters["title~cnt"],
@@ -21,7 +20,6 @@ export const useFindTestEntities = ({
       query: {
         offset: pagination.offset,
         limit: pagination.limit,
-        reportId: filters.reportId,
         launchId: filters.launchId,
         entityTypes: filters.entityTypes,
         "title~cnt": filters["title~cnt"],
@@ -34,7 +32,6 @@ export const useFindTestEntities = ({
 export type FindTestEntitiesParams = {
   filters: {
     "title~cnt"?: string;
-    reportId?: number;
     launchId?: number;
     entityTypes?: ("beforeTest" | "test" | "afterTest")[]; // Add entity types filter with proper typing
   };

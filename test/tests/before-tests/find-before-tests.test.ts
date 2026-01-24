@@ -5,7 +5,11 @@ import { client } from "../../tools/client.js";
 
 const generator = new CoreEntititesGenerator(client);
 
-describe("find before tests", () => {
+describe("find before tests", () => {  
+  beforeEach(async () => {
+    await generator.launches.deleteAll();
+  });
+
   test("by id", async () => {
     const launch = await generator.launches.create();
     const testContext = await generator.contexts.create({
@@ -40,42 +44,12 @@ describe("find before tests", () => {
     });
   });
 
-  test("by reportId", async () => {
-    const report = await generator.reports.create();
-    const launch = await generator.launches.create({ reportId: report.id });
-    const created = await generator.beforeTests.create({ launchId: launch.id });
-
-    // Record that should be filtered out
-    await generator.beforeTests.create();
-
-    const limit = 10;
-    const offset = 0;
-
-    const response = await client.findBeforeTests({
-      query: { reportId: report.id, limit, offset },
-    });
-
-    expect(response).toEqual({
-      headers: expect.anything(),
-      status: 200,
-      body: {
-        pagination: {
-          total: 1,
-          limit,
-          offset,
-        },
-        items: [{ ...created, arguments: [], externalArguments: [] }],
-      },
-    });
-  });
-
   test("by launchId", async () => {
-    const report = await generator.reports.create();
-    const launch = await generator.launches.create({ reportId: report.id });
+    const launch = await generator.launches.create({ });
     const created = await generator.beforeTests.create({ launchId: launch.id });
 
     // Record that should be filtered out
-    const launch2 = await generator.launches.create({ reportId: report.id });
+    const launch2 = await generator.launches.create({ });
     await generator.beforeTests.create({ launchId: launch2.id });
 
     const limit = 10;
