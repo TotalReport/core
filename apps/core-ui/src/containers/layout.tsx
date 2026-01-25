@@ -49,11 +49,6 @@ export const Layout = ({
             isCollapsed={isCollapsed}
             links={[
               {
-                title: "Reports",
-                icon: ChartLine,
-                href: "/reports",
-              },
-              {
                 title: "Launches",
                 icon: Rocket,
                 href: "/launches",
