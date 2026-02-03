@@ -23,7 +23,7 @@
   },
   "pnpm": {
     "patchedDependencies": {
-      "@rspack/core": "patches/@rspack__core.patch"
+      "@rspack/core@1.5.8": "patches/@rspack__core.patch"
     },
     "overrides": {
       "@types/react": "18.3.1",

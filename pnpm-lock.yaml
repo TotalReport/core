@@ -9,7 +9,7 @@ overrides:
   '@types/react-dom': 18.3.1
 
 patchedDependencies:
-  '@rspack/core':
+  '@rspack/core@1.5.8':
     hash: clldiqe7l6tgm2nl3d43caa6ga
     path: patches/@rspack__core.patch
 
@@ -300,6 +300,9 @@ importers:
       '@ts-rest/core':
         specifier: ^3.51.0
         version: 3.51.0(@types/node@22.14.1)(zod@3.24.3)
+      date-fns:
+        specifier: ^4.1.0
+        version: 4.1.0
     devDependencies:
       '@total-report/typescript-config':
         specifier: workspace:*
@@ -395,6 +398,9 @@ importers:
       '@ts-rest/core':
         specifier: ^3.51.0
         version: 3.51.0(@types/node@22.14.1)(zod@3.24.3)
+      date-fns:
+        specifier: ^4.1.0
+        version: 4.1.0
     devDependencies:
       '@total-report/typescript-config':
         specifier: workspace:*
@@ -9819,7 +9825,7 @@ snapshots:
 
   '@rsbuild/core@1.5.12':
     dependencies:
-      '@rspack/core': 1.5.7(patch_hash=clldiqe7l6tgm2nl3d43caa6ga)(@swc/helpers@0.5.17)
+      '@rspack/core': 1.5.7(@swc/helpers@0.5.17)
       '@rspack/lite-tapable': 1.0.1
       '@swc/helpers': 0.5.17
       core-js: 3.45.1
@@ -10117,7 +10123,7 @@ snapshots:
       '@rspack/binding-win32-ia32-msvc': 1.5.8
       '@rspack/binding-win32-x64-msvc': 1.5.8
 
-  '@rspack/core@1.5.7(patch_hash=clldiqe7l6tgm2nl3d43caa6ga)(@swc/helpers@0.5.17)':
+  '@rspack/core@1.5.7(@swc/helpers@0.5.17)':
     dependencies:
       '@module-federation/runtime-tools': 0.18.0
       '@rspack/binding': 1.5.7
@@ -14518,6 +14524,17 @@ snapshots:
     optionalDependencies:
       esbuild: 0.25.10
 
+  terser-webpack-plugin@5.3.14(esbuild@0.25.5)(webpack@5.102.0(esbuild@0.25.5)):
+    dependencies:
+      '@jridgewell/trace-mapping': 0.3.31
+      jest-worker: 27.5.1
+      schema-utils: 4.3.2
+      serialize-javascript: 6.0.2
+      terser: 5.44.0
+      webpack: 5.102.0(esbuild@0.25.5)
+    optionalDependencies:
+      esbuild: 0.25.5
+
   terser@5.44.0:
     dependencies:
       '@jridgewell/source-map': 0.3.11
@@ -14865,7 +14882,7 @@ snapshots:
       neo-async: 2.6.2
       schema-utils: 4.3.2
       tapable: 2.2.3
-      terser-webpack-plugin: 5.3.14(@swc/core@1.11.31(@swc/helpers@0.5.17))(esbuild@0.25.5)(webpack@5.102.0(@swc/core@1.11.31(@swc/helpers@0.5.17))(esbuild@0.25.5))
+      terser-webpack-plugin: 5.3.14(esbuild@0.25.5)(webpack@5.102.0(esbuild@0.25.5))
       watchpack: 2.4.4
       webpack-sources: 3.3.3
     transitivePeerDependencies:

@@ -14,6 +14,8 @@ export class TestsGenerator {
 
   constructor(client: ClientType) {
     this.client = client;
+    this.create = this.create.bind(this);
+    this.createMultiple = this.createMultiple.bind(this);
   }
 
   /**
@@ -23,17 +25,22 @@ export class TestsGenerator {
    * @returns The created test.
    */
   async create(
-    args: GenerateTestArgs | undefined = undefined
+    args: GenerateTestArgs | undefined = undefined,
   ): Promise<CreateTestResponse> {
     const launchId =
       args?.launchId ?? (await new LaunchesGenerator(this.client).create()).id;
 
     const title =
       args?.title ??
-      capitalizeFirstLetter(faker.word.adjective() + " " + 
-      faker.word.noun() + " " + 
-      faker.word.verb() + " " + 
-      faker.word.adverb());
+      capitalizeFirstLetter(
+        faker.word.adjective() +
+          " " +
+          faker.word.noun() +
+          " " +
+          faker.word.verb() +
+          " " +
+          faker.word.adverb(),
+      );
 
     if (args?.statusId !== undefined) {
       const now = new Date();
@@ -53,7 +60,7 @@ export class TestsGenerator {
       }
       if (args.createdTimestamp === undefined) {
         args.createdTimestamp = [
-          args.createdTimestamp,
+          args.startedTimestamp,
           args.finishedTimestamp,
           now,
         ].find((x) => x !== undefined);
@@ -71,7 +78,7 @@ export class TestsGenerator {
     assertEquals(
       response.status,
       201,
-      `Failed to create test. Server response status ${response.status}, body ${JSON.stringify(response.body)}`
+      `Failed to create test. Server response status ${response.status}, body ${JSON.stringify(response.body)}`,
     );
 
     return response.body;
@@ -86,14 +93,76 @@ export class TestsGenerator {
    */
   async createMultiple(
     count: number,
-    argsProvider: (index: number) => GenerateTestArgs | undefined
+    argsProvider: (index: number) => GenerateTestArgs | undefined,
   ): Promise<Array<CreateTestResponse>> {
     const result = Array.from({ length: count }).map(
-      async (_, i) => await this.create(argsProvider(i))
+      async (_, i) => await this.create(argsProvider(i)),
     );
     return await Promise.all(result);
   }
+
+  /**
+   * Creates a new test by sample.
+   *
+   * @param params The parameters to create the test run with.
+   * @returns The created test.
+   */
+  async createBySample(params: CreateTestParams) {
+    const launchId =
+      "launch" in params ? params.launch.id : params.context.launchId;
+
+    const contextId = "context" in params ? params.context.id : undefined;
+
+    return await this.create({
+      launchId: launchId,
+      testContextId: contextId,
+      title: params.sample.title,
+      correlationId: params.sample.correlationId,
+      arguments: params.sample.arguments,
+      argumentsHash: params.sample.argumentsHash,
+      externalArguments: params.sample.externalArguments,
+      externalArgumentsHash: params.sample.externalArgumentsHash,
+      startedTimestamp: params.startedTimestamp,
+      finishedTimestamp: params.finishedTimestamp,
+      statusId: params.statusId,
+    });
+  }
 }
+
+type TestToRun = Pick<
+  CreateTestResponse,
+  | "title"
+  | "correlationId"
+  | "arguments"
+  | "argumentsHash"
+  | "externalArguments"
+  | "externalArgumentsHash"
+>;
+
+type CreateTestParams = {
+  sample: TestToRun;
+  startedTimestamp: Date | undefined;
+} &
+  LaunchOrContext &
+  (NotFinished | Finished);
+
+type LaunchOrContext =
+  | {
+      launch: { id: number };
+    }
+  | {
+      context: { id: number; launchId: number };
+    };
+
+type NotFinished = {
+  finishedTimestamp: undefined;
+  statusId: undefined;
+};
+
+type Finished = {
+  finishedTimestamp: Date;
+  statusId: string;
+};
 
 /**
  * The arguments to create a test with.

@@ -13,3 +13,15 @@ export function assertEquals<T>(
   if (actual === expected) return;
   throw new Error(message);
 }
+
+/**
+ * Returns a new date that is after the given date by the specified delay in milliseconds.
+ * 
+ * @param params.date The date to add the delay to.
+ * @param params.delayMilliseconds The delay in milliseconds to add.
+ * @returns A new date that is after the given date by the specified delay.
+ */
+export function after(params: { timestamp: Date | string; delayMilliseconds: number }): Date {
+  const date = typeof params.timestamp === "string" ? new Date(params.timestamp) : params.timestamp;
+  return new Date(date.getTime() + params.delayMilliseconds);
+}

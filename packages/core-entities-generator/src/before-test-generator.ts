@@ -1,10 +1,10 @@
 import { faker } from "@faker-js/faker";
-import { ClientType } from "./types.js";
-import { assertEquals } from "./utils.js";
-import { LaunchesGenerator } from "./launch-generator.js";
-import { ClientInferRequest, ClientInferResponseBody } from "@ts-rest/core";
 import { contract } from "@total-report/core-contract/contract";
+import { ClientInferRequest, ClientInferResponseBody } from "@ts-rest/core";
+import { LaunchesGenerator } from "./launch-generator.js";
+import { ClientType } from "./types.js";
 import { capitalizeFirstLetter } from "./utils-string.js";
+import { assertEquals } from "./utils.js";
 
 /**
  * This class is responsible for generating before tests.
@@ -21,16 +21,23 @@ export class BeforeTestsGenerator {
    * @param args The arguments to create the before test with.
    * @returns The created before test.
    */
-  async create(args: GenerateBeforeTestArgs | undefined = undefined): Promise<CreateBeforeTestResponse> {
+  async create(
+    args: GenerateBeforeTestArgs | undefined = undefined,
+  ): Promise<CreateBeforeTestResponse> {
     const launchId =
       args?.launchId ?? (await new LaunchesGenerator(this.client).create()).id;
 
     const title =
       args?.title ??
-      capitalizeFirstLetter(faker.word.adjective() + " " + 
-      faker.word.noun() + " " + 
-      faker.word.verb() + " " + 
-      faker.word.adverb());
+      capitalizeFirstLetter(
+        faker.word.adjective() +
+          " " +
+          faker.word.noun() +
+          " " +
+          faker.word.verb() +
+          " " +
+          faker.word.adverb(),
+      );
 
     if (args?.statusId !== undefined) {
       const now = new Date();
@@ -68,7 +75,7 @@ export class BeforeTestsGenerator {
     assertEquals(
       response.status,
       201,
-      `Failed to create before test. Server response status ${response.status}, body ${JSON.stringify(response.body)}`
+      `Failed to create before test. Server response status ${response.status}, body ${JSON.stringify(response.body)}`,
     );
 
     return response.body;
@@ -83,14 +90,76 @@ export class BeforeTestsGenerator {
    */
   async createMultiple(
     count: number,
-    argsProvider: (index: number) => GenerateBeforeTestArgs | undefined
+    argsProvider: (index: number) => GenerateBeforeTestArgs | undefined,
   ): Promise<Array<CreateBeforeTestResponse>> {
     const result = Array.from({ length: count }).map(
-      async (_, i) => await this.create(argsProvider(i))
+      async (_, i) => await this.create(argsProvider(i)),
     );
     return await Promise.all(result);
   }
+
+  /**
+   * Creates a new before test by sample.
+   *
+   * @param params The parameters to create the test run with.
+   * @returns The created test.
+   */
+  async createBySample(params: CreateBeforeTestParams) {
+    const launchId =
+      "launch" in params ? params.launch.id : params.context.launchId;
+
+    const contextId = "context" in params ? params.context.id : undefined;
+
+    return await this.create({
+      launchId: launchId,
+      testContextId: contextId,
+      title: params.sample.title,
+      correlationId: params.sample.correlationId,
+      arguments: params.sample.arguments,
+      argumentsHash: params.sample.argumentsHash,
+      externalArguments: params.sample.externalArguments,
+      externalArgumentsHash: params.sample.externalArgumentsHash,
+      startedTimestamp: params.startedTimestamp,
+      finishedTimestamp: params.finishedTimestamp,
+      statusId: params.statusId,
+    });
+  }
 }
+
+type TestToRun = Pick<
+  CreateBeforeTestResponse,
+  | "title"
+  | "correlationId"
+  | "arguments"
+  | "argumentsHash"
+  | "externalArguments"
+  | "externalArgumentsHash"
+>;
+
+type CreateBeforeTestParams = {
+  sample: TestToRun;
+  startedTimestamp: Date | undefined;
+} &
+  LaunchOrContext &
+  (NotFinished | Finished);
+
+type LaunchOrContext =
+  | {
+      launch: { id: number };
+    }
+  | {
+      context: { id: number; launchId: number };
+    };
+
+type NotFinished = {
+  finishedTimestamp: undefined;
+  statusId: undefined;
+};
+
+type Finished = {
+  finishedTimestamp: Date;
+  statusId: string;
+};
 
 /**
  * The arguments to create a before test with.
