@@ -16,24 +16,6 @@ export class LaunchNotFoundError extends ValidationError {
   }
 }
 
-export class TestContextNotFoundError extends ValidationError {
-  constructor(testContextId: number) {
-    super("Test context " + testContextId + " is not found.");
-  }
-}
-
-export class ParentTestContextNotFoundError extends ValidationError {
-  constructor(parentTestContextId: number) {
-    super("Parent test context " + parentTestContextId + " is not found.");
-  }
-}
-
-export class ParentTestContextHasCircularParentTestContextReferenceError extends ValidationError {
-  constructor(parentTestContextId: number) {
-    super(`Parent test context ${parentTestContextId} has a circular reference.`);
-  }
-}
-
 export class StartedTimestampIsNotSetButFinishedTimestampIsSetError extends ValidationError {
   constructor() {
     super("Started timestamp is not set, but finished timestamp is set.");
@@ -49,30 +31,6 @@ export class StartedTimestampBeforeCreatedTimestampError extends ValidationError
 export class FinishedTimestampBeforeStartedTimestampError extends ValidationError {
   constructor(finishedTimestamp: Date, startedTimestamp: Date) {
     super(`Finished timestamp ${finishedTimestamp.toISOString()} is before started timestamp ${startedTimestamp.toISOString()}.`);
-  }
-}
-
-export class ParentTestContextBelongsToDifferentLaunchError extends ValidationError {
-  constructor(args: {
-    parentTestContextId: number;
-    parentTestContextLaunchId: number;
-    expectedLaunchId: number;
-  }) {
-    super(
-      `Parent test context ${args.parentTestContextId} belongs to different launch ${args.parentTestContextLaunchId}. Expected ${args.expectedLaunchId}.`
-    );
-  }
-}
-
-export class TestContextBelongsToDifferentLaunchError extends ValidationError {
-  constructor(args: {
-    testContextId: number;
-    testContextLaunchId: number;
-    expectedLaunchId: number;
-  }) {
-    super(
-      `Test context ${args.testContextId} belongs to different launch ${args.testContextLaunchId}. Expected ${args.expectedLaunchId}.`
-    );
   }
 }
 

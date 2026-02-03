@@ -18,94 +18,66 @@ describe("test entities", () => {
     const launch1 = await generator.launches.create();
     const launch2 = await generator.launches.create();
 
-    const rootContext11 = await generator.contexts.create({
+    const beforeTest1Launch1 = await generator.beforeTests.create({
       launchId: launch1.id,
     });
-    const rootContext21 = await generator.contexts.create({
+    const beforeTest1Launch2 = await generator.beforeTests.create({
       launchId: launch2.id,
     });
 
-    const context12InRootContext11 = await generator.contexts.create({
-      parentTestContextId: rootContext11.id,
+    const beforeTest2Launch1 = await generator.beforeTests.create({
       launchId: launch1.id,
     });
-    const context22InRootContext21 = await generator.contexts.create({
-      parentTestContextId: rootContext21.id,
+    const beforeTest2Launch2 = await generator.beforeTests.create({
       launchId: launch2.id,
     });
 
-    const rootBeforeTest11 = await generator.beforeTests.create({
+    const beforeTest3Launch1 = await generator.beforeTests.create({
       launchId: launch1.id,
     });
-    const rootBeforeTest21 = await generator.beforeTests.create({
+    const beforeTest3Launch2 = await generator.beforeTests.create({
       launchId: launch2.id,
     });
 
-    const beforeTest12InRootContext11 = await generator.beforeTests.create({
-      testContextId: rootContext11.id,
+    const test1Launch1 = await generator.tests.create({
       launchId: launch1.id,
     });
-    const beforeTest22InRootContext21 = await generator.beforeTests.create({
-      testContextId: rootContext21.id,
+    const test1Launch2 = await generator.tests.create({
       launchId: launch2.id,
     });
 
-    const beforeTest13InContext12 = await generator.beforeTests.create({
-      testContextId: context12InRootContext11.id,
+    const test2Launch1 = await generator.tests.create({
       launchId: launch1.id,
     });
-    const beforeTest23InContext22 = await generator.beforeTests.create({
-      testContextId: context22InRootContext21.id,
+    const test2Launch2 = await generator.tests.create({
       launchId: launch2.id,
     });
 
-    const rootTest11 = await generator.tests.create({
+    const test3Launch1 = await generator.tests.create({
       launchId: launch1.id,
     });
-    const rootTest21 = await generator.tests.create({
+    const test3Launch2 = await generator.tests.create({
       launchId: launch2.id,
     });
 
-    const test12InRootContext11 = await generator.tests.create({
-      testContextId: rootContext11.id,
+    const afterTest1Launch1 = await generator.afterTests.create({
       launchId: launch1.id,
     });
-    const test22InRootContext21 = await generator.tests.create({
-      testContextId: rootContext21.id,
+    const afterTest1Launch2 = await generator.afterTests.create({
       launchId: launch2.id,
     });
 
-    const test13InContext12 = await generator.tests.create({
-      testContextId: context12InRootContext11.id,
+    const afterTest2Launch1 = await generator.afterTests.create({
       launchId: launch1.id,
     });
-    const test23InContext22 = await generator.tests.create({
-      testContextId: context22InRootContext21.id,
+    const afterTest2Launch2 = await generator.afterTests.create({
       launchId: launch2.id,
     });
 
-    const rootAfterTest11 = await generator.afterTests.create({
+    const afterTest3Launch1 = await generator.afterTests.create({
       launchId: launch1.id,
     });
-    const rootAfterTest21 = await generator.afterTests.create({
-      launchId: launch2.id,
-    });
-
-    const afterTest12InRootContext11 = await generator.afterTests.create({
-      testContextId: rootContext11.id,
-      launchId: launch1.id,
-    });
-    const afterTest22InRootContext21 = await generator.afterTests.create({
-      testContextId: rootContext21.id,
-      launchId: launch2.id,
-    });
-
-    const afterTest13InContext12 = await generator.afterTests.create({
-      testContextId: context12InRootContext11.id,
-      launchId: launch1.id,
-    });
-    const afterTest23InContext22 = await generator.afterTests.create({
-      testContextId: context22InRootContext21.id,
+    const afterTest3Launch2 = await generator.afterTests.create({
       launchId: launch2.id,
     });
 
@@ -122,70 +94,20 @@ describe("test entities", () => {
       status: 200,
       body: {
         items: [
-          beforeTestToEntity(rootBeforeTest11),
-          beforeTestToEntity(beforeTest12InRootContext11),
-          beforeTestToEntity(beforeTest13InContext12),
-          testToEntity(rootTest11),
-          testToEntity(test12InRootContext11),
-          testToEntity(test13InContext12),
-          afterTestToEntity(rootAfterTest11),
-          afterTestToEntity(afterTest12InRootContext11),
-          afterTestToEntity(afterTest13InContext12),
+          beforeTestToEntity(beforeTest1Launch1),
+          beforeTestToEntity(beforeTest2Launch1),
+          beforeTestToEntity(beforeTest3Launch1),
+          testToEntity(test1Launch1),
+          testToEntity(test2Launch1),
+          testToEntity(test3Launch1),
+          afterTestToEntity(afterTest1Launch1),
+          afterTestToEntity(afterTest2Launch1),
+          afterTestToEntity(afterTest3Launch1),
         ],
         pagination: {
           limit: 20,
           offset: 0,
           total: 9,
-        },
-      },
-    });
-
-    const entitiesByRootContext = await client.findTestEntities({
-      query: {
-        contextId: rootContext11.id,
-        limit: 20,
-        offset: 0,
-      },
-    });
-
-    expect(entitiesByRootContext).toEqual({
-      headers: expect.anything(),
-      status: 200,
-      body: {
-        items: [
-          beforeTestToEntity(beforeTest12InRootContext11),
-          testToEntity(test12InRootContext11),
-          afterTestToEntity(afterTest12InRootContext11),
-        ],
-        pagination: {
-          limit: 20,
-          offset: 0,
-          total: 3,
-        },
-      },
-    });
-
-    const entitiesByNestedContext = await client.findTestEntities({
-      query: {
-        contextId: context12InRootContext11.id,
-        limit: 20,
-        offset: 0,
-      },
-    });
-
-    expect(entitiesByNestedContext).toEqual({
-      headers: expect.anything(),
-      status: 200,
-      body: {
-        items: [
-          beforeTestToEntity(beforeTest13InContext12),
-          testToEntity(test13InContext12),
-          afterTestToEntity(afterTest13InContext12),
-        ],
-        pagination: {
-          limit: 20,
-          offset: 0,
-          total: 3,
         },
       },
     });
@@ -216,46 +138,6 @@ describe("test entities", () => {
           offset,
         },
         items: [testToEntity(created)],
-      },
-    });
-  });
-
-  test("by contextId", async () => {
-    const launch = await generator.launches.create();
-    const testContext = await generator.contexts.create({
-      launchId: launch.id,
-    });
-    const expectedRecord = await generator.tests.create({
-      testContextId: testContext.id,
-      launchId: launch.id,
-    });
-
-    // Record that should be filtered out
-    const testContext2 = await generator.contexts.create({
-      launchId: launch.id,
-    });
-    await generator.tests.create({
-      testContextId: testContext2.id,
-      launchId: launch.id,
-    });
-
-    const limit = 10;
-    const offset = 0;
-
-    const response = await client.findTestEntities({
-      query: { contextId: testContext.id, limit, offset },
-    });
-
-    expect(response).toEqual({
-      headers: expect.anything(),
-      status: 200,
-      body: {
-        pagination: {
-          total: 1,
-          limit,
-          offset,
-        },
-        items: [testToEntity(expectedRecord)],
       },
     });
   });
@@ -600,9 +482,6 @@ describe("test entities", () => {
 const beforeTestToEntity = (entity: BeforeTest): TestEntity => {
   return {
     launchId: entity.launchId,
-    ...(entity.testContextId
-      ? { parentContextId: entity.testContextId }
-      : undefined),
     entityType: "beforeTest",
     id: entity.id,
     title: entity.title,
@@ -623,9 +502,6 @@ const beforeTestToEntity = (entity: BeforeTest): TestEntity => {
 const testToEntity = (entity: Test): TestEntity => {
   return {
     launchId: entity.launchId,
-    ...(entity.testContextId
-      ? { parentContextId: entity.testContextId }
-      : undefined),
     entityType: "test",
     id: entity.id,
     title: entity.title,
@@ -646,9 +522,6 @@ const testToEntity = (entity: Test): TestEntity => {
 const afterTestToEntity = (entity: AfterTest): TestEntity => {
   return {
     launchId: entity.launchId,
-    ...(entity.testContextId
-      ? { parentContextId: entity.testContextId }
-      : undefined),
     entityType: "afterTest",
     id: entity.id,
     title: entity.title,
@@ -670,10 +543,6 @@ type TestEntity = ClientInferResponseBody<
   typeof contract.findTestEntities,
   200
 >["items"][0];
-type TestContext = ClientInferResponseBody<
-  typeof contract.createTestContext,
-  201
->;
 type BeforeTest = ClientInferResponseBody<
   typeof contract.createBeforeTest,
   201

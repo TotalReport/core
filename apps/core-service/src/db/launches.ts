@@ -5,7 +5,6 @@ import { PgDatabase } from "drizzle-orm/pg-core/db";
 import { Paginated } from "../db-common/types.js";
 import { validateTimestamps } from "../validations/validations.js";
 import { db as defaultDB } from "./setup.js";
-import { TestEntitiesDAO } from "./test-entities.js";
 
 export class LaunchesDAO {
   db: PgDatabase<NodePgQueryResultHKT, Record<string, unknown>>;

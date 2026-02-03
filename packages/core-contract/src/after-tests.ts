@@ -4,7 +4,6 @@ import { PAGINATION_DEFAULTS } from "./defaults.js";
 
 export const CreateAfterTestSchema = z.object({
   launchId: z.number().int(),
-  testContextId: z.number().int().optional(),
   title: z.string().min(1).max(256),
   createdTimestamp: z.coerce.date().optional(),
   startedTimestamp: z.coerce.date().optional(),
@@ -54,7 +53,6 @@ export const CreateAfterTestSchema = z.object({
 
 export const AfterTestSchema = z.object({
   launchId: z.number().int(),
-  testContextId: z.number().int().optional(),
   id: z.number().int(),
   title: z.string().min(1).max(256),
   createdTimestamp: z.string().datetime({ offset: true }),
@@ -129,11 +127,6 @@ export const findAfterTests = contract.query({
       .int()
       .optional()
       .describe("The launch ID the after tests belong to."),
-    testContextId: z.coerce
-      .number()
-      .int()
-      .optional()
-      .describe("The test context ID the after tests belong to."),
     correlationId: z.coerce
       .string()
       .uuid()

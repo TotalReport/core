@@ -9,10 +9,9 @@ const generator = new CoreEntititesGenerator(client);
 
 describe("patch test", () => {
   test("with all fields", async () => {
-    const testContext = await generator.contexts.create();
+    const launch = await generator.launches.create();
     const test = await generator.tests.create({
-      launchId: testContext.launchId,
-      testContextId: testContext.id,
+      launchId: launch.id,
       title: "Text context 1",
       createdTimestamp: new Date("2024-07-21T06:52:32Z"),
       startedTimestamp: new Date("2024-07-21T06:52:35Z"),
@@ -48,7 +47,6 @@ describe("patch test", () => {
       headers: expect.anything(),
       status: 200,
       body: {
-        testContextId: testContext.id,
         launchId: test.launchId,
         id: test.id,
         title: patchRequest.title,

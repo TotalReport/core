@@ -10,7 +10,6 @@ const contract = initContract();
 
 export const TestEntitySchema = z.object({
   launchId: z.number().int(),
-  parentContextId: z.number().int().optional(),
   id: z.number().int(),
   entityType: z.string(),
   title: z.string(),
@@ -37,7 +36,6 @@ export const findTestEntities = contract.query({
       .array(z.enum(["beforeTest", "test", "afterTest"]))
       .optional(),
     launchId: z.coerce.number().int().optional(),
-    contextId: z.coerce.number().int().optional(),
     correlationId: z.coerce.string().optional(),
     statusIds: z.array(z.coerce.string()).optional(),
     argumentsHash: z.coerce.string().optional(),

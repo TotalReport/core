@@ -49,13 +49,6 @@ import {
   readTestStatusRoute,
 } from "./routes/statuses.js";
 import {
-  createTestContextRoute,
-  deleteTestContextRoute,
-  findTestContextsByLaunchIdRoute,
-  patchTestContextRoute,
-  readTestContextRoute,
-} from "./routes/test-contexts.js";
-import {
   findTestEntitiesCountsByStatusesRoute,
   findTestEntitiesRoute,
 } from "./routes/test-entities.js";
@@ -95,12 +88,6 @@ const router = s.router(contract, {
   findLaunches: findLaunchesRoute,
   patchLaunch: patchLaunchRoute,
   deleteLaunch: deleteLaunchRoute,
-
-  createTestContext: createTestContextRoute,
-  readTestContext: readTestContextRoute,
-  patchTestContext: patchTestContextRoute,
-  findTestContextsByLaunchId: findTestContextsByLaunchIdRoute,
-  deleteTestContext: deleteTestContextRoute,
 
   createBeforeTest: createBeforeTestRoute,
   findBeforeTests: findBeforeTestsRoute,

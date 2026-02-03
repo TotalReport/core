@@ -43,13 +43,6 @@ import {
   readTestStatus,
   readTestStatusGroup,
 } from "./statuses.js";
-import {
-  createTestContext,
-  deleteTestContext,
-  findTestContextsByLaunchId,
-  patchTestContext,
-  readTestContext,
-} from "./test-contexts.js";
 import { findTestEntities, findTestEntitiesCountsByStatuses } from "./test-entities.js";
 import {
   createTestStep,
@@ -86,12 +79,6 @@ export const contract = c.router({
   findLaunches: findLaunches,
   patchLaunch: patchLaunch,
   deleteLaunch: deleteLaunch,
-
-  createTestContext: createTestContext,
-  readTestContext: readTestContext,
-  patchTestContext: patchTestContext,
-  findTestContextsByLaunchId: findTestContextsByLaunchId,
-  deleteTestContext: deleteTestContext,
 
   createBeforeTest: createBeforeTest,
   readBeforeTest: readBeforeTest,

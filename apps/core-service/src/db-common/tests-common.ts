@@ -6,11 +6,8 @@ import {
 import { and, count, eq } from "drizzle-orm";
 import { NodePgQueryResultHKT } from "drizzle-orm/node-postgres/session";
 import { PgDatabase } from "drizzle-orm/pg-core/db";
-import { TestContextsDAO } from "../db/test-contexts.js";
 import {
-  TestContextBelongsToDifferentLaunchError,
-  TestContextNotFoundError,
-  TestNotFoundError,
+  TestNotFoundError
 } from "../errors/errors.js";
 import {
   validateTimestampsAndStatus,
@@ -66,29 +63,9 @@ export class TestsCommonDAO {
    *
    * @param {CreateTestArguments} args Arguments for creating a new test entity.
    * @returns Created test entity.
-   * @throws {TestContextNotFoundError} if the test context is not found.
-   * @throws {TestContextBelongsToDifferentLaunchError} if the test context belongs to a different launch.
    */
   async create(args: CreateTestArguments): Promise<TestEntity> {
     const result = await this.db.transaction(async (tx) => {
-      if (args.testContextId) {
-        const testContext = await new TestContextsDAO(tx).findById(
-          args.testContextId
-        );
-
-        if (testContext == undefined) {
-          throw new TestContextNotFoundError(args.testContextId);
-        }
-
-        if (testContext.launchId != args.launchId) {
-          throw new TestContextBelongsToDifferentLaunchError({
-            testContextId: args.testContextId,
-            testContextLaunchId: testContext.launchId,
-            expectedLaunchId: args.launchId,
-          });
-        }
-      }
-
       validate(args);
 
       const test = await this.insertRow(tx, args);
@@ -155,15 +132,11 @@ export class TestsCommonDAO {
     limit: number;
     offset: number;
     launchId?: number;
-    testContextId?: number;
     correlationId?: string;
     argumentsHash?: string;
   }): Promise<{ items: TestEntity[]; totalItems: number }> {
     const whereConditions = [
       args.launchId ? eq(this.testTable.launchId, args.launchId) : undefined,
-      args.testContextId
-        ? eq(this.testTable.testContextId, args.testContextId)
-        : undefined,
       args.correlationId
         ? eq(this.testTable.correlationId, args.correlationId)
         : undefined,
@@ -289,7 +262,6 @@ export class TestsCommonDAO {
       await db
         .insert(this.testTable)
         .values({
-          testContextId: args.testContextId,
           title: args.title,
           launchId: args.launchId,
           createdTimestamp: args.createdTimestamp,
@@ -312,7 +284,6 @@ export type CreateTestArguments = {
   startedTimestamp?: Date;
   finishedTimestamp?: Date;
   statusId?: string;
-  testContextId?: number;
   arguments?: {
     name: string;
     type: string;
@@ -368,7 +339,6 @@ const convertToEntity = (args: {
 }): TestEntity => {
   return {
     launchId: args.testRow.launchId,
-    testContextId: args.testRow.testContextId ?? undefined,
     id: args.testRow.id,
     title: args.testRow.title,
     createdTimestamp: args.testRow.createdTimestamp,

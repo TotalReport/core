@@ -20,7 +20,7 @@ import { Paginated, PaginationParams } from "../db-common/types.js";
 import { db as defaultDB } from "../db/setup.js";
 
 /**
- * Data access object for test entities. Test entities are contexts, before tests, tests, after tests.
+ * Data access object for test entities. Test entities are before tests, tests, after tests.
  */
 export class TestEntitiesDAO {
   db: PgDatabase<NodePgQueryResultHKT, Record<string, unknown>>;
@@ -45,10 +45,6 @@ export class TestEntitiesDAO {
     return await this.db.transaction(async (tx) => {
       //TODO rewrite this mess fully to something more readable
       const filters: SQLWrapper[] = [];
-
-      if (search.contextId !== undefined) {
-        filters.push(eq(testEntities.parentContextId, search.contextId));
-      }
 
       if (search.launchId !== undefined) {
         filters.push(eq(testEntities.launchId, search.launchId));
@@ -97,7 +93,6 @@ export class TestEntitiesDAO {
       const selectItems = tx
         .select({
           launchId: testEntities.launchId,
-          contextId: testEntities.parentContextId,
           id: testEntities.id,
           title: testEntities.title,
           createdTimestamp: testEntities.createdTimestamp,
@@ -117,7 +112,6 @@ export class TestEntitiesDAO {
           const subquery = tx
             .select({
               launchId: testEntities.launchId,
-              contextId: testEntities.parentContextId,
               id: testEntities.id,
               title: testEntities.title,
               createdTimestamp: testEntities.createdTimestamp,
@@ -139,7 +133,6 @@ export class TestEntitiesDAO {
           return tx
             .select({
               launchId: subquery.launchId,
-              contextId: subquery.contextId,
               id: subquery.id,
               title: subquery.title,
               createdTimestamp: subquery.createdTimestamp,
@@ -217,7 +210,6 @@ const distinctFilterTestEntities = (
       db
         .select({
           launchId: testEntities.launchId,
-          contextId: testEntities.parentContextId,
           id: testEntities.id,
           title: testEntities.title,
           createdTimestamp: testEntities.createdTimestamp,
@@ -257,7 +249,6 @@ const filterTestEntities = (
     db
       .select({
         launchId: testEntities.launchId,
-        contextId: testEntities.parentContextId,
         id: testEntities.id,
         title: testEntities.title,
         createdTimestamp: testEntities.createdTimestamp,
@@ -284,7 +275,6 @@ const filterTestEntities = (
 export type TestEntitySearch = {
   entityTypes?: string[];
   launchId?: number;
-  contextId?: number;
   correlationId?: string;
   argumentsHash?: string;
   statusIds?: string[];
@@ -298,7 +288,6 @@ export type TestEntitySearch = {
  */
 export type TestEntityEntity = {
   launchId: number;
-  parentContextId: number | undefined;
   id: number;
   entityType: string;
   title: string;
@@ -313,7 +302,6 @@ export type TestEntityEntity = {
 
 type TestEntityRow = {
   launchId: number;
-  contextId: number | null;
   id: number;
   title: string;
   createdTimestamp: Date;
@@ -334,10 +322,6 @@ type CountsByStatusesFilter = {
 const rowToEntitty = (row: TestEntityRow) => {
   return {
     launchId: row.launchId,
-    //FIXME for some reason the testEntities.parentContextId is a string in reality, due some bug of drizzle-orm probably
-    parentContextId: row.contextId
-      ? parseInt(row.contextId as unknown as string)
-      : undefined,
     id: row.id,
     entityType: row.entityType,
     title: row.title,

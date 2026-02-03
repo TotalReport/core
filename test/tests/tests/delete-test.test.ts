@@ -10,14 +10,8 @@ const generator = new CoreEntititesGenerator(client);
 describe("delete test", () => {
   test("by id", async () => {
     const launch = await generator.launches.create();
-
-    const testContext = await generator.contexts.create({
-      launchId: launch.id,
-    });
-
     const test = await generator.tests.create({
       launchId: launch.id,
-      testContextId: testContext.id,
       title: "Text context 1",
       createdTimestamp: new Date("2024-07-21T06:52:32Z"),
       startedTimestamp: new Date("2024-07-21T06:52:35Z"),
@@ -55,16 +49,6 @@ describe("delete test", () => {
       headers: expect.anything(),
       status: 404,
       body: {},
-    });
-
-    const testContextByIdAfterDeleteResponse = await client.readTestContext({
-      params: { id: testContext.id },
-    });
-
-    expect(testContextByIdAfterDeleteResponse).toEqual({
-      headers: expect.anything(),
-      status: 200,
-      body: testContext,
     });
 
     const launchByIdAfterDeleteResponse = await client.readLaunch({

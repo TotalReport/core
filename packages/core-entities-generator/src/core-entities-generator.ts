@@ -3,7 +3,6 @@ import { AfterTestStepsGenerator } from "./after-test-step-generator.js";
 import { BeforeTestsGenerator } from "./before-test-generator.js";
 import { BeforeTestStepsGenerator } from "./before-test-step-generator.js";
 import { LaunchesGenerator } from "./launch-generator.js";
-import { TestContextsGenerator } from "./test-context-generator.js";
 import { TestsGenerator } from "./test-generator.js";
 import { TestStepsGenerator } from "./test-step-generator.js";
 import { ClientType } from "./types.js";
@@ -11,7 +10,6 @@ import { ClientType } from "./types.js";
 export class CoreEntititesGenerator {
   readonly client: ClientType;
   readonly launches: LaunchesGenerator;
-  readonly contexts: TestContextsGenerator;
   readonly beforeTests: BeforeTestsGenerator;
   readonly beforeTestSteps: BeforeTestStepsGenerator;
   readonly tests: TestsGenerator;
@@ -22,7 +20,6 @@ export class CoreEntititesGenerator {
   constructor(client: ClientType) {
     this.client = client;
     this.launches = new LaunchesGenerator(this.client);
-    this.contexts = new TestContextsGenerator(this.client);
     this.beforeTests = new BeforeTestsGenerator(this.client);
     this.beforeTestSteps = new BeforeTestStepsGenerator(this.client);
     this.tests = new TestsGenerator(this.client);

@@ -8,11 +8,7 @@ const generator = new CoreEntititesGenerator(client);
 describe("find after tests", () => {
   test("by id", async () => {
     const launch = await generator.launches.create();
-    const testContext = await generator.contexts.create({
-      launchId: launch.id,
-    });
     const created = await generator.afterTests.create({
-      testContextId: testContext.id,
       title: "New after test",
       launchId: launch.id,
       arguments: [
@@ -65,46 +61,6 @@ describe("find after tests", () => {
           offset,
         },
         items: [{ ...created, arguments: [] }],
-      },
-    });
-  });
-
-  test("by testContextId", async () => {
-    const launch = await generator.launches.create();
-    const testContext = await generator.contexts.create({
-      launchId: launch.id,
-    });
-    const expectedRecord = await generator.afterTests.create({
-      testContextId: testContext.id,
-      launchId: launch.id,
-    });
-
-    // Record that should be filtered out
-    const testContext2 = await generator.contexts.create({
-      launchId: launch.id,
-    });
-    await generator.afterTests.create({
-      testContextId: testContext2.id,
-      launchId: launch.id,
-    });
-
-    const limit = 10;
-    const offset = 0;
-
-    const response = await client.findAfterTests({
-      query: { testContextId: testContext.id, limit, offset },
-    });
-
-    expect(response).toEqual({
-      headers: expect.anything(),
-      status: 200,
-      body: {
-        pagination: {
-          total: 1,
-          limit,
-          offset,
-        },
-        items: [{ ...expectedRecord, arguments: [] }],
       },
     });
   });

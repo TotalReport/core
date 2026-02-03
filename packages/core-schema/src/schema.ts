@@ -28,21 +28,9 @@ export const launches = pgTable("launches", {
 
 export const testEnititesIdSeq = pgSequence("test_entities_id_seq", { cache: 5 });
 
-export const testContexts = pgTable("test_contexts", {
-  launchId: bigint("launch_id", { mode: "number" }).references(() => launches.id, { onDelete: "cascade" }).notNull(),
-  parentTestContextId: bigint("parent_test_context_id", { mode: 'number' }).references((): AnyPgColumn => testContexts.id),
-  //FIXME drizzle-kit@0.26.2 doesn't support variables in the default, change to testEnititesIdSeq.name when it's supported
-  id: bigint("id", { mode: "number" }).primaryKey().default(sql`nextval('test_entities_id_seq')`),
-  title: varchar("title", { length: 256 }).notNull(),
-  createdTimestamp: timestamp("created_timestamp", { withTimezone: false, mode: "date" }).notNull(),
-  startedTimestamp: timestamp("started_timestamp", { withTimezone: false, mode: "date" }),
-  finishedTimestamp: timestamp("finished_timestamp", { withTimezone: false, mode: "date" }),
-});
-
 export const beforeTests = pgTable("before_tests", {
   //TODO here and everywhere investigatge if cascade delete gives performance issues on large datasets
   launchId: bigint("launch_id", { mode: "number" }).references(() => launches.id, { onDelete: "cascade" }).notNull(),
-  testContextId: bigint("test_context_id", { mode: 'number' }).references(() => testContexts.id, { onDelete: "cascade" }),
   //FIXME drizzle-kit@0.26.2 doesn't support variables in the default, change to testEnititesIdSeq.name when it's supported
   id: bigint("id", { mode: "number" }).primaryKey().default(sql`nextval('test_entities_id_seq')`),
   title: varchar("title", { length: 256 }).notNull(),
@@ -88,7 +76,6 @@ export const beforeTestSteps = pgTable("before_test_steps", {
 
 export const tests = pgTable("tests", {
   launchId: bigint("launch_id", { mode: "number" }).references(() => launches.id, { onDelete: "cascade" }).notNull(),
-  testContextId: bigint("test_context_id", { mode: 'number' }).references(() => testContexts.id, { onDelete: "cascade" }),
   //FIXME drizzle-kit@0.26.2 doesn't support variables in the default, change to testEnititesIdSeq.name when it's supported
   id: bigint("id", { mode: "number" }).primaryKey().default(sql`nextval('test_entities_id_seq')`),
   title: varchar("title", { length: 256 }).notNull(),
@@ -134,7 +121,6 @@ export const testSteps = pgTable("test_steps", {
 
 export const afterTests = pgTable("after_tests", {
   launchId: bigint("launch_id", { mode: "number" }).references(() => launches.id, { onDelete: "cascade" }).notNull(),
-  testContextId: bigint("test_context_id", { mode: 'number' }).references(() => testContexts.id, { onDelete: "cascade" }),
   //FIXME drizzle-kit@0.26.2 doesn't support variables in the default, change to testEnititesIdSeq.name when it's supported
   id: bigint("id", { mode: "number" }).primaryKey().default(sql`nextval('test_entities_id_seq')`),
   title: varchar("title", { length: 256 }).notNull(),
@@ -188,7 +174,6 @@ export const paths = pgTable("paths", {
 export const testEntities = pgView("test_entities").as((qb) => 
   qb.select({
       launchId: beforeTests.launchId,
-      parentContextId: sql<number | null>`${beforeTests.testContextId}`.as("parent_context_id"),
       entityType: sql<"beforeTest"|"test"|"afterTest">`${ENTITY_TYPES.BEFORE_TEST}`.as("entity_type"),
       id: beforeTests.id,
       title: beforeTests.title,
@@ -203,7 +188,6 @@ export const testEntities = pgView("test_entities").as((qb) =>
   .unionAll(
     qb.select({
         launchId: tests.launchId,
-        parentContextId: sql<number | null>`${tests.testContextId}`.as("parent_context_id"),
         entityType: sql<"beforeTest"|"test"|"afterTest">`${ENTITY_TYPES.TEST}`.as("entity_type"),
         id: tests.id,
         title: tests.title,
@@ -219,7 +203,6 @@ export const testEntities = pgView("test_entities").as((qb) =>
   .unionAll(
     qb.select({
         launchId: afterTests.launchId,
-        parentContextId: sql<number | null>`${afterTests.testContextId}`.as("parent_context_id"),
         entityType: sql<"beforeTest"|"test"|"afterTest">`${ENTITY_TYPES.AFTER_TEST}`.as("entity_type"),
         id: afterTests.id,
         title: afterTests.title,

@@ -31,12 +31,11 @@ export const readTestRoute: ReadTestRoute = async ({ params }) => {
 };
 
 export const findTestsRoute: FindTestsRoute = async ({ query }) => {
-  const { limit, offset, launchId, testContextId, correlationId, argumentsHash } = query;
+  const { limit, offset, launchId, correlationId, argumentsHash } = query;
   const { items, totalItems } = await new TestsDAO().find({
     limit,
     offset,
     launchId,
-    testContextId,
     correlationId,
     argumentsHash,
   });
@@ -75,7 +74,6 @@ export const deleteTestRoute: DeleteTestRoute = async ({ params }) => {
 const convertToResponseBody = (response: TestEntity) => {
   return {
     launchId: response.launchId,
-    testContextId: response.testContextId ?? undefined,
     id: response.id,
     title: response.title,
     createdTimestamp: response.createdTimestamp.toISOString(),

@@ -60,7 +60,6 @@ describe("create after test", () => {
 
   test("with all fields", async () => {
     const launch = await generator.launches.create();
-    const context = await generator.contexts.create({ launchId: launch.id });
     const request = {
       launchId: launch.id,
       title: "New test",
@@ -68,7 +67,6 @@ describe("create after test", () => {
       startedTimestamp: new Date("2024-07-21T06:52:35Z"),
       finishedTimestamp: new Date("2024-07-21T06:53:21Z"),
       statusId: DEFAULT_TEST_STATUSES.PASSED.id,
-      testContextId: context.id,
       arguments: [
         {
           name: "Argument1",
@@ -99,7 +97,6 @@ describe("create after test", () => {
         finishedTimestamp: request.finishedTimestamp.toISOString(),
         statusId: request.statusId,
         launchId: launch.id,
-        testContextId: context.id,
         arguments: [
           {
             id: expect.a(Number),

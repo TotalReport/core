@@ -33,23 +33,16 @@ for (let i = 0; i < launchesCount; i++) {
     startedTimestamp: sub(new Date(), { days: launchesCount - i }),
   });
 
-  const testContext = await entities.contexts.create({
-    launchId: launch.id,
-    createdTimestamp: add(new Date(launch.createdTimestamp!), { seconds: 1 }),
-    startedTimestamp: add(new Date(launch.startedTimestamp!), { seconds: 1 }),
-  });
-
   const beforeTest = await entities.beforeTests.create({
     launchId: launch.id,
-    testContextId: testContext.id,
     statusId: DEFAULT_TEST_STATUSES.PASSED.id,
-    createdTimestamp: add(new Date(testContext.createdTimestamp!), {
+    createdTimestamp: add(new Date(launch.createdTimestamp!), {
       seconds: 1,
     }),
-    startedTimestamp: add(new Date(testContext.startedTimestamp!), {
+    startedTimestamp: add(new Date(launch.startedTimestamp!), {
       seconds: 1,
     }),
-    finishedTimestamp: add(new Date(testContext.startedTimestamp!), {
+    finishedTimestamp: add(new Date(launch.startedTimestamp!), {
       seconds: 2,
     }),
     arguments: [
@@ -70,7 +63,6 @@ for (let i = 0; i < launchesCount; i++) {
     passedTest === undefined
       ? await entities.tests.create({
           launchId: launch.id,
-          testContextId: testContext.id,
           startedTimestamp: after({
             timestamp: beforeTest.finishedTimestamp!,
             delayMilliseconds: 1000,
@@ -83,7 +75,7 @@ for (let i = 0; i < launchesCount; i++) {
         })
       : await entities.tests.createBySample({
           sample: passedTest,
-          context: testContext,
+          launch: launch,
           startedTimestamp: after({
             timestamp: beforeTest.finishedTimestamp!,
             delayMilliseconds: 1000,
@@ -99,7 +91,6 @@ for (let i = 0; i < launchesCount; i++) {
     failedTest === undefined
       ? await entities.tests.create({
           launchId: launch.id,
-          testContextId: testContext.id,
           startedTimestamp: after({
             timestamp: passedTest.finishedTimestamp!,
             delayMilliseconds: 1,
@@ -112,7 +103,7 @@ for (let i = 0; i < launchesCount; i++) {
         })
       : await entities.tests.createBySample({
           sample: failedTest,
-          context: testContext,
+          launch: launch,
           startedTimestamp: after({
             timestamp: passedTest.finishedTimestamp!,
             delayMilliseconds: 1,
@@ -132,7 +123,7 @@ for (let i = 0; i < launchesCount; i++) {
     flakyToInvestigateTest === undefined
       ? await entities.tests.create({
           launchId: launch.id,
-          testContextId: testContext.id,
+
           startedTimestamp: after({
             timestamp: passedTest.finishedTimestamp!,
             delayMilliseconds: 1,
@@ -145,7 +136,7 @@ for (let i = 0; i < launchesCount; i++) {
         })
       : await entities.tests.createBySample({
           sample: flakyToInvestigateTest,
-          context: testContext,
+          launch: launch,
           startedTimestamp: after({
             timestamp: passedTest.finishedTimestamp!,
             delayMilliseconds: 1,
@@ -165,8 +156,7 @@ for (let i = 0; i < launchesCount; i++) {
   resolvedAutomationBugTest =
     resolvedAutomationBugTest === undefined
       ? await entities.tests.create({
-          launchId: launch.id,
-          testContextId: testContext.id,
+          launchId: launch.id,          
           statusId: resolvedAutomationBugStatus,
 
           startedTimestamp: after({
@@ -180,7 +170,7 @@ for (let i = 0; i < launchesCount; i++) {
         })
       : await entities.tests.createBySample({
           sample: resolvedAutomationBugTest,
-          context: testContext,
+          launch: launch,
           statusId: resolvedAutomationBugStatus,
 
           startedTimestamp: after({
@@ -197,7 +187,6 @@ for (let i = 0; i < launchesCount; i++) {
     productBugTest === undefined
       ? await entities.tests.create({
           launchId: launch.id,
-          testContextId: testContext.id,
           statusId: DEFAULT_TEST_STATUSES.PRODUCT_BUG.id,
           startedTimestamp: after({
             timestamp: resolvedAutomationBugTest.finishedTimestamp!,
@@ -210,7 +199,7 @@ for (let i = 0; i < launchesCount; i++) {
         })
       : await entities.tests.createBySample({
           sample: productBugTest,
-          context: testContext,
+          launch: launch,
           statusId: DEFAULT_TEST_STATUSES.PRODUCT_BUG.id,
           startedTimestamp: after({
             timestamp: resolvedAutomationBugTest.finishedTimestamp!,
@@ -226,7 +215,6 @@ for (let i = 0; i < launchesCount; i++) {
     systemIssueTest === undefined
       ? await entities.tests.create({
           launchId: launch.id,
-          testContextId: testContext.id,
           statusId: DEFAULT_TEST_STATUSES.SYSTEM_ISSUE.id,
           startedTimestamp: after({
             timestamp: productBugTest.finishedTimestamp!,
@@ -239,7 +227,7 @@ for (let i = 0; i < launchesCount; i++) {
         })
       : await entities.tests.createBySample({
           sample: systemIssueTest,
-          context: testContext,
+          launch: launch,
           statusId: DEFAULT_TEST_STATUSES.SYSTEM_ISSUE.id,
           startedTimestamp: after({
             timestamp: productBugTest.finishedTimestamp!,
@@ -255,7 +243,6 @@ for (let i = 0; i < launchesCount; i++) {
     noDefectTest === undefined
       ? await entities.tests.create({
           launchId: launch.id,
-          testContextId: testContext.id,
           statusId: DEFAULT_TEST_STATUSES.NO_DEFECT.id,
           startedTimestamp: after({
             timestamp: systemIssueTest.finishedTimestamp!,
@@ -268,7 +255,7 @@ for (let i = 0; i < launchesCount; i++) {
         })
       : await entities.tests.createBySample({
           sample: noDefectTest,
-          context: testContext,
+          launch: launch,
           statusId: DEFAULT_TEST_STATUSES.NO_DEFECT.id,
           startedTimestamp: after({
             timestamp: systemIssueTest.finishedTimestamp!,
@@ -284,7 +271,6 @@ for (let i = 0; i < launchesCount; i++) {
     skippedTest === undefined
       ? await entities.tests.create({
           launchId: launch.id,
-          testContextId: testContext.id,
           statusId: DEFAULT_TEST_STATUSES.SKIPPED.id,
           startedTimestamp: after({
             timestamp: noDefectTest.finishedTimestamp!,
@@ -297,7 +283,7 @@ for (let i = 0; i < launchesCount; i++) {
         })
       : await entities.tests.createBySample({
           sample: skippedTest,
-          context: testContext,
+          launch: launch,
           statusId: DEFAULT_TEST_STATUSES.SKIPPED.id,
           startedTimestamp: after({
             timestamp: noDefectTest.finishedTimestamp!,
@@ -313,7 +299,6 @@ for (let i = 0; i < launchesCount; i++) {
     abortedTest === undefined
       ? await entities.tests.create({
           launchId: launch.id,
-          testContextId: testContext.id,
           statusId: DEFAULT_TEST_STATUSES.ABORTED.id,
           startedTimestamp: after({
             timestamp: skippedTest.finishedTimestamp!,
@@ -326,7 +311,7 @@ for (let i = 0; i < launchesCount; i++) {
         })
       : await entities.tests.createBySample({
           sample: abortedTest,
-          context: testContext,
+          launch: launch,
           statusId: DEFAULT_TEST_STATUSES.ABORTED.id,
           startedTimestamp: after({
             timestamp: skippedTest.finishedTimestamp!,
@@ -337,18 +322,6 @@ for (let i = 0; i < launchesCount; i++) {
             delayMilliseconds: 2,
           }),
         });
-
-  
-
-  client.patchTestContext({
-    params: { id: testContext.id },
-    body: {
-      finishedTimestamp: after({
-        timestamp: abortedTest.finishedTimestamp!,
-        delayMilliseconds: 1000,
-      }),
-    },
-  });
 
   client.patchLaunch({
     params: { id: launch.id },

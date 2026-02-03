@@ -14,7 +14,6 @@ export const findTestEntitiesRoute: FindTestEntitiesRoute = async ({
   const search = {
     entityTypes: query.entityTypes,
     launchId: query.launchId,
-    contextId: query.contextId,
     correlationId: query.correlationId,
     argumentsHash: query.argumentsHash,
     externalArgumentsHash: query.externalArgumentsHash,
@@ -32,7 +31,6 @@ export const findTestEntitiesRoute: FindTestEntitiesRoute = async ({
       items: searchResults.items.map((item) => {
         return {
           launchId: item.launchId,
-          parentContextId: item.parentContextId,
           id: item.id,
           entityType: item.entityType,
           title: item.title,

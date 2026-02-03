@@ -25,7 +25,6 @@ export const applyPatchToTestRow = (args: {
 }): GenericTestRow => {
   return {
     launchId: args.row.launchId,
-    testContextId: args.row.testContextId,
     id: args.row.id,
     title: firstNotUndefined(args.patch.title, args.row.title),
     createdTimestamp: firstNotUndefined(
@@ -84,7 +83,6 @@ type GenericTestRow = {
     finishedTimestamp: Date | null;
     statusId: string | null;
     launchId: number;
-    testContextId: number | null;
     correlationId: string;
     argumentsHash: string;
     externalArgumentsHash: string;

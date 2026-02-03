@@ -108,14 +108,10 @@ export class TestsGenerator {
    * @returns The created test.
    */
   async createBySample(params: CreateTestParams) {
-    const launchId =
-      "launch" in params ? params.launch.id : params.context.launchId;
-
-    const contextId = "context" in params ? params.context.id : undefined;
+    const launchId = params.launch.id;
 
     return await this.create({
       launchId: launchId,
-      testContextId: contextId,
       title: params.sample.title,
       correlationId: params.sample.correlationId,
       arguments: params.sample.arguments,
@@ -141,18 +137,11 @@ type TestToRun = Pick<
 
 type CreateTestParams = {
   sample: TestToRun;
+  launch: { id: number };
   startedTimestamp: Date | undefined;
 } &
-  LaunchOrContext &
   (NotFinished | Finished);
 
-type LaunchOrContext =
-  | {
-      launch: { id: number };
-    }
-  | {
-      context: { id: number; launchId: number };
-    };
 
 type NotFinished = {
   finishedTimestamp: undefined;
