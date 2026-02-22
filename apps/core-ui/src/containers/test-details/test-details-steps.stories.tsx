@@ -112,39 +112,33 @@ const afterSteps = [
 ];
 
 export const Success: Story = {
-  args: { testId: 10, testType: "test" },
+  args: { testId: 10},
   parameters: {
     msw: {
       handlers: [
-        apiMock.findBeforeTestSteps(10, beforeSteps),
         apiMock.findTestSteps(10, testSteps),
-        apiMock.findAfterTestSteps(10, afterSteps),
       ],
     },
   },
 };
 
 export const Loading: Story = {
-  args: { testId: 10, testType: "test" },
+  args: { testId: 10},
   parameters: {
     msw: {
       handlers: [
-        apiMock.findBeforeTestStepsInfinite(10),
         apiMock.findTestStepsInfinite(10),
-        apiMock.findAfterTestStepsInfinite(10),
       ],
     },
   },
 };
 
 export const Error: Story = {
-  args: { testId: 10, testType: "test" },
+  args: { testId: 10},
   parameters: {
     msw: {
       handlers: [
-        apiMock.findBeforeTestStepsCustom(10, 500, { error: "boom" }),
         apiMock.findTestStepsCustom(10, 500, { error: "boom" }),
-        apiMock.findAfterTestStepsCustom(10, 500, { error: "boom" }),
       ],
     },
   },

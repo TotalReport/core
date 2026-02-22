@@ -4,8 +4,7 @@ import { z } from "zod";
 export const CreateTestStep = z.object({
   testId: z.number().int(),
   title: z.string(),
-  createdTimestamp: z.coerce.date().optional(),
-  startedTimestamp: z.coerce.date().optional(),
+  startedTimestamp: z.coerce.date(),
   finishedTimestamp: z.coerce.date().optional(),
   isSuccessful: z.boolean().optional(),
   errorMessage: z.string().optional(),
@@ -17,8 +16,7 @@ export const TestStep = z.object({
   testId: z.number().int(),
   id: z.number().int(),
   title: z.string(),
-  createdTimestamp: z.string().datetime({ offset: true }).optional(),
-  startedTimestamp: z.string().datetime({ offset: true }).optional(),
+  startedTimestamp: z.string().datetime({ offset: true }),
   finishedTimestamp: z.string().datetime({ offset: true }).optional(),
   isSuccessful: z.boolean().optional(),
   errorMessage: z.string().optional(),
@@ -28,8 +26,7 @@ export const TestStep = z.object({
 
 export const PatchTestStep = z.object({
   title: z.string().min(1).max(256).optional(),
-  createdTimestamp: z.coerce.date().optional(),
-  startedTimestamp: z.coerce.date().nullish(),
+  startedTimestamp: z.coerce.date().optional(),
   finishedTimestamp: z.coerce.date().nullish(),
   isSuccessful: z.boolean().nullish(),
   errorMessage: z.string().nullish(),

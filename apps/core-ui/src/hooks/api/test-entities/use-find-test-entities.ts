@@ -7,7 +7,7 @@ export const useFindTestEntities = ({
   filters,
   enabled,
 }: FindTestEntitiesParams) => {
-  return api.findTestEntities.useQuery({
+  return api.findTests.useQuery({
     queryKey: [
       "test-entities",
       pagination.offset,
@@ -45,6 +45,6 @@ export type FindTestEntitiesParams = {
 export type TestEntity = FindTestEntitiesResponseData["items"][0];
 
 export type FindTestEntitiesResponseData = ClientInferResponseBody<
-  typeof contract.findTestEntities,
+  typeof contract.findTests,
   200
 >;

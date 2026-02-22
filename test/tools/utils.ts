@@ -25,3 +25,7 @@ export function expect_toBeCloseToNow(actual: number, delta: number): void {
   const nowUtc = nowLocal.getTime() + nowLocal.getTimezoneOffset() * 60 * 1000;
   expect_toBeCloseTo(actual, nowUtc, delta);
 }
+
+export type RemoveNullishProps<T> = {
+  [P in keyof T as T[P] extends null | undefined ? never : P]: Exclude<T[P], null | undefined>
+};

@@ -103,18 +103,10 @@ export default function LaunchDetails({ launchId }: LaunchDetailsProps) {
           </div>
           <div>
             <h3 className="text-sm font-medium text-muted-foreground">
-              Created
+              Started
             </h3>
-            <p>{format(new Date(launch.body.createdTimestamp), "PPpp")}</p>
+            <p>{format(new Date(launch.body.startedTimestamp), "PPpp")}</p>
           </div>
-          {launch.body.startedTimestamp && (
-            <div>
-              <h3 className="text-sm font-medium text-muted-foreground">
-                Started
-              </h3>
-              <p>{format(new Date(launch.body.startedTimestamp), "PPpp")}</p>
-            </div>
-          )}
           {launch.body.finishedTimestamp && (
             <div>
               <h3 className="text-sm font-medium text-muted-foreground">

@@ -18,70 +18,70 @@ describe("test entities", () => {
     const launch1 = await generator.launches.create();
     const launch2 = await generator.launches.create();
 
-    const beforeTest1Launch1 = await generator.beforeTests.create({
+    const beforeTest1Launch1 = await generator.tests.createBeforeTest({
       launchId: launch1.id,
     });
-    const beforeTest1Launch2 = await generator.beforeTests.create({
+    const beforeTest1Launch2 = await generator.tests.createBeforeTest({
       launchId: launch2.id,
     });
 
-    const beforeTest2Launch1 = await generator.beforeTests.create({
+    const beforeTest2Launch1 = await generator.tests.createBeforeTest({
       launchId: launch1.id,
     });
-    const beforeTest2Launch2 = await generator.beforeTests.create({
+    const beforeTest2Launch2 = await generator.tests.createBeforeTest({
       launchId: launch2.id,
     });
 
-    const beforeTest3Launch1 = await generator.beforeTests.create({
+    const beforeTest3Launch1 = await generator.tests.createBeforeTest({
       launchId: launch1.id,
     });
-    const beforeTest3Launch2 = await generator.beforeTests.create({
+    const beforeTest3Launch2 = await generator.tests.createBeforeTest({
       launchId: launch2.id,
     });
 
-    const test1Launch1 = await generator.tests.create({
+    const test1Launch1 = await generator.tests.createTest({
       launchId: launch1.id,
     });
-    const test1Launch2 = await generator.tests.create({
+    const test1Launch2 = await generator.tests.createTest({
       launchId: launch2.id,
     });
 
-    const test2Launch1 = await generator.tests.create({
+    const test2Launch1 = await generator.tests.createTest({
       launchId: launch1.id,
     });
-    const test2Launch2 = await generator.tests.create({
+    const test2Launch2 = await generator.tests.createTest({
       launchId: launch2.id,
     });
 
-    const test3Launch1 = await generator.tests.create({
+    const test3Launch1 = await generator.tests.createTest({
       launchId: launch1.id,
     });
-    const test3Launch2 = await generator.tests.create({
+    const test3Launch2 = await generator.tests.createTest({
       launchId: launch2.id,
     });
 
-    const afterTest1Launch1 = await generator.afterTests.create({
+    const afterTest1Launch1 = await generator.tests.createAfterTest({
       launchId: launch1.id,
     });
-    const afterTest1Launch2 = await generator.afterTests.create({
+    const afterTest1Launch2 = await generator.tests.createAfterTest({
       launchId: launch2.id,
     });
 
-    const afterTest2Launch1 = await generator.afterTests.create({
+    const afterTest2Launch1 = await generator.tests.createAfterTest({
       launchId: launch1.id,
     });
-    const afterTest2Launch2 = await generator.afterTests.create({
+    const afterTest2Launch2 = await generator.tests.createAfterTest({
       launchId: launch2.id,
     });
 
-    const afterTest3Launch1 = await generator.afterTests.create({
+    const afterTest3Launch1 = await generator.tests.createAfterTest({
       launchId: launch1.id,
     });
-    const afterTest3Launch2 = await generator.afterTests.create({
+    const afterTest3Launch2 = await generator.tests.createAfterTest({
       launchId: launch2.id,
     });
 
-    const entitiesByLaunch = await client.findTestEntities({
+    const entitiesByLaunch = await client.findTests({
       query: {
         launchId: launch1.id,
         limit: 20,
@@ -114,17 +114,17 @@ describe("test entities", () => {
   });
 
   test("by launchId", async () => {
-    const launch = await generator.launches.create({ });
-    const created = await generator.tests.create({ launchId: launch.id });
+    const launch = await generator.launches.create({});
+    const created = await generator.tests.createTest({ launchId: launch.id });
 
     // Record that should be filtered out
-    const launch2 = await generator.launches.create({ });
-    await generator.tests.create({ launchId: launch2.id });
+    const launch2 = await generator.launches.create({});
+    await generator.tests.createTest({ launchId: launch2.id });
 
     const limit = 10;
     const offset = 0;
 
-    const response = await client.findTestEntities({
+    const response = await client.findTests({
       query: { launchId: launch.id, limit, offset },
     });
 
@@ -145,13 +145,13 @@ describe("test entities", () => {
   test("by correlationId", async () => {
     const launch = await generator.launches.create();
     const correlationId = "cf11c6c2-ed80-46d6-ac55-d1181b59a69f";
-    const created = await generator.tests.create({
+    const created = await generator.tests.createTest({
       launchId: launch.id,
       correlationId,
     });
 
     // Record that should be filtered out
-    await generator.tests.create({
+    await generator.tests.createTest({
       launchId: launch.id,
       correlationId: "0f4ae45f-69c4-4afc-9367-610dd423aa6c",
     });
@@ -159,7 +159,7 @@ describe("test entities", () => {
     const limit = 10;
     const offset = 0;
 
-    const response = await client.findTestEntities({
+    const response = await client.findTests({
       query: { correlationId, limit, offset },
     });
 
@@ -180,13 +180,13 @@ describe("test entities", () => {
   test("by argumentsHash", async () => {
     const launch = await generator.launches.create();
     const argumentsHash = "cf555a84-75b5-4d08-b5ce-639ec35015fd";
-    const created = await generator.tests.create({
+    const created = await generator.tests.createTest({
       launchId: launch.id,
       argumentsHash,
     });
 
     // Record that should be filtered out
-    await generator.tests.create({
+    await generator.tests.createTest({
       launchId: launch.id,
       argumentsHash: "7daae764-6eca-44d8-9324-020a8fb4507a",
     });
@@ -194,7 +194,7 @@ describe("test entities", () => {
     const limit = 10;
     const offset = 0;
 
-    const response = await client.findTestEntities({
+    const response = await client.findTests({
       query: { argumentsHash, limit, offset },
     });
 
@@ -215,13 +215,13 @@ describe("test entities", () => {
   test("by externalArgumentsHash", async () => {
     const launch = await generator.launches.create();
     const externalArgumentsHash = "409cb2f4-2785-4a22-a55a-38d00cf3c619";
-    const created = await generator.tests.create({
+    const created = await generator.tests.createTest({
       launchId: launch.id,
       externalArgumentsHash,
     });
 
     // Record that should be filtered out
-    await generator.tests.create({
+    await generator.tests.createTest({
       launchId: launch.id,
       externalArgumentsHash: "44fc3efe-0d5d-448c-9778-e76ccc9446e7",
     });
@@ -229,7 +229,7 @@ describe("test entities", () => {
     const limit = 10;
     const offset = 0;
 
-    const response = await client.findTestEntities({
+    const response = await client.findTests({
       query: { externalArgumentsHash, limit, offset },
     });
 
@@ -251,12 +251,12 @@ describe("test entities", () => {
     const launch = await generator.launches.create();
     const correlationId = "123e4567-e89b-12d3-a456-426614174000";
     const argumentsHash = "6a6cd8dd-3dd7-4804-b98b-ce70cfb93496";
-    const created1 = await generator.tests.create({
+    const created1 = await generator.tests.createTest({
       launchId: launch.id,
       correlationId,
       argumentsHash,
     });
-    const created2 = await generator.tests.create({
+    const created2 = await generator.tests.createTest({
       launchId: launch.id,
       correlationId,
       argumentsHash,
@@ -265,7 +265,7 @@ describe("test entities", () => {
     const limit = 10;
     const offset = 0;
 
-    const response = await client.findTestEntities({
+    const response = await client.findTests({
       query: { correlationId, argumentsHash, distinct: true, limit, offset },
     });
 
@@ -285,18 +285,18 @@ describe("test entities", () => {
 
   test("by entityType", async () => {
     const launch = await generator.launches.create();
-    const beforeTest = await generator.beforeTests.create({
+    const beforeTest = await generator.tests.createBeforeTest({
       launchId: launch.id,
     });
-    const test = await generator.tests.create({ launchId: launch.id });
-    const afterTest = await generator.afterTests.create({
+    const test = await generator.tests.createTest({ launchId: launch.id });
+    const afterTest = await generator.tests.createAfterTest({
       launchId: launch.id,
     });
 
     const limit = 10;
     const offset = 0;
 
-    const response = await client.findTestEntities({
+    const response = await client.findTests({
       query: {
         entityTypes: ["beforeTest"],
         launchId: launch.id,
@@ -318,7 +318,7 @@ describe("test entities", () => {
       },
     });
 
-    const response2 = await client.findTestEntities({
+    const response2 = await client.findTests({
       query: { entityTypes: ["test"], launchId: launch.id, limit, offset },
     });
 
@@ -335,7 +335,7 @@ describe("test entities", () => {
       },
     });
 
-    const response3 = await client.findTestEntities({
+    const response3 = await client.findTests({
       query: {
         entityTypes: ["afterTest"],
         launchId: launch.id,
@@ -360,11 +360,11 @@ describe("test entities", () => {
 
   test("by title contains", async () => {
     const launch = await generator.launches.create();
-    const test1 = await generator.tests.create({
+    const test1 = await generator.tests.createTest({
       launchId: launch.id,
       title: "Test Entity 1",
     });
-    const test2 = await generator.tests.create({
+    const test2 = await generator.tests.createTest({
       launchId: launch.id,
       title: "Another Test Entity",
     });
@@ -372,7 +372,7 @@ describe("test entities", () => {
     const limit = 10;
     const offset = 0;
 
-    const response = await client.findTestEntities({
+    const response = await client.findTests({
       query: { "title~cnt": "Test", launchId: launch.id, limit, offset },
     });
 
@@ -389,7 +389,7 @@ describe("test entities", () => {
       },
     });
 
-    const response2 = await client.findTestEntities({
+    const response2 = await client.findTests({
       query: { "title~cnt": "Another", launchId: launch.id, limit, offset },
     });
 
@@ -409,21 +409,21 @@ describe("test entities", () => {
 
   test("by statusIds", async () => {
     const launch = await generator.launches.create();
-    const passedTest = await generator.tests.create({
+    const passedTest = await generator.tests.createTest({
       launchId: launch.id,
       statusId: DEFAULT_TEST_STATUSES.PASSED.id,
     });
-    const failedTest = await generator.tests.create({
+    const failedTest = await generator.tests.createTest({
       launchId: launch.id,
       statusId: DEFAULT_TEST_STATUSES.FAILED.id,
     });
-    const productBugTest = await generator.tests.create({
+    const productBugTest = await generator.tests.createTest({
       launchId: launch.id,
       statusId: DEFAULT_TEST_STATUSES.PRODUCT_BUG.id,
     });
-    
+
     // Record that should be filtered out (no status)
-    await generator.tests.create({
+    await generator.tests.createTest({
       launchId: launch.id,
       statusId: undefined,
     });
@@ -432,12 +432,12 @@ describe("test entities", () => {
     const offset = 0;
 
     // Test filtering by single status ID
-    const response1 = await client.findTestEntities({
-      query: { 
-        statusIds: [DEFAULT_TEST_STATUSES.PASSED.id], 
-        launchId: launch.id, 
-        limit, 
-        offset 
+    const response1 = await client.findTests({
+      query: {
+        statusIds: [DEFAULT_TEST_STATUSES.PASSED.id],
+        launchId: launch.id,
+        limit,
+        offset,
       },
     });
 
@@ -455,12 +455,15 @@ describe("test entities", () => {
     });
 
     // Test filtering by multiple status IDs
-    const response2 = await client.findTestEntities({
-      query: { 
-        statusIds: [DEFAULT_TEST_STATUSES.FAILED.id, DEFAULT_TEST_STATUSES.PRODUCT_BUG.id], 
-        launchId: launch.id, 
-        limit, 
-        offset 
+    const response2 = await client.findTests({
+      query: {
+        statusIds: [
+          DEFAULT_TEST_STATUSES.FAILED.id,
+          DEFAULT_TEST_STATUSES.PRODUCT_BUG.id,
+        ],
+        launchId: launch.id,
+        limit,
+        offset,
       },
     });
 
@@ -485,10 +488,7 @@ const beforeTestToEntity = (entity: BeforeTest): TestEntity => {
     entityType: "beforeTest",
     id: entity.id,
     title: entity.title,
-    createdTimestamp: entity.createdTimestamp,
-    ...(entity.startedTimestamp
-      ? { startedTimestamp: entity.startedTimestamp }
-      : undefined),
+    startedTimestamp: entity.startedTimestamp,
     ...(entity.finishedTimestamp
       ? { finishedTimestamp: entity.finishedTimestamp }
       : undefined),
@@ -505,10 +505,7 @@ const testToEntity = (entity: Test): TestEntity => {
     entityType: "test",
     id: entity.id,
     title: entity.title,
-    createdTimestamp: entity.createdTimestamp,
-    ...(entity.startedTimestamp
-      ? { startedTimestamp: entity.startedTimestamp }
-      : undefined),
+    startedTimestamp: entity.startedTimestamp,
     ...(entity.finishedTimestamp
       ? { finishedTimestamp: entity.finishedTimestamp }
       : undefined),
@@ -525,10 +522,7 @@ const afterTestToEntity = (entity: AfterTest): TestEntity => {
     entityType: "afterTest",
     id: entity.id,
     title: entity.title,
-    createdTimestamp: entity.createdTimestamp,
-    ...(entity.startedTimestamp
-      ? { startedTimestamp: entity.startedTimestamp }
-      : undefined),
+    startedTimestamp: entity.startedTimestamp,
     ...(entity.finishedTimestamp
       ? { finishedTimestamp: entity.finishedTimestamp }
       : undefined),
@@ -540,12 +534,9 @@ const afterTestToEntity = (entity: AfterTest): TestEntity => {
 };
 
 type TestEntity = ClientInferResponseBody<
-  typeof contract.findTestEntities,
+  typeof contract.findTests,
   200
 >["items"][0];
-type BeforeTest = ClientInferResponseBody<
-  typeof contract.createBeforeTest,
-  201
->;
+type BeforeTest = ClientInferResponseBody<typeof contract.createTest, 201>;
 type Test = ClientInferResponseBody<typeof contract.createTest, 201>;
-type AfterTest = ClientInferResponseBody<typeof contract.createAfterTest, 201>;
+type AfterTest = ClientInferResponseBody<typeof contract.createTest, 201>;

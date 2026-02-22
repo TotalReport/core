@@ -146,9 +146,7 @@ function LaunchesListItem({ launch, selected, onClick }: LaunchItemProps) {
               selected ? "text-foreground" : "text-muted-foreground"
             )}
           >
-            {launch.startedTimestamp ? 
-              formatDistanceToNow(new Date(launch.startedTimestamp), { addSuffix: true }) : 
-              formatDistanceToNow(new Date(launch.createdTimestamp), { addSuffix: true })}
+            {formatDistanceToNow(new Date(launch.startedTimestamp), { addSuffix: true })}
           </div>
         </div>
         <div className="text-xs font-medium">{launch.title}</div>

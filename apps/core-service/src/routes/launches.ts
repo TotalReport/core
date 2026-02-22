@@ -3,18 +3,12 @@ import { AppRouteImplementation } from "@ts-rest/express";
 import { LaunchesDAO } from "../db/launches.js";
 
 export const createLaunchRoute: CreateLaunchRoute = async ({ body }) => {
-  let createdTimestamp = body.createdTimestamp ?? new Date();
-
-  const launch = await new LaunchesDAO().create({
-    ...body,
-    createdTimestamp,
-  });
+  const launch = await new LaunchesDAO().create(body);
   return {
     status: 201,
     body: {
       ...launch,
-      createdTimestamp: launch.createdTimestamp.toISOString(),
-      startedTimestamp: launch.startedTimestamp?.toISOString(),
+      startedTimestamp: launch.startedTimestamp.toISOString(),
       finishedTimestamp: launch.finishedTimestamp?.toISOString(),
     },
   };
@@ -32,8 +26,7 @@ export const readLaunchRoute: ReadLaunchRoute = async ({ params }) => {
     status: 200,
     body: {
       ...launch,
-      createdTimestamp: launch.createdTimestamp.toISOString(),
-      startedTimestamp: launch.startedTimestamp?.toISOString(),
+      startedTimestamp: launch.startedTimestamp.toISOString(),
       finishedTimestamp: launch.finishedTimestamp?.toISOString(),
     },
   };
@@ -51,8 +44,7 @@ export const findLaunchesRoute: FindLaunchRoute = async ({ query }) => {
     body: {
       items: data.items.map((item) => ({
         ...item,
-        createdTimestamp: item.createdTimestamp.toISOString(),
-        startedTimestamp: item.startedTimestamp?.toISOString(),
+        startedTimestamp: item.startedTimestamp.toISOString(),
         finishedTimestamp: item.finishedTimestamp?.toISOString(),
       })),
       pagination: {
@@ -67,7 +59,7 @@ export const findLaunchesRoute: FindLaunchRoute = async ({ query }) => {
 export const findLaunchesCountRoute: FindLaunchesCountRoute = async ({
   query,
 }) => {
-  const data = await new LaunchesDAO().findCount({ });
+  const data = await new LaunchesDAO().findCount({});
 
   return {
     status: 200,
@@ -92,8 +84,7 @@ export const patchLaunchRoute: PatchLaunchRoute = async ({ params, body }) => {
     status: 200,
     body: {
       ...result,
-      createdTimestamp: result.createdTimestamp.toISOString(),
-      startedTimestamp: result.startedTimestamp?.toISOString(),
+      startedTimestamp: result.startedTimestamp.toISOString(),
       finishedTimestamp: result.finishedTimestamp?.toISOString(),
     },
   };

@@ -22,12 +22,6 @@ export class StartedTimestampIsNotSetButFinishedTimestampIsSetError extends Vali
   }
 }
 
-export class StartedTimestampBeforeCreatedTimestampError extends ValidationError {
-  constructor(startedTimestamp: Date, createdTimestamp: Date) {
-    super(`Started timestamp ${startedTimestamp.toISOString()} is before created timestamp ${createdTimestamp.toISOString()}.`);
-  }
-}
-
 export class FinishedTimestampBeforeStartedTimestampError extends ValidationError {
   constructor(finishedTimestamp: Date, startedTimestamp: Date) {
     super(`Finished timestamp ${finishedTimestamp.toISOString()} is before started timestamp ${startedTimestamp.toISOString()}.`);

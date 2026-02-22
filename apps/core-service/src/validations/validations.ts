@@ -2,7 +2,6 @@ import {
   FinishedTimestampBeforeStartedTimestampError,
   FinishedTimestampIsSetButStatusIsNotSetError,
   FinishedTimestampIsSetButSuccessIsNotSetError,
-  StartedTimestampBeforeCreatedTimestampError,
   StartedTimestampIsNotSetButFinishedTimestampIsSetError,
   StatusIsSetButFinishedTimestampIsNotSetError,
   SuccessIsSetButFinishedTimestampIsNotSetError,
@@ -16,8 +15,7 @@ export const validateTitle = (args: { title?: string }) => {
 }
 
 export const validateTimestamps = (args: {
-  createdTimestamp: Date;
-  startedTimestamp?: Date | null;
+  startedTimestamp: Date;
   finishedTimestamp?: Date | null;
 }) => {
   if (args.startedTimestamp == undefined) {
@@ -25,13 +23,6 @@ export const validateTimestamps = (args: {
       throw new StartedTimestampIsNotSetButFinishedTimestampIsSetError();
     }
   } else {
-    if (args.createdTimestamp > args.startedTimestamp) {
-      throw new StartedTimestampBeforeCreatedTimestampError(
-        args.startedTimestamp,
-        args.createdTimestamp
-      );
-    }
-
     if (
       args.finishedTimestamp != undefined &&
       args.startedTimestamp > args.finishedTimestamp
@@ -45,8 +36,7 @@ export const validateTimestamps = (args: {
 };
 
 export const validateTimestampsAndStatus = (args: {
-  createdTimestamp: Date;
-  startedTimestamp?: Date | null;
+  startedTimestamp: Date;
   finishedTimestamp?: Date | null;
   statusId?: string | null;
 }) => {
@@ -61,8 +51,7 @@ export const validateTimestampsAndStatus = (args: {
 };
 
 export const validateTimestampsAndSuccess = (args: {
-  createdTimestamp: Date;
-  startedTimestamp?: Date | null;
+  startedTimestamp: Date;
   finishedTimestamp?: Date | null;
   isSuccessful?: boolean | null;
 }) => {

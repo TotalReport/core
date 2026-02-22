@@ -1,124 +1,37 @@
-CREATE SEQUENCE "public"."test_entities_id_seq" INCREMENT BY 1 MINVALUE 1 MAXVALUE 9223372036854775807 START WITH 1 CACHE 5;--> statement-breakpoint
-CREATE TABLE "after_test_arguments" (
-	"test_id" bigint NOT NULL,
-	"id" bigserial PRIMARY KEY NOT NULL,
-	"index" integer NOT NULL,
-	"name" varchar(256) NOT NULL,
-	"type" varchar(256) NOT NULL,
-	"value" text
-);
---> statement-breakpoint
-CREATE TABLE "after_test_external_arguments" (
-	"test_id" bigint NOT NULL,
-	"id" bigserial PRIMARY KEY NOT NULL,
-	"index" integer NOT NULL,
-	"name" varchar(256) NOT NULL,
-	"type" varchar(256) NOT NULL,
-	"value" text
-);
---> statement-breakpoint
-CREATE TABLE "after_test_steps" (
-	"test_id" bigint NOT NULL,
-	"id" bigserial PRIMARY KEY NOT NULL,
-	"title" varchar(256) NOT NULL,
-	"created_timestamp" timestamp NOT NULL,
-	"started_timestamp" timestamp,
-	"finished_timestamp" timestamp,
-	"is_successful" boolean,
-	"error_message" text,
-	"thread" varchar(256),
-	"process" varchar(256)
-);
---> statement-breakpoint
-CREATE TABLE "after_tests" (
-	"launch_id" bigint NOT NULL,
-	"id" bigint PRIMARY KEY DEFAULT nextval('test_entities_id_seq') NOT NULL,
-	"title" varchar(256) NOT NULL,
-	"created_timestamp" timestamp NOT NULL,
-	"started_timestamp" timestamp,
-	"finished_timestamp" timestamp,
-	"status_id" varchar,
-	"correlation_id" uuid NOT NULL,
-	"arguments_hash" uuid NOT NULL,
-	"external_arguments_hash" uuid NOT NULL
-);
---> statement-breakpoint
-CREATE TABLE "before_test_arguments" (
-	"test_id" bigint NOT NULL,
-	"id" bigserial PRIMARY KEY NOT NULL,
-	"index" integer NOT NULL,
-	"name" varchar(256) NOT NULL,
-	"type" varchar(256) NOT NULL,
-	"value" text
-);
---> statement-breakpoint
-CREATE TABLE "before_test_external_arguments" (
-	"test_id" bigint NOT NULL,
-	"id" bigserial PRIMARY KEY NOT NULL,
-	"index" integer NOT NULL,
-	"name" varchar(256) NOT NULL,
-	"type" varchar(256) NOT NULL,
-	"value" text
-);
---> statement-breakpoint
-CREATE TABLE "before_test_steps" (
-	"test_id" bigint NOT NULL,
-	"id" bigserial PRIMARY KEY NOT NULL,
-	"title" varchar(256) NOT NULL,
-	"created_timestamp" timestamp NOT NULL,
-	"started_timestamp" timestamp,
-	"finished_timestamp" timestamp,
-	"is_successful" boolean,
-	"error_message" text,
-	"thread" varchar(256),
-	"process" varchar(256)
-);
---> statement-breakpoint
-CREATE TABLE "before_tests" (
-	"launch_id" bigint NOT NULL,
-	"id" bigint PRIMARY KEY DEFAULT nextval('test_entities_id_seq') NOT NULL,
-	"title" varchar(256) NOT NULL,
-	"created_timestamp" timestamp NOT NULL,
-	"started_timestamp" timestamp,
-	"finished_timestamp" timestamp,
-	"status_id" varchar,
-	"correlation_id" uuid NOT NULL,
-	"arguments_hash" uuid NOT NULL,
-	"external_arguments_hash" uuid NOT NULL
-);
---> statement-breakpoint
+CREATE TYPE "public"."test_entity_types" AS ENUM('beforeTest', 'test', 'afterTest');--> statement-breakpoint
 CREATE TABLE "launches" (
 	"id" bigserial PRIMARY KEY NOT NULL,
 	"title" varchar(256) NOT NULL,
 	"arguments" text,
-	"created_timestamp" timestamp NOT NULL,
-	"started_timestamp" timestamp,
+	"started_timestamp" timestamp NOT NULL,
 	"finished_timestamp" timestamp
 );
 --> statement-breakpoint
-CREATE TABLE "paths" (
-	"test_id" bigint,
+CREATE TABLE "test_entities" (
+	"launch_id" bigint NOT NULL,
+	"id" bigserial PRIMARY KEY NOT NULL,
+	"entity_type" "test_entity_types" NOT NULL,
+	"title" varchar(256) NOT NULL,
+	"arguments" json,
+	"external_arguments" json,
+	"started_timestamp" timestamp NOT NULL,
+	"finished_timestamp" timestamp,
+	"status_id" varchar,
+	"title_hash" uuid NOT NULL,
+	"arguments_hash" uuid NOT NULL,
+	"external_arguments_hash" uuid NOT NULL
+);
+--> statement-breakpoint
+CREATE TABLE "test_entity_steps" (
+	"test_id" bigint NOT NULL,
 	"id" bigserial PRIMARY KEY NOT NULL,
 	"title" varchar(256) NOT NULL,
-	"created_timestamp" timestamp NOT NULL
-);
---> statement-breakpoint
-CREATE TABLE "test_arguments" (
-	"test_id" bigint NOT NULL,
-	"id" bigserial PRIMARY KEY NOT NULL,
-	"index" integer NOT NULL,
-	"name" varchar(256) NOT NULL,
-	"type" varchar(256) NOT NULL,
-	"value" text
-);
---> statement-breakpoint
-CREATE TABLE "test_external_arguments" (
-	"test_id" bigint NOT NULL,
-	"id" bigserial PRIMARY KEY NOT NULL,
-	"index" integer NOT NULL,
-	"name" varchar(256) NOT NULL,
-	"type" varchar(256) NOT NULL,
-	"value" text
+	"started_timestamp" timestamp NOT NULL,
+	"finished_timestamp" timestamp,
+	"is_successful" boolean,
+	"error_message" text,
+	"thread" varchar(256),
+	"process" varchar(256)
 );
 --> statement-breakpoint
 CREATE TABLE "test_status_groups" (
@@ -136,47 +49,7 @@ CREATE TABLE "test_statuses" (
 	"color" varchar(7) NOT NULL
 );
 --> statement-breakpoint
-CREATE TABLE "test_steps" (
-	"test_id" bigint NOT NULL,
-	"id" bigserial PRIMARY KEY NOT NULL,
-	"title" varchar(256) NOT NULL,
-	"created_timestamp" timestamp NOT NULL,
-	"started_timestamp" timestamp,
-	"finished_timestamp" timestamp,
-	"is_successful" boolean,
-	"error_message" text,
-	"thread" varchar(256),
-	"process" varchar(256)
-);
---> statement-breakpoint
-CREATE TABLE "tests" (
-	"launch_id" bigint NOT NULL,
-	"id" bigint PRIMARY KEY DEFAULT nextval('test_entities_id_seq') NOT NULL,
-	"title" varchar(256) NOT NULL,
-	"created_timestamp" timestamp NOT NULL,
-	"started_timestamp" timestamp,
-	"finished_timestamp" timestamp,
-	"status_id" varchar,
-	"correlation_id" uuid NOT NULL,
-	"arguments_hash" uuid NOT NULL,
-	"external_arguments_hash" uuid NOT NULL
-);
---> statement-breakpoint
-ALTER TABLE "after_test_arguments" ADD CONSTRAINT "after_test_arguments_test_id_after_tests_id_fk" FOREIGN KEY ("test_id") REFERENCES "public"."after_tests"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
-ALTER TABLE "after_test_external_arguments" ADD CONSTRAINT "after_test_external_arguments_test_id_after_tests_id_fk" FOREIGN KEY ("test_id") REFERENCES "public"."after_tests"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
-ALTER TABLE "after_test_steps" ADD CONSTRAINT "after_test_steps_test_id_after_tests_id_fk" FOREIGN KEY ("test_id") REFERENCES "public"."after_tests"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
-ALTER TABLE "after_tests" ADD CONSTRAINT "after_tests_launch_id_launches_id_fk" FOREIGN KEY ("launch_id") REFERENCES "public"."launches"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
-ALTER TABLE "after_tests" ADD CONSTRAINT "after_tests_status_id_test_statuses_id_fk" FOREIGN KEY ("status_id") REFERENCES "public"."test_statuses"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
-ALTER TABLE "before_test_arguments" ADD CONSTRAINT "before_test_arguments_test_id_before_tests_id_fk" FOREIGN KEY ("test_id") REFERENCES "public"."before_tests"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
-ALTER TABLE "before_test_external_arguments" ADD CONSTRAINT "before_test_external_arguments_test_id_before_tests_id_fk" FOREIGN KEY ("test_id") REFERENCES "public"."before_tests"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
-ALTER TABLE "before_test_steps" ADD CONSTRAINT "before_test_steps_test_id_before_tests_id_fk" FOREIGN KEY ("test_id") REFERENCES "public"."before_tests"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
-ALTER TABLE "before_tests" ADD CONSTRAINT "before_tests_launch_id_launches_id_fk" FOREIGN KEY ("launch_id") REFERENCES "public"."launches"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
-ALTER TABLE "before_tests" ADD CONSTRAINT "before_tests_status_id_test_statuses_id_fk" FOREIGN KEY ("status_id") REFERENCES "public"."test_statuses"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
-ALTER TABLE "paths" ADD CONSTRAINT "paths_test_id_tests_id_fk" FOREIGN KEY ("test_id") REFERENCES "public"."tests"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
-ALTER TABLE "test_arguments" ADD CONSTRAINT "test_arguments_test_id_tests_id_fk" FOREIGN KEY ("test_id") REFERENCES "public"."tests"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
-ALTER TABLE "test_external_arguments" ADD CONSTRAINT "test_external_arguments_test_id_tests_id_fk" FOREIGN KEY ("test_id") REFERENCES "public"."tests"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
-ALTER TABLE "test_statuses" ADD CONSTRAINT "test_statuses_group_id_test_status_groups_id_fk" FOREIGN KEY ("group_id") REFERENCES "public"."test_status_groups"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
-ALTER TABLE "test_steps" ADD CONSTRAINT "test_steps_test_id_tests_id_fk" FOREIGN KEY ("test_id") REFERENCES "public"."tests"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
-ALTER TABLE "tests" ADD CONSTRAINT "tests_launch_id_launches_id_fk" FOREIGN KEY ("launch_id") REFERENCES "public"."launches"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
-ALTER TABLE "tests" ADD CONSTRAINT "tests_status_id_test_statuses_id_fk" FOREIGN KEY ("status_id") REFERENCES "public"."test_statuses"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
-CREATE VIEW "public"."test_entities" AS (((select "launch_id", 'beforeTest' as "entity_type", "id", "title", "created_timestamp", "started_timestamp", "finished_timestamp", "status_id", "correlation_id", "arguments_hash", "external_arguments_hash" from "before_tests") union all (select "launch_id", 'test' as "entity_type", "id", "title", "created_timestamp", "started_timestamp", "finished_timestamp", "status_id", "correlation_id", "arguments_hash", "external_arguments_hash" from "tests")) union all (select "launch_id", 'afterTest' as "entity_type", "id", "title", "created_timestamp", "started_timestamp", "finished_timestamp", "status_id", "correlation_id", "arguments_hash", "external_arguments_hash" from "after_tests"));
+ALTER TABLE "test_entities" ADD CONSTRAINT "test_entities_launch_id_launches_id_fk" FOREIGN KEY ("launch_id") REFERENCES "public"."launches"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "test_entities" ADD CONSTRAINT "test_entities_status_id_test_statuses_id_fk" FOREIGN KEY ("status_id") REFERENCES "public"."test_statuses"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "test_entity_steps" ADD CONSTRAINT "test_entity_steps_test_id_test_entities_id_fk" FOREIGN KEY ("test_id") REFERENCES "public"."test_entities"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "test_statuses" ADD CONSTRAINT "test_statuses_group_id_test_status_groups_id_fk" FOREIGN KEY ("group_id") REFERENCES "public"."test_status_groups"("id") ON DELETE no action ON UPDATE no action;

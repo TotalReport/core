@@ -1,12 +1,13 @@
 import { initContract } from "@ts-rest/core";
 import { z } from "zod";
 import { PAGINATION_DEFAULTS } from "./defaults.js";
+import { zBoolean } from "./utils/z-types.js";
 
 export const CreateTestSchema = z.object({
   launchId: z.number().int(),
+  entityType: z.enum(["beforeTest", "test", "afterTest"]),
   title: z.string().min(1).max(256),
-  createdTimestamp: z.coerce.date().optional(),
-  startedTimestamp: z.coerce.date().optional(),
+  startedTimestamp: z.coerce.date(),
   finishedTimestamp: z.coerce.date().optional(),
   statusId: z.string().optional(),
   arguments: z
@@ -15,7 +16,7 @@ export const CreateTestSchema = z.object({
         name: z.string(),
         type: z.string(),
         value: z.string().nullable(),
-      })
+      }),
     )
     .optional(),
   externalArguments: z
@@ -24,7 +25,7 @@ export const CreateTestSchema = z.object({
         name: z.string(),
         type: z.string(),
         value: z.string().nullable(),
-      })
+      }),
     )
     .optional(),
   correlationId: z
@@ -33,50 +34,48 @@ export const CreateTestSchema = z.object({
     .optional()
     .describe(
       "The correlation ID is used together with arguments hash to identify the tests suitable for compare." +
-        " If the correlation ID is not provided, it will be generated from the title."
+        " If the correlation ID is not provided, it will be generated from the title.",
     ),
   argumentsHash: z
     .string()
     .optional()
     .describe(
       "The hash of the arguments. Together with the correlation ID, it is used to identify the tests suitable for compare." +
-        " If the arguments hash is not provided, it will be generated from the arguments."
+        " If the arguments hash is not provided, it will be generated from the arguments.",
     ),
-    externalArgumentsHash: z
-      .string()
-      .optional()
-      .describe(
-        "The hash of the external arguments. Together with the correlation ID, it is used to identify the tests suitable for compare." +
-          " If the external arguments hash is not provided, it will be generated from the external arguments."
-      )
+  externalArgumentsHash: z
+    .string()
+    .optional()
+    .describe(
+      "The hash of the external arguments. Together with the correlation ID, it is used to identify the tests suitable for compare." +
+        " If the external arguments hash is not provided, it will be generated from the external arguments.",
+    ),
 });
 
 export const TestSchema = z.object({
   launchId: z.number().int(),
   id: z.number().int(),
+  entityType: z.enum(["beforeTest", "test", "afterTest"]),
   title: z.string().min(1).max(256),
-  createdTimestamp: z.string().datetime({ offset: true }),
-  startedTimestamp: z.string().datetime({ offset: true }).optional(),
+  startedTimestamp: z.string().datetime({ offset: true }),
   finishedTimestamp: z.string().datetime({ offset: true }).optional(),
   statusId: z.string().optional(),
   arguments: z
     .array(
       z.object({
-        id: z.number().int(),
         name: z.string(),
         type: z.string(),
         value: z.string().nullable(),
-      })
+      }),
     )
     .optional(),
   externalArguments: z
     .array(
       z.object({
-        id: z.number().int(),
         name: z.string(),
         type: z.string(),
         value: z.string().nullable(),
-      })
+      }),
     )
     .optional(),
   correlationId: z.string().uuid(),
@@ -86,8 +85,7 @@ export const TestSchema = z.object({
 
 export const PatchTestSchema = z.object({
   title: z.string().min(1).max(256).optional(),
-  createdTimestamp: z.coerce.date().optional(),
-  startedTimestamp: z.coerce.date().nullish(),
+  startedTimestamp: z.coerce.date().optional(),
   finishedTimestamp: z.coerce.date().nullish(),
   statusId: z.string().nullish(),
 });
@@ -122,11 +120,19 @@ export const findTests = contract.query({
   method: "GET",
   path: "/v1/tests",
   query: z.object({
+    "title~cnt": z
+      .string()
+      .optional()
+      .describe("The title of the test entity contains the string."),
+    entityTypes: z
+      .array(z.enum(["beforeTest", "test", "afterTest"]))
+      .optional(),
     launchId: z.coerce
       .number()
       .int()
       .optional()
       .describe("The launch ID the tests belong to."),
+    statusIds: z.array(z.coerce.string()).optional(),
     correlationId: z.coerce
       .string()
       .uuid()
@@ -140,6 +146,7 @@ export const findTests = contract.query({
       .string()
       .optional()
       .describe("The external arguments hash the tests have."),
+    distinct: zBoolean(z).default("false"),
     limit: z.coerce
       .number()
       .int()
@@ -160,7 +167,7 @@ export const findTests = contract.query({
         limit: z.number().int(),
         offset: z.number().int(),
       }),
-      items: z.array(TestSchema)
+      items: z.array(TestSchema),
     }),
   },
 });
@@ -189,6 +196,30 @@ export const deleteTest = contract.mutation({
   body: contract.noBody(),
   responses: {
     204: z.void(),
+    404: z.object({}),
+  },
+});
+
+export const StatusesCountsSchema = z.array(
+  z.object({
+    entityType: z.enum(["beforeTest", "test", "afterTest"]),
+    statusGroupId: z.string().nullable(),
+    statusId: z.string().nullable(),
+    count: z.number().int(),
+  })
+);
+
+export const findTestEntitiesCountsByStatuses = contract.query({
+  summary:
+    "Get the tests counts grouped by status and test entity type.",
+  method: "GET",
+  path: "/v1/tests/counts/statuses",
+  query: z.object({
+    launchId: z.coerce.number().int().optional(),
+    distinct: zBoolean(z),
+  }),
+  responses: {
+    200: StatusesCountsSchema,
     404: z.object({}),
   },
 });

@@ -4,34 +4,6 @@ import bodyParser from "body-parser";
 import cors from "cors";
 import express, { NextFunction, Request, Response } from "express";
 import { ValidationError } from "./errors/errors.js";
-import {
-  createAfterTestStepRoute,
-  deleteAfterTestStepRoute,
-  findAfterTestStepsRoute,
-  patchAfterTestStepRoute,
-  readAfterTestStepRoute,
-} from "./routes/after-test-steps.js";
-import {
-  createAfterTestRoute,
-  deleteAfterTestRoute,
-  findAfterTestsRoute,
-  patchAfterTestRoute,
-  readAfterTestRoute,
-} from "./routes/after-tests.js";
-import {
-  createBeforeTestStepRoute,
-  deleteBeforeTestStepRoute,
-  findBeforeTestStepsRoute,
-  patchBeforeTestStepRoute,
-  readBeforeTestStepRoute,
-} from "./routes/before-test-steps.js";
-import {
-  createBeforeTestRoute,
-  deleteBeforeTestRoute,
-  findBeforeTestsRoute,
-  patchBeforeTestRoute,
-  readBeforeTestRoute,
-} from "./routes/before-tests.js";
 import { healthCheckRoute, setApiStarted } from "./routes/healthcheck.js";
 import {
   createLaunchRoute,
@@ -49,10 +21,6 @@ import {
   readTestStatusRoute,
 } from "./routes/statuses.js";
 import {
-  findTestEntitiesCountsByStatusesRoute,
-  findTestEntitiesRoute,
-} from "./routes/test-entities.js";
-import {
   createTestStepRoute,
   deleteTestStepRoute,
   findTestStepsRoute,
@@ -62,9 +30,10 @@ import {
 import {
   createTestRoute,
   deleteTestRoute,
+  findTestEntitiesCountsByStatusesRoute,
   findTestsRoute,
   patchTestRoute,
-  readTestRoute,
+  readTestRoute
 } from "./routes/tests.js";
 
 const { urlencoded, json } = bodyParser;
@@ -89,23 +58,12 @@ const router = s.router(contract, {
   patchLaunch: patchLaunchRoute,
   deleteLaunch: deleteLaunchRoute,
 
-  createBeforeTest: createBeforeTestRoute,
-  findBeforeTests: findBeforeTestsRoute,
-  readBeforeTest: readBeforeTestRoute,
-  patchBeforeTest: patchBeforeTestRoute,
-  deleteBeforeTest: deleteBeforeTestRoute,
-
-  createBeforeTestStep: createBeforeTestStepRoute,
-  readBeforeTestStep: readBeforeTestStepRoute,
-  findBeforeTestSteps: findBeforeTestStepsRoute,
-  patchBeforeTestStep: patchBeforeTestStepRoute,
-  deleteBeforeTestStep: deleteBeforeTestStepRoute,
-
   createTest: createTestRoute,
   findTests: findTestsRoute,
   readTest: readTestRoute,
   patchTest: patchTestRoute,
   deleteTest: deleteTestRoute,
+  findTestEntitiesCountsByStatuses: findTestEntitiesCountsByStatusesRoute,
 
   createTestStep: createTestStepRoute,
   readTestStep: readTestStepRoute,
@@ -113,25 +71,10 @@ const router = s.router(contract, {
   patchTestStep: patchTestStepRoute,
   deleteTestStep: deleteTestStepRoute,
 
-  createAfterTest: createAfterTestRoute,
-  findAfterTests: findAfterTestsRoute,
-  readAfterTest: readAfterTestRoute,
-  patchAfterTest: patchAfterTestRoute,
-  deleteAfterTest: deleteAfterTestRoute,
-
-  createAfterTestStep: createAfterTestStepRoute,
-  readAfterTestStep: readAfterTestStepRoute,
-  findAfterTestSteps: findAfterTestStepsRoute,
-  patchAfterTestStep: patchAfterTestStepRoute,
-  deleteAfterTestStep: deleteAfterTestStepRoute,
-
   findTestStatusGroups: findTestStatusGroupsRoute,
   findTestStatuses: findTestStatusesRoute,
   readTestStatusGroup: readTestStatusGroupRoute,
   readTestStatus: readTestStatusRoute,
-
-  findTestEntities: findTestEntitiesRoute,
-  findTestEntitiesCountsByStatuses: findTestEntitiesCountsByStatusesRoute,
 });
 
 createExpressEndpoints(contract, router, app);

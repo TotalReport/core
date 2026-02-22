@@ -1,7 +1,7 @@
 import { faker } from "@faker-js/faker";
 import { ClientType } from "./types.js";
 import { LaunchesGenerator } from "./launch-generator.js";
-import { assertEquals } from "./utils.js";
+import { assertEquals, firstDefined } from "./utils.js";
 import { ClientInferRequest, ClientInferResponseBody } from "@ts-rest/core";
 import { contract } from "@total-report/core-contract/contract";
 import { capitalizeFirstLetter } from "./utils-string.js";
@@ -19,14 +19,57 @@ export class TestsGenerator {
   }
 
   /**
+   * Creates a new before test with default values.
+   *
+   * @param args The arguments to create the before test with.
+   * @return The created before test.
+   */
+  async createBeforeTest(
+    args: GenerateTestArgs | undefined,
+  ): Promise<CreateTestResponse> {
+    return await this.create({
+      ...args,
+      entityType: "beforeTest",
+    });
+  }
+
+  /**
+   * Creates a new test with default values.
+   *
+   * @param args The arguments to create the test with.
+   * @return The created test.
+   */
+  async createTest(
+    args: GenerateTestArgs | undefined,
+  ): Promise<CreateTestResponse> {
+    return await this.create({
+      ...args,
+      entityType: "test",
+    });
+  }
+
+  /**
+   * Creates a new after test with default values.
+   *
+   * @param args The arguments to create the after test with.
+   * @return The created after test.
+   */
+  async createAfterTest(
+    args: GenerateTestArgs | undefined,
+  ): Promise<CreateTestResponse> {
+    return await this.create({
+      ...args,
+      entityType: "afterTest",
+    });
+  }
+
+  /**
    * Creates a new test.
    *
    * @param args The arguments to create the test with.
    * @returns The created test.
    */
-  async create(
-    args: GenerateTestArgs | undefined = undefined,
-  ): Promise<CreateTestResponse> {
+  async create(args: GenerateTestEntityArgs): Promise<CreateTestResponse> {
     const launchId =
       args?.launchId ?? (await new LaunchesGenerator(this.client).create()).id;
 
@@ -42,34 +85,24 @@ export class TestsGenerator {
           faker.word.adverb(),
       );
 
-    if (args?.statusId !== undefined) {
-      const now = new Date();
-      if (args.finishedTimestamp === undefined) {
-        args.finishedTimestamp = [
-          args.startedTimestamp,
-          args.createdTimestamp,
-          now,
-        ].find((x) => x !== undefined);
-      }
-      if (args.startedTimestamp === undefined) {
-        args.startedTimestamp = [
-          args.finishedTimestamp,
-          args.createdTimestamp,
-          now,
-        ].find((x) => x !== undefined);
-      }
-      if (args.createdTimestamp === undefined) {
-        args.createdTimestamp = [
-          args.startedTimestamp,
-          args.finishedTimestamp,
-          now,
-        ].find((x) => x !== undefined);
-      }
-    }
+    const now = new Date();
 
     const response = await this.client.createTest({
       body: {
         ...args,
+        startedTimestamp: firstDefined(
+          args?.startedTimestamp,
+          args?.finishedTimestamp,
+          now,
+        ),
+        finishedTimestamp:
+          args?.statusId === undefined
+            ? args?.finishedTimestamp
+            : firstDefined(
+                args?.finishedTimestamp,
+                args?.startedTimestamp,
+                now,
+              ),
         launchId: launchId,
         title: title,
       },
@@ -85,6 +118,57 @@ export class TestsGenerator {
   }
 
   /**
+   * Creates multiple before tests.
+   *
+   * @param count The number of before tests to create.
+   * @param argsProvider The function that provides the arguments for each before test.
+   * @returns The created before tests.
+   */
+  async createMultipleBeforeTests(
+    count: number,
+    argsProvider: (index: number) => GenerateTestArgs | undefined,
+  ): Promise<Array<CreateTestResponse>> {
+    const result = Array.from({ length: count }).map(
+      async (_, i) => await this.createBeforeTest(argsProvider(i)),
+    );
+    return await Promise.all(result);
+  }
+
+  /**
+   * Creates multiple tests.
+   *
+   * @param count The number of tests to create.
+   * @param argsProvider The function that provides the arguments for each test.
+   * @returns The created tests.
+   */
+  async createMultipleTests(
+    count: number,
+    argsProvider: (index: number) => GenerateTestArgs,
+  ): Promise<Array<CreateTestResponse>> {
+    const result = Array.from({ length: count }).map(
+      async (_, i) => await this.createTest(argsProvider(i)),
+    );
+    return await Promise.all(result);
+  }
+
+  /**
+   * Creates multiple after tests.
+   * 
+   * @param count The number of after tests to create.
+   * @param argsProvider The function that provides the arguments for each after test.
+   * @returns The created after tests.
+   */
+  async createMultipleAfterTests(
+    count: number,
+    argsProvider: (index: number) => GenerateTestArgs | undefined,
+  ): Promise<Array<CreateTestResponse>> {
+    const result = Array.from({ length: count }).map(
+      async (_, i) => await this.createAfterTest(argsProvider(i)),
+    );
+    return await Promise.all(result);
+  }
+
+  /**
    * Creates multiple tests.
    *
    * @param count The number of tests to create.
@@ -93,7 +177,7 @@ export class TestsGenerator {
    */
   async createMultiple(
     count: number,
-    argsProvider: (index: number) => GenerateTestArgs | undefined,
+    argsProvider: (index: number) => GenerateTestEntityArgs,
   ): Promise<Array<CreateTestResponse>> {
     const result = Array.from({ length: count }).map(
       async (_, i) => await this.create(argsProvider(i)),
@@ -112,6 +196,7 @@ export class TestsGenerator {
 
     return await this.create({
       launchId: launchId,
+      entityType: params.sample.entityType,
       title: params.sample.title,
       correlationId: params.sample.correlationId,
       arguments: params.sample.arguments,
@@ -125,8 +210,9 @@ export class TestsGenerator {
   }
 }
 
-type TestToRun = Pick<
+type Sample = Pick<
   CreateTestResponse,
+  | "entityType"
   | "title"
   | "correlationId"
   | "arguments"
@@ -136,12 +222,10 @@ type TestToRun = Pick<
 >;
 
 type CreateTestParams = {
-  sample: TestToRun;
+  sample: Sample;
   launch: { id: number };
   startedTimestamp: Date | undefined;
-} &
-  (NotFinished | Finished);
-
+} & (NotFinished | Finished);
 
 type NotFinished = {
   finishedTimestamp: undefined;
@@ -156,7 +240,10 @@ type Finished = {
 /**
  * The arguments to create a test with.
  */
-export type GenerateTestArgs = Partial<CreateTestRequest>;
+export type GenerateTestEntityArgs = Partial<CreateTestRequest> &
+  Pick<CreateTestRequest, "entityType">;
+
+export type GenerateTestArgs = Omit<Partial<CreateTestRequest>, "entityType">;
 
 export type CreateTestRequest = ClientInferRequest<
   typeof contract.createTest

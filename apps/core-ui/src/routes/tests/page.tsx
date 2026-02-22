@@ -1,14 +1,14 @@
-import React from 'react';
-import { RestAPIProvider } from '@/components/providers/rest-api-provider.jsx';
-import { TestsListBlock } from '@/containers/tests-list/tests-list-block.jsx';
+import React from "react";
+import { RestAPIProvider } from "@/components/providers/rest-api-provider.jsx";
+import { TestsListBlock } from "@/containers/tests-list/tests-list-block.jsx";
 import {
   ResizableHandle,
   ResizablePanel,
   ResizablePanelGroup,
-} from '@/components/ui/resizable.jsx';
-import { TestDetails } from '@/containers/test-details/test-details.jsx';
-import { useUrlParams } from '@/hooks/url/use-url-params.jsx';
-import TestsUrlParams from '@/types/tests-url-params.js';
+} from "@/components/ui/resizable.jsx";
+import { TestDetails } from "@/containers/test-details/test-details.jsx";
+import { useUrlParams } from "@/hooks/url/use-url-params.jsx";
+import TestsUrlParams from "@/types/tests-url-params.js";
 
 export const title = "Tests - Total Report";
 
@@ -32,23 +32,37 @@ function TestsPageContent() {
   const filters = {
     "title~cnt": urlParams["title~cnt"],
     launchId: urlParams.launchId,
-    entityTypes: urlParams.entityTypes ? (urlParams.entityTypes.split(',') as ("beforeTest" | "test" | "afterTest")[]) : undefined,
+    entityTypes: urlParams.entityTypes
+      ? (urlParams.entityTypes.split(",") as (
+          | "beforeTest"
+          | "test"
+          | "afterTest"
+        )[])
+      : undefined,
   };
 
   // Resolve selected test from URL params
   const selectedTest = urlParams.testId
-    ? { id: urlParams.testId, type: 'test' as const }
+    ? { id: urlParams.testId, type: "test" as const }
     : urlParams.beforeTestId
-    ? { id: urlParams.beforeTestId, type: 'beforeTest' as const }
-    : urlParams.afterTestId
-    ? { id: urlParams.afterTestId, type: 'afterTest' as const }
-    : undefined;
+      ? { id: urlParams.beforeTestId, type: "beforeTest" as const }
+      : urlParams.afterTestId
+        ? { id: urlParams.afterTestId, type: "afterTest" as const }
+        : undefined;
 
   return (
     <div className="flex h-screen">
       <div className="flex-1">
-        <ResizablePanelGroup direction="horizontal" className="h-full border rounded-md">
-          <ResizablePanel defaultSize={30} minSize={20} maxSize={50} collapsible={false}>
+        <ResizablePanelGroup
+          direction="horizontal"
+          className="h-full border rounded-md"
+        >
+          <ResizablePanel
+            defaultSize={30}
+            minSize={20}
+            maxSize={50}
+            collapsible={false}
+          >
             <TestsListBlock
               pagination={{
                 page,
@@ -59,15 +73,30 @@ function TestsPageContent() {
               filters={filters}
               onFiltersChange={(v) => {
                 const next: Record<string, any> = { ...v };
-                if (v.entityTypes) next.entityTypes = v.entityTypes.join(',');
+                if (v.entityTypes) next.entityTypes = v.entityTypes.join(",");
                 setUrlParams(next);
               }}
               selection={{
                 selectedId: selectedTest ? selectedTest.id : null,
                 onSelect: (sel) => {
-                  if (sel.type === 'test') setUrlParams({ testId: sel.id, beforeTestId: undefined, afterTestId: undefined });
-                  if (sel.type === 'beforeTest') setUrlParams({ beforeTestId: sel.id, testId: undefined, afterTestId: undefined });
-                  if (sel.type === 'afterTest') setUrlParams({ afterTestId: sel.id, testId: undefined, beforeTestId: undefined });
+                  if (sel.type === "test")
+                    setUrlParams({
+                      testId: sel.id,
+                      beforeTestId: undefined,
+                      afterTestId: undefined,
+                    });
+                  if (sel.type === "beforeTest")
+                    setUrlParams({
+                      beforeTestId: sel.id,
+                      testId: undefined,
+                      afterTestId: undefined,
+                    });
+                  if (sel.type === "afterTest")
+                    setUrlParams({
+                      afterTestId: sel.id,
+                      testId: undefined,
+                      beforeTestId: undefined,
+                    });
                 },
               }}
             />
@@ -77,14 +106,18 @@ function TestsPageContent() {
             {selectedTest === undefined && (
               <div className="h-full flex items-center justify-center">
                 <div className="text-center">
-                  <p className="text-lg font-bold text-secondary-foreground">No test selected</p>
-                  <p className="text-sm text-muted-foreground mt-1">Select a test from the list to view details</p>
+                  <p className="text-lg font-bold text-secondary-foreground">
+                    No test selected
+                  </p>
+                  <p className="text-sm text-muted-foreground mt-1">
+                    Select a test from the list to view details
+                  </p>
                 </div>
               </div>
             )}
 
             {selectedTest !== undefined && (
-              <TestDetails entityId={selectedTest.id} entityType={selectedTest.type} />
+              <TestDetails entityId={selectedTest.id} />
             )}
           </ResizablePanel>
         </ResizablePanelGroup>

@@ -27,7 +27,7 @@ describe("find test entities counts by statuses", () => {
     const passedStatusId = DEFAULT_TEST_STATUSES.PASSED.id;
     const testArgumentsHash = "89fbeb32-2f4b-43a8-b942-7712fc695c4e";
 
-    await generator.tests.createMultiple(2, () => {
+    await generator.tests.createMultipleTests(2, () => {
       return {
         launchId: launch.id,
         statusId: passedStatusId,
@@ -36,7 +36,7 @@ describe("find test entities counts by statuses", () => {
       };
     });
 
-    await generator.tests.createMultiple(3, () => {
+    await generator.tests.createMultipleTests(3, () => {
       return {
         launchId: launch.id,
         statusId: passedStatusId,
@@ -90,7 +90,7 @@ describe("find test entities counts by statuses", () => {
     const testArgumentsHash = "f21e0195-1a62-45b7-a8c3-dc1475cec94e";
 
     // Create tests with null status ID
-    await generator.tests.createMultiple(2, () => {
+    await generator.tests.createMultipleTests(2, () => {
       return {
         launchId: launch.id,
         statusId: undefined,
@@ -100,7 +100,7 @@ describe("find test entities counts by statuses", () => {
     });
 
     // Create a test with non-null status ID
-    await generator.tests.createMultiple(3, () => {
+    await generator.tests.createMultipleTests(3, () => {
       return {
         launchId: launch.id,
         statusId: DEFAULT_TEST_STATUSES.PASSED.id,
@@ -179,21 +179,19 @@ describe("find test entities counts by statuses", () => {
     const timestampBefore = new Date("2023-01-01T00:00:01Z");
     const timestampAfter = add(timestampBefore, { seconds: 3 });
 
-    await generator.tests.create({
+    await generator.tests.createTest({
       launchId: launch.id,
       correlationId: testCorrelationId,
       argumentsHash: testArgumentsHash,
-      createdTimestamp: timestampBefore,
       startedTimestamp: timestampBefore,
       finishedTimestamp: add(timestampBefore, { seconds: 1 }),
       statusId: passedStatusId,
     });
 
-    await generator.tests.create({
+    await generator.tests.createTest({
       launchId: launch.id,
       correlationId: testCorrelationId,
       argumentsHash: testArgumentsHash,
-      createdTimestamp: timestampAfter,
       statusId: undefined,
     });
 
@@ -257,21 +255,19 @@ describe("find test entities counts by statuses", () => {
     const timestampBefore = new Date("2023-01-01T00:00:01Z");
     const timestampAfter = add(timestampBefore, { seconds: 3 });
 
-    await generator.tests.create({
+    await generator.tests.createTest({
       launchId: launch.id,
       correlationId: testCorrelationId,
       argumentsHash: testArgumentsHash,
-      createdTimestamp: timestampBefore,
       startedTimestamp: timestampBefore,
       finishedTimestamp: sub(timestampAfter, { seconds: 1 }),
       statusId: passedStatusId,
     });
 
-    await generator.tests.create({
+    await generator.tests.createTest({
       launchId: launch.id,
       correlationId: testCorrelationId,
       argumentsHash: testArgumentsHash,
-      createdTimestamp: timestampBefore,
       startedTimestamp: timestampBefore,
       finishedTimestamp: timestampAfter,
       statusId: failedStatusId,
@@ -335,7 +331,7 @@ describe("find test entities counts by statuses", () => {
     const passedStatusId = DEFAULT_TEST_STATUSES.PASSED.id;
 
     // Two tests for launch1
-    await generator.tests.createMultiple(2, () => {
+    await generator.tests.createMultipleTests(2, () => {
       return {
         launchId: launch1.id,
         statusId: passedStatusId,
@@ -345,7 +341,7 @@ describe("find test entities counts by statuses", () => {
     });
 
     // Three tests for launch2
-    await generator.tests.createMultiple(3, () => {
+    await generator.tests.createMultipleTests(3, () => {
       return {
         launchId: launch2.id,
         statusId: passedStatusId,
@@ -401,17 +397,17 @@ describe("find test entities counts by statuses", () => {
     const passedStatusId = DEFAULT_TEST_STATUSES.PASSED.id;
 
     // Create one entity of each type with the passed status
-    await generator.beforeTests.create({
+    await generator.tests.createBeforeTest({
       launchId: launch.id,
       statusId: passedStatusId,
     });
 
-    await generator.tests.create({
+    await generator.tests.createTest({
       launchId: launch.id,
       statusId: passedStatusId,
     });
 
-    await generator.afterTests.create({
+    await generator.tests.createAfterTest({
       launchId: launch.id,
       statusId: passedStatusId,
     });

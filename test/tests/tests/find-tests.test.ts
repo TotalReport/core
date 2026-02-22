@@ -5,134 +5,155 @@ import { client } from "../../tools/client.js";
 import "../../tools/earl-extensions.js";
 
 const generator = new CoreEntititesGenerator(client);
+const types: ("beforeTest" | "test" | "afterTest")[] = [
+  "beforeTest",
+  "test",
+  "afterTest",
+];
 
-describe("find tests", () => {
-  test("by id", async () => {
-    const launch = await generator.launches.create();
-    const created = await generator.tests.create({
-      title: "New test",
-      launchId: launch.id,
-      arguments: [
-        {
-          name: "Argument1",
-          type: "String",
-          value: "value1",
+types.forEach((type: "beforeTest" | "test" | "afterTest") =>
+  describe("find " + type, () => {
+    beforeEach(async () => {
+      await generator.launches.deleteAll();
+    });
+
+    test("by id", async () => {
+      const launch = await generator.launches.create();
+      const created = await generator.tests.create({
+        title: "New test",
+        entityType: type,
+        launchId: launch.id,
+        arguments: [
+          {
+            name: "Argument1",
+            type: "String",
+            value: "value1",
+          },
+          {
+            name: "Argument2",
+            type: "Integer",
+            value: "value2",
+          },
+        ],
+      });
+
+      const response = await client.readTest({
+        params: { id: created.id },
+      });
+
+      expect(response).toEqual({
+        headers: expect.anything(),
+        status: 200,
+        body: {
+          ...created,
+        }
+      });
+    });
+
+    test("by launchId", async () => {
+      const launch = await generator.launches.create({});
+      const created = await generator.tests.create({
+        launchId: launch.id,
+        entityType: type,
+      });
+
+      // Record that should be filtered out
+      const launch2 = await generator.launches.create({});
+      await generator.tests.create({ launchId: launch2.id, entityType: type });
+
+      const limit = 10;
+      const offset = 0;
+
+      const response = await client.findTests({
+        query: { launchId: launch.id, limit, offset },
+      });
+
+      expect(response).toEqual({
+        headers: expect.anything(),
+        status: 200,
+        body: {
+          pagination: {
+            total: 1,
+            limit,
+            offset,
+          },
+          items: [{ ...created }],
         },
-        {
-          name: "Argument2",
-          type: "Integer",
-          value: "value2",
+      });
+    });
+
+    test("by correlationId", async () => {
+      const launch = await generator.launches.create();
+      const correlationId = "00ee066e-77dc-45ab-953a-d4e945239363";
+      const created = await generator.tests.create({
+        entityType: type,
+        launchId: launch.id,
+        correlationId,
+      });
+
+      // Record that should be filtered out
+      await generator.tests.create({
+        entityType: type,
+        launchId: launch.id,
+        correlationId: "d412cab5-913e-4e45-b357-06579075f095",
+      });
+
+      const limit = 10;
+      const offset = 0;
+
+      const response = await client.findTests({
+        query: { correlationId, limit, offset },
+      });
+
+      expect(response).toEqual({
+        headers: expect.anything(),
+        status: 200,
+        body: {
+          pagination: {
+            total: 1,
+            limit,
+            offset,
+          },
+          items: [{ ...created }],
         },
-      ],
+      });
     });
 
-    const response = await client.readTest({
-      params: { id: created.id },
-    });
+    test("by argumentsHash", async () => {
+      const launch = await generator.launches.create();
+      const argumentsHash = "f9561dd7-7da9-44ff-9007-a24cc7fd2de5";
+      const created = await generator.tests.create({
+        entityType: type,
+        launchId: launch.id,
+        argumentsHash,
+      });
 
-    expect(response).toEqual({
-      headers: expect.anything(),
-      status: 200,
-      body: created,
-    });
-  });
+      // Record that should be filtered out
+      await generator.tests.create({
+        entityType: type,
+        launchId: launch.id,
+        argumentsHash: "e0655bf8-d58c-4b15-a053-e2dd418c0392",
+      });
 
-  test("by launchId", async () => {
-    const launch = await generator.launches.create({ });
-    const created = await generator.tests.create({ launchId: launch.id });
+      const limit = 10;
+      const offset = 0;
 
-    // Record that should be filtered out
-    const launch2 = await generator.launches.create({ });
-    await generator.tests.create({ launchId: launch2.id });
+      const response = await client.findTests({
+        query: { argumentsHash, limit, offset },
+      });
 
-    const limit = 10;
-    const offset = 0;
-
-    const response = await client.findTests({
-      query: { launchId: launch.id, limit, offset },
-    });
-
-    expect(response).toEqual({
-      headers: expect.anything(),
-      status: 200,
-      body: {
-        pagination: {
-          total: 1,
-          limit,
-          offset,
+      expect(response).toEqual({
+        headers: expect.anything(),
+        status: 200,
+        body: {
+          pagination: {
+            total: 1,
+            limit,
+            offset,
+          },
+          items: [{ ...created }],
         },
-        items: [{...created, arguments: [], externalArguments: []}],
-      },
+      });
     });
-  });
-
-  test("by correlationId", async () => {
-    const launch = await generator.launches.create();
-    const correlationId = "00ee066e-77dc-45ab-953a-d4e945239363";
-    const created = await generator.tests.create({
-      launchId: launch.id,
-      correlationId,
-    });
-
-    // Record that should be filtered out
-    await generator.tests.create({
-      launchId: launch.id,
-      correlationId: "d412cab5-913e-4e45-b357-06579075f095",
-    });
-
-    const limit = 10;
-    const offset = 0;
-
-    const response = await client.findTests({
-      query: { correlationId, limit, offset },
-    });
-
-    expect(response).toEqual({
-      headers: expect.anything(),
-      status: 200,
-      body: {
-        pagination: {
-          total: 1,
-          limit,
-          offset,
-        },
-        items: [{...created, arguments: [], externalArguments: []}],
-      },
-    });
-  });
-
-  test("by argumentsHash", async () => {
-    const launch = await generator.launches.create();
-    const argumentsHash = "f9561dd7-7da9-44ff-9007-a24cc7fd2de5";
-    const created = await generator.tests.create({
-      launchId: launch.id,
-      argumentsHash,
-    });
-
-    // Record that should be filtered out
-    await generator.tests.create({
-      launchId: launch.id,
-      argumentsHash: "e0655bf8-d58c-4b15-a053-e2dd418c0392",
-    });
-
-    const limit = 10;
-    const offset = 0;
-
-    const response = await client.findTests({
-      query: { argumentsHash, limit, offset },
-    });
-
-    expect(response).toEqual({
-      headers: expect.anything(),
-      status: 200,
-      body: {
-        pagination: {
-          total: 1,
-          limit,
-          offset,
-        },
-        items: [{...created, arguments: [], externalArguments: []}],
-      },
-    });
-  });
-});
+  }),
+);

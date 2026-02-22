@@ -23,7 +23,6 @@ export class LaunchesDAO {
       .values({
         title: args.title,
         arguments: args.arguments,
-        createdTimestamp: args.createdTimestamp,
         startedTimestamp: args.startedTimestamp,
         finishedTimestamp: args.finishedTimestamp,
       })
@@ -60,7 +59,7 @@ export class LaunchesDAO {
         .where(titleFilter)
         .limit(params.limit)
         .offset(params.offset)
-        .orderBy(launches.createdTimestamp);
+        .orderBy(launches.finishedTimestamp, launches.startedTimestamp);
 
       const total =
         (await tx.select({ value: count() }).from(launches).where(titleFilter)).at(0)
@@ -136,8 +135,7 @@ export class LaunchesDAO {
 
 const validateLaunch = (args: {
   title: string;
-  createdTimestamp: Date;
-  startedTimestamp?: Date | null;
+  startedTimestamp: Date;
   finishedTimestamp?: Date | null;
 }) => {
   if (args.title.length === 0) {
@@ -150,8 +148,7 @@ const validateLaunch = (args: {
 type CreateLaunch = {
   title: string;
   arguments?: string;
-  createdTimestamp: Date;
-  startedTimestamp?: Date;
+  startedTimestamp: Date;
   finishedTimestamp?: Date;
 };
 
@@ -171,15 +168,13 @@ type FindCountParams = {};
 type PatchLaunch = {
   id: number;
   title?: string;
-  createdTimestamp?: Date;
-  startedTimestamp?: Date | null;
+  startedTimestamp?: Date;
   finishedTimestamp?: Date | null;
 };
 
 type SetColumnsValues = {
   title?: string;
-  createdTimestamp?: Date;
-  startedTimestamp?: Date | null;
+  startedTimestamp?: Date;
   finishedTimestamp?: Date | null;
 };
 
@@ -189,8 +184,7 @@ type LaunchEntity = {
   id: number;
   title: string;
   arguments?: string;
-  createdTimestamp: Date;
-  startedTimestamp?: Date;
+  startedTimestamp: Date;
   finishedTimestamp?: Date;
 };
 
@@ -199,8 +193,7 @@ const rowToEntity = (row: LaunchRow): LaunchEntity => {
     id: row.id,
     title: row.title,
     arguments: row.arguments ?? undefined,
-    createdTimestamp: row.createdTimestamp,
-    startedTimestamp: row.startedTimestamp ?? undefined,
+    startedTimestamp: row.startedTimestamp,
     finishedTimestamp: row.finishedTimestamp ?? undefined,
   };
 };
@@ -211,22 +204,11 @@ const convertToSetColumns = (args: PatchLaunch) => {
     update = { ...update, title: args.title };
   }
 
-  if (args.createdTimestamp !== undefined) {
+  if (args.startedTimestamp !== undefined) {
     update = {
       ...update,
-      createdTimestamp: args.createdTimestamp,
+      startedTimestamp: args.startedTimestamp,
     };
-  }
-
-  if (args.startedTimestamp !== undefined) {
-    if (args.startedTimestamp === null) {
-      update = { ...update, startedTimestamp: null };
-    } else {
-      update = {
-        ...update,
-        startedTimestamp: args.startedTimestamp,
-      };
-    }
   }
 
   if (args.finishedTimestamp !== undefined) {

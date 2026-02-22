@@ -1,6 +1,4 @@
-import { sql } from "drizzle-orm";
-import { AnyPgColumn, bigint, bigserial, boolean, integer, pgSequence, pgTable, pgView, text, timestamp, uuid, varchar } from "drizzle-orm/pg-core";
-import { ENTITY_TYPES } from "@total-report/core-schema/constants";
+import { bigint, bigserial, boolean, json, pgEnum, pgTable, text, timestamp, uuid, varchar } from "drizzle-orm/pg-core";
 
 export const testStatusGroups = pgTable("test_status_groups", {
   id: varchar("id", { length: 4 }).primaryKey(),
@@ -21,197 +19,36 @@ export const launches = pgTable("launches", {
   id: bigserial("id", { mode: "number" }).primaryKey(),
   title: varchar("title", { length: 256 }).notNull(),
   arguments: text("arguments"),
-  createdTimestamp: timestamp("created_timestamp", { withTimezone: false, mode: "date" }).notNull(),
-  startedTimestamp: timestamp("started_timestamp", { withTimezone: false, mode: "date" }),
+  startedTimestamp: timestamp("started_timestamp", { withTimezone: false, mode: "date" }).notNull(),
   finishedTimestamp: timestamp("finished_timestamp", { withTimezone: false, mode: "date" }),
 });
 
-export const testEnititesIdSeq = pgSequence("test_entities_id_seq", { cache: 5 });
+export const testEntityTypes = pgEnum("test_entity_types", ["beforeTest", "test", "afterTest"]);
 
-export const beforeTests = pgTable("before_tests", {
+export const testEntities = pgTable("test_entities", {
   //TODO here and everywhere investigatge if cascade delete gives performance issues on large datasets
   launchId: bigint("launch_id", { mode: "number" }).references(() => launches.id, { onDelete: "cascade" }).notNull(),
-  //FIXME drizzle-kit@0.26.2 doesn't support variables in the default, change to testEnititesIdSeq.name when it's supported
-  id: bigint("id", { mode: "number" }).primaryKey().default(sql`nextval('test_entities_id_seq')`),
+  id: bigserial("id", { mode: "number" }).primaryKey(),
+  entityType: testEntityTypes("entity_type").notNull(),
   title: varchar("title", { length: 256 }).notNull(),
-  createdTimestamp: timestamp("created_timestamp", { withTimezone: false, mode: "date" }).notNull(),
-  startedTimestamp: timestamp("started_timestamp", { withTimezone: false, mode: "date" }),
+  arguments: json("arguments").$type<{ name: string, type: string, value: string | null }[]>(),
+  externalArguments: json("external_arguments").$type<{ name: string, type: string, value: string | null }[]>(),
+  startedTimestamp: timestamp("started_timestamp", { withTimezone: false, mode: "date" }).notNull(),
   finishedTimestamp: timestamp("finished_timestamp", { withTimezone: false, mode: "date" }),
   statusId: varchar("status_id").references(() => testStatuses.id),
-  correlationId: uuid("correlation_id").notNull(),
+  titleHash: uuid("title_hash").notNull(),
   argumentsHash: uuid("arguments_hash").notNull(),
   externalArgumentsHash: uuid("external_arguments_hash").notNull(),
 });
 
-export const beforeTestArguments = pgTable("before_test_arguments", {
-  testId: bigint("test_id", { mode: "number" }).references(() => beforeTests.id, { onDelete: "cascade" }).notNull(),
-  id: bigserial("id", { mode: "number" }).primaryKey(),
-  index: integer("index").notNull(),
-  name: varchar("name", { length: 256 }).notNull(),
-  type: varchar("type", { length: 256 }).notNull(),
-  value: text("value"),
-});
-
-export const beforeTestExternalArguments = pgTable("before_test_external_arguments", {
-  testId: bigint("test_id", { mode: "number" }).references(() => beforeTests.id, { onDelete: "cascade" }).notNull(),
-  id: bigserial("id", { mode: "number" }).primaryKey(),
-  index: integer("index").notNull(),
-  name: varchar("name", { length: 256 }).notNull(),
-  type: varchar("type", { length: 256 }).notNull(),
-  value: text("value"),
-});
-
-export const beforeTestSteps = pgTable("before_test_steps", {
-  testId: bigint("test_id", { mode: "number" }).references(() => beforeTests.id, { onDelete: "cascade" }).notNull(),
+export const testEntitySteps = pgTable("test_entity_steps", {
+  testId: bigint("test_id", { mode: "number" }).references(() => testEntities.id, { onDelete: "cascade" }).notNull(),
   id: bigserial("id", { mode: "number" }).primaryKey(),
   title: varchar("title", { length: 256 }).notNull(),
-  createdTimestamp: timestamp("created_timestamp", { withTimezone: false, mode: "date" }).notNull(),
-  startedTimestamp: timestamp("started_timestamp", { withTimezone: false, mode: "date" }),
+  startedTimestamp: timestamp("started_timestamp", { withTimezone: false, mode: "date" }).notNull(),
   finishedTimestamp: timestamp("finished_timestamp", { withTimezone: false, mode: "date" }),
   isSuccessful: boolean("is_successful"),
   errorMessage: text("error_message"),
   thread: varchar("thread", { length: 256 }),
   process: varchar("process", { length: 256 }),
 });
-
-export const tests = pgTable("tests", {
-  launchId: bigint("launch_id", { mode: "number" }).references(() => launches.id, { onDelete: "cascade" }).notNull(),
-  //FIXME drizzle-kit@0.26.2 doesn't support variables in the default, change to testEnititesIdSeq.name when it's supported
-  id: bigint("id", { mode: "number" }).primaryKey().default(sql`nextval('test_entities_id_seq')`),
-  title: varchar("title", { length: 256 }).notNull(),
-  createdTimestamp: timestamp("created_timestamp", { withTimezone: false, mode: "date" }).notNull(),
-  startedTimestamp: timestamp("started_timestamp", { withTimezone: false, mode: "date" }),
-  finishedTimestamp: timestamp("finished_timestamp", { withTimezone: false, mode: "date" }),
-  statusId: varchar("status_id").references(() => testStatuses.id),
-  correlationId: uuid("correlation_id").notNull(),
-  argumentsHash: uuid("arguments_hash").notNull(),
-  externalArgumentsHash: uuid("external_arguments_hash").notNull(),
-});
-
-export const testArguments = pgTable("test_arguments", {
-  testId: bigint("test_id", { mode: "number" }).references(() => tests.id, { onDelete: "cascade" }).notNull(),
-  id: bigserial("id", { mode: "number" }).primaryKey(),
-  index: integer("index").notNull(),
-  name: varchar("name", { length: 256 }).notNull(),
-  type: varchar("type", { length: 256 }).notNull(),
-  value: text("value"),
-});
-
-export const testExternalArguments = pgTable("test_external_arguments", {
-  testId: bigint("test_id", { mode: "number" }).references(() => tests.id, { onDelete: "cascade" }).notNull(),
-  id: bigserial("id", { mode: "number" }).primaryKey(),
-  index: integer("index").notNull(),
-  name: varchar("name", { length: 256 }).notNull(),
-  type: varchar("type", { length: 256 }).notNull(),
-  value: text("value"),
-});
-
-export const testSteps = pgTable("test_steps", {
-  testId: bigint("test_id", { mode: "number" }).references(() => tests.id, { onDelete: "cascade" }).notNull(),
-  id: bigserial("id", { mode: "number" }).primaryKey(),
-  title: varchar("title", { length: 256 }).notNull(),
-  createdTimestamp: timestamp("created_timestamp", { withTimezone: false, mode: "date" }).notNull(),
-  startedTimestamp: timestamp("started_timestamp", { withTimezone: false, mode: "date" }),
-  finishedTimestamp: timestamp("finished_timestamp", { withTimezone: false, mode: "date" }),
-  isSuccessful: boolean("is_successful"),
-  errorMessage: text("error_message"),
-  thread: varchar("thread", { length: 256 }),
-  process: varchar("process", { length: 256 }),
-});
-
-export const afterTests = pgTable("after_tests", {
-  launchId: bigint("launch_id", { mode: "number" }).references(() => launches.id, { onDelete: "cascade" }).notNull(),
-  //FIXME drizzle-kit@0.26.2 doesn't support variables in the default, change to testEnititesIdSeq.name when it's supported
-  id: bigint("id", { mode: "number" }).primaryKey().default(sql`nextval('test_entities_id_seq')`),
-  title: varchar("title", { length: 256 }).notNull(),
-  createdTimestamp: timestamp("created_timestamp", { withTimezone: false, mode: "date" }).notNull(),
-  startedTimestamp: timestamp("started_timestamp", { withTimezone: false, mode: "date" }),
-  finishedTimestamp: timestamp("finished_timestamp", { withTimezone: false, mode: "date" }),
-  statusId: varchar("status_id").references(() => testStatuses.id),
-  correlationId: uuid("correlation_id").notNull(),
-  argumentsHash: uuid("arguments_hash").notNull(),
-  externalArgumentsHash: uuid("external_arguments_hash").notNull(),
-});
-
-export const afterTestArguments = pgTable("after_test_arguments", {
-  testId: bigint("test_id", { mode: "number" }).references(() => afterTests.id, { onDelete: "cascade" }).notNull(),
-  id: bigserial("id", { mode: "number" }).primaryKey(),
-  index: integer("index").notNull(),
-  name: varchar("name", { length: 256 }).notNull(),
-  type: varchar("type", { length: 256 }).notNull(),
-  value: text("value"),
-});
-
-export const afterTestExternalArguments = pgTable("after_test_external_arguments", {
-  testId: bigint("test_id", { mode: "number" }).references(() => afterTests.id, { onDelete: "cascade" }).notNull(),
-  id: bigserial("id", { mode: "number" }).primaryKey(),
-  index: integer("index").notNull(),
-  name: varchar("name", { length: 256 }).notNull(),
-  type: varchar("type", { length: 256 }).notNull(),
-  value: text("value"),
-});
-
-export const afterTestSteps = pgTable("after_test_steps", {
-  testId: bigint("test_id", { mode: "number" }).references(() => afterTests.id, { onDelete: "cascade" }).notNull(),
-  id: bigserial("id", { mode: "number" }).primaryKey(),
-  title: varchar("title", { length: 256 }).notNull(),
-  createdTimestamp: timestamp("created_timestamp", { withTimezone: false, mode: "date" }).notNull(),
-  startedTimestamp: timestamp("started_timestamp", { withTimezone: false, mode: "date" }),
-  finishedTimestamp: timestamp("finished_timestamp", { withTimezone: false, mode: "date" }),
-  isSuccessful: boolean("is_successful"),
-  errorMessage: text("error_message"),
-  thread: varchar("thread", { length: 256 }),
-  process: varchar("process", { length: 256 }),
-});
-
-export const paths = pgTable("paths", {
-  testId: bigint("test_id", { mode: "number" }).references(() => tests.id, { onDelete: "cascade" }),
-  id: bigserial("id", { mode: "number" }).primaryKey(),
-  title: varchar("title", { length: 256 }).notNull(),
-  createdTimestamp: timestamp("created_timestamp", { withTimezone: false, mode: "string" }).notNull(),
-});
-
-export const testEntities = pgView("test_entities").as((qb) => 
-  qb.select({
-      launchId: beforeTests.launchId,
-      entityType: sql<"beforeTest"|"test"|"afterTest">`${ENTITY_TYPES.BEFORE_TEST}`.as("entity_type"),
-      id: beforeTests.id,
-      title: beforeTests.title,
-      createdTimestamp: beforeTests.createdTimestamp,
-      startedTimestamp: beforeTests.startedTimestamp,
-      finishedTimestamp: beforeTests.finishedTimestamp,
-      statusId: beforeTests.statusId,
-      correlationId: beforeTests.correlationId,
-      argumentsHash: beforeTests.argumentsHash,
-      externalArgumentsHash: beforeTests.externalArgumentsHash})
-    .from(beforeTests)
-  .unionAll(
-    qb.select({
-        launchId: tests.launchId,
-        entityType: sql<"beforeTest"|"test"|"afterTest">`${ENTITY_TYPES.TEST}`.as("entity_type"),
-        id: tests.id,
-        title: tests.title,
-        createdTimestamp: tests.createdTimestamp,
-        startedTimestamp: tests.startedTimestamp,
-        finishedTimestamp: tests.finishedTimestamp,
-        statusId: tests.statusId,
-        correlationId: tests.correlationId,
-        argumentsHash: tests.argumentsHash,
-        externalArgumentsHash: tests.externalArgumentsHash
-      })
-      .from(tests))
-  .unionAll(
-    qb.select({
-        launchId: afterTests.launchId,
-        entityType: sql<"beforeTest"|"test"|"afterTest">`${ENTITY_TYPES.AFTER_TEST}`.as("entity_type"),
-        id: afterTests.id,
-        title: afterTests.title,
-        createdTimestamp: afterTests.createdTimestamp,
-        startedTimestamp: afterTests.startedTimestamp,
-        finishedTimestamp: afterTests.finishedTimestamp,
-        statusId: afterTests.statusId,
-        correlationId: afterTests.correlationId,
-        argumentsHash: afterTests.argumentsHash,
-        externalArgumentsHash: afterTests.externalArgumentsHash
-      })
-      .from(afterTests)))

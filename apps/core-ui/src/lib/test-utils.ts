@@ -17,9 +17,8 @@ export type FormattedTestEntity = {
       createdTimestamp: string;
     };
   };
-  startedTimestamp?: string | null;
+  startedTimestamp: string;
   finishedTimestamp?: string | null;
-  createdTimestamp: string;
   entityType: string;
   correlationId?: string | null;
   argumentsHash?: string | null;
@@ -34,7 +33,6 @@ export function formatTestEntity(
     id: test.id,
     title: test.title,
     status: formatStatus(test.statusId, statuses, statusGroups),
-    createdTimestamp: test.createdTimestamp,
     startedTimestamp: test.startedTimestamp,
     finishedTimestamp: test.finishedTimestamp,
     entityType: test.entityType,
@@ -53,7 +51,6 @@ export function formatTestDetails(
     id: test.id,
     title: test.title,
     status: formatStatus(test.statusId, statuses, statusGroups),
-    createdTimestamp: test.createdTimestamp,
     startedTimestamp: test.startedTimestamp,
     finishedTimestamp: test.finishedTimestamp,
     entityType: entityType,

@@ -2,11 +2,12 @@ import { expect } from "earl";
 import { describe, test } from "mocha";
 import { client } from "../../tools/client.js";
 import "../../tools/earl-extensions.js";
+import { start } from "repl";
 
 
 describe("create launches", () => {
   test("with minimum fields", async () => {
-    const request = { title: "New launch"};
+    const request = { title: "New launch", startedTimestamp: new Date("2024-07-21T06:52:35Z") };
 
     const response = await client.createLaunch({ body: request });
 
@@ -16,7 +17,7 @@ describe("create launches", () => {
       body: {
         id: expect.a(Number),
         title: request.title,
-        createdTimestamp: expect.isCloseToNow(3000),
+        startedTimestamp: request.startedTimestamp.toISOString(),
       },
     });
   });
@@ -39,7 +40,6 @@ describe("create launches", () => {
         id: expect.a(Number),
         title: request.title,
         arguments: request.arguments,
-        createdTimestamp: request.createdTimestamp.toISOString(),
         startedTimestamp: request.startedTimestamp.toISOString(),
         finishedTimestamp: request.finishedTimestamp.toISOString(),
       },

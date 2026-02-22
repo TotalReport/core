@@ -29,16 +29,12 @@ let abortedTest: CreateTestResponse | undefined = undefined;
 
 for (let i = 0; i < launchesCount; i++) {
   const launch = await entities.launches.create({
-    createdTimestamp: sub(new Date(), { days: launchesCount - i }),
     startedTimestamp: sub(new Date(), { days: launchesCount - i }),
   });
 
-  const beforeTest = await entities.beforeTests.create({
+  const beforeTest = await entities.tests.createBeforeTest({
     launchId: launch.id,
     statusId: DEFAULT_TEST_STATUSES.PASSED.id,
-    createdTimestamp: add(new Date(launch.createdTimestamp!), {
-      seconds: 1,
-    }),
     startedTimestamp: add(new Date(launch.startedTimestamp!), {
       seconds: 1,
     }),
@@ -61,7 +57,7 @@ for (let i = 0; i < launchesCount; i++) {
 
   passedTest =
     passedTest === undefined
-      ? await entities.tests.create({
+      ? await entities.tests.createTest({
           launchId: launch.id,
           startedTimestamp: after({
             timestamp: beforeTest.finishedTimestamp!,
@@ -89,7 +85,7 @@ for (let i = 0; i < launchesCount; i++) {
 
   failedTest =
     failedTest === undefined
-      ? await entities.tests.create({
+      ? await entities.tests.createTest({
           launchId: launch.id,
           startedTimestamp: after({
             timestamp: passedTest.finishedTimestamp!,
@@ -121,7 +117,7 @@ for (let i = 0; i < launchesCount; i++) {
       : DEFAULT_TEST_STATUSES.TO_INVESTIGATE.id;
   flakyToInvestigateTest =
     flakyToInvestigateTest === undefined
-      ? await entities.tests.create({
+      ? await entities.tests.createTest({
           launchId: launch.id,
 
           startedTimestamp: after({
@@ -155,7 +151,7 @@ for (let i = 0; i < launchesCount; i++) {
 
   resolvedAutomationBugTest =
     resolvedAutomationBugTest === undefined
-      ? await entities.tests.create({
+      ? await entities.tests.createTest({
           launchId: launch.id,          
           statusId: resolvedAutomationBugStatus,
 
@@ -185,7 +181,7 @@ for (let i = 0; i < launchesCount; i++) {
 
   productBugTest =
     productBugTest === undefined
-      ? await entities.tests.create({
+      ? await entities.tests.createTest({
           launchId: launch.id,
           statusId: DEFAULT_TEST_STATUSES.PRODUCT_BUG.id,
           startedTimestamp: after({
@@ -213,7 +209,7 @@ for (let i = 0; i < launchesCount; i++) {
 
   systemIssueTest =
     systemIssueTest === undefined
-      ? await entities.tests.create({
+      ? await entities.tests.createTest({
           launchId: launch.id,
           statusId: DEFAULT_TEST_STATUSES.SYSTEM_ISSUE.id,
           startedTimestamp: after({
@@ -241,7 +237,7 @@ for (let i = 0; i < launchesCount; i++) {
 
   noDefectTest =
     noDefectTest === undefined
-      ? await entities.tests.create({
+      ? await entities.tests.createTest({
           launchId: launch.id,
           statusId: DEFAULT_TEST_STATUSES.NO_DEFECT.id,
           startedTimestamp: after({
@@ -269,7 +265,7 @@ for (let i = 0; i < launchesCount; i++) {
 
   skippedTest =
     skippedTest === undefined
-      ? await entities.tests.create({
+      ? await entities.tests.createTest({
           launchId: launch.id,
           statusId: DEFAULT_TEST_STATUSES.SKIPPED.id,
           startedTimestamp: after({
@@ -297,7 +293,7 @@ for (let i = 0; i < launchesCount; i++) {
 
   abortedTest =
     abortedTest === undefined
-      ? await entities.tests.create({
+      ? await entities.tests.createTest({
           launchId: launch.id,
           statusId: DEFAULT_TEST_STATUSES.ABORTED.id,
           startedTimestamp: after({

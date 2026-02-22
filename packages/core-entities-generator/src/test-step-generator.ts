@@ -1,9 +1,9 @@
 import { faker } from "@faker-js/faker";
 import { contract } from "@total-report/core-contract/contract";
 import { ClientInferRequest } from "@ts-rest/core";
-import { TestsGenerator } from "./test-generator.js";
 import { ClientType } from "./types.js";
 import { capitalizeFirstLetter } from "./utils-string.js";
+import { firstDefined } from "./utils.js";
 
 /**
  * This class is responsible for generating test steps.
@@ -21,10 +21,7 @@ export class TestStepsGenerator {
    * @param args The arguments to create the test step with.
    * @returns The created test step.
    */
-  async create(args: GenerateTestStepArgs | undefined = undefined) {
-    const testId =
-      args?.testId ?? (await new TestsGenerator(this.client).create()).id;
-
+  async create(args: GenerateTestStepArgs) {
     const title =
       args?.title ??
       capitalizeFirstLetter(
@@ -37,11 +34,17 @@ export class TestStepsGenerator {
           faker.word.adverb()
       );
 
+    const startedTimestamp = firstDefined(
+      args?.startedTimestamp,
+      args?.finishedTimestamp,
+      new Date(),
+    );
+
     const response = await this.client.createTestStep({
       body: {
-        testId: testId,
         title: title,
         ...args,
+        startedTimestamp: startedTimestamp,
       },
     });
     if (response.status !== 201) {
@@ -53,7 +56,7 @@ export class TestStepsGenerator {
   }
 }
 
-export type GenerateTestStepArgs = Partial<CreateTestStepRequest>;
+export type GenerateTestStepArgs = Partial<CreateTestStepRequest> & Pick<CreateTestStepRequest, "testId">;
 
 export type CreateTestStepRequest = ClientInferRequest<
   typeof contract.createTestStep

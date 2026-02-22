@@ -6,59 +6,66 @@ import { client } from "../../tools/client.js";
 import "../../tools/earl-extensions.js";
 
 const generator = new CoreEntititesGenerator(client);
+const types: ("beforeTest" | "test" | "afterTest")[] = [
+  "beforeTest",
+  "test",
+  "afterTest",
+];
 
-describe("delete test", () => {
-  test("by id", async () => {
-    const launch = await generator.launches.create();
-    const test = await generator.tests.create({
-      launchId: launch.id,
-      title: "Text context 1",
-      createdTimestamp: new Date("2024-07-21T06:52:32Z"),
-      startedTimestamp: new Date("2024-07-21T06:52:35Z"),
-      finishedTimestamp: new Date("2024-07-21T06:53:21Z"),
-      statusId: DEFAULT_TEST_STATUSES.PASSED.id,
-      arguments: [
-        {
-          name: "Argument1",
-          type: "String",
-          value: "value1",
-        },
-        {
-          name: "Argument2",
-          type: "Integer",
-          value: "value2",
-        },
-      ],
-    });
+types.forEach((type: "beforeTest" | "test" | "afterTest") =>
+  describe(`delete ${type}`, () => {
+    test("by id", async () => {
+      const launch = await generator.launches.create();
+      const test = await generator.tests.create({
+        launchId: launch.id,
+        entityType: type,
+        title: "Text context 1",
+        startedTimestamp: new Date("2024-07-21T06:52:35Z"),
+        finishedTimestamp: new Date("2024-07-21T06:53:21Z"),
+        statusId: DEFAULT_TEST_STATUSES.PASSED.id,
+        arguments: [
+          {
+            name: "Argument1",
+            type: "String",
+            value: "value1",
+          },
+          {
+            name: "Argument2",
+            type: "Integer",
+            value: "value2",
+          },
+        ],
+      });
 
-    const deleteTestResponse = await client.deleteTest({
-      params: { id: test.id },
-    });
+      const deleteTestResponse = await client.deleteTest({
+        params: { id: test.id },
+      });
 
-    expect(deleteTestResponse).toEqual({
-      headers: expect.anything(),
-      status: 204,
-      body: expect.a(Blob),
-    });
+      expect(deleteTestResponse).toEqual({
+        headers: expect.anything(),
+        status: 204,
+        body: expect.a(Blob),
+      });
 
-    const testByIdAfterDeleteResponse = await client.readTest({
-      params: { id: test.id },
-    });
+      const testByIdAfterDeleteResponse = await client.readTest({
+        params: { id: test.id },
+      });
 
-    expect(testByIdAfterDeleteResponse).toEqual({
-      headers: expect.anything(),
-      status: 404,
-      body: {},
-    });
+      expect(testByIdAfterDeleteResponse).toEqual({
+        headers: expect.anything(),
+        status: 404,
+        body: {},
+      });
 
-    const launchByIdAfterDeleteResponse = await client.readLaunch({
-      params: { id: test.launchId },
-    });
+      const launchByIdAfterDeleteResponse = await client.readLaunch({
+        params: { id: test.launchId },
+      });
 
-    expect(launchByIdAfterDeleteResponse).toEqual({
-      headers: expect.anything(),
-      status: 200,
-      body: launch,
+      expect(launchByIdAfterDeleteResponse).toEqual({
+        headers: expect.anything(),
+        status: 200,
+        body: launch,
+      });
     });
-  });
-});
+  }),
+);

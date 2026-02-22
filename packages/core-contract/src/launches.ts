@@ -11,23 +11,20 @@ export const CreateLaunchSchema = z.object({
     .string()
     .optional()
     .describe("The arguments which were used to start the run."),
-  createdTimestamp: z.coerce.date().optional(),
-  startedTimestamp: z.coerce.date().optional(),
+  startedTimestamp: z.coerce.date(),
   finishedTimestamp: z.coerce.date().optional(),
 });
 
 export const PatchLaunchSchema = z.object({
   title: z.string().min(1).max(256).optional(),
-  createdTimestamp: z.coerce.date().optional(),
-  startedTimestamp: z.coerce.date().nullish(),
+  startedTimestamp: z.coerce.date().optional(),
   finishedTimestamp: z.coerce.date().nullish(),
 });
 
 export const LaunchSchema = z.object({
   id: z.number().int(),
   title: z.string().min(1).max(256),
-  createdTimestamp: z.string().datetime({ offset: true }),
-  startedTimestamp: z.string().datetime({ offset: true }).optional(),
+  startedTimestamp: z.string().datetime({ offset: true }),
   finishedTimestamp: z.string().datetime({ offset: true }).optional(),
   arguments: z.string().optional(),
 });

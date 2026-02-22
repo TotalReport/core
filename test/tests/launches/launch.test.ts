@@ -28,7 +28,6 @@ describe("launches", () => {
       body: {
         id: launchId,
         title: request.title,
-        createdTimestamp: request.createdTimestamp.toISOString(),
         startedTimestamp: request.startedTimestamp.toISOString(),
         finishedTimestamp: request.finishedTimestamp.toISOString(),
       },
@@ -38,7 +37,6 @@ describe("launches", () => {
   test("patch launch all fields", async () => {
     const launch = await generator.launches.create({
       title: "Launch 1",
-      createdTimestamp: new Date("2024-07-21T06:52:32Z"),
       startedTimestamp: new Date("2024-07-21T06:52:35Z"),
       finishedTimestamp: new Date("2024-07-21T06:53:21Z"),
     });
@@ -60,7 +58,6 @@ describe("launches", () => {
       body: {
         id: launch.id,
         title: patchRequest.title,
-        createdTimestamp: patchRequest.createdTimestamp.toISOString(),
         startedTimestamp: patchRequest.startedTimestamp.toISOString(),
         finishedTimestamp: patchRequest.finishedTimestamp.toISOString(),
       },

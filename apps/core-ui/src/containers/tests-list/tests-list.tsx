@@ -2,12 +2,15 @@ import ErrorRetry from "@/components/ui/error-retry.js";
 import { PaginationBlock } from "@/components/ui/pagination-block.jsx";
 import { ScrollArea } from "@/components/ui/scroll-area.js";
 import { Skeleton } from "@/components/ui/skeleton.jsx";
-import { StatusPill } from '@/containers/test-status/test-status-pill.jsx';
+import { StatusPill } from "@/containers/test-status/test-status-pill.jsx";
 import { useFindTestEntities } from "@/hooks/api/test-entities/use-find-test-entities.js";
-import { FormattedTestEntity, getTestTypeFromEntityType } from "@/lib/test-utils.js";
-import { cn } from '@/lib/utils.js';
+import {
+  FormattedTestEntity,
+  getTestTypeFromEntityType,
+} from "@/lib/test-utils.js";
+import { cn } from "@/lib/utils.js";
 import { TestsUrlFilters } from "@/types/tests-url-params.js";
-import { formatDistanceToNow } from 'date-fns';
+import { formatDistanceToNow } from "date-fns";
 import { SelectedTest } from "./tests-list-block.jsx";
 
 interface TestsListProps {
@@ -27,7 +30,8 @@ interface TestsListProps {
 export const TestsList = ({
   pagination: { page, pageSize, setPage, setPageSize },
   selection: { selectedId, onSelect },
-  filters}: TestsListProps) => {
+  filters,
+}: TestsListProps) => {
   const testEntitiesQuery = useFindTestEntities({
     pagination: {
       offset: (page - 1) * pageSize,
@@ -100,7 +104,12 @@ export const TestsList = ({
                   key={`${test.id}-${test.entityType}`}
                   test={test}
                   selected={test.id === selectedId}
-                  onClick={() => onSelect({ id: test.id, type: getTestTypeFromEntityType(test.entityType) })}
+                  onClick={() =>
+                    onSelect({
+                      id: test.id,
+                      type: getTestTypeFromEntityType(test.entityType),
+                    })
+                  }
                 />
               ))}
             </div>
@@ -128,13 +137,17 @@ type TestListItemProps = {
   onClick: () => void;
 };
 
-export const TestsListItem = ({ test, selected, onClick }: TestListItemProps) => {
+export const TestsListItem = ({
+  test,
+  selected,
+  onClick,
+}: TestListItemProps) => {
   return (
     <div>
       <button
         className={cn(
-          'flex w-full flex-col items-start gap-2 rounded-lg border p-3 text-left text-sm transition-all hover:bg-accent',
-          selected && 'bg-muted'
+          "flex w-full flex-col items-start gap-2 rounded-lg border p-3 text-left text-sm transition-all hover:bg-accent",
+          selected && "bg-muted",
         )}
         onClick={onClick}
       >
@@ -143,10 +156,7 @@ export const TestsListItem = ({ test, selected, onClick }: TestListItemProps) =>
             <div className="flex items-center gap-2">
               {test.status ? (
                 <div className="relative flex items-center">
-                  <StatusPill
-                    statusId={test.status.id}
-                    size="sm"
-                  />
+                  <StatusPill statusId={test.status.id} size="sm" />
                   <span className="ml-2 font-semibold">{test.status.name}</span>
                 </div>
               ) : (
@@ -155,19 +165,13 @@ export const TestsListItem = ({ test, selected, onClick }: TestListItemProps) =>
             </div>
             <div
               className={cn(
-                'ml-auto text-xs',
-                selected ? 'text-foreground' : 'text-muted-foreground'
+                "ml-auto text-xs",
+                selected ? "text-foreground" : "text-muted-foreground",
               )}
             >
-              {test.startedTimestamp ? (
-                formatDistanceToNow(new Date(test.startedTimestamp), {
-                  addSuffix: true,
-                })
-              ) : (
-                formatDistanceToNow(new Date(test.createdTimestamp), {
-                  addSuffix: true,
-                })
-              )}
+              {formatDistanceToNow(new Date(test.startedTimestamp), {
+                addSuffix: true,
+              })}
             </div>
           </div>
           <div className="text-xs font-medium">{test.title}</div>

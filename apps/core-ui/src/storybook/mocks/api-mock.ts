@@ -17,27 +17,8 @@ export type TestStepsResponse = ClientInferResponseBody<
   200
 >;
 
-export type BeforeTestStepsResponse = ClientInferResponseBody<
-  typeof contract.findBeforeTestSteps,
-  200
->;
-
-export type AfterTestStepsResponse = ClientInferResponseBody<
-  typeof contract.findAfterTestSteps,
-  200
->;
-
 export type TestResponse = ClientInferResponseBody<
   typeof contract.readTest,
-  200
->;
-export type BeforeTestResponse = ClientInferResponseBody<
-  typeof contract.readBeforeTest,
-  200
->;
-
-export type AfterTestResponse = ClientInferResponseBody<
-  typeof contract.readAfterTest,
   200
 >;
 
@@ -127,33 +108,6 @@ export class ApiMock {
     );
   }
 
-  findBeforeTestSteps(beforeTestId: number, response: BeforeTestStepsResponse) {
-    // The API expects beforeTestId as a query parameter, not a path param
-    const url = `${this.baseUrl}${contract.findBeforeTestSteps.path}?beforeTestId=${beforeTestId}`;
-    return http.get(url, () => {
-      return HttpResponse.json(response);
-    });
-  }
-
-  findBeforeTestStepsCustom(
-    beforeTestId: number,
-    responseCode: number,
-    responseBody: any
-  ) {
-    const url = `${this.baseUrl}${contract.findBeforeTestSteps.path}?beforeTestId=${beforeTestId}`;
-    return http.get(url, () => {
-      return HttpResponse.json(responseBody, { status: responseCode });
-    });
-  }
-
-  findBeforeTestStepsInfinite(beforeTestId: number) {
-    const url = `${this.baseUrl}${contract.findBeforeTestSteps.path}?beforeTestId=${beforeTestId}`;
-    return http.get(url, async () => {
-      await delay("infinite");
-      return HttpResponse.json({});
-    });
-  }
-
   findTestSteps(testId: number, response: TestStepsResponse) {
     const url = `${this.baseUrl}${contract.findTestSteps.path}?testId=${testId}`;
     return http.get(url, () => {
@@ -170,32 +124,6 @@ export class ApiMock {
 
   findTestStepsInfinite(testId: number) {
     const url = `${this.baseUrl}${contract.findTestSteps.path}?testId=${testId}`;
-    return http.get(url, async () => {
-      await delay("infinite");
-      return HttpResponse.json({});
-    });
-  }
-
-  findAfterTestSteps(afterTestId: number, response: AfterTestStepsResponse) {
-    const url = `${this.baseUrl}${contract.findAfterTestSteps.path}?afterTestId=${afterTestId}`;
-    return http.get(url, () => {
-      return HttpResponse.json(response);
-    });
-  }
-
-  findAfterTestStepsCustom(
-    afterTestId: number,
-    responseCode: number,
-    responseBody: any
-  ) {
-    const url = `${this.baseUrl}${contract.findAfterTestSteps.path}?afterTestId=${afterTestId}`;
-    return http.get(url, () => {
-      return HttpResponse.json(responseBody, { status: responseCode });
-    });
-  }
-
-  findAfterTestStepsInfinite(afterTestId: number) {
-    const url = `${this.baseUrl}${contract.findAfterTestSteps.path}?afterTestId=${afterTestId}`;
     return http.get(url, async () => {
       await delay("infinite");
       return HttpResponse.json({});
@@ -269,70 +197,6 @@ export class ApiMock {
   readTestInfinite(testId: number) {
     return http.get(
       `${this.baseUrl}${contract.readTest.path.replace(":id", String(testId))}`,
-      async () => {
-        await delay("infinite");
-        return HttpResponse.json({});
-      }
-    );
-  }
-
-  readBeforeTest(beforeTestId: number, response: BeforeTestResponse) {
-    return http.get(
-      `${this.baseUrl}${contract.readBeforeTest.path.replace(":id", String(beforeTestId))}`,
-      () => {
-        return HttpResponse.json(response);
-      }
-    );
-  }
-
-  readBeforeTestCustom(
-    beforeTestId: number,
-    responseCode: number,
-    responseBody: any
-  ) {
-    return http.get(
-      `${this.baseUrl}${contract.readBeforeTest.path.replace(":id", String(beforeTestId))}`,
-      () => {
-        return HttpResponse.json(responseBody, { status: responseCode });
-      }
-    );
-  }
-
-  readBeforeTestInfinite(beforeTestId: number) {
-    return http.get(
-      `${this.baseUrl}${contract.readBeforeTest.path.replace(":id", String(beforeTestId))}`,
-      async () => {
-        await delay("infinite");
-        return HttpResponse.json({});
-      }
-    );
-  }
-
-  readAfterTest(afterTestId: number, response: AfterTestResponse) {
-    return http.get(
-      `${this.baseUrl}${contract.readAfterTest.path.replace(":id", String(afterTestId))}`,
-      () => {
-        return HttpResponse.json(response);
-      }
-    );
-  }
-
-  readAfterTestCustom(
-    afterTestId: number,
-    responseCode: number,
-    responseBody: any
-  ) {
-    return http.get(
-      `${this.baseUrl}${contract.readAfterTest.path.replace(":id", String(afterTestId))}`,
-      () => {
-        return HttpResponse.json(responseBody, { status: responseCode });
-      }
-    );
-  }
-
-  readAfterTestInfinite(afterTestId: number) {
-    return http.get(
-      `${this.baseUrl}${contract.readAfterTest.path.replace(":id", String(afterTestId))}`,
       async () => {
         await delay("infinite");
         return HttpResponse.json({});
@@ -436,7 +300,7 @@ export class ApiMock {
     const launchId = filters?.launchId;
     const title = filters?.["title~cnt"];
     const qs = `?limit=${limit}&offset=${offset}${launchId !== undefined ? `&launchId=${launchId}` : ``}${title !== undefined ? `&title~cnt=${encodeURIComponent(title)}` : ``}`;
-    const url = `${this.baseUrl}${contract.findTestEntities.path}${qs}`;
+    const url = `${this.baseUrl}${contract.findTests.path}${qs}`;
     return http.get(url, () => {
       return HttpResponse.json(response);
     });
@@ -448,7 +312,7 @@ export class ApiMock {
     const launchId = filters?.launchId;
     const title = filters?.["title~cnt"];
     const qs = `?limit=${limit}&offset=${offset}${launchId !== undefined ? `&launchId=${launchId}` : ``}${title !== undefined ? `&title~cnt=${encodeURIComponent(title)}` : ``}`;
-    const url = `${this.baseUrl}${contract.findTestEntities.path}${qs}`;
+    const url = `${this.baseUrl}${contract.findTests.path}${qs}`;
     return http.get(url, async () => {
       await delay("infinite");
       return HttpResponse.json({});
@@ -467,7 +331,7 @@ export class ApiMock {
     const launchId = filters?.launchId;
     const title = filters?.["title~cnt"];
     const qs = `?limit=${limit}&offset=${offset}${launchId !== undefined ? `&launchId=${launchId}` : ``}${title !== undefined ? `&title~cnt=${encodeURIComponent(title)}` : ``}`;
-    const url = `${this.baseUrl}${contract.findTestEntities.path}${qs}`;
+    const url = `${this.baseUrl}${contract.findTests.path}${qs}`;
     return http.get(url, () => {
       return HttpResponse.json(responseBody, { status: responseCode });
     });
@@ -496,3 +360,15 @@ export class ApiMock {
     );
   }
 }
+
+export type TestEntity = FindTestsResponseData["items"][0];
+
+export type FindTestsResponseData = ClientInferResponseBody<
+  typeof contract.findTests,
+  200
+>;
+
+export type ReadTestResponseData = ClientInferResponseBody<
+  typeof contract.readTest,
+  200
+>;

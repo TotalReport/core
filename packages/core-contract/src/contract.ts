@@ -2,34 +2,6 @@ import { extendZodWithOpenApi } from "@anatine/zod-openapi";
 import { initContract } from "@ts-rest/core";
 import { z } from "zod";
 import {
-  createAfterTestStep,
-  deleteAfterTestStep,
-  findAfterTestSteps,
-  patchAfterTestStep,
-  readAfterTestStep,
-} from "./after-test-steps.js";
-import {
-  createAfterTest,
-  deleteAfterTest,
-  findAfterTests,
-  patchAfterTest,
-  readAfterTest,
-} from "./after-tests.js";
-import {
-  createBeforeTestStep,
-  deleteBeforeTestStep,
-  findBeforeTestSteps,
-  patchBeforeTestStep,
-  readBeforeTestStep,
-} from "./before-test-steps.js";
-import {
-  createBeforeTest,
-  deleteBeforeTest,
-  findBeforeTests,
-  patchBeforeTest,
-  readBeforeTest,
-} from "./before-tests.js";
-import {
   createLaunch,
   deleteLaunch,
   findLaunches,
@@ -43,7 +15,6 @@ import {
   readTestStatus,
   readTestStatusGroup,
 } from "./statuses.js";
-import { findTestEntities, findTestEntitiesCountsByStatuses } from "./test-entities.js";
 import {
   createTestStep,
   deleteTestStep,
@@ -51,7 +22,14 @@ import {
   patchTestStep,
   readTestStep,
 } from "./test-steps.js";
-import { createTest, deleteTest, findTests, patchTest, readTest } from "./tests.js";
+import {
+  createTest,
+  deleteTest,
+  findTestEntitiesCountsByStatuses,
+  findTests,
+  patchTest,
+  readTest,
+} from "./tests.js";
 
 extendZodWithOpenApi(z);
 
@@ -80,23 +58,12 @@ export const contract = c.router({
   patchLaunch: patchLaunch,
   deleteLaunch: deleteLaunch,
 
-  createBeforeTest: createBeforeTest,
-  readBeforeTest: readBeforeTest,
-  findBeforeTests: findBeforeTests,
-  patchBeforeTest: patchBeforeTest,
-  deleteBeforeTest: deleteBeforeTest,
-
-  createBeforeTestStep: createBeforeTestStep,
-  readBeforeTestStep: readBeforeTestStep,
-  findBeforeTestSteps: findBeforeTestSteps,
-  patchBeforeTestStep: patchBeforeTestStep,
-  deleteBeforeTestStep: deleteBeforeTestStep,
-
   createTest: createTest,
   readTest: readTest,
   findTests: findTests,
   patchTest: patchTest,
   deleteTest: deleteTest,
+  findTestEntitiesCountsByStatuses: findTestEntitiesCountsByStatuses,
 
   createTestStep: createTestStep,
   readTestStep: readTestStep,
@@ -104,23 +71,8 @@ export const contract = c.router({
   patchTestStep: patchTestStep,
   deleteTestStep: deleteTestStep,
 
-  createAfterTest: createAfterTest,
-  readAfterTest: readAfterTest,
-  findAfterTests: findAfterTests,
-  patchAfterTest: patchAfterTest,
-  deleteAfterTest: deleteAfterTest,
-
-  createAfterTestStep: createAfterTestStep,
-  readAfterTestStep: readAfterTestStep,
-  findAfterTestSteps: findAfterTestSteps,
-  patchAfterTestStep: patchAfterTestStep,
-  deleteAfterTestStep: deleteAfterTestStep,
-
   findTestStatusGroups: findTestStatusGroups,
   findTestStatuses: findTestStatuses,
   readTestStatusGroup: readTestStatusGroup,
   readTestStatus: readTestStatus,
-
-  findTestEntities: findTestEntities,
-  findTestEntitiesCountsByStatuses: findTestEntitiesCountsByStatuses
 });

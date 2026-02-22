@@ -4,53 +4,28 @@ import {
   CollapsibleContent,
   CollapsibleTrigger,
 } from "@/components/ui/collapsible.jsx";
+import ErrorRetry from "@/components/ui/error-retry.js";
 import { Separator } from "@/components/ui/separator.js";
-import { useReadAfterTest } from "@/hooks/api/after-tests/use-read-after-test.js";
-import { useReadBeforeTest } from "@/hooks/api/before-tests/use-read-before-test.js";
-import { useReadTest } from "@/hooks/api/tests/use-read-test.js";
+import {
+  ReadTestResponseData,
+  useReadTest,
+} from "@/hooks/api/tests/use-read-test.js";
 import { format } from "date-fns";
 import { ChevronDown } from "lucide-react";
 import { Skeleton } from "../../components/ui/skeleton.jsx";
-import ErrorRetry from "@/components/ui/error-retry.js";
 import { TestDetailsStatus } from "./test-details-status.jsx";
 import { TestDetailsSteps } from "./test-details-steps.jsx";
 
 type TestDetailsProps = {
-  entityType: "beforeTest" | "test" | "afterTest";
   entityId: number;
 };
 
-export const TestDetails = ({ entityType, entityId }: TestDetailsProps) => {
+export const TestDetails = ({ entityId }: TestDetailsProps) => {
   const testQuery = useReadTest({
-    enabled: entityType == "test",
     testId: entityId,
   });
 
-  const beforeTestQuery = useReadBeforeTest({
-    enabled: entityType == "beforeTest",
-    beforeTestId: entityId,
-  });
-
-  const afterTestQuery = useReadAfterTest({
-    enabled: entityType == "afterTest",
-    afterTestId: entityId,
-  });
-
-  // Determine current query and data
-  const getCurrentQuery = () => {
-    switch (entityType) {
-      case "test":
-        return testQuery;
-      case "beforeTest":
-        return beforeTestQuery;
-      case "afterTest":
-        return afterTestQuery;
-    }
-  };
-
-  const currentQuery = getCurrentQuery();
-
-  if (currentQuery.isPending) {
+  if (testQuery.isPending) {
     return (
       <div className="p-6 h-full overflow-auto">
         <div className="flex flex-col gap-6">
@@ -99,9 +74,9 @@ export const TestDetails = ({ entityType, entityId }: TestDetailsProps) => {
     );
   }
 
-  if (currentQuery.isError) {
+  if (testQuery.isError) {
     const handleRetry = () => {
-      currentQuery.refetch();
+      testQuery.refetch();
     };
 
     return (
@@ -115,7 +90,7 @@ export const TestDetails = ({ entityType, entityId }: TestDetailsProps) => {
     );
   }
 
-  const test = currentQuery.data;
+  const test = testQuery.data;
 
   return (
     <div className="p-6 h-full overflow-auto">
@@ -134,22 +109,16 @@ export const TestDetails = ({ entityType, entityId }: TestDetailsProps) => {
           </div>
           <div>
             <p className="text-muted-foreground">Type</p>
-            <p className="font-medium">{entityTypeToText(entityType)}</p>
-          </div>
-          <div>
-            <p className="text-muted-foreground">Created</p>
             <p className="font-medium">
-              {format(new Date(test.body.createdTimestamp), "PPpp")}
+              {entityTypeToText(test.body.entityType)}
             </p>
           </div>
-          {test.body.startedTimestamp && (
-            <div>
-              <p className="text-muted-foreground">Started</p>
-              <p className="font-medium">
-                {format(new Date(test.body.startedTimestamp), "PPpp")}
-              </p>
-            </div>
-          )}
+          <div>
+            <p className="text-muted-foreground">Started</p>
+            <p className="font-medium">
+              {format(new Date(test.body.startedTimestamp), "PPpp")}
+            </p>
+          </div>
           {test.body.finishedTimestamp && (
             <div>
               <p className="text-muted-foreground">Finished</p>
@@ -176,10 +145,7 @@ export const TestDetails = ({ entityType, entityId }: TestDetailsProps) => {
         )}
         {renderArguments(test.body.arguments || [])}
         {/* <div> */}
-          <TestDetailsSteps
-            testId={test.body.id}
-            testType={entityType === "beforeTest" ? "before" : entityType === "afterTest" ? "after" : "test"}
-          />
+        <TestDetailsSteps testId={test.body.id} />
         {/* </div> */}
       </div>
     </div>
@@ -213,7 +179,7 @@ const renderArguments = (testArguments: TestArgument[]) => {
         <p className="font-mono text-xs bg-muted p-2 rounded mt-1 overflow-auto">
           {testArguments.map((argument) => {
             return (
-              <div key={argument.id} className="mb-2">
+              <div key={argument.name} className="mb-2">
                 <p>
                   <span className="text-muted-foreground">Argument </span>
                   <span className="text-foreground">{argument.name}</span>{" "}
@@ -236,9 +202,4 @@ const renderArgumentsCount = (count: number | undefined) => {
   return `${count}`;
 };
 
-type TestArgument = {
-  id: number;
-  name: string;
-  type: string;
-  value: string | null;
-};
+type TestArgument = NonNullable<ReadTestResponseData["arguments"]>[0];

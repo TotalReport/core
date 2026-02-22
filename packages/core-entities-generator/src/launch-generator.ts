@@ -3,7 +3,7 @@ import { contract } from "@total-report/core-contract/contract";
 import { ClientInferRequest, ClientInferResponseBody } from "@ts-rest/core";
 import { ClientType } from "./types.js";
 import { capitalizeFirstLetter } from "./utils-string.js";
-import { assertEquals } from "./utils.js";
+import { assertEquals, firstDefined } from "./utils.js";
 
 /**
  * This class is responsible for generating launches.
@@ -22,7 +22,7 @@ export class LaunchesGenerator {
    * @returns The created launch.
    */
   async create(
-    args: GenerateLaunch | undefined = undefined
+    args: GenerateLaunch | undefined = undefined,
   ): Promise<CreateLaunchResponse> {
     const title =
       args?.title ??
@@ -39,8 +39,11 @@ export class LaunchesGenerator {
     const response = await this.client.createLaunch({
       body: {
         title: title,
-        createdTimestamp: args?.createdTimestamp,
-        startedTimestamp: args?.startedTimestamp,
+        startedTimestamp: firstDefined(
+          args?.startedTimestamp,
+          args?.finishedTimestamp,
+          new Date(),
+        ),
         finishedTimestamp: args?.finishedTimestamp,
         arguments: args?.arguments,
       },
@@ -75,7 +78,9 @@ export class LaunchesGenerator {
    * Deletes all launches.
    */
   async deleteAll(): Promise<void> {
-    const response = await this.client.findLaunches({query: { limit: 1000000, offset: 0 }});
+    const response = await this.client.findLaunches({
+      query: { limit: 1000000, offset: 0 },
+    });
     if (response.status !== 200) {
       throw new Error(
         `Failed to find launches for deletion. Server response status ${response.status}, body ${JSON.stringify(response.body)}`,
