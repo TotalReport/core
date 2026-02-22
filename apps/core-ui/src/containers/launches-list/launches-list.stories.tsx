@@ -1,7 +1,7 @@
 import React from "react";
 import type { Meta, StoryObj } from "@storybook/react";
 import LaunchesList from "./launches-list.jsx";
-import { ApiMock } from "@/storybook/mocks/api-mock.js";
+import { ApiMock, FindLaunchesResponse } from "@/storybook/mocks/api-mock.js";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 const apiMock = new ApiMock();
@@ -30,12 +30,12 @@ const meta: Meta<typeof LaunchesList> = {
 export default meta;
 type Story = StoryObj<typeof LaunchesList>;
 
-const sampleLaunches = {
+const sampleLaunches: FindLaunchesResponse = {
   pagination: { total: 3, limit: 10, offset: 0 },
   items: [
-    { id: 1, title: "Launch A", createdTimestamp: new Date().toISOString() },
-    { id: 2, title: "Launch B", createdTimestamp: new Date().toISOString() },
-    { id: 3, title: "Launch C", createdTimestamp: new Date().toISOString() },
+    { id: 1, title: "Launch A", startedTimestamp: new Date().toISOString() },
+    { id: 2, title: "Launch B", startedTimestamp: new Date().toISOString() },
+    { id: 3, title: "Launch C", startedTimestamp: new Date().toISOString() },
   ],
 };
 
@@ -47,7 +47,7 @@ export const Success: Story = {
   },
   parameters: {
     msw: {
-      handlers: [apiMock.findLaunches({ limit: 10, offset: 0 }, sampleLaunches as any)],
+      handlers: [apiMock.findLaunches({ limit: 10, offset: 0 }, sampleLaunches)],
     },
   },
 };

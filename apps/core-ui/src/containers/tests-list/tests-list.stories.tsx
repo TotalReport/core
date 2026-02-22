@@ -1,6 +1,6 @@
 import React from "react";
 import type { Meta, StoryObj } from "@storybook/react";
-import { ApiMock } from "@/storybook/mocks/api-mock.js";
+import { ApiMock, FindTestsResponseData } from "@/storybook/mocks/api-mock.js";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { TestsList } from "./tests-list.jsx";
 
@@ -30,26 +30,38 @@ const meta: Meta<typeof TestsList> = {
 export default meta;
 type Story = StoryObj<typeof TestsList>;
 
-const sampleTests = {
+const sampleTests: FindTestsResponseData = {
   pagination: { total: 3, limit: 10, offset: 0 },
   items: [
     {
+      launchId: 1,
       id: 1,
       title: "Test A",
       entityType: "test",
-      createdTimestamp: new Date().toISOString(),
+      startedTimestamp: new Date().toISOString(),
+      correlationId: "a9351d88-1632-4a7b-890c-df7466d81c30",
+      argumentsHash: "b7c7276b-3190-4be5-b0af-21b2850f5693",
+      externalArgumentsHash: "2b6b4e2d-ca40-45a3-a3f6-74ef481c7aa0",
     },
     {
+      launchId: 1,
       id: 2,
       title: "Test B",
       entityType: "beforeTest",
-      createdTimestamp: new Date().toISOString(),
+      startedTimestamp: new Date().toISOString(),
+      correlationId: "a9351d88-1632-4a7b-890c-df7466d81c30",
+      argumentsHash: "b7c7276b-3190-4be5-b0af-21b2850f5693",
+      externalArgumentsHash: "2b6b4e2d-ca40-45a3-a3f6-74ef481c7aa0",
     },
     {
+      launchId: 1,
       id: 3,
       title: "Test C",
       entityType: "afterTest",
-      createdTimestamp: new Date().toISOString(),
+      startedTimestamp: new Date().toISOString(),
+      correlationId: "a9351d88-1632-4a7b-890c-df7466d81c30",
+      argumentsHash: "b7c7276b-3190-4be5-b0af-21b2850f5693",
+      externalArgumentsHash: "2b6b4e2d-ca40-45a3-a3f6-74ef481c7aa0",
     },
   ],
 };
@@ -74,7 +86,7 @@ export const Success: Story = {
       handlers: [
         apiMock.findTestEntities(
           { limit: 10, offset: 0, "title~cnt": undefined },
-          sampleTests as any,
+          sampleTests,
         ),
       ],
     },

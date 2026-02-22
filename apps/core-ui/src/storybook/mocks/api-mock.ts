@@ -32,6 +32,11 @@ export type LaunchResponse = ClientInferResponseBody<
   200
 >;
 
+export type FindLaunchesResponse = ClientInferResponseBody<
+  typeof contract.findLaunches,
+  200
+>;
+
 export type LaunchesCountResponse = ClientInferResponseBody<
   typeof contract.findLaunchesCount,
   200
@@ -248,7 +253,7 @@ export class ApiMock {
     filters:
       | { limit?: number; offset?: number; "title~cnt"?: string }
       | undefined,
-    response: { pagination: { total: number; limit: number; offset: number }; items: LaunchResponse[] }
+    response: FindLaunchesResponse
   ) {
     const limit = filters?.limit ?? 25;
     const offset = filters?.offset ?? 0;
@@ -293,7 +298,7 @@ export class ApiMock {
     filters:
       | { limit?: number; offset?: number; launchId?: number; "title~cnt"?: string }
       | undefined,
-    response: { pagination: { total: number; limit: number; offset: number }; items: any[] }
+    response: FindTestsResponseData
   ) {
     const limit = filters?.limit ?? 25;
     const offset = filters?.offset ?? 0;
