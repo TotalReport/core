@@ -8,10 +8,12 @@ import LaunchDetails from "@/containers/launch-details/launch-details.jsx";
 import { LaunchesListBlock } from "@/containers/launches-list/launches-list-block.jsx";
 import { useUrlParams } from "@/hooks/url/use-url-params.jsx";
 import LaunchesUrlParams from "@/types/launches-url-params.js";
+import { useNavigate } from '@modern-js/runtime/router';
 
 export const title = "Launches - Total Report";
 
 function LaunchesPageContent() {
+  const navigate = useNavigate();
   const { useParams } = useUrlParams();
 
   const { urlParams, setUrlParams } = useParams<LaunchesUrlParams>({
@@ -32,16 +34,6 @@ function LaunchesPageContent() {
   return (
     <div className="flex h-screen">
       <div className="flex-1">
-        <ResizablePanelGroup
-          direction="horizontal"
-          className="h-full border rounded-md"
-        >
-          <ResizablePanel
-            defaultSize={30}
-            minSize={20}
-            maxSize={50}
-            collapsible={false}
-          >
             <LaunchesListBlock
               pagination={{
                 page,
@@ -54,29 +46,9 @@ function LaunchesPageContent() {
               selection={{
                 selectedId: filters.selectedLaunchId ?? null,
                 onSelect: (launchId) =>
-                  setUrlParams({ selectedLaunchId: launchId }),
+                  navigate(`/launches/${launchId}`),
               }}
             />
-          </ResizablePanel>
-          <ResizableHandle withHandle />
-          <ResizablePanel defaultSize={70}>
-            {filters.selectedLaunchId === undefined && (
-              <div className="h-full flex items-center justify-center">
-                <div className="text-center">
-                  <p className="text-lg font-bold text-secondary-foreground">
-                    No launch selected
-                  </p>
-                  <p className="text-sm text-muted-foreground mt-1">
-                    Select a launch from the list to view details
-                  </p>
-                </div>
-              </div>
-            )}
-            {filters.selectedLaunchId !== undefined && (
-              <LaunchDetails launchId={filters.selectedLaunchId} />
-            )}
-          </ResizablePanel>
-        </ResizablePanelGroup>
       </div>
     </div>
   );
