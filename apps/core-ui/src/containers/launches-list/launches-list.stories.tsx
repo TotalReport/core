@@ -2,6 +2,8 @@ import React from "react";
 import type { Meta, StoryObj } from "@storybook/react";
 import LaunchesList from "./launches-list.jsx";
 import { ApiMock, FindLaunchesResponse } from "@/storybook/mocks/api-mock.js";
+import { toStatusResponse } from "@/storybook/converters/status-response.js";
+import { DEFAULT_TEST_STATUSES } from "@total-report/core-schema/constants";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 const apiMock = new ApiMock();
@@ -47,7 +49,48 @@ export const Success: Story = {
   },
   parameters: {
     msw: {
-      handlers: [apiMock.findLaunches({ limit: 10, offset: 0 }, sampleLaunches)],
+      handlers: [
+        apiMock.findLaunches({ limit: 10, offset: 0 }, sampleLaunches),
+        // per-launch status counts
+        apiMock.findTestEntitiesCountsByStatuses(
+          { distinct: true, launchId: 1 },
+          [
+            {
+              entityType: "test",
+              statusGroupId: DEFAULT_TEST_STATUSES.PASSED.groupId,
+              statusId: DEFAULT_TEST_STATUSES.PASSED.id,
+              count: 5,
+            },
+            {
+              entityType: "test",
+              statusGroupId: DEFAULT_TEST_STATUSES.FAILED.groupId,
+              statusId: DEFAULT_TEST_STATUSES.FAILED.id,
+              count: 2,
+            },
+          ]
+        ),
+        apiMock.findTestEntitiesCountsByStatuses(
+          { distinct: true, launchId: 2 },
+          [
+            {
+              entityType: "test",
+              statusGroupId: DEFAULT_TEST_STATUSES.FAILED.groupId,
+              statusId: DEFAULT_TEST_STATUSES.FAILED.id,
+              count: 3,
+            },
+          ]
+        ),
+        apiMock.findTestEntitiesCountsByStatuses({ distinct: true, launchId: 3 }, []),
+        // status detail responses
+        apiMock.readTestStatus(
+          DEFAULT_TEST_STATUSES.PASSED.id,
+          toStatusResponse(DEFAULT_TEST_STATUSES.PASSED)
+        ),
+        apiMock.readTestStatus(
+          DEFAULT_TEST_STATUSES.FAILED.id,
+          toStatusResponse(DEFAULT_TEST_STATUSES.FAILED)
+        ),
+      ],
     },
   },
 };

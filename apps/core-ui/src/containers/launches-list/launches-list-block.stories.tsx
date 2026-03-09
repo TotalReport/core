@@ -1,6 +1,8 @@
 import React from "react";
 import type { Meta, StoryObj } from "@storybook/react";
 import { ApiMock, FindLaunchesResponse } from "@/storybook/mocks/api-mock.js";
+import { toStatusResponse } from "@/storybook/converters/status-response.js";
+import { DEFAULT_TEST_STATUSES } from "@total-report/core-schema/constants";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { LaunchesListBlock } from "./launches-list-block.jsx";
 
@@ -50,6 +52,37 @@ export const Success: Story = {
     msw: {
       handlers: [
         apiMock.findLaunches({ "title~cnt": undefined, limit: 10, offset: 0 }, sampleLaunches),
+        apiMock.findTestEntitiesCountsByStatuses(
+          { distinct: true, launchId: 1 },
+          [
+            {
+              entityType: "test",
+              statusGroupId: DEFAULT_TEST_STATUSES.PASSED.groupId,
+              statusId: DEFAULT_TEST_STATUSES.PASSED.id,
+              count: 5,
+            },
+          ]
+        ),
+        apiMock.findTestEntitiesCountsByStatuses(
+          { distinct: true, launchId: 2 },
+          [
+            {
+              entityType: "test",
+              statusGroupId: DEFAULT_TEST_STATUSES.FAILED.groupId,
+              statusId: DEFAULT_TEST_STATUSES.FAILED.id,
+              count: 3,
+            },
+          ]
+        ),
+        apiMock.findTestEntitiesCountsByStatuses({ distinct: true, launchId: 3 }, []),
+        apiMock.readTestStatus(
+          DEFAULT_TEST_STATUSES.PASSED.id,
+          toStatusResponse(DEFAULT_TEST_STATUSES.PASSED)
+        ),
+        apiMock.readTestStatus(
+          DEFAULT_TEST_STATUSES.FAILED.id,
+          toStatusResponse(DEFAULT_TEST_STATUSES.FAILED)
+        ),
       ],
     },
   },

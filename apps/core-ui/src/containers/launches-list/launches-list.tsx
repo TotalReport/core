@@ -1,11 +1,16 @@
-import { ScrollArea } from "@/components/ui/scroll-area.js";
-import { LaunchEntity, useFindLaunches } from "@/hooks/api/launches/use-find-launches.js";
-import { PaginationBlock } from "@/components/ui/pagination-block.jsx";
-import { Skeleton } from "../../components/ui/skeleton.jsx";
 import ErrorRetry from "@/components/ui/error-retry.js";
-import { formatDistanceToNow } from "date-fns";
+import { PaginationBlock } from "@/components/ui/pagination-block.jsx";
+import { ScrollArea } from "@/components/ui/scroll-area.js";
+import StatusSummary from "@/containers/launches-list/status-summary.jsx";
+import {
+  LaunchEntity,
+  useFindLaunches,
+} from "@/hooks/api/launches/use-find-launches.js";
+import { useFindTestEntitiesStatusesCounts } from "@/hooks/api/test-entities/use-find-test-entities-statuses-counts.js";
 import { cn } from "@/lib/utils.js";
 import { LaunchesUrlFilters } from "@/types/launches-url-params.js";
+import { formatDistanceToNow } from "date-fns";
+import { Skeleton } from "../../components/ui/skeleton.jsx";
 
 interface LaunchesListContainerProps {
   pagination: {
@@ -47,7 +52,10 @@ export default function LaunchesListContainer({
         {launchesLoading && (
           <div className="flex flex-col gap-2 p-2">
             {[1, 2, 3].map((i) => (
-              <div key={i} className="flex flex-col gap-1 rounded-lg border p-3">
+              <div
+                key={i}
+                className="flex flex-col gap-1 rounded-lg border p-3"
+              >
                 <div className="flex items-center">
                   <Skeleton className="h-4 w-32" />
                   <div className="ml-auto">
@@ -131,26 +139,73 @@ function LaunchesListItem({ launch, selected, onClick }: LaunchItemProps) {
       key={launch.id}
       className={cn(
         "flex w-full flex-col items-start gap-2 rounded-lg border p-3 text-left text-sm transition-all hover:bg-accent",
-        selected && "bg-muted"
+        selected && "bg-muted",
       )}
       onClick={onClick}
     >
       <div className="flex w-full flex-col gap-1">
         <div className="flex items-center">
           <div className="flex items-center gap-2">
-            <div className="font-semibold">Launch #{launch.id}</div>
-          </div>
-          <div
-            className={cn(
-              "ml-auto text-xs",
-              selected ? "text-foreground" : "text-muted-foreground"
-            )}
-          >
-            {formatDistanceToNow(new Date(launch.startedTimestamp), { addSuffix: true })}
+            <div className="font-semibold">{launch.title}</div>
           </div>
         </div>
-        <div className="text-xs font-medium">{launch.title}</div>
+
+        {/* Statuses summary row (delegated to internal component) */}
+        <LaunchStatusesSummary launchId={launch.id} />
+
+        <div className="flex items-center">
+          <div
+            className={cn(
+              "ml-auto text-xs text-right",
+              selected ? "text-foreground" : "text-muted-foreground",
+            )}
+          >
+            {formatDistanceToNow(new Date(launch.startedTimestamp), {
+              addSuffix: true,
+            })}
+          </div>
+        </div>
       </div>
     </button>
+  );
+}
+
+function LaunchStatusesSummary({ launchId }: { launchId: number }) {
+  const countsQuery = useFindTestEntitiesStatusesCounts({
+    filters: { launchId, distinct: true },
+  });
+
+  const countsLoading = countsQuery.isPending;
+  const countsError = countsQuery.isError;
+  const countsData = countsQuery.data?.body ?? [];
+
+  const aggregated = countsData.reduce((acc: Map<string | null, number>, curr) => {
+    const id = curr.statusId ?? null;
+    acc.set(id, (acc.get(id) || 0) + curr.count);
+    return acc;
+  }, new Map<string | null, number>());
+
+  const statusesToShow = Array.from(aggregated.entries())
+    .map(([statusId, count]) => ({ statusId, count }))
+    .sort((a, b) => b.count - a.count);
+
+  return (
+    <div className="mt-1 flex items-center gap-3 flex-wrap w-full">
+      {countsLoading ? (
+        <div className="flex items-center gap-2">
+          <Skeleton className="h-3 w-3 rounded-full" />
+          <Skeleton className="h-3 w-12" />
+        </div>
+      ) : countsError ? (
+        <ErrorRetry onRetry={() => countsQuery.refetch()} />
+      ) : (
+        statusesToShow.map((s) => (
+          <div key={String(s.statusId)} className="flex items-center gap-2 text-xs text-muted-foreground mr-2">
+            <StatusSummary statusId={s.statusId} size="w-3 h-3" />
+            <span className="ml-1 font-medium">{s.count}</span>
+          </div>
+        ))
+      )}
+    </div>
   );
 }
