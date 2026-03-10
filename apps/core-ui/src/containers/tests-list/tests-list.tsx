@@ -142,14 +142,27 @@ export const TestsListItem = ({
   selected,
   onClick,
 }: TestListItemProps) => {
+  const handleClick = (e: any) => {
+    // If it's not a plain left-click (middle-click, cmd/ctrl/shift/alt modifiers),
+    // let the browser handle it (open in new tab/window).
+    if (e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) {
+      return;
+    }
+
+    // Prevent default anchor navigation and use SPA navigation instead
+    e.preventDefault();
+    onClick();
+  };
+
   return (
     <div>
-      <button
+      <a
+        href={`/tests/${test.id}`}
         className={cn(
           "flex w-full flex-col items-start gap-2 rounded-lg border p-3 text-left text-sm transition-all hover:bg-accent",
           selected && "bg-muted",
         )}
-        onClick={onClick}
+        onClick={handleClick}
       >
         <div className="flex w-full flex-col gap-1">
           <div className="flex items-center">
@@ -191,7 +204,7 @@ export const TestsListItem = ({
             </>
           )}
         </div>
-      </button>
+      </a>
     </div>
   );
 };

@@ -9,10 +9,12 @@ import {
 import { TestDetails } from "@/containers/test-details/test-details.jsx";
 import { useUrlParams } from "@/hooks/url/use-url-params.jsx";
 import TestsUrlParams from "@/types/tests-url-params.js";
+import { useNavigate } from "@modern-js/runtime/router";
 
 export const title = "Tests - Total Report";
 
 function TestsPageContent() {
+  const navigate = useNavigate();
   const { useParams } = useUrlParams();
 
   const { urlParams, setUrlParams } = useParams<TestsUrlParams>({
@@ -79,46 +81,10 @@ function TestsPageContent() {
               selection={{
                 selectedId: selectedTest ? selectedTest.id : null,
                 onSelect: (sel) => {
-                  if (sel.type === "test")
-                    setUrlParams({
-                      testId: sel.id,
-                      beforeTestId: undefined,
-                      afterTestId: undefined,
-                    });
-                  if (sel.type === "beforeTest")
-                    setUrlParams({
-                      beforeTestId: sel.id,
-                      testId: undefined,
-                      afterTestId: undefined,
-                    });
-                  if (sel.type === "afterTest")
-                    setUrlParams({
-                      afterTestId: sel.id,
-                      testId: undefined,
-                      beforeTestId: undefined,
-                    });
+                  navigate(`/tests/${sel.id}`);
                 },
               }}
             />
-          </ResizablePanel>
-          <ResizableHandle withHandle />
-          <ResizablePanel defaultSize={70}>
-            {selectedTest === undefined && (
-              <div className="h-full flex items-center justify-center">
-                <div className="text-center">
-                  <p className="text-lg font-bold text-secondary-foreground">
-                    No test selected
-                  </p>
-                  <p className="text-sm text-muted-foreground mt-1">
-                    Select a test from the list to view details
-                  </p>
-                </div>
-              </div>
-            )}
-
-            {selectedTest !== undefined && (
-              <TestDetails entityId={selectedTest.id} />
-            )}
           </ResizablePanel>
         </ResizablePanelGroup>
       </div>

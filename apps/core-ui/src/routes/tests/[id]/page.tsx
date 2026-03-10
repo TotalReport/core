@@ -1,11 +1,16 @@
+import { RestAPIProvider } from '@/components/providers/rest-api-provider.jsx';
+import { TestDetails } from '@/containers/test-details/test-details.jsx';
 import { useParams } from '@modern-js/runtime/router';
 
-function Blog() {
+function TestDetailsPage() {
   const { id } = useParams();
-  if (id) {
-    return <div>current blog ID is: {id}</div>;
-  }
 
-  return <div>create new blog</div>;
+  return (
+    <RestAPIProvider>
+      <TestDetails entityId={Number(id)} />
+    </RestAPIProvider>
+  );
 }
-export default Blog;
+
+export default TestDetailsPage;
+
