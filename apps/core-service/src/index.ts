@@ -21,6 +21,15 @@ import {
   readTestStatusRoute,
 } from "./routes/statuses.js";
 import {
+  registerRoute,
+  loginRoute,
+  refreshTokenRoute,
+  logoutRoute,
+  meRoute,
+  oauthCallbackRoute,
+  getProvidersRoute,
+} from "./routes/auth.js";
+import {
   createTestStepRoute,
   deleteTestStepRoute,
   findTestStepsRoute,
@@ -75,6 +84,14 @@ const router = s.router(contract, {
   findTestStatuses: findTestStatusesRoute,
   readTestStatusGroup: readTestStatusGroupRoute,
   readTestStatus: readTestStatusRoute,
+  // Auth
+  register: registerRoute,
+  login: loginRoute,
+  refreshToken: refreshTokenRoute,
+  logout: logoutRoute,
+  me: meRoute,
+  oauthCallback: oauthCallbackRoute,
+  getProviders: getProvidersRoute,
 });
 
 createExpressEndpoints(contract, router, app);

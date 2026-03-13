@@ -1,10 +1,29 @@
 CREATE TYPE "public"."test_entity_types" AS ENUM('beforeTest', 'test', 'afterTest');--> statement-breakpoint
+CREATE TABLE "auth_providers" (
+	"id" bigserial PRIMARY KEY NOT NULL,
+	"user_id" bigint NOT NULL,
+	"provider" varchar(64) NOT NULL,
+	"provider_id" varchar(256) NOT NULL,
+	"profile" json,
+	"created_timestamp" timestamp NOT NULL,
+	"updated_timestamp" timestamp
+);
+--> statement-breakpoint
 CREATE TABLE "launches" (
 	"id" bigserial PRIMARY KEY NOT NULL,
 	"title" varchar(256) NOT NULL,
 	"arguments" text,
 	"started_timestamp" timestamp NOT NULL,
 	"finished_timestamp" timestamp
+);
+--> statement-breakpoint
+CREATE TABLE "sessions" (
+	"id" uuid PRIMARY KEY NOT NULL,
+	"user_id" bigint NOT NULL,
+	"token_hash" varchar(256) NOT NULL,
+	"expires_timestamp" timestamp,
+	"created_timestamp" timestamp NOT NULL,
+	"last_used_timestamp" timestamp
 );
 --> statement-breakpoint
 CREATE TABLE "test_entities" (
@@ -49,6 +68,19 @@ CREATE TABLE "test_statuses" (
 	"color" varchar(7) NOT NULL
 );
 --> statement-breakpoint
+CREATE TABLE "users" (
+	"id" bigserial PRIMARY KEY NOT NULL,
+	"email" varchar(256) NOT NULL,
+	"password_hash" varchar(256),
+	"name" varchar(256),
+	"is_active" boolean NOT NULL,
+	"is_email_verified" boolean NOT NULL,
+	"created_timestamp" timestamp NOT NULL,
+	"updated_timestamp" timestamp
+);
+--> statement-breakpoint
+ALTER TABLE "auth_providers" ADD CONSTRAINT "auth_providers_user_id_users_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."users"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "sessions" ADD CONSTRAINT "sessions_user_id_users_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."users"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "test_entities" ADD CONSTRAINT "test_entities_launch_id_launches_id_fk" FOREIGN KEY ("launch_id") REFERENCES "public"."launches"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "test_entities" ADD CONSTRAINT "test_entities_status_id_test_statuses_id_fk" FOREIGN KEY ("status_id") REFERENCES "public"."test_statuses"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "test_entity_steps" ADD CONSTRAINT "test_entity_steps_test_id_test_entities_id_fk" FOREIGN KEY ("test_id") REFERENCES "public"."test_entities"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint

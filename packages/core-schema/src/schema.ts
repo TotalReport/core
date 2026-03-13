@@ -52,3 +52,33 @@ export const testEntitySteps = pgTable("test_entity_steps", {
   thread: varchar("thread", { length: 256 }),
   process: varchar("process", { length: 256 }),
 });
+
+export const users = pgTable("users", {
+  id: bigserial("id", { mode: "number" }).primaryKey(),
+  email: varchar("email", { length: 256 }).notNull(),
+  passwordHash: varchar("password_hash", { length: 256 }),
+  name: varchar("name", { length: 256 }),
+  isActive: boolean("is_active").notNull(),
+  isEmailVerified: boolean("is_email_verified").notNull(),
+  createdTimestamp: timestamp("created_timestamp", { withTimezone: false, mode: "date" }).notNull(),
+  updatedTimestamp: timestamp("updated_timestamp", { withTimezone: false, mode: "date" }),
+});
+
+export const authProviders = pgTable("auth_providers", {
+  id: bigserial("id", { mode: "number" }).primaryKey(),
+  userId: bigint("user_id", { mode: "number" }).references(() => users.id).notNull(),
+  provider: varchar("provider", { length: 64 }).notNull(),
+  providerId: varchar("provider_id", { length: 256 }).notNull(),
+  profile: json("profile").$type<Record<string, unknown>>(),
+  createdTimestamp: timestamp("created_timestamp", { withTimezone: false, mode: "date" }).notNull(),
+  updatedTimestamp: timestamp("updated_timestamp", { withTimezone: false, mode: "date" }),
+});
+
+export const sessions = pgTable("sessions", {
+  id: uuid("id").primaryKey(),
+  userId: bigint("user_id", { mode: "number" }).references(() => users.id).notNull(),
+  tokenHash: varchar("token_hash", { length: 256 }).notNull(),
+  expiresTimestamp: timestamp("expires_timestamp", { withTimezone: false, mode: "date" }),
+  createdTimestamp: timestamp("created_timestamp", { withTimezone: false, mode: "date" }).notNull(),
+  lastUsedTimestamp: timestamp("last_used_timestamp", { withTimezone: false, mode: "date" }),
+});

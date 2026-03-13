@@ -30,6 +30,15 @@ import {
   patchTest,
   readTest,
 } from "./tests.js";
+import {
+  register,
+  login,
+  refreshToken,
+  logout,
+  me as meAuth,
+  oauthCallback,
+  getProviders,
+} from "./auth.js";
 
 extendZodWithOpenApi(z);
 
@@ -75,4 +84,12 @@ export const contract = c.router({
   findTestStatuses: findTestStatuses,
   readTestStatusGroup: readTestStatusGroup,
   readTestStatus: readTestStatus,
+  // Auth
+  register: register,
+  login: login,
+  refreshToken: refreshToken,
+  logout: logout,
+  me: meAuth,
+  oauthCallback: oauthCallback,
+  getProviders: getProviders,
 });
