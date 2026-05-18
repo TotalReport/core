@@ -1,0 +1,7 @@
+---
+globs: test/**
+alwaysApply: false
+---
+
+- Test against `@total-report/core-contract`, not `apps/core-service` internals.
+- Use `@total-report/core-entities-generator` for test data; extend that package when new factories are needed.
