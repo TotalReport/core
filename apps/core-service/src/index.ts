@@ -14,6 +14,7 @@ import {
   readLaunchRoute,
 } from "./routes/launches.js";
 import { openapiSchema } from "./routes/openapi_schema.js";
+import { authMiddleware } from "./middleware/auth.js";
 import {
   findTestStatusGroupsRoute,
   findTestStatusesRoute,
@@ -54,6 +55,9 @@ app.use(urlencoded({ extended: false }));
 app.use(json());
 
 app.get("/openapi", openapiSchema);
+
+// Authenticate requests for protected endpoints (whitelist openapi, healthcheck, and auth routes)
+app.use(authMiddleware);
 
 const s = initServer();
 

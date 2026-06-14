@@ -8,6 +8,7 @@ import {
   createAccessToken,
   verifyAccessToken,
 } from "../utils/auth-utils.js";
+import { canUseSystem } from "../utils/user-access.js";
 import { v4 as uuidv4 } from "uuid";
 
 const AUTH_SECRET = process.env.AUTH_SECRET || "dev-secret";
@@ -60,6 +61,10 @@ export const loginRoute: LoginRoute = async ({ body }) => {
     return { status: 401, body: {} };
   }
 
+  if (!canUseSystem(user)) {
+    return { status: 403, body: {} };
+  }
+
   const refreshToken = uuidv4();
   const refreshTokenHash = hashToken(refreshToken, AUTH_SECRET);
   const sessionId = uuidv4();
@@ -106,6 +111,10 @@ export const refreshTokenRoute: RefreshTokenRoute = async (request) => {
 
   const user = await usersDao.findById(session.userId);
   if (!user) return { status: 401, body: {} };
+
+  if (!canUseSystem(user)) {
+    return { status: 403, body: {} };
+  }
 
   // rotate refresh token
   const newRefreshToken = uuidv4();
@@ -233,6 +242,10 @@ export const oauthCallbackRoute: OAuthCallbackRoute = async (request) => {
       providerId,
       profile,
     });
+  }
+
+  if (!canUseSystem(user)) {
+    return { status: 403, body: {} };
   }
 
   // create session and return tokens

@@ -3,13 +3,20 @@ import { DEFAULT_TEST_STATUSES } from "@total-report/core-schema/constants";
 import { contract } from "@total-report/core-contract/contract";
 import { expect } from "earl";
 import { describe, test } from "mocha";
-import { client } from "../../tools/client.js";
+import { loginVerifiedTestUser } from "../../tools/auth.js";
+import type { VerifiedTestUserSession } from "../../tools/auth.js";
 import "../../tools/earl-extensions.js";
 import { expect_toBe } from "../../tools/utils.js";
 import { RemoveNullishProps } from "../../tools/utils.js";
 import { ClientInferRequest } from "@ts-rest/core";
 
-const generator = new CoreEntititesGenerator(client);
+let client: VerifiedTestUserSession["client"];
+let generator: CoreEntititesGenerator;
+
+before(async () => {
+  ({ client, generator } = await loginVerifiedTestUser());
+});
+
 const types: ("beforeTest" | "test" | "afterTest")[] = [
   "beforeTest",
   "test",

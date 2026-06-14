@@ -1,10 +1,17 @@
 import { DEFAULT_TEST_STATUSES } from "@total-report/core-schema/constants";
 import { expect } from "earl";
 import { describe, test } from "mocha";
-import { client } from "../../tools/client.js";
+import { loginVerifiedTestUser } from "../../tools/auth.js";
+import type { VerifiedTestUserSession } from "../../tools/auth.js";
 import "../../tools/earl-extensions.js";
 
 describe("test statuses", () => {
+  let client: VerifiedTestUserSession["client"];
+
+  before(async () => {
+    ({ client } = await loginVerifiedTestUser());
+  });
+
   test("find all test statuses", async () => {
     const response = await client.findTestStatuses();
 

@@ -1,10 +1,17 @@
 import { TEST_STATUS_GROUPS } from "@total-report/core-schema/constants";
 import { expect } from "earl";
 import { describe, test } from "mocha";
-import { client } from "../../tools/client.js";
+import { loginVerifiedTestUser } from "../../tools/auth.js";
+import type { VerifiedTestUserSession } from "../../tools/auth.js";
 import "../../tools/earl-extensions.js";
 
 describe("status groups", () => {
+  let client: VerifiedTestUserSession["client"];
+
+  before(async () => {
+    ({ client } = await loginVerifiedTestUser());
+  });
+
   test("find all status groups", async () => {
     const response = await client.findTestStatusGroups();
 

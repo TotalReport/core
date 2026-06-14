@@ -1,11 +1,16 @@
 import { expect } from "earl";
 import { describe, test } from "mocha";
-import { client } from "../../tools/client.js";
+import { loginVerifiedTestUser } from "../../tools/auth.js";
+import type { VerifiedTestUserSession } from "../../tools/auth.js";
 import "../../tools/earl-extensions.js";
-import { start } from "repl";
-
 
 describe("create launches", () => {
+  let client: VerifiedTestUserSession["client"];
+
+  before(async () => {
+    ({ client } = await loginVerifiedTestUser());
+  });
+
   test("with minimum fields", async () => {
     const request = { title: "New launch", startedTimestamp: new Date("2024-07-21T06:52:35Z") };
 

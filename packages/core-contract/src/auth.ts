@@ -62,6 +62,7 @@ export const login = contract.mutation({
   responses: {
     200: z.object({ user: UserSchema, tokens: TokenResponseSchema }),
     401: z.object({}),
+    403: z.object({}),
   },
 });
 
@@ -73,6 +74,7 @@ export const refreshToken = contract.mutation({
   responses: {
     200: TokenResponseSchema,
     401: z.object({}),
+    403: z.object({}),
   },
 });
 
@@ -105,6 +107,7 @@ export const oauthCallback = contract.query({
   responses: {
     200: z.object({ user: UserSchema, tokens: TokenResponseSchema }),
     400: z.object({}),
+    403: z.object({}),
   },
 });
 

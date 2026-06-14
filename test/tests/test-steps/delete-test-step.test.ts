@@ -2,8 +2,15 @@ import { TestsGenerator } from "@total-report/core-entities-generator/test";
 import { TestStepsGenerator } from "@total-report/core-entities-generator/test-step";
 import { expect } from "earl";
 import { describe, test } from "mocha";
-import { client } from "../../tools/client.js";
+import { loginVerifiedTestUser } from "../../tools/auth.js";
+import type { VerifiedTestUserSession } from "../../tools/auth.js";
 import "../../tools/earl-extensions.js";
+
+let client: VerifiedTestUserSession["client"];
+
+before(async () => {
+  ({ client } = await loginVerifiedTestUser());
+});
 
 const types: ("beforeTest" | "test" | "afterTest")[] = [
   "beforeTest",

@@ -2,10 +2,17 @@ import { CoreEntititesGenerator } from "@total-report/core-entities-generator/co
 import { DEFAULT_TEST_STATUSES } from "@total-report/core-schema/constants";
 import { expect } from "earl";
 import { describe, test } from "mocha";
-import { client } from "../../tools/client.js";
+import { loginVerifiedTestUser } from "../../tools/auth.js";
+import type { VerifiedTestUserSession } from "../../tools/auth.js";
 import "../../tools/earl-extensions.js";
 
-const generator = new CoreEntititesGenerator(client);
+let client: VerifiedTestUserSession["client"];
+let generator: CoreEntititesGenerator;
+
+before(async () => {
+  ({ client, generator } = await loginVerifiedTestUser());
+});
+
 const types: ("beforeTest" | "test" | "afterTest")[] = [
   "beforeTest",
   "test",
