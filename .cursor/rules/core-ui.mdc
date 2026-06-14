@@ -1,0 +1,33 @@
+---
+description: Frontend app structure and data-fetching patterns
+globs: apps/core-ui/**
+alwaysApply: false
+---
+
+# core-ui
+
+Modern.js 2 + React 18 + Tailwind + Radix (shadcn-style).
+
+## Structure
+
+- `src/routes/` — file-based pages (`page.tsx`, `layout.tsx`)
+- `src/containers/` — feature UI blocks (may have `.stories.tsx`)
+- `src/components/ui/` — reusable primitives (button, card, tabs, …)
+- `src/hooks/api/{domain}/` — TanStack Query wrappers per API resource
+- `src/hooks/url/` — URL param sync
+- `src/lib/api-client.ts` — `initTsrReactQuery(contract, { baseUrl })`
+
+## Data fetching pattern
+
+```typescript
+export const useFindLaunches = ({ pagination, filters, enabled }: Params) =>
+  api.findLaunches.useQuery({
+    queryKey: ["launches", pagination.offset, pagination.limit, filters.titleContains],
+    queryData: { query: { offset, limit, "title~cnt": filters.titleContains } },
+    enabled: enabled !== false,
+  });
+```
+
+- Infer response types via `ClientInferResponseBody<typeof contract.findLaunches, 200>`.
+- API base URL: `CORE_SERVICE_BASE_URL` env (default `http://localhost:3030`).
+- Lint: Biome (`pnpm lint`). Stories: Storybook (`pnpm storybook`).

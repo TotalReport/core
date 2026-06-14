@@ -22,6 +22,8 @@ Top-level folders of note:
 
 Each app and package includes its own `package.json` and TypeScript configuration when applicable. The repository uses a monorepo structure to share code and simplify local development.
 
+For AI-assisted work in Cursor, see [`AGENTS.md`](./AGENTS.md).
+
 ## Project concept and motivation
 
 The central idea behind this project is to provide a flexible test reporting tool that can be adapted to many teams and products by combining a small core with an ecosystem of plugins and adapters. The platform's goals include:

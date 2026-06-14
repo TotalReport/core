@@ -1,0 +1,28 @@
+---
+description: API contract and Zod schema conventions
+globs: packages/core-contract/**
+alwaysApply: false
+---
+
+# core-contract
+
+Defines the ts-rest API consumed by `core-service`, `core-ui`, and `test/`.
+
+## File layout
+
+- `src/contract.ts` — aggregates all routes into one router
+- `src/{domain}.ts` — per-domain Zod schemas + route definitions (launches, tests, test-steps, statuses, auth)
+- `src/defaults.ts` — shared defaults (pagination)
+- `src/utils/z-types.ts` — custom Zod helpers (e.g. query booleans)
+
+## Patterns
+
+- Export both Zod schemas (`CreateXSchema`) and route objects used by `initContract()`.
+- Response timestamps are ISO strings (`z.string().datetime({ offset: true })`); request bodies may use `z.coerce.date()`.
+- Pagination query params: `offset`, `limit` with defaults from `PAGINATION_DEFAULTS`.
+- Filter params use `~cnt` suffix for contains (e.g. `"title~cnt"`).
+- Use `extendZodWithOpenApi(z)` where OpenAPI metadata is needed.
+
+## After changing contract
+
+Rebuild dependents: `core-service`, `core-ui`, `test` all import `@total-report/core-contract/contract`.

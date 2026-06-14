@@ -1,0 +1,35 @@
+---
+description: Monorepo layout, data flow, and common workflows
+alwaysApply: true
+---
+
+# Total Report architecture
+
+pnpm + Turbo monorepo. Workspace: `apps/*`, `packages/*`, `test`, `utils/*`.
+
+## Package roles
+
+- `core-contract` — single source of truth for API (ts-rest router + Zod). UI and tests import this.
+- `core-schema` — Drizzle table definitions + constants (e.g. default statuses).
+- `core-service` — Express app; route handlers call `*DAO` classes in `src/db/`.
+- `core-schema-migrator` — runs migrations + seed on dev/test startup.
+- `core-entities-generator` — creates entities via the public API (used by tests).
+- `core-ui` — Modern.js SPA; `api` client from `@ts-rest/react-query`.
+
+## Adding an API endpoint (order matters)
+
+1. Zod schemas + route def in `packages/core-contract/src/{domain}.ts`
+2. Register in `packages/core-contract/src/contract.ts`
+3. Route handler in `apps/core-service/src/routes/{domain}.ts` (`AppRouteImplementation<typeof contract.x>`)
+4. DAO methods in `apps/core-service/src/db/{domain}.ts` if persistence needed
+5. Wire handler in `apps/core-service/src/index.ts`
+6. Integration test in `test/tests/{domain}/` using `core-entities-generator`
+7. Optional: hook in `apps/core-ui/src/hooks/api/`
+
+## Auth
+
+Middleware (`auth.ts`) whitelists `/openapi`, `/healthcheck`, `/v1/auth/*`. All other routes need a verified active user (`canUseSystem`).
+
+## Schema change
+
+Edit `packages/core-schema/src/schema.ts` → generate/migrate via `core-schema-migrator` → update contract Zod if API shape changes.

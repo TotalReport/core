@@ -1,0 +1,37 @@
+---
+description: Backend API server patterns
+globs: apps/core-service/**
+alwaysApply: false
+---
+
+# core-service
+
+Express + `@ts-rest/express`. Business logic lives in DAOs, not routes.
+
+## Route handlers (`src/routes/`)
+
+```typescript
+type CreateTestRoute = AppRouteImplementation<typeof contract.createTest>;
+
+export const createTestRoute: CreateTestRoute = async ({ body }) => {
+  const created = await new TestsDAO().create(body);
+  return { status: 201, body: convertToResponseBody(created) };
+};
+```
+
+- Map DB entities → contract response shapes in local `convertToResponseBody` helpers.
+- Return `{ status: 404, body: {} }` for not found; validation errors throw `ValidationError` (→ 400).
+- Type alias at bottom of file: `AppRouteImplementation<typeof contract.x>`.
+
+## DAOs (`src/db/`)
+
+- Class per table/domain; optional `db` constructor param for transactions.
+- Use Drizzle tables from `@total-report/core-schema/schema`.
+- Shared DB connection: `src/db/setup.ts`.
+- Validation in `src/validations/validations.ts`; domain errors in `src/errors/errors.ts`.
+
+## Auth utils
+
+- `src/middleware/auth.ts` — JWT Bearer verification
+- `src/utils/auth-utils.ts` — token/password hashing
+- `src/utils/user-access.ts` — `canUseSystem(user)`

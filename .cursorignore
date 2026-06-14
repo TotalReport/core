@@ -1,0 +1,28 @@
+﻿# Build outputs — never useful for AI context
+**/dist/
+**/build/
+**/.next/
+**/out/
+
+# Dependencies
+**/node_modules/
+
+# Turbo / cache
+**/.turbo/
+**/.nx/
+
+# Test / coverage artifacts
+coverage/
+
+# Logs
+*.log
+**/.turbo/*.log
+
+# Docker local state
+.docker/
+
+# IDE
+.vscode/
+
+# Lockfile is large; package.json has the dependency list
+pnpm-lock.yaml

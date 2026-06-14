@@ -1,0 +1,27 @@
+---
+description: Database schema and migration workflow
+globs: "{packages/core-schema/**,apps/core-schema-migrator/**}"
+alwaysApply: false
+---
+
+# core-schema & core-schema-migrator
+
+## Schema (`packages/core-schema/src/schema.ts`)
+
+Drizzle `pgTable` definitions. Key tables: `launches`, `test_entities`, `test_entity_steps`, `test_statuses`, `test_status_groups`, `users`, `sessions`, `auth_providers`.
+
+- IDs: `bigserial` for entities, `varchar(4)` for status IDs.
+- JSON columns typed with `.$type<...>()`.
+- Cascade deletes on launch → test_entities → steps.
+
+Constants (default statuses): `packages/core-schema/src/constants.ts`.
+
+## Migrations (`apps/core-schema-migrator`)
+
+- SQL migrations in `migrations/`
+- `pnpm dev` in migrator: compile → `drizzle-kit migrate` → seed
+- Schema changes: edit `schema.ts` → `pnpm generate` → review SQL → commit migration
+
+## core-service usage
+
+DAOs import tables from `@total-report/core-schema/schema`; never duplicate table definitions in the service.

@@ -1,7 +1,38 @@
 ---
+description: Integration test patterns and tooling
 globs: test/**
 alwaysApply: false
 ---
 
-- Test against `@total-report/core-contract`, not `apps/core-service` internals.
-- Use `@total-report/core-entities-generator` for test data; extend that package when new factories are needed.
+# Integration tests
+
+Mocha + earl + ts-rest client. Tests run against a Dockerized stack (`test/setup/test-app.docker-compose.yml`).
+
+## Rules
+
+- Assert via `@total-report/core-contract` types/clients — not `core-service` internals.
+- Seed data with `@total-report/core-entities-generator`; add factories there when needed.
+- Auth: `loginVerifiedTestUser()` from `test/tools/auth.ts` (creates verified user, returns `client` + `generator`).
+- Clients: `publicClient` / `authenticatedClient(token)` in `test/tools/client.ts`.
+- Earl extensions: `test/tools/earl-extensions.js`; helpers in `test/tools/utils.ts`.
+- Hooks: `test/setup/hooks.ts` starts/stops Docker (`test:app:up` / `test:app:down`).
+
+## Test file pattern
+
+```typescript
+let client: VerifiedTestUserSession["client"];
+let generator: CoreEntititesGenerator;
+
+before(async () => {
+  ({ client, generator } = await loginVerifiedTestUser());
+});
+
+test("...", async () => {
+  const launch = await generator.launches.create();
+  const response = await client.createTest({ body: { ... } });
+  expect(response).toEqual({ status: 201, headers: expect.anything(), body: { ... } });
+});
+```
+
+- Mirror contract request types: `ClientInferRequest<typeof contract.createTest>`.
+- Env: `test/setup/test.env` (port `3334`, DB on `5433`).
