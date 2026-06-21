@@ -30,7 +30,7 @@ Never implement API shapes only in `core-service` or tests — define them in `c
 - **Status / status group** — predefined outcome taxonomy (seeded).
 - **User** — email/password auth; must be active **and** email-verified to call protected APIs.
 
-Business context: `docs/features/`.
+Business context: `docs/product/` (priorities) and `docs/features/` (domain model).
 
 ## Commands
 

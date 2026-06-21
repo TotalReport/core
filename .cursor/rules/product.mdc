@@ -1,0 +1,44 @@
+---
+description: Product context, MVP scope, and prioritization
+alwaysApply: true
+---
+
+# Product direction
+
+Read `docs/product/brief.md` before large feature work.
+
+## Target
+
+QA lead @ 11–100 person org. ReportPortal is the benchmark.
+
+## Differentiators (equal weight)
+
+1. **Correlation history** — same test across launches
+2. **Substatuses** — nuance inside pass/fail/skip (e.g. passed-with-warning); see `docs/features/03-statuses.md`
+3. **TypeScript dashboard plugins** — team-composed UI via low-ceremony plugins; see `docs/product/plugin-model.md`
+
+## MVP golden path
+
+JUnit adapter → REST API → UI (launches, substatus-aware dashboard, test detail, history/compare) + one TS dashboard plugin.
+
+## In MVP
+
+JUnit adapter v1, substatus on dashboard/history, plugin SDK + one slot + example plugin, Docker Compose, multi-project per instance.
+
+## Out of MVP
+
+SaaS, plugin marketplace, non-JUnit adapters, K8s/Helm, enterprise SSO.
+
+## Success metric
+
+One team (workplace pilot) uses every sprint without founder pushing.
+
+## User stories
+
+`docs/stories/mvp/README.md` — prioritize TR-010, TR-005, TR-011, TR-009 alongside TR-001.
+
+## Doc layout
+
+- `docs/product/` — brief, persona, mvp-scope, plugin-model, metrics, positioning
+- `docs/features/` — domain reference (statuses doc covers substatus rationale)
+- `docs/stories/mvp/` — backlog
